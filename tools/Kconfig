@@ -1,0 +1,7 @@
+#
+# Tools configuration
+#
+
+menu "Tools"
+
+endmenu

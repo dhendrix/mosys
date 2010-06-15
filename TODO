@@ -1,0 +1,8 @@
+- restore all mosys_{malloc,strdup,etc} occurrances
+- use kconfig more aggressively to prune unneeded interfaces
+- improve platform detection
+  - get EFI SMBIOS pointer rather than only scanning legacy range
+  - add pci device matching algorithm?
+  - make less x86-centric overall
+- work on a better driver model, symbol exporting
+- integrate smbios eventlog

@@ -1,0 +1,51 @@
+mosys - The multifunction open system tool
+
+Introduction
+------------
+Mosys is designed to aid in obtaining obscure system-specific information
+and present it in a uniform, human-friendly manner that is also parseable. It
+is intended to complement other systems software and may overlap in some areas.
+
+Examples of information this program is useful for:
+- Platform identification
+- Snapshot of machine information
+- Listing non-enumerable devices
+- Retrieving vital product data
+
+Due to the system-specific nature of this program, it is unlikely to work with
+most platforms. A generic subset of functionality will be available, though
+its usefulness may be extremely limited.
+
+Configuration & Building
+------------------------
+Mosys uses the Linux kernel configuration and build system. "make help" lists
+the available configuration and build targets.
+
+Typical configuration targets:
+"make menuconfig" -- ncurses-based menu configuration for terminal
+"make xconfig" -- qt-based configuration with windowing support
+"make gconfig" -- gtk-based configuration with windowing support
+
+"make oldconfig" -- Convert an old configuration to a new version of mosys and
+                    prompt for new/different options. Use this to port
+		    motherboard configurations.
+
+Build targets:
+"make" -- Creates mosys binary
+
+Usage
+-----
+Mosys uses a natural language syntax to navigate thru a command hierarchy for
+a given platform. Each supported platform will have a specific set of commands
+available.
+
+Typically, top-level commands will reflect classes of hardware components
+such as "cpu" or "sensor", available busses such as "pci" or "i2c", or a
+type of information such as "smbios" or "vpd".
+
+Mosys returns EXIT_SUCCESS upon successful completion of a command, or
+EXIT_FAILURE if a command is not supported on a given platform. These values
+are defined in the system's stdlib.h. In case of failure, mosys will also print
+a message to stderr to let the user know.
+
+Use "mosys -t" to display the command tree for the host platform.

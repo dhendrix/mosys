@@ -1,0 +1,5 @@
+This directory contains core functions of mosys. It should be kept
+as platform-agnostic as possible. Functions which are exposed such as
+print and logging function should go in include/mosys.
+
+Header files in this directory are used by core modules only.

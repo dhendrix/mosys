@@ -1,0 +1,31 @@
+mainmenu "mosys configuration"
+
+menu "General setup"
+config ADVANCED_OPTIONS
+	bool "Configure optional fields"
+	default n
+	help
+	  This will enable advanced options to be selected
+
+config LOGLEVEL
+	int "Log level threshold"
+	range 0 8
+	default 4
+	help
+	  Configure the verbosity of print statements in the code. Each 'v'
+	  passed in using the command-line will increment the threshold by 1.
+	  
+	  Mnemonic     Value    Description
+	  LOG_EMERG	0	system is unusable
+	  LOG_ALERT	1	action must be taken immediately
+	  LOG_CRIT	2	critical conditions
+	  LOG_ERR	3	error conditions
+	  LOG_WARNING	4	warning conditions
+	  LOG_NOTICE	5	normal but significant condition
+	  LOG_INFO	6	informational
+	  LOG_DEBUG	7	debug-level messages	
+	  LOG_SPEW	8	excessive debug messages
+
+endmenu
+
+source "platform/Kconfig"

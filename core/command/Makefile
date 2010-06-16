@@ -30,6 +30,7 @@
 obj-y		+= eeprom.o
 obj-y		+= gpio.o
 obj-y		+= i2c.o
+obj-y		+= nvram.o
 obj-y		+= platform.o
 obj-y		+= smbios.o
 obj-y		+= vpd.o

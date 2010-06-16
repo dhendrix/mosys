@@ -206,6 +206,7 @@ struct bootnum_cb {
 
 /* NVRAM callbacks */
 struct nvram_cb {
+	int (*list)(struct platform_intf *intf);
 	int (*clear)(struct platform_intf *intf);
 	int (*dump)(struct platform_intf *intf);
 };

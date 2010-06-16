@@ -27,8 +27,4 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-obj-y		+= eeprom/
-obj-y		+= math/
-obj-y		+= smbios/
-obj-y		+= util/
-obj-y		+= vpd/
+obj-y		+= math.o

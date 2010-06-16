@@ -27,7 +27,7 @@
 #include <string.h>
 #include <sys/types.h>
 
-#include "mosys/math.h"
+#include "lib/math.h"
 
 /*
  * ctz - count trailing zeros

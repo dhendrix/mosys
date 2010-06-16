@@ -29,12 +29,13 @@
 #include "mosys/globals.h"
 #include "mosys/log.h"
 #include "mosys/list.h"
-#include "mosys/math.h"
 #include "mosys/platform.h"
 #include "mosys/string.h"
 
 #include "intf/i2c.h"
 #include "intf/linux-i2c-dev.h"
+
+#include "lib/math.h"
 
 /* these are exposed only to make testing easier */
 #define I2C_DEV_ROOT	"/dev"

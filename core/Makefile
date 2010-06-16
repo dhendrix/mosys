@@ -41,7 +41,6 @@ obj-y		+= intf_list.o
 obj-y		+= kv_pair.o
 obj-y		+= list.o
 obj-y		+= log.o
-obj-y		+= math.o
 obj-y		+= output.o
 obj-y		+= platform.o
 obj-y		+= string.o

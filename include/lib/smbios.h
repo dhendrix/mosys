@@ -22,7 +22,9 @@
 
 #include <inttypes.h>
 
-#include "smbios_tables.h"
+#include "mosys/platform.h"
+
+#include "lib/smbios_tables.h"
 
 /* SMBIOS Table Types */
 enum smbios_types {

@@ -31,34 +31,34 @@
 #include "lib/smbios.h"
 
 /* FIXME: command/command_list.h is included magically via Makefile */
-const char *default_id_list[] = {
+const char *default_x86_id_list[] = {
 	"",
 	NULL
 };
 
-struct platform_cmd *platform_default_sub[] = {
+struct platform_cmd *platform_default_x86_sub[] = {
 	&cmd_smbios,
 	&cmd_platform,
 	NULL
 };
 
-struct sysinfo_cb default_sysinfo_cb;
+struct sysinfo_cb default_x86_sysinfo_cb;
 
-struct platform_cb default_cb = {
+struct platform_cb default_x86_cb = {
 	.smbios = &smbios_sysinfo_cb,
-	.sysinfo = &default_sysinfo_cb,
+	.sysinfo = &default_x86_sysinfo_cb,
 };
 
-const char *default_probe(struct platform_intf *intf)
+const char *default_x86_probe(struct platform_intf *intf)
 {
 	return intf->id_list[0];
 }
 
-struct platform_intf platform_default = {
-	.type		= PLATFORM_DEFAULT,
+struct platform_intf platform_default_x86 = {
+	.type		= PLATFORM_X86,
 	.name		= "Default",
-	.probe		= default_probe,
-	.id_list	= default_id_list,
-	.sub		= platform_default_sub,
-	.cb		= &default_cb,
+	.probe		= default_x86_probe,
+	.id_list	= default_x86_id_list,
+	.sub		= platform_default_x86_sub,
+	.cb		= &default_x86_cb,
 };

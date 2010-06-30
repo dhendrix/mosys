@@ -22,7 +22,8 @@
 
 #include "mosys/platform.h"
 
-extern struct platform_intf platform_default;
+/* default */
+extern struct platform_intf platform_default_x86;
 
 /* hp */
 extern struct platform_intf platform_hp_z600;
@@ -31,6 +32,10 @@ struct platform_intf *platform_intf_list[] = {
 #ifdef CONFIG_HP_Z600
 	&platform_hp_z600,
 #endif
-	&platform_default,	/* place this last */
+
+	/* place default platform last */
+#ifdef CONFIG_DEFAULT_X86
+	&platform_default_x86,
+#endif
 	NULL
 };

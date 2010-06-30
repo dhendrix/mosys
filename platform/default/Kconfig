@@ -1,0 +1,25 @@
+#
+# Default platform configuration
+#
+
+menu "Default Platform Support"
+config PLATFORM_DEFAULT
+	bool "Default platform support"
+	default n
+	help
+	  These are limited-functionality platform definitions that will allow
+	  usage of a small, generic default subset of mosys functionality
+	  for cases when the platform cannot be positively identified.
+	  
+	  The user must be careful not to allow multiple default platforms to
+	  conflict when platform detection falls through to the default case.
+
+config DEFAULT_X86
+	depends on PLATFORM_ARCH_X86 && PLATFORM_DEFAULT
+	bool "Default x86 functionality"
+	default y
+	help
+	  This will provide minimal x86 support. Identification will be done
+	  via SMBIOS table lookup.
+
+endmenu

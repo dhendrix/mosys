@@ -25,6 +25,9 @@
 /* default */
 extern struct platform_intf platform_default_x86;
 
+/* experimental */
+extern struct platform_intf platform_agz_pinetrail;
+
 /* hp */
 extern struct platform_intf platform_hp_z600;
 
@@ -34,8 +37,8 @@ struct platform_intf *platform_intf_list[] = {
 #endif
 
 	/* experimental platforms */
-#ifdef CONFIG_EXPERIMENTAL_PINETRAIL
-	&platform_experimental_pinetrail,
+#ifdef CONFIG_EXPERIMENTAL_AGZ
+	&platform_agz_pinetrail,
 #endif
 
 	/* place default platform last */

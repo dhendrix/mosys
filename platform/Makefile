@@ -27,7 +27,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-obj-y				+= default/	# FIXME: Make this a config option
-obj-$(CONFIG_PLATFORM_HP)	+= hp/
+obj-y					+= default/	# FIXME: Make this a config option
+obj-$(CONFIG_PLATFORM_HP)		+= hp/
+obj-$(CONFIG_PLATFORM_EXPERIMENTAL)	+= experimental/
 
-obj-y				+= platform_list.o
+obj-y					+= platform_list.o

@@ -43,5 +43,5 @@ static struct eeprom agz_pinetrail_eeproms[] = {
 };
 
 struct eeprom_cb agz_pinetrail_eeprom_cb = {
-	.eeprom_list	= pinetrail_eeproms,
+	.eeprom_list	= agz_pinetrail_eeproms,
 };

@@ -31,6 +31,7 @@
 static const char *probed_platform_id;
 
 const char *agz_pinetrail_id_list[] = {
+	"AGZ",
 	"Pinetrail",
 	NULL
 };

@@ -48,10 +48,20 @@
 # - Removed outputmakefile and other stuff for outputting to a different
 #   directory
 
-MAJOR=0
-MINOR=1
 NAME="Mosys"
 PROGRAM="mosys"
+
+# Mosys will use the following version format: core.major.minor-revision
+# Here is a summery of each of those fields:
+# core:		Mosys core architecture version
+# major:	Major release number; incremented at major milestones
+# minor:	Minor release number; incremented for important changes
+# revision:	Patch number from version control system
+CORE=1
+MAJOR=0
+MINOR=01
+SVNVERSION := $(shell LC_ALL=C svnversion -cn . 2>/dev/null | sed -e "s/.*://" -e "s/\([0-9]*\).*/\1/" | grep "[0-9]" || LC_ALL=C svn info . 2>/dev/null | awk '/^Revision:/ {print $$2 }' | grep "[0-9]" || LC_ALL=C git svn info . 2>/dev/null | awk '/^Revision:/ {print $$2 }' | grep "[0-9]" || echo unknown)
+REVISION=$(SVNVERSION)
 
 # *DOCUMENTATION*
 # To see a list of typical targets execute "make help"
@@ -299,7 +309,7 @@ CFLAGS_GCOV	= -fprofile-arcs -ftest-coverage
 LINUXINCLUDE    := -Iinclude \
                    -include include/generated/autoconf.h
 
-KERNELVERSION = $(MAJOR).$(MINOR)
+KERNELVERSION = $(CORE).$(MAJOR).$(MINOR)-$(REVISION)
 
 EXTRA_CFLAGS	+= $(patsubst %,-l%, $(LIBRARIES)) \
                    -DPROGRAM=\"$(PROGRAM)\" \

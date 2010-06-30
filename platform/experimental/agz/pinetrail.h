@@ -14,33 +14,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
- *
- * All you should need to do to link in a new platform is to hook it in
- * here.
  */
-#include <stdlib.h>
 
+#ifndef AGZ_PINETRAIL_H__
+#define AGZ_PINETRAIL_H__
+
+#include <inttypes.h>
 #include "mosys/platform.h"
 
-/* default */
-extern struct platform_intf platform_default_x86;
+/* platform callbacks */
+extern struct eeprom_cb agz_pinetrail_eeprom_cb;	/* eeprom.c */
+extern struct sysinfo_cb agz_pinetrail_sysinfo_cb;	/* sysinfo.c */
+extern struct vpd_cb agz_pinetrail_vpd_cb;		/* vpd.c */
+//extern struct gpio_cb agz_pinetrail_gpio_cb;		/* gpio.c */
+//extern struct flash_cb agz_pinetrail_flash_cb;	/* flash.c */
+//extern struct nvram_cb agz_pinetrail_nvram_cb;	/* nvram.c */
 
-/* hp */
-extern struct platform_intf platform_hp_z600;
+/* functions called by setup routines */
+extern int agz_pinetrail_vpd_setup(struct platform_intf *intf);
 
-struct platform_intf *platform_intf_list[] = {
-#ifdef CONFIG_HP_Z600
-	&platform_hp_z600,
-#endif
 
-	/* experimental platforms */
-#ifdef CONFIG_EXPERIMENTAL_PINETRAIL
-	&platform_experimental_pinetrail,
-#endif
-
-	/* place default platform last */
-#ifdef CONFIG_DEFAULT_X86
-	&platform_default_x86,
-#endif
-	NULL
-};
+#endif /* AGZ_PINETRAIL_H_ */

@@ -14,33 +14,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
- *
- * All you should need to do to link in a new platform is to hook it in
- * here.
  */
-#include <stdlib.h>
+
+#include <stdio.h>
+#include <unistd.h>
 
 #include "mosys/platform.h"
+#include "mosys/common.h"
+#include "mosys/log.h"
 
-/* default */
-extern struct platform_intf platform_default_x86;
+#include "lib/eeprom.h"
+#include "lib/eeprom_enet.h"
 
-/* hp */
-extern struct platform_intf platform_hp_z600;
+static struct eeprom agz_pinetrail_eeproms[] = {
+	{
+		.name		= "host_firmware",
+		.type		= EEPROM_TYPE_FW,
+		/* FIXME: add proper address stuff here */
+		.flags		= EEPROM_FLAG_RDWR,
+	},
+	{
+		.name		= "ec_firmware",
+		.type		= EEPROM_TYPE_FW,
+		/* FIXME: add proper address stuff here */
+		.flags		= EEPROM_FLAG_RDWR,
+	},
+	{ 0 },
+};
 
-struct platform_intf *platform_intf_list[] = {
-#ifdef CONFIG_HP_Z600
-	&platform_hp_z600,
-#endif
-
-	/* experimental platforms */
-#ifdef CONFIG_EXPERIMENTAL_PINETRAIL
-	&platform_experimental_pinetrail,
-#endif
-
-	/* place default platform last */
-#ifdef CONFIG_DEFAULT_X86
-	&platform_default_x86,
-#endif
-	NULL
+struct eeprom_cb agz_pinetrail_eeprom_cb = {
+	.eeprom_list	= pinetrail_eeproms,
 };

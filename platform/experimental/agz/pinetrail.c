@@ -38,6 +38,7 @@ const char *agz_pinetrail_id_list[] = {
 struct platform_cmd *agz_pinetrail_sub[] = {
 	&cmd_eeprom,
 	&cmd_gpio,
+	&cmd_nvram,
 	&cmd_platform,
 	&cmd_smbios,
 	&cmd_vpd,
@@ -99,6 +100,7 @@ static int agz_pinetrail_destroy(struct platform_intf *intf)
 struct platform_cb agz_pinetrail_cb = {
 	.eeprom		= &agz_pinetrail_eeprom_cb,
 	.gpio		= &agz_pinetrail_gpio_cb,
+	.nvram		= &agz_pinetrail_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,
 	.sysinfo 	= &agz_pinetrail_sysinfo_cb,
 	.vpd		= &agz_pinetrail_vpd_cb,

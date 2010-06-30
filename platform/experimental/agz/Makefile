@@ -29,6 +29,7 @@
 
 obj-$(CONFIG_EXPERIMENTAL_AGZ)	+= eeprom.o
 obj-$(CONFIG_EXPERIMENTAL_AGZ)	+= gpio.o
+obj-$(CONFIG_EXPERIMENTAL_AGZ)	+= nvram.o
 obj-$(CONFIG_EXPERIMENTAL_AGZ)	+= pinetrail.o
 obj-$(CONFIG_EXPERIMENTAL_AGZ)	+= sysinfo.o
 obj-$(CONFIG_EXPERIMENTAL_AGZ)	+= vpd.o

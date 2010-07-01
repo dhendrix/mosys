@@ -65,6 +65,9 @@ REVISION=$(SVNVERSION)
 
 RELEASENAME=$(CORE).$(MAJOR).$(MINOR)-$(REVISION)
 
+# location to use when releasing new packages
+EXPORTDIR ?= .
+
 # *DOCUMENTATION*
 # To see a list of typical targets execute "make help"
 # More info can be located in ./README
@@ -946,6 +949,25 @@ endif	# skip-makefile
 PHONY += FORCE
 FORCE:
 
+PHONY += export
+export:
+	@rm -rf $(EXPORTDIR)/$(PROGRAM)-$(RELEASENAME)
+	@svn export -r BASE . $(EXPORTDIR)/$(PROGRAM)-$(RELEASENAME)
+	@sed "s/^SVNVERSION.*/SVNVERSION := $(SVNVERSION)/" Makefile >$(EXPORTDIR)/$(PROGRAM)-$(RELEASENAME)/Makefile
+	@LC_ALL=C svn log >$(EXPORTDIR)/$(PROGRAM)-$(RELEASENAME)/ChangeLog
+	@echo Exported $(EXPORTDIR)/$(PROGRAM)-$(RELEASENAME)/
+
+PHONY += tarball
+# TAROPTIONS reduces information leakage from the packager's system.
+# If other tar programs support command line arguments for setting uid/gid of
+# stored files, they can be handled here as well.
+TAROPTIONS = $(shell LC_ALL=C tar --version|grep -q GNU && echo "--owner=root --group=root")
+tarball: export
+	@tar cjf $(EXPORTDIR)/$(PROGRAM)-$(RELEASENAME).tar.bz2 -C $(EXPORTDIR)/ $(TAROPTIONS) $(PROGRAM)-$(RELEASENAME)/
+	@rm -rf $(EXPORTDIR)/$(PROGRAM)-$(RELEASENAME)
+	@echo Created $(EXPORTDIR)/$(PROGRAM)-$(RELEASENAME).tar.bz2
+
 # Declare the contents of the .PHONY variable as phony.  We keep that
 # information in a variable so we can use it in if_changed and friends.
+
 .PHONY: $(PHONY)

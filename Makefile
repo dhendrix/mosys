@@ -63,6 +63,8 @@ MINOR=01
 SVNVERSION := $(shell LC_ALL=C svnversion -cn . 2>/dev/null | sed -e "s/.*://" -e "s/\([0-9]*\).*/\1/" | grep "[0-9]" || LC_ALL=C svn info . 2>/dev/null | awk '/^Revision:/ {print $$2 }' | grep "[0-9]" || LC_ALL=C git svn info . 2>/dev/null | awk '/^Revision:/ {print $$2 }' | grep "[0-9]" || echo unknown)
 REVISION=$(SVNVERSION)
 
+RELEASENAME=$(CORE).$(MAJOR).$(MINOR)-$(REVISION)
+
 # *DOCUMENTATION*
 # To see a list of typical targets execute "make help"
 # More info can be located in ./README
@@ -309,7 +311,7 @@ CFLAGS_GCOV	= -fprofile-arcs -ftest-coverage
 LINUXINCLUDE    := -Iinclude \
                    -include include/generated/autoconf.h
 
-KERNELVERSION = $(CORE).$(MAJOR).$(MINOR)-$(REVISION)
+KERNELVERSION = $(RELEASENAME)
 
 EXTRA_CFLAGS	+= $(patsubst %,-l%, $(LIBRARIES)) \
                    -DPROGRAM=\"$(PROGRAM)\" \

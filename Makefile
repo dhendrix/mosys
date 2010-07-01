@@ -67,6 +67,7 @@ RELEASENAME=$(CORE).$(MAJOR).$(MINOR)-$(REVISION)
 
 # location to use when releasing new packages
 EXPORTDIR ?= .
+INSTALLDIR	?= /usr/sbin
 
 # *DOCUMENTATION*
 # To see a list of typical targets execute "make help"
@@ -295,6 +296,7 @@ NM		?= $(CROSS_COMPILE)nm
 STRIP		?= $(CROSS_COMPILE)strip
 OBJCOPY		?= $(CROSS_COMPILE)objcopy
 OBJDUMP		?= $(CROSS_COMPILE)objdump
+INSTALL		?= install
 AWK		= awk
 INSTALLKERNEL  := installkernel
 DEPMOD		= /sbin/depmod
@@ -948,6 +950,13 @@ endif	# skip-makefile
 
 PHONY += FORCE
 FORCE:
+
+PHONY += install
+install: $(PROGRAM)
+	mkdir -p $(INSTALLDIR)
+#	mkdir -p $(MANDIR)/man8
+	$(INSTALL) -m 0755 $(PROGRAM) $(INSTALLDIR)
+#	$(INSTALL) -m 0644 $(PROGRAM).8 $(MANDIR)/man8
 
 PHONY += export
 export:

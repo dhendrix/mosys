@@ -2,9 +2,14 @@
 # Kernel configuration targets
 # These targets are used from top-level makefile
 
-# Note: The only modification to this file is the removal of an ifdef that
-# checked which Kconfig file to use. For this program, we're using
-# the top-level Kconfig file rather than arch/$(SRCARCH)/Kconfig
+# Note: Modification to this file include:
+# - Removal of an ifdef that checked which Kconfig file to use. For this
+#   program, we're using the top-level Kconfig file rather than
+#   arch/$(SRCARCH)/Kconfig
+# - Changes to defconfig to look in $DEFCONFIGS_DIR rather than the architecture
+#   hierchy that Linux uses
+
+DEFCONFIGS_DIR=configs/
 
 PHONY += oldconfig xconfig gconfig menuconfig config silentoldconfig update-po-config \
 	localmodconfig localyesconfig
@@ -111,11 +116,11 @@ ifeq ($(KBUILD_DEFCONFIG),)
 	$< -d $(Kconfig)
 else
 	@echo "*** Default configuration is based on '$(KBUILD_DEFCONFIG)'"
-	$(Q)$< -D arch/$(SRCARCH)/configs/$(KBUILD_DEFCONFIG) $(Kconfig)
+	$(Q)$< -D $(DEFCONFIGS_DIR)/$(KBUILD_DEFCONFIG) $(Kconfig)
 endif
 
 %_defconfig: $(obj)/conf
-	$(Q)$< -D arch/$(SRCARCH)/configs/$@ $(Kconfig)
+	$(Q)$< -D $@ $(Kconfig)
 
 # Help text used by make help
 help:

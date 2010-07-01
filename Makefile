@@ -28,12 +28,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 # This Makefile is a trimmed version of the Linux kernel makefile for version
-# 2.6.34. The purpose is provide a template for using the Linux build system
-# in userspace programs. The point was to modifify the top-level Makefile and
-# leave the helper Makefiles in scripts/ alone.
-#
-# In a nutshell, all core, driver, and library targets are built as they are
-# in Linux. The resulting object files and archives are available as
+# 2.6.34. In a nutshell, all core, driver, and library targets are built as
+# they are in Linux. The resulting object files and archives are available as
 # $(vmlinux-all). This Makefile adds another rule to build $(PROGRAM)
 # which takes $(vmlinux-all) as input files for linking.
 #
@@ -465,8 +461,7 @@ endif # $(dot-config)
 # command line.
 # This allow a user to issue only 'make' to build a kernel including modules
 # Defaults vmlinux but it is usually overridden in the arch makefile
-#all: vmlinux
-all: include/config/auto.conf vmlinux $(PROGRAM)
+all: include/config/auto.conf $(PROGRAM)
 
 # warn about C99 declaration after statement
 KBUILD_CFLAGS += $(call cc-option,-Wdeclaration-after-statement,)
@@ -632,9 +627,6 @@ define rule_vmlinux__
 		/bin/false;                                                  \
 	fi;
 endef
-
-# vmlinux image - including updated kernel symbols
-vmlinux: $(vmlinux-lds) $(vmlinux-main) FORCE
 
 # The actual objects are generated when descending, 
 # make sure no implicit rule kicks in
@@ -810,14 +802,13 @@ help:
 	@echo  ''
 	@echo  'Other generic targets:'
 	@echo  '  all		  - Build all targets marked with [*]'
-	@echo  '* vmlinux	  - Build the bare kernel'
+	@echo  '  install	  - Install $(PROGRAM) to $(INSTALLDIR)'
+	@echo  '  export	  - Copy source code without VCS metadata'
 	@echo  '  dir/            - Build all files in dir and below'
 	@echo  '  dir/file.[ois]  - Build specified target only'
-	@echo  '  dir/file.ko     - Build module including final link'
-	@echo  '  tags/TAGS	  - Generate tags file for editors'
 	@echo  '  kernelrelease	  - Output the release version string'
 	@echo  '  kernelversion	  - Output the version stored in Makefile'
-	 echo  ''
+	@echo  ''
 	@echo  ''
 	@echo  'Architecture specific targets ($(SRCARCH)):'
 	@$(if $(archhelp),$(archhelp),\
@@ -855,14 +846,6 @@ $(help-board-dirs): help-%:
 		$(foreach b, $(boards-per-dir), \
 		printf "  %-24s - Build for %s\\n" $*/$(b) $(subst _defconfig,,$(b));) \
 		echo '')
-
-# Generate tags for editors
-# ---------------------------------------------------------------------------
-quiet_cmd_tags = GEN     $@
-      cmd_tags = $(CONFIG_SHELL) $(srctree)/scripts/tags.sh $@
-
-tags TAGS cscope: FORCE
-	$(call cmd,tags)
 
 # Scripts to check various things for consistency
 # ---------------------------------------------------------------------------

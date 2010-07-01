@@ -21,17 +21,9 @@ Configuration & Building
 Mosys uses the Linux kernel configuration and build system. "make help" lists
 the available configuration and build targets.
 
-Typical configuration targets:
-"make menuconfig" -- ncurses-based menu configuration for terminal
-"make xconfig" -- qt-based configuration with windowing support
-"make gconfig" -- gtk-based configuration with windowing support
-
-"make oldconfig" -- Convert an old configuration to a new version of mosys and
-                    prompt for new/different options. Use this to port
-		    motherboard configurations.
-
-Build targets:
-"make" -- Creates mosys binary
+After a fresh checkout, you will need to generate a configuration file before
+the sources may be compiled. To do so, run a configuration target (ie "make
+menuconfig") followed by a generic target such as "make" or "make all".
 
 Usage
 -----

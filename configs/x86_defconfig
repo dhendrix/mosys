@@ -1,0 +1,39 @@
+#
+# Automatically generated make config: don't edit
+# Mosys version: KERNELVERSION
+# Wed Jun 30 23:22:16 2010
+#
+
+#
+# General setup
+#
+CONFIG_ADVANCED_OPTIONS=y
+CONFIG_LOGLEVEL=4
+
+#
+# Platforms
+#
+CONFIG_PLATFORM_ARCH_ARMEL=y
+CONFIG_PLATFORM_ARCH_X86=y
+
+#
+# Default Platform Support
+#
+CONFIG_PLATFORM_DEFAULT=y
+CONFIG_DEFAULT_X86=y
+
+#
+# HP Platform Support
+#
+CONFIG_PLATFORM_HP=y
+CONFIG_HP_Z600=y
+
+#
+# Experimental Platform Support
+#
+CONFIG_PLATFORM_EXPERIMENTAL=y
+CONFIG_EXPERIMENTAL_AGZ=y
+
+#
+# Tools
+#

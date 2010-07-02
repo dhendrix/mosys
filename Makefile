@@ -310,7 +310,8 @@ CFLAGS_GCOV	= -fprofile-arcs -ftest-coverage
 # Use LINUXINCLUDE when you must reference the include/ directory.
 # Needed to be compatible with the O= option
 LINUXINCLUDE    := -Iinclude \
-                   -include include/generated/autoconf.h
+                   -include include/generated/autoconf.h \
+                   -luuid
 
 KERNELVERSION = $(RELEASENAME)
 

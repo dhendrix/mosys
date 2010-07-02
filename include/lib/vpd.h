@@ -22,6 +22,8 @@
 
 #include <inttypes.h>
 
+#include "mosys/platform.h"
+
 #include "vpd_tables.h"
 
 /* VPD Table Types */

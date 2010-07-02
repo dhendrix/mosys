@@ -1275,7 +1275,7 @@ ConfigMainWindow::ConfigMainWindow(void)
 	char title[256];
 
 	QDesktopWidget *d = configApp->desktop();
-	snprintf(title, sizeof(title), _("Linux Kernel v%s Configuration"),
+	snprintf(title, sizeof(title), _("Mosys v%s Configuration"),
 		getenv("KERNELVERSION"));
 	setCaption(title);
 

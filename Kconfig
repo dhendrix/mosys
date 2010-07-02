@@ -1,5 +1,10 @@
 mainmenu "mosys configuration"
 
+# Internal stuff
+config KERNELVERSION
+	string
+	option env="KERNELVERSION"
+
 menu "General setup"
 config ADVANCED_OPTIONS
 	bool "Configure optional fields"

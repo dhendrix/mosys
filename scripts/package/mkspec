@@ -24,16 +24,16 @@ fi
 PROVIDES="$PROVIDES kernel-$KERNELRELEASE"
 __KERNELRELEASE=`echo $KERNELRELEASE | sed -e "s/-//g"`
 
-echo "Name: kernel"
-echo "Summary: The Linux Kernel"
+echo "Name: mosys"
+echo "Summary: Mosys"
 echo "Version: $__KERNELRELEASE"
 # we need to determine the NEXT version number so that uname and
 # rpm -q will agree
 echo "Release: `. $srctree/scripts/mkversion`"
 echo "License: GPL"
 echo "Group: System Environment/Kernel"
-echo "Vendor: The Linux Community"
-echo "URL: http://www.kernel.org"
+echo "Vendor: The Mosys Community"
+echo "URL: http://mosys.googlecode.com"
 
 if ! $PREBUILT; then
 echo "Source: kernel-$__KERNELRELEASE.tar.gz"
@@ -45,7 +45,7 @@ echo "%define __spec_install_post /usr/lib/rpm/brp-compress || :"
 echo "%define debug_package %{nil}"
 echo ""
 echo "%description"
-echo "The Linux Kernel, the operating system core itself"
+echo "Mosys, a multi-function system tool for obtaining low-level information"
 echo ""
 
 if ! $PREBUILT; then

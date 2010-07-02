@@ -313,7 +313,7 @@ LINUXINCLUDE    := -Iinclude \
                    -include include/generated/autoconf.h \
                    -luuid
 
-KERNELVERSION = $(RELEASENAME)
+KERNELVERSION	= $(RELEASENAME)
 
 EXTRA_CFLAGS	+= $(patsubst %,-l%, $(LIBRARIES)) \
                    -DPROGRAM=\"$(PROGRAM)\" \

@@ -101,3 +101,27 @@ uint8_t rolling8_csum(uint8_t *buf, size_t len)
 		sum += buf[i];
 	return sum;
 }
+
+/*
+  * zero8_csum - Calculates 8-bit zero-sum checksum
+  *
+  * @buf:	input buffer
+  * @len:	length of buffer
+  * 
+  * The summation of the bytes in the array and the csum will equal zero
+  * for 8-bit data size.
+  *
+  * returns checksum to indicate success
+  */
+uint8_t zero8_csum(uint8_t *buf, size_t len)
+{
+	uint8_t *u = buf;
+	uint8_t csum = 0;
+
+	while (u < buf + len) {
+		csum += *u;
+		u++;
+	}
+
+	return (0x100 - csum);
+}

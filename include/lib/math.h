@@ -47,6 +47,19 @@ extern int logbase2(int n);
  */
 extern uint8_t rolling8_csum(uint8_t *buf, size_t len);
 
+/*
+  * zero8_csum - Calculates 8-bit zero-sum checksum
+  *
+  * @buf:	input buffer
+  * @len:	length of buffer
+  * 
+  * The summation of the bytes in the array and the csum will equal zero
+  * for 8-bit data size.
+  *
+  * returns checksum to indicate success
+  */
+extern uint8_t zero8_csum(uint8_t *buf, size_t len);
+
 #ifndef __mask
 # define __mask(high, low) ((1ULL << (high)) + \
                             (((1ULL << (high)) - 1) - ((1ULL << (low)) - 1)))

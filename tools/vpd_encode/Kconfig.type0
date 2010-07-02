@@ -1,0 +1,61 @@
+#
+# Firmware information configuration
+#
+
+menu "Firmware Information (Type 0)"
+	depends on BUILD_VPD
+
+config FIRMWARE_VENDOR
+	string "Firmware vendor"
+	default "To be filled in"
+
+config FIRMWARE_VERSION
+	string "Firmware version string"
+	default "To be filled in"
+	help
+	  This is a freeform string that may contain core and OEM version
+	  information.
+
+config FIRMWARE_START_SEGMENT
+	hex "Firmware start segment"
+	depends on VPD_ADVANCED_OPTIONS
+	default 0xE000
+	help
+	  Starting address segment
+
+config FIRMWARE_RELEASE_DATE
+	string "Firmware release date (mm/dd/yyyy)"
+	default "01/01/1970"
+	help
+	  String number fo the firmware release date. The date string, if
+	  supplied, is mm/dd/yyyy format.
+
+config FIRMWARE_ROM_SIZE
+	int "Size of system firmware ROM (in 64KB blocks)"
+#FIXME: this may need disambiguation; see SMBIOS spec
+	help
+	  Integer size of the physical memory on which the system firmware is
+	  stored, in bytes, divided by 64KB (2^16).
+
+# FIXME: We don't intend on using these, but it might be nice to make them
+# configurable anyway.
+#config FIRMWARE_CHARACTERISTICS
+#config FIRMWARE_CHARACTERISTICS_EXTENSION
+
+config SYSTEM_FIRMWARE_MAJOR_RELEASE
+	int "System firmware major release number"
+	default 0
+
+config SYSTEM_FIRMWARE_MINOR_RELEASE
+	int "System firmware minor release number"
+	default 0
+
+config EC_FIRMWARE_MAJOR_RELEASE
+	int "Embedded controller firmware major release number"
+	default 0
+
+config EC_FIRMWARE_MINOR_RELEASE
+	int "Embedded controller firmware minor release number"
+	default 0
+
+endmenu # Firmware Information (Type 0)

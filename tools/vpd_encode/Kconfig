@@ -1,0 +1,27 @@
+#
+# Vital Product Data (VPD) Configuration
+#
+
+menu "Vital Product Data (VPD) Configuration"
+	depends on BUILD_VPD
+
+config VPD_ADVANCED_OPTIONS
+	bool "Configure optional fields and advanced options"
+	default n
+
+#config INFILE
+#	string "VPD input file (if any)"
+#	help
+#	  Input filename (if any)
+
+config VPD_OUTFILE
+	string "VPD output file"
+	default "vpd.bin"
+	help
+	  File to write VPD to.
+
+source "tools/vpd_encode/Kconfig.entry"
+source "tools/vpd_encode/Kconfig.type0"
+source "tools/vpd_encode/Kconfig.type1"
+
+endmenu

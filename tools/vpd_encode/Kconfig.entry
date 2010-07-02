@@ -1,0 +1,42 @@
+#
+# Entry point configuration
+#
+
+menu "Entry Point Structure"
+	depends on BUILD_VPD
+
+config EPS_VPD_MAJOR_VERSION
+	int "VPD major version"
+	range 0 255
+	default 2
+	help
+	  VPD major version (0-255)
+
+config EPS_VPD_MINOR_VERSION
+	int "VPD minor version"
+	range 0 255
+	default 6
+	help
+	  VPD minor version (0-255)
+
+config EPS_STRUCTURE_TABLE_ADDRESS
+	hex "Structure table address"
+	default 0x1f
+#FIXME: this really should have a range...
+#	range 0 0xffffffff
+	help
+	  32-bit address offset of structure table.
+
+	  If you wish to relocate the structure table, then set this value
+	  to point at the new location. By default, the structure table will
+	  immediately follow the entry point structure, relative to offset zero.
+
+config EPS_NUM_STRUCTURES
+	depends on VPD_ADVANCED_OPTIONS
+	int "Number of structures (not counting entry point)"
+	range 0 65536
+	help
+	  Number of structures in the table structure. Do not include the
+	  entry point structure in this value.
+
+endmenu # VPD Entry Point

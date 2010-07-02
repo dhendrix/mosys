@@ -1,0 +1,60 @@
+vpd_encode alpha
+License: GPLv2 (See COPYING for details)
+
+Summary:
+This is an alpha version of a vital product data (VPD) generator which follows
+follows Google's specification. It will generate a binary file containing VPD
+which can be copied into a final location. The VPD must be aligned on a 16-byte
+boundary in whatever final medium it is stored in.
+
+How to configure:
+This version of vpd_encode is part of the Mosys system utility and uses the
+Linux kernel build system. To generate a VPD blob, you must first run one of the
+configuration targets (e.g. "make menuconfig" or "make xconfig").
+Mosys configuration menu
+    --> Tools
+        --> Vital Product Data (VPD) Encoder
+            --> VPD Configuration
+
+From here, you may configure the variables required for Google VPD. Remember to
+save the configuration when you exit.
+
+How to build:
+Type "make vpd_encode" to generate the vpd_encode executable. Once that is
+complete, you may run the executable. If successful, vpd.bin will be placed in
+the location specified (default is in the current working directory).
+
+How to run:
+vpd_encode will simply generate the binary data blob if run without arguments. By default, the output filename will be vpd.bin.
+
+What to do with the output file:
+The output file should be copied directly into another binary where presence of
+VPD is required.
+
+Test-run using dmidecode
+The example.config provides settings for a VPD blob with entry point structure
+located at 0xf0000 and structure table located immediately after. To generate
+a testing blob:
+1. Create a blob of 0xf0000 bytes: 
+   dd if=/dev/zero of=f0000.bin bs=1 count=$((0xf0000))
+2. Append the VPD blob:
+   cat f0000.bin vpd.bin > test.bin
+3. Write the test binary to a block or loopback device. In this case, I am
+   using a USB flash memory device at /dev/sdc:
+   sudo dd if=test.bin of=/dev/sdc
+4. Run dmidecode and tell it to scan your device instead of /dev/mem:
+   sudo dmidecode -d /dev/sdc
+
+TODO:
+- Add proper debug print functionality
+- Add binary blob pointer encoder
+- Non-detailed documentation
+- Massive clean-up / refactoring of encoder. It's a bloody mess right now.
+- Clean up memory leaks
+- Make configuration of Google OEM type more scalable with number of NICs
+- Add in-place modification for input binary file
+- Unit tests
+- Detailed documentation
+- Add check for library dependencies (ie libuuid) in Makefile
+- Clean up build scripts
+- Expand this to work for all SMBIOS tables and fields (far, far out)

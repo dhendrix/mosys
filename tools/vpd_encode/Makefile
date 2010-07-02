@@ -27,4 +27,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-obj-$(CONFIG_BUILD_VPD)			+= vpd_encode/
+# Note: vpd_encode.c contains main() and will be compiled at the end
+
+obj-$(CONFIG_BUILD_VPD)			+= lib_vpd_encode.o

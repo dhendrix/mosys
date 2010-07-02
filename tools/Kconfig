@@ -4,4 +4,13 @@
 
 menu "Tools"
 
+config BUILD_VPD
+        bool "Vital Product Data (VPD) encoder"
+	default n
+	help
+	  This option will cause VPD to be built using the specified
+	  configuration options.
+
+source "tools/vpd_encode/Kconfig"
+
 endmenu

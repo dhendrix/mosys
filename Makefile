@@ -431,7 +431,11 @@ scripts: scripts_basic include/config/auto.conf include/config/tristate.conf
 #core-y		:= usr/
 drivers-y	:=
 libs-y		:=
-core-y		:= core/ intf/ platform/ lib/
+tools-y		:= tools/
+#FIXME: Clean up core-y
+core-y		:= core/ intf/ platform/ lib/ $(tools-y)
+
+# Tools that are compiled separately
 
 ifeq ($(dot-config),1)
 # Read in config
@@ -644,6 +648,17 @@ $(vmlinux-dirs): prepare scripts
 $(PROGRAM): $(vmlinux-all)
 	$(Q)$(CC) $(CFLAGS) $(EXTRA_CFLAGS) $(LINUXINCLUDE) -o $@ $@.c $?
 
+VPD_ENCODE_CFLAGS	:= $(patsubst %,-l%, $(LIBRARIES)) \
+			   -DPROGRAM=\"vpd_encode\" \
+			   -DVERSION=\"$(KERNELVERSION)\"
+VPD_ENCODE_LDFLAGS	:= -luuid
+# FIXME: should only depend on libs/ being a prerequisite
+vpd_encode: $(core-y) $(libs-y)
+	$(Q)$(CC) $(CFLAGS) $(VPD_ENCODE_CFLAGS) $(VPD_ENCODE_LDFLAGS) \
+	-Itools/vpd_encode $(LINUXINCLUDE) -o $@ tools/vpd_encode/$@.c $?
+
+TOOLS	+= vpd_encode
+
 # Build the kernel release string
 #
 # The KERNELRELEASE value built here is stored in the file
@@ -761,7 +776,7 @@ include/linux/version.h: $(srctree)/Makefile FORCE
 
 # Directories & files removed with 'make clean'
 CLEAN_DIRS  += $(MODVERDIR)
-CLEAN_FILES += $(PROGRAM)
+CLEAN_FILES += $(PROGRAM) $(TOOLS)
 
 # clean - Delete most, but leave enough to build external modules
 #

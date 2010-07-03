@@ -25,7 +25,8 @@
 #define LIB_STRING_BUILDER_H_
 
 #include <stdarg.h>
-#include "mosys/common.h"
+
+#include "mosys/list.h"
 
 struct string_builder;
 

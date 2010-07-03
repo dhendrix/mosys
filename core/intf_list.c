@@ -18,7 +18,6 @@
  * intf_list.c: hardware component interfaces
  */
 
-#include "mosys/common.h"
 #include "mosys/intf_list.h"
 #include "mosys/platform.h"
 

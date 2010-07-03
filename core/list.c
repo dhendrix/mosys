@@ -21,8 +21,8 @@
 #include <stdlib.h>
 
 #include "mosys/alloc.h"
-#include "mosys/common.h"
 #include "mosys/list.h"
+#include "mosys/mosys.h"
 
 struct ll_node *list_head(struct ll_node *node) {
 	MOSYS_CHECK(node);

@@ -27,7 +27,6 @@
 #include <errno.h>
 
 #include "mosys/platform.h"
-#include "mosys/common.h"
 #include "mosys/log.h"
 
 static int gpio_list_cmd(struct platform_intf *intf,

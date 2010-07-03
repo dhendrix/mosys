@@ -32,7 +32,6 @@ obj-y		+= command/
 obj-y		+= alloc.o
 obj-y		+= big_lock.o
 obj-y		+= callbacks.o
-obj-y		+= common.o
 obj-y		+= csem.o
 obj-y		+= file_backed_range.o
 obj-y		+= globals.o

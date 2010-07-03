@@ -24,7 +24,6 @@
 
 #include "mosys/platform.h"
 
-#include "mosys/common.h"
 #include "mosys/log.h"
 #include "mosys/kv_pair.h"
 

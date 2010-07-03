@@ -22,7 +22,6 @@
 #include <inttypes.h>
 #include <errno.h>
 
-#include "mosys/common.h"
 #include "mosys/log.h"
 #include "mosys/platform.h"
 

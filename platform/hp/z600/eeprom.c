@@ -20,7 +20,6 @@
 #include <unistd.h>
 
 #include "mosys/platform.h"
-#include "mosys/common.h"
 #include "mosys/log.h"
 
 #include "lib/eeprom.h"

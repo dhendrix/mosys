@@ -19,7 +19,7 @@
 #ifndef MOSYS_PLATFORM_H__
 #define MOSYS_PLATFORM_H__
 
-#include "mosys/common.h"
+#include "mosys/mosys.h"
 
 struct kv_pair;
 

@@ -30,5 +30,5 @@
 obj-y		+= eeprom/
 obj-y		+= math/
 obj-y		+= smbios/
-obj-y		+= util/
+obj-y		+= string_builder/
 obj-y		+= vpd/

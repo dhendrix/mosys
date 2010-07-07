@@ -4,8 +4,14 @@
 
 menu "Tools"
 
+# hack to ensure libraries are linked in (e.g. -luuid)
+config ADD_TOOL_LIBRARIES
+	bool
+	default n
+
 config BUILD_VPD
         bool "Vital Product Data (VPD) encoder"
+	select ADD_TOOL_LIBRARIES
 	default n
 	help
 	  This option will cause VPD to be built using the specified

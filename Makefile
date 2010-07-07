@@ -303,19 +303,17 @@ CHECKFLAGS     := -D__linux__ -Dlinux -D__STDC__ -Dunix -D__unix__ \
 #AFLAGS_KERNEL	=
 CFLAGS_GCOV	= -fprofile-arcs -ftest-coverage
 
-#LIBRARIES	= uuid
-#LDFLAGS		=
-
 # Use LINUXINCLUDE when you must reference the include/ directory.
 # Needed to be compatible with the O= option
 LINUXINCLUDE    := -Iinclude \
-                   -include include/generated/autoconf.h \
-                   -luuid
+                   -include include/generated/autoconf.h
 
 KERNELVERSION	= $(RELEASENAME)
 
-EXTRA_CFLAGS	+= $(patsubst %,-l%, $(LIBRARIES)) \
-                   -DPROGRAM=\"$(PROGRAM)\" \
+EXTRA_CFLAGS	:=
+#EXTRA_CFLAGS	:= $(patsubst %,-l%, $(LIBRARIES))
+
+MOSYS_MACROS	:= -DPROGRAM=\"$(PROGRAM)\" \
 		   -DVERSION=\"$(KERNELVERSION)\"
 
 KBUILD_CPPFLAGS := -D__KERNEL__
@@ -329,6 +327,7 @@ KBUILD_AFLAGS   := -D__ASSEMBLY__
 
 
 export VERSION PATCHLEVEL SUBLEVEL KERNELRELEASE KERNELVERSION
+export MOSYS_MACROS EXTRA_CFLAGS LIBRARIES
 export ARCH SRCARCH CONFIG_SHELL HOSTCC HOSTCFLAGS HOSTLD HOSTLDFLAGS \
        CROSS_COMPILE AS LD CC
 export CPP AR NM STRIP OBJCOPY OBJDUMP
@@ -635,21 +634,25 @@ $(sort $(vmlinux-main)) $(vmlinux-lds): $(vmlinux-dirs) ;
 # make menuconfig etc.
 # Error messages still appears in the original language
 
+ifeq ($(CONFIG_ADD_TOOL_LIBRARIES),y)
+EXTRA_CFLAGS += -luuid
+endif
+
 PHONY += $(vmlinux-dirs)
 $(vmlinux-dirs): prepare scripts
 	$(Q)$(MAKE) $(build)=$@
 
 $(PROGRAM): $(vmlinux-all)
-	$(Q)$(CC) $(CFLAGS) $(EXTRA_CFLAGS) $(LINUXINCLUDE) -o $@ $@.c $?
+	$(Q)$(CC) $(CFLAGS) $(EXTRA_CFLAGS) $(MOSYS_MACROS) $(LINUXINCLUDE) \
+	-o $@ $@.c $?
 
-VPD_ENCODE_CFLAGS	:= $(patsubst %,-l%, $(LIBRARIES)) \
-			   -DPROGRAM=\"vpd_encode\" \
+VPD_ENCODE_MACROS	:= -DPROGRAM=\"vpd_encode\" \
 			   -DVERSION=\"$(KERNELVERSION)\"
-VPD_ENCODE_LDFLAGS	:= -luuid
 # FIXME: should only depend on libs/ being a prerequisite
 vpd_encode: $(core-y) $(libs-y)
-	$(Q)$(CC) $(CFLAGS) $(VPD_ENCODE_CFLAGS) $(VPD_ENCODE_LDFLAGS) \
-	-Itools/vpd_encode $(LINUXINCLUDE) -o $@ tools/vpd_encode/$@.c $?
+	$(Q)$(CC) $(CFLAGS) $(VPD_ENCODE_MACROS) \
+	$(EXTRA_CFLAGS) -Itools/vpd_encode $(LINUXINCLUDE) \
+	-o $@ tools/vpd_encode/$@.c $?
 
 TOOLS	+= vpd_encode
 

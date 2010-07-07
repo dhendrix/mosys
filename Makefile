@@ -62,8 +62,8 @@ REVISION=$(SVNVERSION)
 RELEASENAME=$(CORE).$(MAJOR).$(MINOR).$(REVISION)
 
 # location to use when releasing new packages
-EXPORTDIR	?= .
-INSTALLDIR	?= /usr/sbin
+export EXPORTDIR	?= .
+export INSTALL_PATH	?= /usr/sbin
 
 # *DOCUMENTATION*
 # To see a list of typical targets execute "make help"
@@ -294,7 +294,6 @@ OBJCOPY		?= $(CROSS_COMPILE)objcopy
 OBJDUMP		?= $(CROSS_COMPILE)objdump
 INSTALL		?= install
 AWK		= awk
-INSTALLKERNEL  := installkernel
 DEPMOD		= /sbin/depmod
 CHECK		= sparse
 
@@ -463,8 +462,7 @@ endif # $(dot-config)
 
 # The all: target is the default when no target is given on the
 # command line.
-# This allow a user to issue only 'make' to build a kernel including modules
-# Defaults vmlinux but it is usually overridden in the arch makefile
+# This allow a user to issue only 'make' to build the primary program
 all: include/config/auto.conf $(PROGRAM)
 
 # warn about C99 declaration after statement
@@ -511,11 +509,6 @@ LDFLAGS_vmlinux += $(LDFLAGS_BUILD_ID)
 # Also any assignments in arch/$(ARCH)/Makefile take precedence over
 # this default value
 export KBUILD_IMAGE ?= vmlinux
-
-#
-# INSTALL_PATH specifies where to place the updated kernel and system map
-# images. Default is /boot, but you can set it to other values
-export	INSTALL_PATH ?= /boot
 
 #
 # INSTALL_MOD_PATH specifies a prefix to MODLIB for module directory
@@ -817,7 +810,7 @@ help:
 	@echo  ''
 	@echo  'Other generic targets:'
 	@echo  '  all		  - Build all targets marked with [*]'
-	@echo  '  install	  - Install $(PROGRAM) to $(INSTALLDIR)'
+	@echo  '  install	  - Install $(PROGRAM) to $(INSTALL_PATH)'
 	@echo  '  export	  - Copy source code without VCS metadata'
 	@echo  '  dir/            - Build all files in dir and below'
 	@echo  '  dir/file.[ois]  - Build specified target only'
@@ -951,9 +944,9 @@ FORCE:
 
 PHONY += install
 install: $(PROGRAM)
-	mkdir -p $(INSTALLDIR)
+	mkdir -p $(INSTALL_PATH)
 #	mkdir -p $(MANDIR)/man8
-	$(INSTALL) -m 0755 $(PROGRAM) $(INSTALLDIR)
+	$(INSTALL) -m 0755 $(PROGRAM) $(INSTALL_PATH)
 #	$(INSTALL) -m 0644 $(PROGRAM).8 $(MANDIR)/man8
 
 PHONY += export

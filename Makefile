@@ -501,7 +501,7 @@ endif
 # Use --build-id when available.
 LDFLAGS_BUILD_ID = $(patsubst -Wl$(comma)%,%,\
 			      $(call cc-ldoption, -Wl$(comma)--build-id,))
-LDFLAGS_vmlinux += $(LDFLAGS_BUILD_ID)
+LDFLAGS_VMLINUX += $(LDFLAGS_BUILD_ID)
 
 # Default kernel image to build when no specific target is given.
 # KBUILD_IMAGE may be overruled on the command line or
@@ -585,7 +585,7 @@ export KBUILD_VMLINUX_OBJS := $(vmlinux-all)
 # Rule to link vmlinux - also used during CONFIG_KALLSYMS
 # May be overridden by arch/$(ARCH)/Makefile
 quiet_cmd_vmlinux__ ?= LD      $@
-      cmd_vmlinux__ ?= $(LD) $(LDFLAGS) $(LDFLAGS_vmlinux) -o $@ \
+      cmd_vmlinux__ ?= $(LD) $(LDFLAGS) $(LDFLAGS_VMLINUX) -o $@ \
       -T $(vmlinux-lds) \
       --start-group $(vmlinux-main) --end-group                  \
       $(filter-out $(vmlinux-lds) $(vmlinux-main) vmlinux.o FORCE ,$^)

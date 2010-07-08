@@ -434,7 +434,7 @@ char *smbios_find_string(struct platform_intf *intf,
 
 	/* get instance 0 of the table */
 	if (smbios_find_table_raw(intf, type, 0, baseaddr, len) < 0) {
-		lprintf(LOG_ERR, "Unable to locate table %d\n", type);
+		lprintf(LOG_DEBUG, "Unable to locate table %d\n", type);
 		return NULL;
 	}
 

@@ -60,6 +60,8 @@ static int smbios_get_cmd(struct platform_intf *intf,
 		kv_pair_print(kv);
 		kv_pair_free(kv);
 		free(str);
+	} else {
+		lprintf(LOG_ERR, "Unable to locate table %d\n", type);
 	}
 
 	return 0;		/* the legacy tool always returns success */

@@ -36,7 +36,7 @@ int agz_pinetrail_vpd_setup(struct platform_intf *intf)
 	if (smbios_find_table(intf, SMBIOS_TYPE_BIOS, 0, &table,
 	                      SMBIOS_LEGACY_ENTRY_BASE,
 	                      SMBIOS_LEGACY_ENTRY_LEN) < 0) {
-		lprintf(LOG_ERR, "Unable to calculate VPD address\n");
+		lprintf(LOG_INFO, "Unable to calculate VPD address\n");
 		return -1;
 	}
 

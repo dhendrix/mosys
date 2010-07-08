@@ -84,7 +84,9 @@ static int agz_pinetrail_setup_post(struct platform_intf *intf)
 {
 	int rc = 0;
 
-	rc |= agz_pinetrail_vpd_setup(intf);
+	/* FIXME: until VPD is properly implemented, do not fail on setup */
+//	rc |= agz_pinetrail_vpd_setup(intf);
+	agz_pinetrail_vpd_setup(intf);
 
 	return rc;
 }

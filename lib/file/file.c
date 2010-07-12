@@ -122,12 +122,6 @@ struct ll_node *scanft(struct ll_node **list,
 
 		scanft(list, newpath, filename, str, symdepth);
 	}
-	if (d == NULL) {		/* Probably just ENOTDIR */
-		if (errno == EOVERFLOW)	{	/* http://b/issue?id=972812 */
-			lprintf(LOG_DEBUG, "%s: readdir(3) error on %s: %s\n",
-					__func__, root, strerror(errno));
-		}
-	}
 
 	closedir(dp);
 	return *list;

@@ -87,7 +87,7 @@ static int agz_pinetrail_setup_post(struct platform_intf *intf)
 	/* FIXME: until VPD is properly implemented, do not fail on setup */
 //	rc |= agz_pinetrail_vpd_setup(intf);
 	if (agz_pinetrail_vpd_setup(intf) < 0)
-		lprintf(LOG_ERR, "VPD not found\n");
+		lprintf(LOG_INFO, "VPD not found\n");
 
 	return rc;
 }

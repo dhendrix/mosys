@@ -6,24 +6,23 @@ menu "System Information (Type 1)"
 	depends on BUILD_VPD
 
 config SYSTEM_MANUFACTURER
-	string
-	prompt "Manufacturer"
+	string "System manufacturer"
+	default "To be filled in"
 
 config SYSTEM_PRODUCT_NAME
-	string
-	prompt "Product name"
+	string "System product name"
+	default "To be filled in"
 
 config SYSTEM_VERSION
-	string
-	prompt "Version"
+	string "System version"
+	default "To be filled in"
 
 config SYSTEM_SERIAL_NUMBER
-	string
-	prompt "Serial number"
+	string "System serial number"
+	default "To be filled in"
 
 config SYSTEM_UUID
-	string
-	prompt "UUID"
+	string "System UUID"
 	default "00000000-0000-0000-0000-000000000000"
 	help
 	  128-bit UUID, obeying RFC4122 format.
@@ -31,11 +30,12 @@ config SYSTEM_UUID
 
 #config SYSTEM_WAKEUP_TYPE
 
-config SYSTEM_SKU_NUMBER
-	string
-	prompt "SKU number"
+config SYSTEM_SKU
+	string "System SKU"
+	default "To be filled in"
 
 config SYSTEM_FAMILY
-	string
-	prompt "Family"
+	string "System family"
+	default "To be filled in"
+
 endmenu	# System Information (Type 1)

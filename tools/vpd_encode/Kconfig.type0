@@ -32,6 +32,7 @@ config FIRMWARE_RELEASE_DATE
 
 config FIRMWARE_ROM_SIZE
 	int "Size of system firmware ROM (in 64KB blocks)"
+	default 64
 #FIXME: this may need disambiguation; see SMBIOS spec
 	help
 	  Integer size of the physical memory on which the system firmware is

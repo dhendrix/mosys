@@ -100,7 +100,8 @@ static char *smbios_sysinfo_get_vendor(struct platform_intf *intf)
 	                         SMBIOS_LEGACY_ENTRY_LEN);
 
 	if (!str) {
-		lprintf(LOG_DEBUG, "%s: normal method failed, trying sysfs\n");
+		lprintf(LOG_DEBUG, "%s: normal method failed, "
+		                   "trying sysfs\n", __func__);
 		str = smbios_scan_sysfs("sys_vendor");
 	}
 
@@ -124,7 +125,7 @@ static char *smbios_sysinfo_get_name(struct platform_intf *intf)
 	                         SMBIOS_LEGACY_ENTRY_LEN);
 
 	if (!str) {
-		lprintf(LOG_DEBUG, "%s: attempting to use sysfs\n");
+		lprintf(LOG_DEBUG, "%s: attempting to use sysfs\n", __func__);
 		str = smbios_scan_sysfs("product_name");
 	}
 
@@ -148,7 +149,8 @@ static char *smbios_sysinfo_get_version(struct platform_intf *intf)
 	                         SMBIOS_LEGACY_ENTRY_LEN);
 
 	if (!str) {
-		lprintf(LOG_INFO, "%s: normal approach failed, trying sysfs\n");
+		lprintf(LOG_INFO, "%s: normal approach failed, trying sysfs\n",
+		                  __func__);
 		str = smbios_scan_sysfs("product_version");
 	}
 

@@ -57,12 +57,8 @@ int agz_pinetrail_vpd_setup(struct platform_intf *intf)
 
 static char *agz_pinetrail_vpd_get_serial(struct platform_intf *intf)
 {
-	/*
-	 * FIXME: This is a mock-up since this platform does not have gvpd.
-	 * Serial number is available from SMBIOS table for this platform
-	 */ 
-	if (intf->cb->smbios && intf->cb->smbios->system_serial)
-		return intf->cb->smbios->system_serial(intf);
+	if (intf->cb->vpd && intf->cb->vpd->system_serial)
+		return intf->cb->vpd->system_serial(intf);
 	else
 		return NULL;
 
@@ -70,12 +66,8 @@ static char *agz_pinetrail_vpd_get_serial(struct platform_intf *intf)
 
 static char *agz_pinetrail_vpd_get_sku(struct platform_intf *intf)
 {
-	/*
-	 * FIXME: This is a mock-up since this platform does not have gvpd.
-	 * SKU number is available from SMBIOS table for this platform
-	 */ 
-	if (intf->cb->smbios && intf->cb->smbios->system_sku)
-		return intf->cb->smbios->system_sku(intf);
+	if (intf->cb->vpd && intf->cb->vpd->system_sku)
+		return intf->cb->vpd->system_sku(intf);
 	else
 		return NULL;
 }

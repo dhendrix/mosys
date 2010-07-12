@@ -26,7 +26,7 @@ int agz_pinetrail_vpd_setup(struct platform_intf *intf)
 {
 	struct smbios_table table;
 	unsigned int rom_base, rom_size;
-	   
+
 	/*
 	 * In this example, we'll pretend like there is VPD stored in the
 	 * system firmware ROM. The ROM address is given by SMBIOS tables,
@@ -37,12 +37,18 @@ int agz_pinetrail_vpd_setup(struct platform_intf *intf)
 	                      SMBIOS_LEGACY_ENTRY_BASE,
 	                      SMBIOS_LEGACY_ENTRY_LEN) < 0) {
 		lprintf(LOG_INFO, "Unable to calculate VPD address\n");
-		return -1;
+
+		/*
+		 * FIXME: SMBIOS on this platform is a bit wonky at the moment,
+		 * so we'll just fake it knowing the firmware ROM is 4MB.
+		 */
+		lprintf(LOG_INFO, "Assuming 4MB firmware ROM\n");
+		rom_size = 4096 * 1024;
+	} else {
+		rom_size = (table.data.bios.rom_size_64k_blocks + 1) * 64 * 1024;
 	}
 
-	rom_size = (table.data.bios.rom_size_64k_blocks + 1) * 64 * 1024;
 	rom_base = 0xffffffff - rom_size + 1;
-
 	vpd_rom_base = rom_base;
 	vpd_rom_size = rom_size;
 

@@ -240,7 +240,7 @@ int vpd_append_type1(uint16_t handle, uint8_t **buf, size_t len)
 	             strlen(CONFIG_SYSTEM_PRODUCT_NAME) + 1 +
 	             strlen(CONFIG_SYSTEM_VERSION) + 1 +
 	             strlen(CONFIG_SYSTEM_SERIAL_NUMBER) + 1 +
-	             strlen(CONFIG_SYSTEM_SKU_NUMBER) + 1 +
+	             strlen(CONFIG_SYSTEM_SKU) + 1 +
 	             strlen(CONFIG_SYSTEM_FAMILY) + 1 +
 		     1;			/* structure terminator */
 	total_len = len + struct_len;
@@ -276,7 +276,7 @@ int vpd_append_type1(uint16_t handle, uint8_t **buf, size_t len)
 	                 CONFIG_SYSTEM_PRODUCT_NAME, '\0',
 	                 CONFIG_SYSTEM_VERSION, '\0',
 	                 CONFIG_SYSTEM_SERIAL_NUMBER, '\0',
-	                 CONFIG_SYSTEM_SKU_NUMBER, '\0',
+	                 CONFIG_SYSTEM_SKU, '\0',
 	                 CONFIG_SYSTEM_FAMILY, '\0');
 
 	memset(*buf + struct_len, 0, 1);	/* terminator */

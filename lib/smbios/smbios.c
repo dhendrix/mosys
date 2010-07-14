@@ -23,6 +23,7 @@
 #include <string.h>
 #include <fcntl.h>
 #include <ctype.h>
+#include <sys/klog.h>
 
 #include "mosys/alloc.h"
 #include "mosys/callbacks.h"
@@ -158,6 +159,7 @@ int smbios_find_entry(struct platform_intf *intf, struct smbios_entry *entry,
 	size_t offset;
 	int i;
 	uint8_t smbios_magic[] = SMBIOS_ENTRY_MAGIC;
+	int found = 0;
 
 	data = mmio_map(intf, O_RDONLY, baseaddr, len);
 	if (data == NULL) {
@@ -167,10 +169,53 @@ int smbios_find_entry(struct platform_intf *intf, struct smbios_entry *entry,
 
 	if (find_pattern(data, len,
 	                 &smbios_magic[0], 4, 16, &offset) < 0) {
-		lprintf(LOG_DEBUG, "Unable to find SMBIOS entry.\n");
 		mmio_unmap(intf, data, baseaddr, len);
+		found = 0;
+	} else {
+		found = 1;
+	}
+
+	if (!found) {
+		char *buf;
+		int klog_size;
+		size_t klog_offset;
+
+		/*
+		 * Try parsing kernel log for SMBIOS= address. This is useful
+		 * in situations where the SMBIOS address is out of spec and not
+		 * easy to find from userspace (possibly due to EFI).
+		 */
+		if ((klog_size = klogctl(10, NULL, 0)) < 0)
+			return -1;
+
+		buf = malloc(klog_size);
+		if ((klogctl(3, buf, klog_size)) < 0) {
+			lprintf(LOG_DEBUG, "Unable to read kernel log\n");
+		} else {
+			if (find_pattern(buf, klog_size,
+			                 "SMBIOS=", 7, 1, &klog_offset) == 0) {
+				baseaddr = strtoull(buf + klog_offset + 7,
+				                    NULL, 0);
+				lprintf(LOG_DEBUG, "kernel log offset: %d, "
+				                   "SMBIOS=0x%08x\n",
+					           klog_offset, baseaddr);
+				data = mmio_map(intf, O_RDONLY, baseaddr, len);
+				offset = 0;
+				found = 1;
+			} else {
+				lprintf(LOG_DEBUG, "SMBIOS entry point not"
+				                   "found in kernel log\n");
+			}
+		}
+
+		free(buf);
+	}
+
+	if (!found) {
+		lprintf(LOG_DEBUG, "Unable to find SMBIOS entry.\n");
 		return -1;
 	}
+
 
 	lprintf(LOG_DEBUG, "SMBIOS Table Entry @ 0x%x\n", baseaddr + offset);
 

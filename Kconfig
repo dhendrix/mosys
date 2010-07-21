@@ -33,5 +33,6 @@ config LOGLEVEL
 
 endmenu
 
+source "drivers/Kconfig"
 source "platform/Kconfig"
 source "tools/Kconfig"

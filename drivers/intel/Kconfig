@@ -1,0 +1,5 @@
+# intel config variables
+
+config CHIPSET_INTEL_NM10
+	bool
+	default 0

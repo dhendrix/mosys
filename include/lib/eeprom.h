@@ -55,8 +55,16 @@ enum eeprom_flag_types {
 
 struct eeprom;
 struct eeprom_dev {
-	/* size of eeprom (bytes) */
-	unsigned int size;
+	/*
+	 * size  -  return size of eeprom (in bytes)
+	 *
+	 * @intf:	platform interface
+	 * @eeprom:	eeprom interface
+	 *
+	 * returns <0 to indicate error
+	 */
+	size_t (*size)(struct platform_intf *intf,
+	               struct eeprom *eeprom);
 
 	/*
 	 * read  -  read from eeprom

@@ -72,7 +72,9 @@ static int eeprom_list_cmd(struct platform_intf *intf,
 		kv_pair_add(kv, "name", eeprom->name);
 		/* FIXME: should this go one level deeper? */
 		if (eeprom->device) {
-			kv_pair_fmt(kv, "size", "%u", eeprom->device->size);
+			size_t size = eeprom->device->size(intf, eeprom);
+
+			kv_pair_fmt(kv, "size", "%u", size);
 			kv_pair_add(kv, "units", "bytes");
 		}
 
@@ -139,6 +141,7 @@ static int eeprom_dump_cmd(struct platform_intf *intf,
 	struct stat st;
 	uint8_t *buf = NULL;
 	const char *devname, *filename;
+	size_t eeprom_size;
 
 	if ((argc < 1) || (argc > 2)) {
 		platform_cmd_usage(cmd);
@@ -183,11 +186,11 @@ static int eeprom_dump_cmd(struct platform_intf *intf,
 
 	/* do the actual work - read from eeprom, print to screen or
 	 * write to file */
-	buf = mosys_malloc(eeprom->device->size);
-	if (eeprom->device->read(intf, eeprom, 0,
-				 eeprom->device->size, buf) < 0) {
+	eeprom_size = eeprom->device->size(intf, eeprom);
+	buf = mosys_malloc(eeprom_size);
+	if (eeprom->device->read(intf, eeprom, 0, eeprom_size, buf) < 0) {
 		lprintf(LOG_ERR, "Unable to read %d bytes from %s\n",
-				  eeprom->device->size, eeprom->name);
+				  eeprom_size, eeprom->name);
 		rc = -1;
 		goto eeprom_dump_done;
 	}
@@ -195,14 +198,14 @@ static int eeprom_dump_cmd(struct platform_intf *intf,
 	if (filename != NULL) {
 		int count;
 
-		count = write(fd, buf, eeprom->device->size);
-		if (count != eeprom->device->size) {
+		count = write(fd, buf, eeprom_size);
+		if (count != eeprom_size) {
 			lprintf(LOG_ERR, "Unable to write %d bytes to %s\n",
-					 eeprom->device->size, filename);
+					 eeprom_size, filename);
 			rc = -1;
 		}
 	} else {
-		print_buffer(buf, eeprom->device->size);
+		print_buffer(buf, eeprom_size);
 	}
 
 eeprom_dump_done:
@@ -219,6 +222,7 @@ static int eeprom_write_cmd(struct platform_intf *intf,
 	struct stat st;
 	uint8_t *buf = NULL;
 	const char *devname, *filename;
+	size_t eeprom_size;
 
 	if (argc != 2) {
 		platform_cmd_usage(cmd);
@@ -245,13 +249,15 @@ static int eeprom_write_cmd(struct platform_intf *intf,
 		return -ENOSYS;
 
 	/* size sanity checks */
+	eeprom_size = eeprom->device->size(intf, eeprom);
 	if (lstat(filename, &st) < 0) {
 		lperror(LOG_ERR, "lstat failure on file %s", filename);
 		return -1;
 	}
-	if (st.st_size > eeprom->device->size) {
-		lprintf(LOG_ERR, "cannot write %u bytes to %s eeprom (%u bytes)\n",
-				  st.st_size, eeprom->name, eeprom->device->size);
+	if (st.st_size > eeprom_size) {
+		lprintf(LOG_ERR, "cannot write %u bytes to %s eeprom "
+			         "(%u bytes)\n", st.st_size, eeprom->name,
+		                  eeprom_size);
 		return -1;
 	}
 

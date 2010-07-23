@@ -25,14 +25,27 @@
 #include "lib/eeprom.h"
 #include "lib/eeprom_enet.h"
 
-#define HP_Z600_FIRMWARE_SIZE	(2048 * 1024)
+#define HP_Z600_FIRMWARE_SIZE		(2048 * 1024)
+#define HP_Z600_ETH0_EEPROM_SIZE	(128 * 1024)
+
+static size_t z600_fw_size(struct platform_intf *intf,
+                           struct eeprom *eeprom)
+{
+	return HP_Z600_FIRMWARE_SIZE;
+}
+
 static struct eeprom_dev z600_host_firmware = {
-	.size	= HP_Z600_FIRMWARE_SIZE,
+	.size	= z600_fw_size,
 	.read	= eeprom_mmio_read,
 };
 
+static size_t z600_eth0_size(struct platform_intf *intf, struct eeprom *eeprom)
+{
+	return HP_Z600_ETH0_EEPROM_SIZE;
+}
+
 static struct eeprom_dev z600_eth0 = {
-	.size	= 128 * 1024,
+	.size	= z600_eth0_size,
 };
 
 static struct eeprom z600_eeproms[] = {

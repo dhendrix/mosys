@@ -126,6 +126,7 @@ struct eeprom {
 	} addr;
 	struct eeprom_dev *device;
 	uint8_t flags;
+	int (*setup)(struct platform_intf *intf, struct eeprom *eeprom);
 	void *priv;
 };
 

@@ -85,6 +85,16 @@ struct fmap {
 extern off_t fmap_find(const uint8_t *image, size_t len);
 
 /*
+ * fmap_flags_to_string - returns human-readable string of FMAP flags
+ *
+ * @flags:	flags to process
+ *
+ * returns newly allocated string if successful
+ * returns NULL to indicate error
+ */
+extern const char *fmap_flags_to_string(uint16_t flags);
+
+/*
  * fmap_print - Print contents of flash map data structure
  *
  * @map:	raw map data

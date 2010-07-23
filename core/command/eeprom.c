@@ -36,7 +36,7 @@
 #include "lib/string_builder.h"
 
 static int eeprom_enet_info_cmd(struct platform_intf *intf,
-				struct platform_cmd *cmd, int argc, char **argv)
+                                struct platform_cmd *cmd, int argc, char **argv)
 {
 	if (!intf->cb->eeprom ||
 	    !intf->cb->eeprom->enet ||
@@ -47,7 +47,7 @@ static int eeprom_enet_info_cmd(struct platform_intf *intf,
 }
 
 static int eeprom_list_cmd(struct platform_intf *intf,
-			   struct platform_cmd *cmd, int argc, char **argv)
+                           struct platform_cmd *cmd, int argc, char **argv)
 {
 	struct eeprom *eeprom;
 	const struct valstr flag_lut[] = {
@@ -108,7 +108,7 @@ static int eeprom_list_cmd(struct platform_intf *intf,
 }
 
 static int eeprom_map_cmd(struct platform_intf *intf,
-			   struct platform_cmd *cmd, int argc, char **argv)
+                          struct platform_cmd *cmd, int argc, char **argv)
 {
 	struct eeprom *eeprom;
 
@@ -155,7 +155,7 @@ static int eeprom_map_cmd(struct platform_intf *intf,
 }
 
 static int eeprom_dump_cmd(struct platform_intf *intf,
-			   struct platform_cmd *cmd, int argc, char **argv)
+                           struct platform_cmd *cmd, int argc, char **argv)
 {
 	struct eeprom *eeprom;
 	int rc = 0, fd = -1;
@@ -236,7 +236,7 @@ eeprom_dump_done:
 }
 
 static int eeprom_write_cmd(struct platform_intf *intf,
-			    struct platform_cmd *cmd, int argc, char **argv)
+                            struct platform_cmd *cmd, int argc, char **argv)
 {
 	struct eeprom *eeprom;
 	int rc = 0, fd;

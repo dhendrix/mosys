@@ -119,6 +119,7 @@ static int eeprom_map_cmd(struct platform_intf *intf,
 	     eeprom && eeprom->name;
 	     eeprom++) {
 		struct fmap *fmap;
+		int i;
 
 		if (!eeprom->device || !eeprom->device->get_map)
 			continue;
@@ -126,7 +127,28 @@ static int eeprom_map_cmd(struct platform_intf *intf,
 		if (!(fmap = eeprom->device->get_map(intf, eeprom)))
 			continue;
 
-		fmap_print(fmap);
+		for (i = 0; i < fmap->nareas; i++) {
+			struct kv_pair *kv = kv_pair_new();
+			const char *str = NULL;
+
+			kv_pair_fmt(kv, "eeprom", eeprom->name);
+			kv_pair_fmt(kv, "area_name", "%s",
+			            fmap->areas[i].name);
+			kv_pair_fmt(kv, "area_offset", "0x%08x",
+			            fmap->areas[i].offset);
+			kv_pair_fmt(kv, "area_size", "0x%08x",
+			            fmap->areas[i].size);
+
+			str = fmap_flags_to_string(fmap->areas[i].flags);
+			if (str == NULL)
+				return -1;
+			kv_pair_fmt(kv, "area_flags", "%s", str);
+
+			kv_pair_print(kv);
+			kv_pair_free(kv);
+			free((void *)str);
+		}
+
 		free(fmap);
 	}
 

@@ -45,14 +45,11 @@
 #include <inttypes.h>
 #include <limits.h>
 
-#include "mosys/alloc.h"
 #include "mosys/kv_pair.h"
-#include "mosys/log.h"
 #include "mosys/string.h"
 
 #include "lib/crypto.h"
 #include "lib/fmap.h"
-#include "lib/string_builder.h"
 
 static const struct valstr flag_lut[] = {
 	{ 1 << 0, "static" },
@@ -79,38 +76,6 @@ off_t fmap_find(const uint8_t *image, size_t image_len)
 		return -1;
 }
 
-const char *fmap_flags_to_string(uint16_t flags)
-{
-	char *ret;
-	struct string_builder *sb;
-	int i;
-
-	if (!flags) {
-		return mosys_strdup("");
-	}
-
-	if ((sb = new_string_builder()) == NULL)
-		return NULL;
-
-	for (i = 0; i < sizeof(flags) * CHAR_BIT; i++) {
-		if (!flags)
-			break;
-
-		if (flags & (1 << i)) {
-			const char *tmp = val2str(1 << i, flag_lut);
-
-			string_builder_strcat(sb, tmp);
-			flags &= ~(1 << i);
-			if (flags)
-				string_builder_add_char(sb, ',');
-		}
-	}
-
-	ret = mosys_strdup(string_builder_get_string(sb));
-	free_string_builder(sb);
-	return ret;
-}
-
 int fmap_print(const struct fmap *fmap)
 {
 	int i;
@@ -134,7 +99,9 @@ int fmap_print(const struct fmap *fmap)
 
 	for (i = 0; i < fmap->nareas; i++) {
 		struct kv_pair *kv;
-		const char *str;
+		uint16_t flags;
+		char str[256] = { '\0' };
+		int j;
 
 		kv = kv_pair_new();
 		if (!kv)
@@ -149,14 +116,25 @@ int fmap_print(const struct fmap *fmap)
 		kv_pair_fmt(kv, "area_flags_raw", "0x%02x",
 				fmap->areas[i].flags);
 
-		str = fmap_flags_to_string(fmap->areas[i].flags);
-		if (str == NULL)
-			return -1;
-		kv_pair_fmt(kv, "area_flags", "%s", str);
+		/* Print descriptive strings for flags rather than the field */
+		flags = fmap->areas[i].flags;
+		for (j = 0; j < 16; j++) {
+			if (!flags)
+				break;
+
+			if (flags & (1 << j)) {
+				const char *tmp = val2str(1 << j, flag_lut);
+
+				strncat(str, tmp, strlen(tmp));
+				flags &= ~(1 << j);
+				if (flags)
+					strncat(str, ",", 1);
+			}
+		}
+		kv_pair_fmt(kv, "area_flags", "%s", str );
 
 		kv_pair_print(kv);
 		kv_pair_free(kv);
-		free((void *)str);
 	}
 
 	return 0;

@@ -24,6 +24,8 @@
 #include "intf/mmio.h"
 #include "intf/pci.h"
 
+struct fmap;
+
 enum eeprom_type {
 	EEPROM_RAW,		/* arbitrary contents */
 	EEPROM_SPD,		/* follows a JEDEC SPD spec */
@@ -91,6 +93,18 @@ struct eeprom_dev {
 		     unsigned int offset,
 		     unsigned int len,
 		     void *data);
+
+	/*
+	 * get_map  -  retrieve flash map
+	 *
+	 * @intf:	platform interface
+	 * @eeprom:	eeprom interface
+	 *
+	 * returns newly allocated flash map if successful
+	 * returns NULL to indicate error
+	 */
+	struct fmap *(*get_map)(struct platform_intf *intf,
+	                        struct eeprom *eeprom);
 };
 
 /* high-level eeprom interface (includes name, topology info, etc) */

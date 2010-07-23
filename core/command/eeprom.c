@@ -32,6 +32,7 @@
 #include "mosys/string.h"
 
 #include "lib/eeprom.h"
+#include "lib/fmap.h"
 #include "lib/string_builder.h"
 
 static int eeprom_enet_info_cmd(struct platform_intf *intf,
@@ -99,6 +100,33 @@ static int eeprom_list_cmd(struct platform_intf *intf,
 		kv_pair_print(kv);
 		kv_pair_free(kv);
 		free_string_builder(str);
+	}
+
+	return 0;
+}
+
+static int eeprom_map_cmd(struct platform_intf *intf,
+			   struct platform_cmd *cmd, int argc, char **argv)
+{
+	struct eeprom *eeprom;
+	int i;
+
+	if (!intf->cb->eeprom || !intf->cb->eeprom->eeprom_list)
+		return -1;
+
+	for (eeprom = intf->cb->eeprom->eeprom_list;
+	     eeprom && eeprom->name;
+	     eeprom++) {
+		struct fmap *fmap;
+
+		if (!eeprom->device || !eeprom->device->get_map)
+			continue;
+
+		if (!(fmap = eeprom->device->get_map(intf, eeprom)))
+			continue;
+
+		fmap_print(fmap);
+		free(fmap);
 	}
 
 	return 0;
@@ -282,6 +310,13 @@ struct platform_cmd eeprom_cmds[] = {
 		.usage	= "mosys eeprom list",
 		.type	= ARG_TYPE_GETTER,
 		.arg	= { .func = eeprom_list_cmd }
+	},
+	{
+		.name	= "map",
+		.desc	= "Print EEPROM maps if present",
+		.usage	= "mosys eeprom map",
+		.type	= ARG_TYPE_GETTER,
+		.arg	= { .func = eeprom_map_cmd }
 	},
 	{
 		.name	= "dump",

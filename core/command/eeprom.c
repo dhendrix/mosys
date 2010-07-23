@@ -109,7 +109,6 @@ static int eeprom_map_cmd(struct platform_intf *intf,
 			   struct platform_cmd *cmd, int argc, char **argv)
 {
 	struct eeprom *eeprom;
-	int i;
 
 	if (!intf->cb->eeprom || !intf->cb->eeprom->eeprom_list)
 		return -1;

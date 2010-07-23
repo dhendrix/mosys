@@ -131,9 +131,8 @@ static int eeprom_map_cmd(struct platform_intf *intf,
 			struct kv_pair *kv = kv_pair_new();
 			const char *str = NULL;
 
-			kv_pair_fmt(kv, "eeprom", eeprom->name);
-			kv_pair_fmt(kv, "area_name", "%s",
-			            fmap->areas[i].name);
+			kv_pair_fmt(kv, "name", "%s", eeprom->name);
+			kv_pair_fmt(kv, "area_name", "%s", fmap->areas[i].name);
 			kv_pair_fmt(kv, "area_offset", "0x%08x",
 			            fmap->areas[i].offset);
 			kv_pair_fmt(kv, "area_size", "0x%08x",

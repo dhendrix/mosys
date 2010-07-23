@@ -107,6 +107,33 @@ static int eeprom_list_cmd(struct platform_intf *intf,
 	return 0;
 }
 
+/* helper function for printing fmap area information */
+static int print_fmap_areas(const char *name, struct fmap *fmap)
+{
+	int i;
+
+	for (i = 0; i < fmap->nareas; i++) {
+		struct kv_pair *kv = kv_pair_new();
+		const char *str = NULL;
+
+		kv_pair_fmt(kv, "name", "%s", name);
+		kv_pair_fmt(kv, "area_name", "%s", fmap->areas[i].name);
+		kv_pair_fmt(kv, "area_offset", "0x%08x", fmap->areas[i].offset);
+		kv_pair_fmt(kv, "area_size", "0x%08x", fmap->areas[i].size);
+
+		str = fmap_flags_to_string(fmap->areas[i].flags);
+		if (str == NULL)
+			return -1;
+		kv_pair_fmt(kv, "area_flags", "%s", str);
+
+		kv_pair_print(kv);
+		kv_pair_free(kv);
+		free((void *)str);
+	}
+
+	return 0;
+}
+
 static int eeprom_map_cmd(struct platform_intf *intf,
                           struct platform_cmd *cmd, int argc, char **argv)
 {
@@ -119,33 +146,16 @@ static int eeprom_map_cmd(struct platform_intf *intf,
 	     eeprom && eeprom->name;
 	     eeprom++) {
 		struct fmap *fmap;
-		int i;
 
 		if (!eeprom->device || !eeprom->device->get_map)
 			continue;
 
-		if (!(fmap = eeprom->device->get_map(intf, eeprom)))
+		fmap = eeprom->device->get_map(intf, eeprom);
+		if (!fmap) {
 			continue;
-
-		for (i = 0; i < fmap->nareas; i++) {
-			struct kv_pair *kv = kv_pair_new();
-			const char *str = NULL;
-
-			kv_pair_fmt(kv, "name", "%s", eeprom->name);
-			kv_pair_fmt(kv, "area_name", "%s", fmap->areas[i].name);
-			kv_pair_fmt(kv, "area_offset", "0x%08x",
-			            fmap->areas[i].offset);
-			kv_pair_fmt(kv, "area_size", "0x%08x",
-			            fmap->areas[i].size);
-
-			str = fmap_flags_to_string(fmap->areas[i].flags);
-			if (str == NULL)
+		} else {
+			if (print_fmap_areas(eeprom->name, fmap) < 0)
 				return -1;
-			kv_pair_fmt(kv, "area_flags", "%s", str);
-
-			kv_pair_print(kv);
-			kv_pair_free(kv);
-			free((void *)str);
 		}
 
 		free(fmap);

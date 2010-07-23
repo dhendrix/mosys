@@ -10,6 +10,7 @@ config PLATFORM_EXPERIMENTAL
 
 config EXPERIMENTAL_AGZ
 	depends on PLATFORM_ARCH_X86 && PLATFORM_EXPERIMENTAL
+	select CHIPSET_INTEL_NM10
 	bool "agz pinetrail reference board"
 	default n
 

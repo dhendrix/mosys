@@ -25,12 +25,16 @@
 #include "lib/eeprom.h"
 #include "lib/eeprom_enet.h"
 
+static struct eeprom_dev agz_host_firmware = {
+};
+
 static struct eeprom agz_pinetrail_eeproms[] = {
 	{
 		.name		= "host_firmware",
 		.type		= EEPROM_TYPE_FW,
 		/* FIXME: add proper address stuff here */
 		.flags		= EEPROM_FLAG_RDWR,
+		.device		= &agz_host_firmware,
 	},
 	{
 		.name		= "ec_firmware",

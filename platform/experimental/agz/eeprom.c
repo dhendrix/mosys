@@ -26,6 +26,8 @@
 #include "lib/eeprom_enet.h"
 #include "lib/smbios.h"
 
+#include "drivers/intel/nm10.h"
+
 /* set up EEPROM's MMIO location */
 static int agz_pinetrail_host_firmware_setup(struct platform_intf *intf,
                                              struct eeprom *eeprom)
@@ -73,8 +75,35 @@ static size_t agz_host_firmware_size(struct platform_intf *intf,
 	return rom_size;
 }
 
+static int agz_host_firmware_read(struct platform_intf *intf,
+                                  struct eeprom *eeprom,
+                                  unsigned int offset,
+				  unsigned int len,
+                                  void *data)
+{
+	uint8_t *buf = data;
+	enum ich_bbs bbs_orig;
+
+	bbs_orig = nm10_get_bbs(intf);
+
+	/* set chipset to direct TOLM firmware region I/Os to SPI */
+	if (nm10_set_bbs(intf, ICH_BBS_SPI) < 0)
+		return -1;
+
+	if (eeprom_mmio_read(intf, eeprom, offset, len, buf) < 0) {
+		lprintf(LOG_DEBUG, "%s: failed to read device\n", __func__);
+		return -1;
+	}
+
+	/* restore original BBS value */
+	nm10_set_bbs(intf, bbs_orig);
+
+	return 0;
+}
+
 static struct eeprom_dev agz_host_firmware = {
 	.size		= agz_host_firmware_size,
+	.read		= agz_host_firmware_read,
 };
 
 static struct eeprom agz_pinetrail_eeproms[] = {

@@ -24,8 +24,39 @@
 
 #include "lib/eeprom.h"
 #include "lib/eeprom_enet.h"
+#include "lib/smbios.h"
+
+static size_t agz_host_firmware_size(struct platform_intf *intf,
+                                     struct eeprom *eeprom)
+{
+	size_t rom_size;
+	struct smbios_table table;
+
+	/*
+	 * Determine size of firmware using SMBIOS. We might implement a more
+	 * sophisticated approach in the future, but this works well for now
+	 * since it does not depend on the BIOS boot straps value.
+	 */
+	if (smbios_find_table(intf, SMBIOS_TYPE_BIOS, 0, &table,
+	                      SMBIOS_LEGACY_ENTRY_BASE,
+	                      SMBIOS_LEGACY_ENTRY_LEN) < 0) {
+		lprintf(LOG_INFO, "Unable to calculate VPD address\n");
+
+		/*
+		 * FIXME: SMBIOS on this platform is a bit wonky at the moment,
+		 * so we'll just fake it knowing the firmware ROM is 4MB.
+		 */
+		lprintf(LOG_INFO, "Assuming 4MB firmware ROM\n");
+		rom_size = 4096 * 1024;
+	} else {
+		rom_size = (table.data.bios.rom_size_64k_blocks + 1) * 64 * 1024;
+	}
+
+	return rom_size;
+}
 
 static struct eeprom_dev agz_host_firmware = {
+	.size		= agz_host_firmware_size,
 };
 
 static struct eeprom agz_pinetrail_eeproms[] = {

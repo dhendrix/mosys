@@ -89,6 +89,10 @@ static int agz_pinetrail_setup_post(struct platform_intf *intf)
 	if (agz_pinetrail_vpd_setup(intf) < 0)
 		lprintf(LOG_INFO, "VPD not found\n");
 
+	rc |= agz_pinetrail_eeprom_setup(intf);
+
+	if (rc)
+		lprintf(LOG_DEBUG, "%s: failed\n", __func__);
 	return rc;
 }
 

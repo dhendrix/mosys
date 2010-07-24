@@ -26,6 +26,24 @@
 #include "lib/eeprom_enet.h"
 #include "lib/smbios.h"
 
+/* set up EEPROM's MMIO location */
+static int agz_pinetrail_host_firmware_setup(struct platform_intf *intf,
+                                             struct eeprom *eeprom)
+{
+	unsigned long int rom_size = 0, rom_base = 0;
+
+	if (!eeprom->device || !eeprom->device->size)
+		return -1;
+	rom_size = eeprom->device->size(intf, eeprom);
+	rom_base = 0xffffffff - rom_size + 1;
+	lprintf(LOG_DEBUG, "%s: rom_base: 0x%08x, rom_size: 0x%08x\n",
+	__func__, rom_base, rom_size);
+
+	eeprom->addr.mmio = rom_base;
+
+	return 0;
+}
+
 static size_t agz_host_firmware_size(struct platform_intf *intf,
                                      struct eeprom *eeprom)
 {
@@ -66,6 +84,7 @@ static struct eeprom agz_pinetrail_eeproms[] = {
 		/* FIXME: add proper address stuff here */
 		.flags		= EEPROM_FLAG_RDWR,
 		.device		= &agz_host_firmware,
+		.setup		= agz_pinetrail_host_firmware_setup,
 	},
 	{
 		.name		= "ec_firmware",
@@ -75,6 +94,21 @@ static struct eeprom agz_pinetrail_eeproms[] = {
 	},
 	{ 0 },
 };
+
+int agz_pinetrail_eeprom_setup(struct platform_intf *intf)
+{
+	struct eeprom *eeprom;
+	int rc = 0;
+
+	for (eeprom = intf->cb->eeprom->eeprom_list;
+	     eeprom && eeprom->name;
+	     eeprom++) {
+		if (eeprom->setup)
+			rc |= eeprom->setup(intf, eeprom);
+	}
+
+	return rc;
+}
 
 struct eeprom_cb agz_pinetrail_eeprom_cb = {
 	.eeprom_list	= agz_pinetrail_eeproms,

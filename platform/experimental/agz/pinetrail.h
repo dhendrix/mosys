@@ -31,6 +31,7 @@ extern struct nvram_cb agz_pinetrail_nvram_cb;		/* nvram.c */
 
 /* functions called by setup routines */
 extern int agz_pinetrail_vpd_setup(struct platform_intf *intf);
+extern int agz_pinetrail_eeprom_setup(struct platform_intf *intf);
 
 
 #endif /* AGZ_PINETRAIL_H_ */

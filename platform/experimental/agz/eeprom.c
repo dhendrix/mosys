@@ -31,8 +31,8 @@
 #include "drivers/intel/nm10.h"
 
 /* set up EEPROM's MMIO location */
-static int agz_pinetrail_host_firmware_setup(struct platform_intf *intf,
-                                             struct eeprom *eeprom)
+static int agz_firmware_mmio_setup(struct platform_intf *intf,
+                                   struct eeprom *eeprom)
 {
 	unsigned long int rom_size = 0, rom_base = 0;
 
@@ -44,6 +44,35 @@ static int agz_pinetrail_host_firmware_setup(struct platform_intf *intf,
 	__func__, rom_base, rom_size);
 
 	eeprom->addr.mmio = rom_base;
+
+	return 0;
+}
+
+static int agz_firmware_read(struct platform_intf *intf,
+                             struct eeprom *eeprom,
+                             unsigned int offset,
+                             unsigned int len,
+                             void *data,
+                             enum ich_bbs bbs)
+{
+	uint8_t *buf = data;
+	enum ich_bbs bbs_orig;
+
+	bbs_orig = nm10_get_bbs(intf);
+
+	/* set chipset to direct TOLM firmware region I/Os to SPI */
+	if (nm10_set_bbs(intf, bbs) < 0) {
+		lprintf(LOG_DEBUG, "%s: cannot set bbs\n", __func__);
+		return -1;
+	}
+
+	if (eeprom_mmio_read(intf, eeprom, offset, len, buf) < 0) {
+		lprintf(LOG_DEBUG, "%s: failed to read device\n", __func__);
+		return -1;
+	}
+
+	/* restore original BBS value */
+	nm10_set_bbs(intf, bbs_orig);
 
 	return 0;
 }
@@ -80,29 +109,10 @@ static size_t agz_host_firmware_size(struct platform_intf *intf,
 static int agz_host_firmware_read(struct platform_intf *intf,
                                   struct eeprom *eeprom,
                                   unsigned int offset,
-				  unsigned int len,
+                                  unsigned int len,
                                   void *data)
 {
-	uint8_t *buf = data;
-	enum ich_bbs bbs_orig;
-
-	bbs_orig = nm10_get_bbs(intf);
-
-	/* set chipset to direct TOLM firmware region I/Os to SPI */
-	if (nm10_set_bbs(intf, ICH_BBS_SPI) < 0) {
-		lprintf(LOG_DEBUG, "%s: cannot set bbs\n", __func__);
-		return -1;
-	}
-
-	if (eeprom_mmio_read(intf, eeprom, offset, len, buf) < 0) {
-		lprintf(LOG_DEBUG, "%s: failed to read device\n", __func__);
-		return -1;
-	}
-
-	/* restore original BBS value */
-	nm10_set_bbs(intf, bbs_orig);
-
-	return 0;
+	return agz_firmware_read(intf, eeprom, offset, len, data, ICH_BBS_SPI);
 }
 
 static struct eeprom_dev agz_host_firmware = {
@@ -110,24 +120,6 @@ static struct eeprom_dev agz_host_firmware = {
 	.read		= agz_host_firmware_read,
 	.get_map	= eeprom_get_fmap,
 };
-
-/* set up EEPROM's MMIO location */
-static int agz_pinetrail_ec_firmware_setup(struct platform_intf *intf,
-                                           struct eeprom *eeprom)
-{
-	unsigned long int rom_size = 0, rom_base = 0;
-
-	if (!eeprom->device || !eeprom->device->size)
-		return -1;
-	rom_size = eeprom->device->size(intf, eeprom);
-	rom_base = 0xffffffff - rom_size + 1;
-	lprintf(LOG_DEBUG, "%s: rom_base: 0x%08x, rom_size: 0x%08x\n",
-	__func__, rom_base, rom_size);
-
-	eeprom->addr.mmio = rom_base;
-
-	return 0;
-}
 
 static size_t agz_ec_firmware_size(struct platform_intf *intf,
                                    struct eeprom *eeprom)
@@ -138,31 +130,12 @@ static size_t agz_ec_firmware_size(struct platform_intf *intf,
 }
 
 static int agz_ec_firmware_read(struct platform_intf *intf,
-                                  struct eeprom *eeprom,
-                                  unsigned int offset,
-				  unsigned int len,
-                                  void *data)
+                                struct eeprom *eeprom,
+                                unsigned int offset,
+                                unsigned int len,
+                                void *data)
 {
-	uint8_t *buf = data;
-	enum ich_bbs bbs_orig;
-
-	bbs_orig = nm10_get_bbs(intf);
-
-	/* set chipset to direct TOLM firmware region I/Os to LPC/FWH */
-	if (nm10_set_bbs(intf, ICH_BBS_LPC) < 0) {
-		lprintf(LOG_DEBUG, "%s: cannot set bbs\n", __func__);
-		return -1;
-	}
-
-	if (eeprom_mmio_read(intf, eeprom, offset, len, buf) < 0) {
-		lprintf(LOG_DEBUG, "%s: failed to read device\n", __func__);
-		return -1;
-	}
-
-	/* restore original BBS value */
-	nm10_set_bbs(intf, bbs_orig);
-
-	return 0;
+	return agz_firmware_read(intf, eeprom, offset, len, data, ICH_BBS_LPC);
 }
 
 static struct eeprom_dev agz_ec_firmware = {
@@ -177,14 +150,14 @@ static struct eeprom agz_pinetrail_eeproms[] = {
 		.type		= EEPROM_TYPE_FW,
 		.flags		= EEPROM_FLAG_RDWR,
 		.device		= &agz_host_firmware,
-		.setup		= agz_pinetrail_host_firmware_setup,
+		.setup		= agz_firmware_mmio_setup,
 	},
 	{
 		.name		= "ec_firmware",
 		.type		= EEPROM_TYPE_FW,
 		.flags		= EEPROM_FLAG_RDWR,
 		.device		= &agz_ec_firmware,
-		.setup		= agz_pinetrail_ec_firmware_setup,
+		.setup		= agz_firmware_mmio_setup,
 	},
 	{ 0 },
 };

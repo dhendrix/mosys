@@ -33,7 +33,12 @@
 
 static int nm10_get_rcba_addr(struct platform_intf *intf, uint32_t *val)
 {
-	return pci_read32(intf, 0x00, 0x1f, 0x00, 0xf0, val);
+	if (pci_read32(intf, 0x00, 0x1f, 0x00, 0xf0, val) < 0)
+		return -1;
+
+	*val &= ~__mask(13, 0);
+
+	return 0;
 }
 
 static int nm10_get_gcs_addr(struct platform_intf *intf, uint32_t *val)

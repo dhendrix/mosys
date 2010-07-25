@@ -31,6 +31,7 @@
 #include "mosys/kv_pair.h"
 #include "mosys/string.h"
 
+#include "lib/crypto.h"
 #include "lib/eeprom.h"
 #include "lib/fmap.h"
 #include "lib/string_builder.h"
@@ -159,6 +160,64 @@ static int eeprom_map_cmd(struct platform_intf *intf,
 		}
 
 		free(fmap);
+	}
+
+	return 0;
+}
+
+static int eeprom_csum_cmd(struct platform_intf *intf,
+                           struct platform_cmd *cmd, int argc, char **argv)
+{
+	struct eeprom *eeprom;
+	struct crypto_algo *crypto = &sha1_algo;
+	uint8_t *digest = NULL;
+
+	if (!intf->cb->eeprom || !intf->cb->eeprom->eeprom_list)
+		return -1;
+
+	for (eeprom = intf->cb->eeprom->eeprom_list;
+	     eeprom && eeprom->name;
+	     eeprom++) {
+		uint8_t *image = NULL;
+		int len;
+		char *digest_str;
+		struct kv_pair *kv;
+
+		if (!eeprom->device || !eeprom->device->size ||
+		    !eeprom->device->read)
+			continue;
+
+		if ((len = eeprom->device->size(intf, eeprom)) < 0) {
+			lprintf(LOG_DEBUG, "failed to obtain size of %s\n",
+			                   eeprom->name);
+			continue;
+		}
+		image = mosys_malloc(len);
+		if (eeprom->device->read(intf, eeprom, 0, len, image) < 0) {
+			lprintf(LOG_DEBUG, "failed to read %s\n", eeprom->name);
+			continue;
+		}
+
+		if (fmap_get_csum(image, len, &digest, crypto) < 0) {
+			lprintf(LOG_DEBUG, "fmap_get_csum failed, checksumming "
+			                   "entire image\n");
+			                   
+			crypto->init(crypto->ctx);
+			crypto->update(crypto->ctx, image, len);
+			crypto->final(crypto->ctx);
+			digest = crypto->get_digest(crypto);
+		}
+
+		digest_str = buf2str(digest, crypto->digest_len);
+
+		kv = kv_pair_new();
+		kv_pair_fmt(kv, "name", eeprom->name);
+		kv_pair_fmt(kv, "checksum", digest_str);
+		kv_pair_print(kv);
+
+		kv_pair_free(kv);
+		free(digest_str);
+		free(image);
 	}
 
 	return 0;
@@ -353,6 +412,14 @@ struct platform_cmd eeprom_cmds[] = {
 		.usage	= "mosys eeprom map",
 		.type	= ARG_TYPE_GETTER,
 		.arg	= { .func = eeprom_map_cmd }
+	},
+	{
+		.name	= "csum",
+		.desc	= "Print sha1 checksum",
+		/* FIXME: add device / file argument */
+		.usage	= "mosys eeprom csum",
+		.type	= ARG_TYPE_GETTER,
+		.arg	= { .func = eeprom_csum_cmd }
 	},
 	{
 		.name	= "dump",

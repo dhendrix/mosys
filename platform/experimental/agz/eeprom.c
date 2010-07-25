@@ -111,6 +111,66 @@ static struct eeprom_dev agz_host_firmware = {
 	.get_map	= eeprom_get_fmap,
 };
 
+/* set up EEPROM's MMIO location */
+static int agz_pinetrail_ec_firmware_setup(struct platform_intf *intf,
+                                           struct eeprom *eeprom)
+{
+	unsigned long int rom_size = 0, rom_base = 0;
+
+	if (!eeprom->device || !eeprom->device->size)
+		return -1;
+	rom_size = eeprom->device->size(intf, eeprom);
+	rom_base = 0xffffffff - rom_size + 1;
+	lprintf(LOG_DEBUG, "%s: rom_base: 0x%08x, rom_size: 0x%08x\n",
+	__func__, rom_base, rom_size);
+
+	eeprom->addr.mmio = rom_base;
+
+	return 0;
+}
+
+static size_t agz_ec_firmware_size(struct platform_intf *intf,
+                                   struct eeprom *eeprom)
+{
+	/* FIXME: the actual mechanism for obtaining this info is not yet
+	 * supported by mosys, so we'll cheat for now */
+	return 512 * 1024;
+}
+
+static int agz_ec_firmware_read(struct platform_intf *intf,
+                                  struct eeprom *eeprom,
+                                  unsigned int offset,
+				  unsigned int len,
+                                  void *data)
+{
+	uint8_t *buf = data;
+	enum ich_bbs bbs_orig;
+
+	bbs_orig = nm10_get_bbs(intf);
+
+	/* set chipset to direct TOLM firmware region I/Os to LPC/FWH */
+	if (nm10_set_bbs(intf, ICH_BBS_LPC) < 0) {
+		lprintf(LOG_DEBUG, "%s: cannot set bbs\n", __func__);
+		return -1;
+	}
+
+	if (eeprom_mmio_read(intf, eeprom, offset, len, buf) < 0) {
+		lprintf(LOG_DEBUG, "%s: failed to read device\n", __func__);
+		return -1;
+	}
+
+	/* restore original BBS value */
+	nm10_set_bbs(intf, bbs_orig);
+
+	return 0;
+}
+
+static struct eeprom_dev agz_ec_firmware = {
+	.size		= agz_ec_firmware_size,
+	.read		= agz_ec_firmware_read,
+	.get_map	= eeprom_get_fmap,
+};
+
 static struct eeprom agz_pinetrail_eeproms[] = {
 	{
 		.name		= "host_firmware",
@@ -122,8 +182,9 @@ static struct eeprom agz_pinetrail_eeproms[] = {
 	{
 		.name		= "ec_firmware",
 		.type		= EEPROM_TYPE_FW,
-		/* FIXME: add proper address stuff here */
 		.flags		= EEPROM_FLAG_RDWR,
+		.device		= &agz_ec_firmware,
+		.setup		= agz_pinetrail_ec_firmware_setup,
 	},
 	{ 0 },
 };

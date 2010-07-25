@@ -419,7 +419,6 @@ int vpd_find_table(struct platform_intf *intf, enum vpd_types type,
 
 /*
  * vpd_find_string  -  locate specific string in VPD table
- *                        (conforms to legacy vpd utility)
  *
  * @intf:	platform interface
  * @type:	vpd table type

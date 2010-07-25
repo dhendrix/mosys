@@ -133,4 +133,19 @@ struct eeprom {
 extern int eeprom_mmio_read(struct platform_intf *intf, struct eeprom *eeprom,
                             unsigned int offset, unsigned int len, void *data);
 
+/*
+ * eeprom_get_fmap - return a newly allocated copy of EEPROM's FMAP
+ *
+ * @intf:	platform interface
+ * @eeprom:	eeprom structure
+ *
+ * This function will attempt to find an FMAP data structure embedded in an
+ * EEPROM image and will copy it to a newly allocated buffer if found.
+ *
+ * returns a newly allocated struct fmap if successful
+ * returns NULL to indicate error or if no fmap is found
+ */
+extern struct fmap *eeprom_get_fmap(struct platform_intf *intf,
+                                    struct eeprom *eeprom);
+
 #endif /* MOSYS_LIB_EEPROM_H__ */

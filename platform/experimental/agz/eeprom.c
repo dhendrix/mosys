@@ -155,7 +155,6 @@ static struct eeprom agz_pinetrail_eeproms[] = {
 	{
 		.name		= "host_firmware",
 		.type		= EEPROM_TYPE_FW,
-		/* FIXME: add proper address stuff here */
 		.flags		= EEPROM_FLAG_RDWR,
 		.device		= &agz_host_firmware,
 		.setup		= agz_pinetrail_host_firmware_setup,

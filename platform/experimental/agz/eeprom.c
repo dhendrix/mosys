@@ -89,8 +89,10 @@ static int agz_host_firmware_read(struct platform_intf *intf,
 	bbs_orig = nm10_get_bbs(intf);
 
 	/* set chipset to direct TOLM firmware region I/Os to SPI */
-	if (nm10_set_bbs(intf, ICH_BBS_SPI) < 0)
+	if (nm10_set_bbs(intf, ICH_BBS_SPI) < 0) {
+		lprintf(LOG_DEBUG, "%s: cannot set bbs\n", __func__);
 		return -1;
+	}
 
 	if (eeprom_mmio_read(intf, eeprom, offset, len, buf) < 0) {
 		lprintf(LOG_DEBUG, "%s: failed to read device\n", __func__);

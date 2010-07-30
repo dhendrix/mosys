@@ -8,7 +8,7 @@ menu "Binary Blob Pointer (Handle == 0)"
 config BBP0_STRUCTURE_MAJOR_VERSION
 	int "Structure major version"
 	range 0 255
-	default 0
+	default 1
 
 config BBP0_STRUCTURE_MINOR_VERSION
 	int "Structure minor version"

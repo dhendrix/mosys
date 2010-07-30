@@ -8,7 +8,7 @@ menu "Binary Blob Pointer (Handle == 1)"
 config BBP1_STRUCTURE_MAJOR_VERSION
 	int "Structure major version"
 	range 0 255
-	default 0
+	default 1
 
 config BBP1_STRUCTURE_MINOR_VERSION
 	int "Structure minor version"
@@ -36,7 +36,7 @@ config BBP1_BLOB_MINOR_VERSION
 	default 0
 
 config BBP1_BLOB_VARIANT
-	string "Blob minor version"
+	string "Blob variant"
 	default "To be filled in"
 
 config BBP1_UUID

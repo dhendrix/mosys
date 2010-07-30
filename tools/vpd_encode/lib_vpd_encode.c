@@ -178,7 +178,7 @@ int vpd_append_type0(uint16_t handle, uint8_t **buf, size_t len)
 	strings = (uint8_t *)data + sizeof(*data);
 
 	/* fill in structure header details */
-	header->type = 0;
+	header->type = VPD_TYPE_FIRMWARE;
 	header->length = sizeof(*header) + sizeof(*data);
 	header->handle = handle;
 
@@ -253,7 +253,7 @@ int vpd_append_type1(uint16_t handle, uint8_t **buf, size_t len)
 	strings = (uint8_t *)data + sizeof(*data);
 
 	/* fill in structure header details */
-	header->type = 1;
+	header->type = VPD_TYPE_SYSTEM;
 	header->length = sizeof(*header) + sizeof(*data);
 	header->handle = handle;
 

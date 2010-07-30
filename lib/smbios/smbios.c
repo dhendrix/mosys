@@ -320,7 +320,7 @@ static int smbios_itr_setup(struct platform_intf *intf,
 		return -1;
 	}
 
-	if (mosys_get_verbosity() > 5)
+	if (mosys_get_verbosity() == LOG_DEBUG)
 		print_buffer(smbios_itr->data, smbios_itr->entry->table_length);
 
 	/* start pointer at table start */
@@ -398,7 +398,7 @@ static int smbios_find_table_raw(struct platform_intf *intf,
 			if (instance-- > 0)
 				continue;
 
-			if (mosys_get_verbosity() > 5)
+			if (mosys_get_verbosity() == LOG_DEBUG)
 				print_buffer(smbios_itr->current,
 				             smbios_itr->header->length);
 

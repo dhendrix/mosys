@@ -217,6 +217,12 @@ struct platform_cmd vpd_print_cmds[] = {
 		.type	= ARG_TYPE_GETTER,
 		.arg	= { .func = vpd_print_system_cmd }
 	},
+	{
+		.name	= "blobs",
+		.desc	= "Binary Blobs Pointer Tables",
+		.type	= ARG_TYPE_GETTER,
+		.arg	= { .func = vpd_print_blobs_cmd }
+	},
 	{ NULL }
 };
 

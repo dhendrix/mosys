@@ -310,7 +310,8 @@ LINUXINCLUDE    := -Iinclude \
 
 KERNELVERSION	= $(RELEASENAME)
 
-EXTRA_CFLAGS	:=
+EXTRA_CFLAGS	:= -luuid
+
 #EXTRA_CFLAGS	:= $(patsubst %,-l%, $(LIBRARIES))
 
 MOSYS_MACROS	:= -DPROGRAM=\"$(PROGRAM)\" \
@@ -633,10 +634,6 @@ $(sort $(vmlinux-main)) $(vmlinux-lds): $(vmlinux-dirs) ;
 # tweaks to this spot to avoid wrong language settings when running
 # make menuconfig etc.
 # Error messages still appears in the original language
-
-ifeq ($(CONFIG_ADD_TOOL_LIBRARIES),y)
-EXTRA_CFLAGS += -luuid
-endif
 
 PHONY += $(vmlinux-dirs)
 $(vmlinux-dirs): prepare scripts

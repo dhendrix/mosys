@@ -132,15 +132,37 @@ static int vpd_print_system_cmd(struct platform_intf *intf,
 	return 0;
 }
 
-#if 0
 static int vpd_print_blobs_cmd(struct platform_intf *intf,
                                struct platform_cmd *cmd,
                                int argc, char **argv)
 {
-	/* FIXME: add this once binary blob pointer support is added in */
-	return -ENOSYS;
+	struct vpd_table table;
+	struct kv_pair *kv;
+	int i;
+
+	for (i = 0; i < 0xffff; i++) {
+		if (vpd_find_table(intf, VPD_TYPE_BINARY_BLOB_POINTER,
+		                   i, &table, vpd_rom_base, vpd_rom_size) < 0) {
+			lprintf(LOG_DEBUG, "cannot find binary blob pointer\n");
+			break;
+		}
+
+		kv = kv_pair_new();
+		kv_pair_fmt(kv, "table_type", "%d", table.header.type);
+		kv_pair_add(kv, "vendor",
+			    table.string[table.data.blob.vendor]);
+		kv_pair_add(kv, "description",
+		            table.string[table.data.blob.description]);
+
+		vpd_print_blob(kv, &table);
+
+		kv_pair_print(kv);
+		kv_pair_free(kv);
+	}
+
+	return 0;
+
 }
-#endif
 
 static int vpd_print_all_cmd(struct platform_intf *intf,
                              struct platform_cmd *cmd,
@@ -150,8 +172,7 @@ static int vpd_print_all_cmd(struct platform_intf *intf,
 
 	rc |= vpd_print_firmware_cmd(intf, cmd, argc, argv);
 	rc |= vpd_print_system_cmd(intf, cmd, argc, argv);
-	/* FIXME: add this once binary blob pointer support is added in */
-//	rc |= vpd_print_blobs_cmd(intf, cmd, argc, argv);
+	rc |= vpd_print_blobs_cmd(intf, cmd, argc, argv);
 
 	return rc;
 }

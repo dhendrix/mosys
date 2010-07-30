@@ -28,4 +28,5 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 obj-y		+= mosys_callbacks.o
+obj-y		+= binary_blob.o
 obj-y		+= vpd.o

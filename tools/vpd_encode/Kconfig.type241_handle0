@@ -1,0 +1,59 @@
+#
+# Binary blob pointer #0 configuration
+#
+
+menu "Binary Blob Pointer (Handle == 0)"
+	depends on BUILD_BBP0
+
+config BBP0_STRUCTURE_MAJOR_VERSION
+	int "Structure major version"
+	range 0 255
+	default 0
+
+config BBP0_STRUCTURE_MINOR_VERSION
+	int "Structure minor version"
+	range 0 255
+	default 0
+
+config BBP0_VENDOR
+	string "Blob vendor"
+	default "To be filled in"
+
+config BBP0_DESCRIPTION
+	string "Blob description"
+	default "To be filled in"
+	help
+	  Freeform description of blob.
+
+config BBP0_BLOB_MAJOR_VERSION
+	int "Blob major version"
+	range 0 255
+	default 0
+
+config BBP0_BLOB_MINOR_VERSION
+	int "Blob minor version"
+	range 0 255
+	default 0
+
+config BBP0_BLOB_VARIANT
+	string "Blob variant"
+	default "To be filled in"
+
+config BBP0_UUID
+	string "Blob UUID"
+	default "00000000-0000-0000-0000-000000000000"
+	help
+	  128-bit UUID, obeying RFC4122 format.
+	  Example: 0bf40e9f-e9e9-4c42-a39b-ee1c54a4359a
+
+config BBP0_OFFSET
+	hex "Blob offset"
+	default 0
+	help
+	  Blob offset, relative to address 0 of the EEPROM
+
+config BBP0_SIZE
+	int "Blob size (in bytes)"
+	default 0
+
+endmenu # Binary Blob Pointer (Handle == 0)

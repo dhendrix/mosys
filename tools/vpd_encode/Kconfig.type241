@@ -1,0 +1,39 @@
+#
+# Binary blob pointer
+#
+
+# FIXME: This is extremely hacky. We should modify Kconfig to do arithmetic
+# comparisons (==, >=, etc).
+
+config BINARY_BLOB_POINTERS
+	bool "Configure binary blob pointers"
+	default n
+	help
+	  Select this if binary blobs are present.
+
+config NUM_BINARY_BLOB_POINTERS
+	int "Number of binary blobs present"
+	depends on BINARY_BLOB_POINTERS
+	default 0
+	range 0 4
+	help
+	  Total number of binary blobs present in the EEPROM
+
+# The BUILD_BBP* variables are a hacky way of making configuration for each
+# binary point blob visible in Kconfig on an as-needed basis. We can move the
+# dependencies to individual Kconfig files, but that merely scatters the gross
+# hack across several files...
+
+config BUILD_BBP0
+	bool
+	depends on NUM_BINARY_BLOB_POINTERS="1" || \
+	           NUM_BINARY_BLOB_POINTERS="2"
+	default y
+
+config BUILD_BBP1
+	bool
+	depends on NUM_BINARY_BLOB_POINTERS="2"
+	default y
+
+source "tools/vpd_encode/Kconfig.type241_handle0"
+source "tools/vpd_encode/Kconfig.type241_handle1"

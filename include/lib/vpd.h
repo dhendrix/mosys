@@ -50,4 +50,6 @@ extern char *vpd_find_string(struct platform_intf *intf,
                              enum vpd_types type, int number,
                              unsigned int baseaddr, unsigned int len);
 
+extern int vpd_print_blob(struct kv_pair *kv, struct vpd_table *table);
+
 #endif /* MOSYS_LIB_VPD_H__ */

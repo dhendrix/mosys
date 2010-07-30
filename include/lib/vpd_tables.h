@@ -82,6 +82,21 @@ struct vpd_table_eot {
 	struct vpd_header header;
 } __attribute__ ((packed));
 
+/* Type 241 - binary blob pointer */
+struct vpd_table_binary_blob_pointer {
+	uint8_t struct_major_version;
+	uint8_t struct_minor_version;
+	uint8_t vendor;
+	uint8_t description;
+	uint8_t major_version;
+	uint8_t minor_version;
+	uint8_t variant;
+	uint8_t reserved[5];
+	uint8_t uuid[16];
+	uint32_t offset;
+	uint32_t size;
+} __attribute__ ((packed));
+
 /* The length and number of strings defined here is not a limitation of VPD.
  * These numbers were deemed good enough during development. */
 #define VPD_MAX_STRINGS 10
@@ -93,6 +108,7 @@ struct vpd_table {
 	union {
 		struct vpd_table_firmware firmware;
 		struct vpd_table_system system;
+		struct vpd_table_binary_blob_pointer blob;
 		uint8_t data[1024];
 	} data;
 	char string[VPD_MAX_STRINGS][VPD_MAX_STRING_LENGTH];

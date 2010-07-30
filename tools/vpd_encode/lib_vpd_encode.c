@@ -320,6 +320,84 @@ int vpd_append_type127(uint16_t handle, uint8_t **buf, size_t len)
 	return total_len;
 }
 
+/**
+ * vpd_append_type241 - append type 241 (binary blob pointer) structure
+ *
+ * @handle:	handle for this structure
+ * @buf:	buffer to append to
+ * @len:	length of buffer
+ * @vendor:	blob vendor string
+ * @desc:	blob description string
+ * @variant:	blob variant string
+ *
+ * returns total size of newly re-sized buffer if successful
+ * returns <0 to indicate failure
+ */
+int vpd_append_type241(uint16_t handle, uint8_t **buf,
+                       size_t len, const char *uuid, uint32_t offset,
+                       uint32_t size, const char *vendor,
+                       const char *desc, const char *variant)
+{
+	struct vpd_header *header;
+	struct vpd_table_binary_blob_pointer *data;
+	uint8_t *strings;
+	size_t struct_len, total_len;
+
+	/* FIXME: Add sanity checking */
+	struct_len = sizeof(struct vpd_header) +
+	             sizeof(struct vpd_table_binary_blob_pointer) +
+	             strlen(vendor) + 1 +
+	             strlen(desc) + 1 +
+	             strlen(variant) + 1 +
+		     1;			/* structure terminator */
+	total_len = len + struct_len;
+
+	*buf = realloc(*buf, total_len);
+	memset(*buf + len, 0, struct_len);
+
+	header = *buf + len;
+	data = (uint8_t *)header + sizeof(*header);
+	strings = (uint8_t *)data + sizeof(*data);
+
+	/* fill in structure header details */
+	header->type = VPD_TYPE_BINARY_BLOB_POINTER;
+	header->length = sizeof(*header) + sizeof(*data);
+	header->handle = handle;
+
+	data->struct_major_version = 1;
+	data->struct_minor_version = 0;
+	data->vendor = 1;
+	data->description = 2;
+	data->major_version = 0;
+	data->minor_version = 1;
+	data->variant = 3;
+	memset(&data->reserved[0], 0, 5);
+
+	if (uuid_parse(uuid, &data->uuid[0]) < 0) {
+		printf("invalid UUID \"%s\" specified\n", uuid);
+		goto vpd_create_type241_fail;
+	}
+
+	data->offset = offset;
+	data->size = size;
+
+	sprintf(strings, "%s%c%s%c%s%c",
+	                 vendor, '\0',
+	                 desc, '\0',
+	                 variant, '\0');
+
+	memset(*buf + struct_len, 0, 1);	/* terminator */
+
+	lprintf(LOG_DEBUG, "%s: total length (including strings): %u\n",
+	        __func__, (unsigned)total_len);
+	print_buf(LOG_DEBUG, data, total_len);
+
+	return total_len;
+
+vpd_create_type241_fail:
+	return -1;
+}
+
 void vpd_free_table(void *data)
 {
 	uint8_t *foo = data;

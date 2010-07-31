@@ -102,11 +102,6 @@ int main(int argc, char *argv[])
 		goto do_exit_2;
 	num_structures++;
 
-	table_len = vpd_append_type127(1, &table, table_len);
-	if (table_len < 0)
-		goto do_exit_2;
-	num_structures++;
-
 #ifdef CONFIG_BUILD_BBP0
 	table_len = vpd_append_type241(0, &table, table_len,
 	                               CONFIG_BBP0_UUID,
@@ -132,6 +127,11 @@ int main(int argc, char *argv[])
 		goto do_exit_2;
 	num_structures++;
 #endif
+
+	table_len = vpd_append_type127(1, &table, table_len);
+	if (table_len < 0)
+		goto do_exit_2;
+	num_structures++;
 
 	/* 
 	 * create the entry point structure last since it contains information

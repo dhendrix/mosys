@@ -23,6 +23,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <limits.h>
+#include <sys/mman.h>
 
 #include "mosys/platform.h"
 #include "mosys/alloc.h"
@@ -33,6 +34,7 @@
 
 #include "lib/crypto.h"
 #include "lib/eeprom.h"
+#include "lib/file.h"
 #include "lib/fmap.h"
 #include "lib/string_builder.h"
 
@@ -140,6 +142,8 @@ static int eeprom_map_cmd(struct platform_intf *intf,
 {
 	struct eeprom *eeprom;
 	char *name = NULL;
+	int fd = 0;
+	int rc = 0;
 
 	if (!intf->cb->eeprom || !intf->cb->eeprom->eeprom_list)
 		return -1;
@@ -147,10 +151,40 @@ static int eeprom_map_cmd(struct platform_intf *intf,
 	if (argc)
 		name = argv[0];
 
+	if ((fd = file_open(name, FILE_READ)) >= 0) {
+		struct stat s;
+		uint8_t *blob;
+		off_t offset;
+
+		if (fstat(fd, &s) < 0) {
+			lprintf(LOG_ERR, "cannot stat \"%s\"\n", name);
+			rc = -1;
+			goto eeprom_map_cmd_exit;
+		}
+
+		blob = mmap(NULL, s.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
+		if (blob == MAP_FAILED) {
+			lprintf(LOG_ERR, "unable to mmap \"%s\"\n", name);
+			rc = -1;
+			close(fd);
+			goto eeprom_map_cmd_exit;
+		}
+
+		if ((offset = fmap_find(blob, s.st_size)) < 0) {
+			lprintf(LOG_ERR, "unable to find fmap\n");
+			rc = -1;
+		} else {
+			rc = print_fmap_areas(name,
+			                      (struct fmap *)(blob + offset));
+		}
+
+		munmap(blob, s.st_size);
+	}
+
 	for (eeprom = intf->cb->eeprom->eeprom_list;
 	     eeprom && eeprom->name;
 	     eeprom++) {
-		struct fmap *fmap;
+		struct fmap *fmap = NULL;
 
 		if (name && strncmp(eeprom->name, name, strlen(eeprom->name)))
 			continue;
@@ -163,13 +197,14 @@ static int eeprom_map_cmd(struct platform_intf *intf,
 			continue;
 		} else {
 			if (print_fmap_areas(eeprom->name, fmap) < 0)
-				return -1;
+				rc = -1;
 		}
 
 		free(fmap);
 	}
 
-	return 0;
+eeprom_map_cmd_exit:
+	return rc;
 }
 
 static int eeprom_csum_cmd(struct platform_intf *intf,
@@ -416,7 +451,7 @@ struct platform_cmd eeprom_cmds[] = {
 	{
 		.name	= "map",
 		.desc	= "Print EEPROM maps if present",
-		.usage	= "mosys eeprom map <eeprom>",
+		.usage	= "mosys eeprom map <eeprom/filename>",
 		.type	= ARG_TYPE_GETTER,
 		.arg	= { .func = eeprom_map_cmd }
 	},

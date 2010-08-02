@@ -35,6 +35,104 @@
 #include "mosys/log.h"
 
 #include "mosys/list.h"
+#include "lib/file.h"
+
+/*
+ * file_open  -  Generic file open function
+ *
+ * @file:       file path and name
+ * @rw:         read=0, write=1
+ *
+ * returns valid file descriptor on success
+ * returns <0 to indicate failure
+ */
+int file_open(const char *file, int rw)
+{
+	struct stat st1, st2;
+	int fd;
+
+	/* verify existance */
+	if (lstat(file, &st1) < 0) {
+		if (rw == FILE_WRITE) {
+			/* does not exist, ok to create */
+			fd = open(file, O_CREAT|O_WRONLY, S_IRUSR|S_IWUSR);
+			if (fd == -1) {
+				lperror(LOG_DEBUG,
+					"Unable to open file %s for write",
+					file);
+				return -1;
+			}
+			/* created ok, now return the descriptor */
+			return fd;
+		} else {
+			lprintf(LOG_DEBUG, "File %s does not exist\n", file);
+			return -1;
+		}
+	}
+
+	if (rw == FILE_READ) {
+		/* on read skip the extra checks */
+		fd = open(file, O_RDONLY);
+		if (fd == -1) {
+			lperror(LOG_NOTICE, "Unable to open file %s", file);
+			return -1;
+		}
+		return fd;
+	}
+
+	/* it exists - only regular files and char devices */
+	if (S_ISREG(st1.st_mode) == 0 && S_ISCHR(st1.st_mode) == 0) {
+		lprintf(LOG_NOTICE, "File %s has invalid mode: %d\n",
+			file, st1.st_mode);
+		return -1;
+	}
+
+	/* allow only files with 1 link (itself) */
+	if (st1.st_nlink != 1) {
+		lprintf(LOG_NOTICE, "File %s has invalid link count: %d != 1\n",
+			file, (int)st1.st_nlink);
+		return -1;
+	}
+
+	fd = open(file, O_RDWR);
+	if (fd == -1) {
+		lperror(LOG_NOTICE, "Unable to open file %s", file);
+		return -1;
+	}
+
+	/* stat again */
+	if (fstat(fd, &st2) < 0) {
+		lperror(LOG_NOTICE, "Unable to stat file %s", file);
+		close(fd);
+		return -1;
+	}
+
+	/* verify inode */
+	if (st1.st_ino != st2.st_ino) {
+		lprintf(LOG_NOTICE, "File %s has invalid inode: %d != %d\n",
+			file, st1.st_ino, st2.st_ino);
+		close(fd);
+		return -1;
+	}
+
+	/* verify owner */
+	if (st1.st_uid != st2.st_uid) {
+		lprintf(LOG_NOTICE, "File %s has invalid user id: %d != %d\n",
+			file, st1.st_uid, st2.st_uid);
+		close(fd);
+		return -1;
+	}
+
+	/* verify inode */
+	if (st2.st_nlink != 1) {
+		lprintf(LOG_NOTICE, "File %s has invalid link count: %d != 1\n",
+			file, st2.st_nlink);
+		close(fd);
+		return -1;
+	}
+
+	return fd;
+}
 
 /*
  * scanft - Scan filetree. A file tree walker for finding files containing an

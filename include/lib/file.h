@@ -21,6 +21,12 @@
 #ifndef MOSYS_LIB_FILE_H__
 #define MOSYS_LIB_FILE_H__
 
+enum file_mode {
+	FILE_READ,
+	FILE_WRITE,
+};
+int file_open(const char *file, int rw);
+
 #include "mosys/list.h"
 extern struct ll_node *scanft(struct ll_node **list,
                               const char *root, const char *name,

@@ -213,9 +213,13 @@ static int eeprom_csum_cmd(struct platform_intf *intf,
 	struct eeprom *eeprom;
 	struct crypto_algo *crypto = &sha1_algo;
 	uint8_t *digest = NULL;
+	char *name;
 
 	if (!intf->cb->eeprom || !intf->cb->eeprom->eeprom_list)
 		return -1;
+
+	if (argc)
+		name = argv[0];
 
 	for (eeprom = intf->cb->eeprom->eeprom_list;
 	     eeprom && eeprom->name;
@@ -224,6 +228,9 @@ static int eeprom_csum_cmd(struct platform_intf *intf,
 		int len;
 		char *digest_str;
 		struct kv_pair *kv;
+
+		if (name && strncmp(eeprom->name, name, strlen(eeprom->name)))
+			continue;
 
 		if (!eeprom->device || !eeprom->device->size ||
 		    !eeprom->device->read)
@@ -458,8 +465,8 @@ struct platform_cmd eeprom_cmds[] = {
 	{
 		.name	= "csum",
 		.desc	= "Print sha1 checksum",
-		/* FIXME: add device / file argument */
-		.usage	= "mosys eeprom csum",
+		/* FIXME: add file argument */
+		.usage	= "mosys eeprom csum <eeprom>",
 		.type	= ARG_TYPE_GETTER,
 		.arg	= { .func = eeprom_csum_cmd }
 	},

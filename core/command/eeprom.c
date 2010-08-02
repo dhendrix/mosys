@@ -186,7 +186,7 @@ static int eeprom_map_cmd(struct platform_intf *intf,
 	     eeprom++) {
 		struct fmap *fmap = NULL;
 
-		if (name && strncmp(eeprom->name, name, strlen(eeprom->name)))
+		if (name && strcmp(eeprom->name, name))
 			continue;
 
 		if (!eeprom->device || !eeprom->device->get_map)
@@ -273,7 +273,7 @@ static int eeprom_csum_cmd(struct platform_intf *intf,
 		char *digest_str;
 		struct kv_pair *kv;
 
-		if (name && strncmp(eeprom->name, name, strlen(eeprom->name)))
+		if (name && strcmp(eeprom->name, name))
 			continue;
 
 		if (!eeprom->device || !eeprom->device->size ||

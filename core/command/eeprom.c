@@ -139,14 +139,21 @@ static int eeprom_map_cmd(struct platform_intf *intf,
                           struct platform_cmd *cmd, int argc, char **argv)
 {
 	struct eeprom *eeprom;
+	char *name = NULL;
 
 	if (!intf->cb->eeprom || !intf->cb->eeprom->eeprom_list)
 		return -1;
+
+	if (argc)
+		name = argv[0];
 
 	for (eeprom = intf->cb->eeprom->eeprom_list;
 	     eeprom && eeprom->name;
 	     eeprom++) {
 		struct fmap *fmap;
+
+		if (name && strncmp(eeprom->name, name, strlen(eeprom->name)))
+			continue;
 
 		if (!eeprom->device || !eeprom->device->get_map)
 			continue;
@@ -409,7 +416,7 @@ struct platform_cmd eeprom_cmds[] = {
 	{
 		.name	= "map",
 		.desc	= "Print EEPROM maps if present",
-		.usage	= "mosys eeprom map",
+		.usage	= "mosys eeprom map <eeprom>",
 		.type	= ARG_TYPE_GETTER,
 		.arg	= { .func = eeprom_map_cmd }
 	},

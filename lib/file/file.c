@@ -32,9 +32,9 @@
 #include <dirent.h>
 
 #include "mosys/alloc.h"
+#include "mosys/list.h"
 #include "mosys/log.h"
 
-#include "mosys/list.h"
 #include "lib/file.h"
 
 /*

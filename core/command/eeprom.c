@@ -214,12 +214,56 @@ static int eeprom_csum_cmd(struct platform_intf *intf,
 	struct crypto_algo *crypto = &sha1_algo;
 	uint8_t *digest = NULL;
 	char *name;
+	int fd = 0;
+	int rc = 0;
 
 	if (!intf->cb->eeprom || !intf->cb->eeprom->eeprom_list)
 		return -1;
 
 	if (argc)
 		name = argv[0];
+
+	if ((fd = file_open(name, FILE_READ)) >= 0) {
+		struct stat s;
+		uint8_t *blob;
+		char *digest_str;
+		struct kv_pair *kv;
+
+		if (fstat(fd, &s) < 0) {
+			lprintf(LOG_ERR, "cannot stat \"%s\"\n", name);
+			rc = -1;
+			goto eeprom_csum_cmd_exit;
+		}
+
+		blob = mmap(NULL, s.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
+		if (blob == MAP_FAILED) {
+			lprintf(LOG_ERR, "unable to mmap \"%s\"\n", name);
+			rc = -1;
+			close(fd);
+			goto eeprom_csum_cmd_exit;
+		}
+
+		if (fmap_get_csum(blob, s.st_size, &digest, crypto) < 0) {
+			lprintf(LOG_DEBUG, "fmap_get_csum failed, checksumming "
+			                   "entire image\n");
+
+			crypto->init(crypto->ctx);
+			crypto->update(crypto->ctx, blob, s.st_size);
+			crypto->final(crypto->ctx);
+			digest = crypto->get_digest(crypto);
+		}
+
+		digest_str = buf2str(digest, crypto->digest_len);
+
+		kv = kv_pair_new();
+		kv_pair_fmt(kv, "name", name);
+		kv_pair_fmt(kv, "checksum", digest_str);
+		kv_pair_print(kv);
+
+		kv_pair_free(kv);
+		free(digest_str);
+		munmap(blob, s.st_size);
+	}
 
 	for (eeprom = intf->cb->eeprom->eeprom_list;
 	     eeprom && eeprom->name;
@@ -269,7 +313,8 @@ static int eeprom_csum_cmd(struct platform_intf *intf,
 		free(image);
 	}
 
-	return 0;
+eeprom_csum_cmd_exit:
+	return rc;
 }
 
 static int eeprom_dump_cmd(struct platform_intf *intf,
@@ -465,8 +510,7 @@ struct platform_cmd eeprom_cmds[] = {
 	{
 		.name	= "csum",
 		.desc	= "Print sha1 checksum",
-		/* FIXME: add file argument */
-		.usage	= "mosys eeprom csum <eeprom>",
+		.usage	= "mosys eeprom csum <eeprom/filename>",
 		.type	= ARG_TYPE_GETTER,
 		.arg	= { .func = eeprom_csum_cmd }
 	},

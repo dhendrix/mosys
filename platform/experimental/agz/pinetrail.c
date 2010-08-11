@@ -34,7 +34,6 @@ static const char *probed_platform_id;
 
 const char *agz_pinetrail_id_list[] = {
 	"AGZ",
-	"Pinetrail",
 	NULL
 };
 
@@ -144,7 +143,7 @@ struct platform_cb agz_pinetrail_cb = {
 
 struct platform_intf platform_agz_pinetrail = {
 	.type		= PLATFORM_X86_64,
-	.name		= "Pinetrail",
+	.name		= "AGZ",
 	.id_list	= agz_pinetrail_id_list,
 	.sub		= agz_pinetrail_sub,
 	.cb		= &agz_pinetrail_cb,

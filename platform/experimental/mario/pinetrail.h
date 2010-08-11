@@ -14,40 +14,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
- *
- * All you should need to do to link in a new platform is to hook it in
- * here.
  */
-#include <stdlib.h>
 
+#ifndef MARIO_PINETRAIL_H__
+#define MARIO_PINETRAIL_H__
+
+#include <inttypes.h>
 #include "mosys/platform.h"
 
-/* default */
-extern struct platform_intf platform_default_x86;
+/* platform callbacks */
+extern struct eeprom_cb mario_pinetrail_eeprom_cb;	/* eeprom.c */
+extern struct sysinfo_cb mario_pinetrail_sysinfo_cb;	/* sysinfo.c */
+extern struct vpd_cb mario_pinetrail_vpd_cb;		/* vpd.c */
+extern struct nvram_cb mario_pinetrail_nvram_cb;	/* nvram.c */
 
-/* experimental */
-extern struct platform_intf platform_agz_pinetrail;
-extern struct platform_intf platform_mario_pinetrail;
+/* functions called by setup routines */
+extern int mario_pinetrail_vpd_setup(struct platform_intf *intf);
+extern int mario_pinetrail_eeprom_setup(struct platform_intf *intf);
 
-/* hp */
-extern struct platform_intf platform_hp_z600;
-
-struct platform_intf *platform_intf_list[] = {
-#ifdef CONFIG_HP_Z600
-	&platform_hp_z600,
-#endif
-
-	/* experimental platforms */
-#ifdef CONFIG_EXPERIMENTAL_AGZ
-	&platform_agz_pinetrail,
-#endif
-#ifdef CONFIG_EXPERIMENTAL_MARIO
-	&platform_mario_pinetrail,
-#endif
-
-	/* place default platform last */
-#ifdef CONFIG_DEFAULT_X86
-	&platform_default_x86,
-#endif
-	NULL
-};
+#endif /* MARIO_PINETRAIL_H_ */

@@ -58,6 +58,7 @@ struct smbios_table_bios {
 	uint8_t release_date;
 	uint8_t rom_size_64k_blocks;
 	uint32_t characteristics;
+	uint8_t unused[4];	/* unused bytes */
 	uint8_t extension[2];	/* v2.4+ */
 	uint8_t major_ver;	/* v2.4+ */
 	uint8_t minor_ver;	/* v2.4+ */

@@ -17,12 +17,14 @@
  */
 
 #include <stdlib.h>
+#include <unistd.h>
 
 #include "mosys/command_list.h"
 #include "mosys/platform.h"
 #include "mosys/intf_list.h"
 #include "mosys/log.h"
 
+#include "lib/file.h"
 #include "lib/smbios.h"
 #include "lib/vpd.h"
 
@@ -46,11 +48,36 @@ struct platform_cmd *agz_pinetrail_sub[] = {
 	NULL
 };
 
+static char agz_hwid[] = "{9707217C-7943-4376-A812-FA05C318A16F}";
 const char *agz_pinetrail_probe(struct platform_intf *intf)
 {
+	int fd;
+	char *buf;
+
 	if (probed_platform_id)
 		return probed_platform_id;
 
+	/*
+	 * AGZ is using an experimental identifier called the "HWID". It's a
+	 * GUID that is found somewhere in ACPI space and exposed via sysfs.
+	 */
+	fd = file_open("/sys/devices/platform/chromeos_acpi/HWID", FILE_READ);
+	buf = malloc(strlen(agz_hwid));
+	if (read(fd, buf, strlen(agz_hwid)) < 0) {
+		lprintf(LOG_DEBUG, "%s: Could not open ACPI HWID\n", __func__);
+		free(buf);
+		return NULL;
+	}
+	lprintf(LOG_DEBUG, "%s: HWID: %s\n", __func__, buf);
+	if (!strcmp(buf, agz_hwid)) {
+		/* FIXME: this basically just assigns a human-readable name
+		   to the platform */
+		lprintf(LOG_DEBUG, "%s: Matched ACPI HWID\n", __func__);
+		probed_platform_id = strdup(agz_pinetrail_id_list[0]);
+	}
+	free(buf);
+
+#if 0
 	/*
 	 * The pinetrail reference platform uses the model presented in the
 	 * SMBIOS type 1 table for identification. For this string to be
@@ -75,6 +102,7 @@ const char *agz_pinetrail_probe(struct platform_intf *intf)
 		                                       SMBIOS_LEGACY_ENTRY_BASE,
 		                                       SMBIOS_LEGACY_ENTRY_LEN);
 	}
+#endif
 
 	return probed_platform_id;
 }

@@ -306,7 +306,7 @@ int vpd_append_type127(uint16_t handle, uint8_t **buf, size_t len)
 	struct vpd_table_eot *data;
 	size_t total_len, struct_len;
 
-	struct_len = sizeof(struct vpd_table_eot) + 2;
+	struct_len = sizeof(struct vpd_table_eot) + 2;	/* double terminator */
 	total_len = len + struct_len;
 	*buf = realloc(*buf, total_len);
 
@@ -315,7 +315,7 @@ int vpd_append_type127(uint16_t handle, uint8_t **buf, size_t len)
 	data->header.length = sizeof(*data);
 	data->header.handle = handle;
 
-	memset(*buf + struct_len, 0, 2);	/* double terminator */
+	memset(*buf + len + sizeof(*data), 0, 2);	/* double terminator */
 
 	return total_len;
 }

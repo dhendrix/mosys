@@ -29,7 +29,8 @@
 #include "mosys/alloc.h"
 #include "mosys/kv_pair.h"
 #include "mosys/log.h"
-#include "mosys/string.h"
+
+#include "lib/string.h"
 
 #include "ethtool-util.h"
 

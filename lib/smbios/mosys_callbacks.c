@@ -26,11 +26,11 @@
 #include "mosys/list.h"
 #include "mosys/log.h"
 #include "mosys/platform.h"
-#include "mosys/string.h"
 
 #include "lib/file.h"
 #include "lib/smbios.h"
 #include "lib/smbios_tables.h"
+#include "lib/string.h"
 
 #define	SYSFS_SMBIOS_DIR	"/sys/class/dmi/id"
 

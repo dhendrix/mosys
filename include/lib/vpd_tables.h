@@ -21,7 +21,7 @@
 
 #include <inttypes.h>
 
-#include "mosys/string.h"
+#include "lib/string.h"
 
 #define VPD_ENTRY_MAGIC		"_SM_"
 

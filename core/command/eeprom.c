@@ -36,6 +36,7 @@
 #include "lib/eeprom.h"
 #include "lib/file.h"
 #include "lib/fmap.h"
+#include "lib/string.h"
 #include "lib/string_builder.h"
 
 static int eeprom_enet_info_cmd(struct platform_intf *intf,

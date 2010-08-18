@@ -31,10 +31,10 @@
 #include "mosys/log.h"
 #include "mosys/platform.h"
 #include "mosys/output.h"
-#include "mosys/string.h"
 
 #include "intf/mmio.h"
 
+#include "lib/string.h"
 #include "lib/vpd.h"
 
 #include "binary_blob.h"

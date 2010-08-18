@@ -21,8 +21,8 @@
 
 #include "mosys/alloc.h"
 #include "mosys/platform.h"
-#include "mosys/string.h"
 
+#include "lib/string.h"
 #include "lib/vpd.h"
 #include "lib/vpd_tables.h"
 

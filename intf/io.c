@@ -29,7 +29,8 @@
 #include "mosys/globals.h"
 #include "mosys/log.h"
 #include "mosys/platform.h"
-#include "mosys/string.h"
+
+#include "lib/string.h"
 
 #include "intf/io.h"
 

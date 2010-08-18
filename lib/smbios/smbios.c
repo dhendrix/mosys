@@ -31,11 +31,11 @@
 #include "mosys/log.h"
 #include "mosys/platform.h"
 #include "mosys/output.h"
-#include "mosys/string.h"
 
 #include "intf/mmio.h"
 
 #include "lib/smbios.h"
+#include "lib/string.h"
 
 /* Iterator used for table parsing */
 struct smbios_iterator {

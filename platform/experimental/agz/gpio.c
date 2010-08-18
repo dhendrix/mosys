@@ -23,12 +23,13 @@
 #include <inttypes.h>
 
 #include "mosys/platform.h"
-#include "mosys/string.h"
 #include "mosys/log.h"
 #include "mosys/kv_pair.h"
 
 #include "intf/pci.h"
 #include "intf/io.h"
+
+#include "lib/string.h"
 
 #include "pinetrail.h"
 

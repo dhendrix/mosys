@@ -32,9 +32,10 @@
 #include "mosys/log.h"
 #include "mosys/output.h"
 #include "mosys/platform.h"
-#include "mosys/string.h"
 
 #include "intf/mmio.h"
+
+#include "lib/string.h"
 
 inline struct file_backed_range *
 mmio_ranges(struct platform_intf *intf)

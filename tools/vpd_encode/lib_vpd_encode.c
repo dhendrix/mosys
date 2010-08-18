@@ -16,9 +16,9 @@
 #include <uuid/uuid.h>
 
 #include "mosys/log.h"
-#include "mosys/string.h"
 
 #include "lib/math.h"
+#include "lib/string.h"
 #include "lib/vpd.h"
 #include "lib/vpd_tables.h"
 

@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef MOSYS_EEPROM_ENET_H__
-#define MOSYS_EEPROM_ENET_H__
+#ifndef MOSYS_LIB_EEPROM_ENET_H__
+#define MOSYS_LIB_EEPROM_ENET_H__
 
 #include <stdint.h>
 //#include <linux/if.h>
@@ -52,4 +52,4 @@ enum EEPROM_ENET_MODES {
 #endif
 };
 
-#endif /* MOSYS_EEPROM_ENET_H__ */
+#endif /* MOSYS_LIB_EEPROM_ENET_H__ */

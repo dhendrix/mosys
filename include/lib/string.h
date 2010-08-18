@@ -33,8 +33,8 @@
  * String helper functions.
  */
 
-#ifndef LIB_STRING_H_
-#define LIB_STRING_H_
+#ifndef MOSYS_LIB_STRING_H_
+#define MOSYS_LIB_STRING_H_
 
 /* FIXME: Should we #include string_builder.h and valstr.h here? */
 
@@ -84,4 +84,4 @@ extern char *strfield(const char *str, char delim, int n);
 # define __maxlen(a, b) ({ int x=strlen(a); int y=strlen(b); (x > y) ? x : y;})
 #endif
 
-#endif /* LIB_STRING_H_ */
+#endif /* MOSYS_LIB_STRING_H_ */

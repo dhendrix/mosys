@@ -21,8 +21,8 @@
  * generating/handling routines that are used frequently.
  */
 
-#ifndef LIB_STRING_BUILDER_H_
-#define LIB_STRING_BUILDER_H_
+#ifndef MOSYS_LIB_STRING_BUILDER_H_
+#define MOSYS_LIB_STRING_BUILDER_H_
 
 #include <stdarg.h>
 
@@ -168,4 +168,4 @@ extern int string_builder_add_hexstring(struct string_builder *str_builder,
 extern const char *string_builder_get_string(
                        struct string_builder *str_builder);
 
-#endif /* LIB_STRING_BUILDER_H_ */
+#endif /* MOSYS_LIB_STRING_BUILDER_H_ */

@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef MOSYS_MATH_H__
-#define MOSYS_MATH_H__
+#ifndef MOSYS_LIB_MATH_H__
+#define MOSYS_LIB_MATH_H__
 
 #include <inttypes.h>
 #include <sys/types.h>
@@ -77,4 +77,4 @@ extern uint8_t zero8_csum(uint8_t *buf, size_t len);
 # define __abs(x) (x < 0 ? -x : x)
 #endif
 
-#endif /* MOSYS_MATH_H__ */
+#endif /* MOSYS_LIB_MATH_H__ */

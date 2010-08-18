@@ -33,5 +33,5 @@ obj-y		+= file/
 obj-y		+= fmap/
 obj-y		+= math/
 obj-y		+= smbios/
-obj-y		+= string_builder/
+obj-y		+= string/
 obj-y		+= vpd/

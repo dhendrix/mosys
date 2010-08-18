@@ -54,7 +54,7 @@ static void usage(void)
 int main(int argc, char *argv[])
 {
 	int fd, rc = EXIT_SUCCESS;
-	char *outfile = CONFIG_VPD_OUTFILE;
+	char outfile[] = CONFIG_VPD_OUTFILE;
 	int argflag;
 	int verbose = 0;
 	struct vpd_entry *eps = NULL;

@@ -466,7 +466,8 @@ struct blob_handler blob_handlers[] = {
 	{ NULL },
 };
 
-extern int vpd_print_blob(struct kv_pair *kv, struct vpd_table *table)
+extern int vpd_print_blob(struct platform_intf *intf,
+                          struct kv_pair *kv, struct vpd_table *table)
 {
 	struct blob_handler *handler;
 	char s[37];
@@ -482,15 +483,24 @@ extern int vpd_print_blob(struct kv_pair *kv, struct vpd_table *table)
 	}
 
 	if (handler && handler->print) {
-		uint8_t *blob = (uint8_t *)(vpd_rom_base +
-		                            table->data.blob.offset);
+		uint8_t *blob = mosys_malloc(table->data.blob.size);
+		
+		if (mmio_read(intf, vpd_rom_base + table->data.blob.offset,
+		              table->data.blob.size, blob) < 0) {
+			lprintf(LOG_DEBUG, "%s: cannot map %lu bytes at offset "
+					   "%lu\n", table->data.blob.offset,
+					   table->data.blob.size);
+			rc = -1;
+		} else {
+			lprintf(LOG_DEBUG, "%s: blob offset: 0x%x, blob size: "
+			                   "%u\n", __func__,
+			                   table->data.blob.offset,
+			                   table->data.blob.size);
 
-		lprintf(LOG_DEBUG, "%s: blob offset: 0x%x, blob size: %u\n",
-			           __func__,
-			           table->data.blob.offset,
-		                   table->data.blob.size);
+			rc = handler->print(blob, table->data.blob.size, kv);
+		}
 
-		rc = handler->print(blob, table->data.blob.size, kv);
+		free(blob);
 	} else {
 		lprintf(LOG_DEBUG, "%s: no suitable handler found\n");
 	}

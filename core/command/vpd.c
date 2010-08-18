@@ -157,7 +157,7 @@ static int vpd_print_blobs_cmd(struct platform_intf *intf,
 		kv_pair_fmt(kv, "size", "%d", table.data.blob.size);
 		kv_pair_add(kv, "units", "bytes");
 
-		vpd_print_blob(kv, &table);
+		vpd_print_blob(intf, kv, &table);
 
 		kv_pair_print(kv);
 		kv_pair_free(kv);

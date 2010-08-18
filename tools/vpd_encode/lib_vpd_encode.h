@@ -17,8 +17,13 @@
  *
  */
 
+#ifndef VPD_ENCODE_VENDOR_BLOBS_H__
+#define VPD_ENCODE_VENDOR_BLOBS_H__
+
 extern struct vpd_entry *vpd_create_eps(uint16_t structure_table_len,
                                         uint16_t num_structures);
 extern int vpd_append_type0(uint16_t handle, uint8_t **buf, size_t len);
 extern int vpd_append_type1(uint16_t handle, uint8_t **buf, size_t len);
 extern int vpd_append_type127(uint16_t handle, uint8_t **buf, size_t len);
+
+#endif	/* VPD_ENCODE_VENDOR_BLOBS_H__ */

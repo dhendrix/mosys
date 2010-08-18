@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
 	uint8_t *table = NULL;		/* the structure table */
 	int table_len = 0, num_structures = 0;
 
-	while ((argflag = getopt(argc, argv, "vh")) > 0) {
+	while ((argflag = getopt(argc, argv, "vVh")) > 0) {
 		switch (argflag) {
 		case 'v':
 			verbose++;

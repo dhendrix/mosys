@@ -253,7 +253,7 @@ int nstr2buf(uint8_t **buf, const char *str, int base, const char *delim)
 				lprintf(LOG_ERR, "invalid character: "
 				                 "\'%c\'\n", c[0]);
 				err = 1;
-				goto str2buf_exit;
+				goto nstr2buf_exit;
 			} else {
 				continue;
 			}
@@ -284,7 +284,7 @@ int nstr2buf(uint8_t **buf, const char *str, int base, const char *delim)
 	memset(*buf, 0, tmp_idx);
 	memcpy(*buf, tmp, tmp_idx);
 
-str2buf_exit:
+nstr2buf_exit:
 	free(tmp);
 	if (err)
 		return -1;

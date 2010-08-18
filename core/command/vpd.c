@@ -157,7 +157,6 @@ static int vpd_print_blobs_cmd(struct platform_intf *intf,
 		            table.string[table.data.blob.description]);
 		kv_pair_fmt(kv, "offset", "0x%08x", table.data.blob.offset);
 		kv_pair_fmt(kv, "size", "%d", table.data.blob.size);
-		kv_pair_add(kv, "units", "bytes");
 
 		vpd_print_blob(intf, blob_kv, &table);
 

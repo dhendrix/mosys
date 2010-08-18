@@ -36,6 +36,8 @@
 #ifndef MOSYS_LIB_STRING_H_
 #define MOSYS_LIB_STRING_H_
 
+#include <inttypes.h>
+
 /* FIXME: Should we #include string_builder.h and valstr.h here? */
 
 /*

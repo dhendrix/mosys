@@ -35,5 +35,4 @@
 #include "mosys/log.h"
 
 #include "lib/vpd_tables.h"
-
-#include "binary_blob.h"
+#include "lib/vpd_binary_blob.h"

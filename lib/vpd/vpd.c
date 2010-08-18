@@ -36,8 +36,7 @@
 
 #include "lib/string.h"
 #include "lib/vpd.h"
-
-#include "binary_blob.h"
+#include "lib/vpd_binary_blob.h"
 
 /*
  * These represent the memory-mapped address space which the VPD

@@ -27,12 +27,12 @@
 #include "mosys/globals.h"
 #include "mosys/platform.h"
 #include "mosys/output.h"
-#include "mosys/string.h"
 
 #include "intf/mmio.h"
 
 #include "lib/common.h"
 #include "lib/smbios.h"
+#include "lib/valstr.h"
 
 struct smbios_eventlog_iterator {
 	int verbose;

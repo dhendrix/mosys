@@ -48,11 +48,11 @@
 #include "mosys/alloc.h"
 #include "mosys/kv_pair.h"
 #include "mosys/log.h"
-#include "mosys/string.h"
 
 #include "lib/crypto.h"
 #include "lib/fmap.h"
 #include "lib/string_builder.h"
+#include "lib/valstr.h"
 
 static const struct valstr flag_lut[] = {
 	{ 1 << 0, "static" },

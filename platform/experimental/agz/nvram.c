@@ -24,11 +24,11 @@
 #include "mosys/log.h"
 #include "mosys/platform.h"
 #include "mosys/output.h"
-#include "mosys/string.h"
 
 #include "intf/io.h"
 
 #include "lib/math.h"
+#include "lib/valstr.h"
 
 enum cmos_device {
 	CMOS_DEVICE_NM10,

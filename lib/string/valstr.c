@@ -30,7 +30,7 @@
  * LIABILITY, ARISING OUT OF THE USE OF OR INABILITY TO USE THIS SOFTWARE,
  * EVEN IF SUN HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
  *
- * string.c: string utilities
+ * valstr.c: value-string library
  */
 
 #include <stdlib.h>
@@ -40,8 +40,7 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "mosys/alloc.h"
-#include "mosys/string.h"
+#include "lib/valstr.h"
 
 /*
  * val2str_default  -  convert value to string

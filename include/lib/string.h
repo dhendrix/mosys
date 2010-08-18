@@ -36,7 +36,7 @@
 #ifndef LIB_STRING_H_
 #define LIB_STRING_H_
 
-/* FIXME: Should we #include string_builder.h here? */
+/* FIXME: Should we #include string_builder.h and valstr.h here? */
 
 /*
  * convert an array of bytes to a hexadecimal string (no prefix)

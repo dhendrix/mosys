@@ -42,4 +42,3 @@ obj-y		+= list.o
 obj-y		+= log.o
 obj-y		+= output.o
 obj-y		+= platform.o
-obj-y		+= string.o

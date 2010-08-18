@@ -28,8 +28,8 @@
  * EVEN IF SUN HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
  */
 
-#ifndef MOSYS_STRING_H__
-#define MOSYS_STRING_H__
+#ifndef MOSYS_VALSTR_H__
+#define MOSYS_VALSTR_H__
 
 #include <inttypes.h>
 
@@ -51,4 +51,4 @@ extern const char *val2str_default(uint32_t val, const struct valstr *vs,
  */
 extern uint32_t str2val(const char *str, const struct valstr *vs);
 
-#endif /* MOSYS_STRING_H__ */
+#endif /* MOSYS_VALSTR__ */

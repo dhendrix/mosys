@@ -23,10 +23,10 @@
 #include "mosys/log.h"
 #include "mosys/kv_pair.h"
 #include "mosys/platform.h"
-#include "mosys/string.h"
 
 #include "lib/smbios.h"
 #include "lib/smbios_tables.h"
+#include "lib/valstr.h"
 
 static int smbios_get_cmd(struct platform_intf *intf,
 			  struct platform_cmd *cmd, int argc, char **argv)

@@ -30,7 +30,6 @@
 #include "mosys/log.h"
 #include "mosys/output.h"
 #include "mosys/kv_pair.h"
-#include "mosys/string.h"
 
 #include "lib/crypto.h"
 #include "lib/eeprom.h"
@@ -38,6 +37,7 @@
 #include "lib/fmap.h"
 #include "lib/string.h"
 #include "lib/string_builder.h"
+#include "lib/valstr.h"
 
 static int eeprom_enet_info_cmd(struct platform_intf *intf,
                                 struct platform_cmd *cmd, int argc, char **argv)

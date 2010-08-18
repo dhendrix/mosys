@@ -30,6 +30,9 @@
  * vpd_binary_blob.h: helper functions for handling binary blobs
  */
 
+#ifndef MOSYS_LIB_VPD_BINARY_BLOB_H__
+#define MOSYS_LIB_VPD_BINARY_BLOB_H__
+
 #include <uuid/uuid.h>
 
 #include "mosys/kv_pair.h"
@@ -38,3 +41,5 @@ struct blob_handler {
 	unsigned char *uuid;	/* string representation of UUID */
 	int (*print)(uint8_t *blob, uint32_t size, struct kv_pair *kv);
 };
+
+#endif	/* MOSYS_LIB_VPD_BINARY_BLOB_H__ */

@@ -476,29 +476,24 @@ extern int vpd_print_blob(struct kv_pair *kv, struct vpd_table *table)
 	uuid_unparse(table->data.blob.uuid, s);
 
 	for (handler = &blob_handlers[0]; handler && handler->print; handler++) {
-		/* FIXME: superfluous debug prints */
-		lprintf(LOG_DEBUG, "hander->uuid: %s\n", handler->uuid);
-		lprintf(LOG_DEBUG, "table.data.blob.uuid: %s\n", s);
-		        
 		if (!strcmp(handler->uuid, s)) {
 			lprintf(LOG_DEBUG, "found matching uuid\n");
-
 			break;
 		}
 	}
-
 
 	if (handler && handler->print) {
 		uint8_t *blob = (uint8_t *)(vpd_rom_base +
 		                            table->data.blob.offset);
 
-		lprintf(LOG_DEBUG, "blob offset: 0x%x, blob size: %u, "
-		                   "blob: %p\n",
+		lprintf(LOG_DEBUG, "%s: blob offset: 0x%x, blob size: %u\n",
+			           __func__,
 			           table->data.blob.offset,
-		                   table->data.blob.size,
-		                   blob);
+		                   table->data.blob.size);
 
 		rc = handler->print(blob, table->data.blob.size, kv);
+	} else {
+		lprintf(LOG_DEBUG, "%s: no suitable handler found\n");
 	}
 
 	return rc;

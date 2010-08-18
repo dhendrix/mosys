@@ -52,7 +52,7 @@ static int create_agz_blob_v3(uint8_t **buf)
 	struct agz_blob_0_3 *blob;
 	int len = sizeof(struct agz_blob_0_3);
 	unsigned char *tmpstr;
-	int i, tmplen;
+	int tmplen;
 
 	/* FIXME: Add sanity checking */
 	*buf = realloc(*buf, len);
@@ -136,7 +136,6 @@ int build_agz_vendor_blob(int version)
 	int rc = 0;
 	int fd;
 	int len = -1;
-	int i;
 	uint8_t *buf = NULL;
 
 	fd = open(outfile, O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);

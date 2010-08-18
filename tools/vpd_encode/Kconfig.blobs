@@ -1,0 +1,8 @@
+#
+# Binary Blob Configuration
+#
+
+menu "Binary Blob Configuration"
+	depends on BUILD_VPD
+
+endmenu # Binary Blob Configuration

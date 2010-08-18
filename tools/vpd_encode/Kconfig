@@ -24,5 +24,6 @@ source "tools/vpd_encode/Kconfig.entry"
 source "tools/vpd_encode/Kconfig.type0"
 source "tools/vpd_encode/Kconfig.type1"
 source "tools/vpd_encode/Kconfig.type241"
+source "tools/vpd_encode/Kconfig.blobs"
 
 endmenu

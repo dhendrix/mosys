@@ -41,6 +41,7 @@
 #include <stdio.h>
 
 #include "mosys/alloc.h"
+#include "mosys/log.h"
 
 #include "lib/string.h"
 
@@ -205,4 +206,87 @@ void rshift_nibbles(uint8_t array[], size_t len)
 		else
 			array[i] = (array[i - 1] << 4) | (array[i] >> 4);
 	}
+}
+
+/**
+ * nstr2buf - convert a string of numerical characters into binary form
+ *
+ * @buf: 	buffer to store result
+ * @str:	null-terminated string to convert
+ * @base:	number base to convert to, range is 2 to 16
+ * @delim:	string containing all delimiting characters
+ *
+ * This function will store the content of the provided string into a buffer.
+ * Delimiting characters will be left out of the result. This is essentially
+ * a glorified wrapper around strtoul().
+ *
+ * returns length of buffer if successful
+ * returns <0 to indicate error
+ */
+int nstr2buf(uint8_t **buf, const char *str, int base, const char *delim)
+{
+	unsigned char c[2] = { '\0', '\0' };
+	unsigned long int digit;
+	int str_idx, tmp_idx, len, err = 0;
+	char *endptr;
+	uint8_t *tmp;
+	enum {
+		low,
+		high,
+	} nibble = high;
+
+	if (!str || ((base < 2) || (base > 16)))
+		return -1;
+
+	len = strlen(str);
+	tmp = mosys_malloc(len);	/* more than we need */
+	memset(tmp, 0, len);
+
+	tmp_idx = 0;
+	for (str_idx = 0; str_idx < len; str_idx++) {
+		c[0] = str[str_idx];
+
+		digit = strtol(c, &endptr, base);
+		if (*endptr != '\0') {
+			/* perhaps we hit a delimiter? */
+			if (!strpbrk(&c[0], delim)) {
+				lprintf(LOG_ERR, "invalid character: "
+				                 "\'%c\'\n", c[0]);
+				err = 1;
+				goto str2buf_exit;
+			} else {
+				continue;
+			}
+		}
+
+		/* FIXME: superfluous debug print */
+		//lprintf(LOG_DEBUG, "%s: str_idx: %d, char: \'%c\'\n",
+		//                   __func__, str_idx, c[0]);
+		if (nibble == high) {
+			tmp[tmp_idx] |= digit << 4;
+			nibble = low;
+		} else {
+			tmp[tmp_idx] |= digit;
+			nibble = high;
+			tmp_idx++;
+		}
+	}
+
+	/* if we ended the loop with nibble == low, then we must ensure
+	 * that the final byte is counted and align the array */
+	if (nibble == low) {
+		tmp_idx++;
+		rshift_nibbles(tmp, tmp_idx);
+	}
+
+	/* tmp_idx represents the actual length of the buffer */
+	*buf = mosys_malloc(tmp_idx);
+	memset(*buf, 0, tmp_idx);
+	memcpy(*buf, tmp, tmp_idx);
+
+str2buf_exit:
+	free(tmp);
+	if (err)
+		return -1;
+	return tmp_idx;
 }

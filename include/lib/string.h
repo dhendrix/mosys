@@ -65,15 +65,33 @@ extern int find_pattern(void *haystack, size_t haystack_length,
                         size_t align, size_t *offset);
 
 /*
+ * Right-shift nibbles in a given by 1 (4 bits)
+ */
+extern void rshift_nibbles(uint8_t array[], size_t len);
+
+/*
  * Return a pointer to a dynamically allocated string representing the nth
  * field, delimited by delim, in str.
  */
 extern char *strfield(const char *str, char delim, int n);
 
-/*
- * Right-shift nibbles in a given by 1 (4 bits)
+/**
+ * nstr2buf - convert a string of numerical characters into binary form
+ *
+ * @buf: 	buffer to store result
+ * @str:	null-terminated string to convert
+ * @base:	number base to convert to, range is 2 to 16
+ * @delim:	string containing all delimiting characters
+ *
+ * This function will store the content of the provided string into a buffer.
+ * Delimiting characters will be left out of the result. This is essentially
+ * a glorified wrapper around strtoul().
+ *
+ * returns length of buffer if successful
+ * returns <0 to indicate error
  */
-extern void rshift_nibbles(uint8_t array[], size_t len);
+extern int nstr2buf(uint8_t **buf, const char *str,
+                    int base, const char *delim);
 
 /*
  * Find the min-length string.

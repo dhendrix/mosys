@@ -28,5 +28,5 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # Note: vpd_encode.c contains main() and will be compiled at the end
-
+# via the top-level Makefile
 obj-$(CONFIG_BUILD_VPD)			+= lib_vpd_encode.o

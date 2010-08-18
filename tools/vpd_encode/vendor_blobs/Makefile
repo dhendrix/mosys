@@ -27,9 +27,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Visit subdirectories first
-obj-y					+= vendor_blobs/
-
 # Note: vpd_encode.c contains main() and will be compiled at the end
-# via the top-level Makefile
-obj-$(CONFIG_BUILD_VPD)			+= lib_vpd_encode.o
+
+obj-$(CONFIG_BUILD_AGZ_VENDOR_VPD_BLOB)		+= agz_blob.o

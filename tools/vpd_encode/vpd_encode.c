@@ -35,6 +35,7 @@
 #include "lib/vpd.h"
 
 #include "lib_vpd_encode.h"
+#include "vendor_blobs/vendor_blobs.h"
 
 #ifndef CONFIG_VPD_OUTFILE
 #define CONFIG_VPD_OUTFILE	"vpd.bin"
@@ -78,6 +79,10 @@ int main(int argc, char *argv[])
 	}
 
 	mosys_log_init(PROGRAM, CONFIG_LOGLEVEL+verbose, NULL);
+
+#ifdef CONFIG_BUILD_AGZ_VENDOR_VPD_BLOB
+	build_agz_vendor_blob(3);
+#endif
 
 	fd = open(outfile, O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
 	if (fd < 0) {

@@ -137,7 +137,7 @@ static int vpd_print_blobs_cmd(struct platform_intf *intf,
                                int argc, char **argv)
 {
 	struct vpd_table table;
-	struct kv_pair *kv;
+	struct kv_pair *kv, *blob_kv;
 	int i;
 
 	for (i = 0; i < 0xffff; i++) {
@@ -148,6 +148,8 @@ static int vpd_print_blobs_cmd(struct platform_intf *intf,
 		}
 
 		kv = kv_pair_new();
+		blob_kv = kv_pair_new();
+
 		kv_pair_fmt(kv, "table_type", "%d", table.header.type);
 		kv_pair_add(kv, "vendor",
 			    table.string[table.data.blob.vendor]);
@@ -157,10 +159,12 @@ static int vpd_print_blobs_cmd(struct platform_intf *intf,
 		kv_pair_fmt(kv, "size", "%d", table.data.blob.size);
 		kv_pair_add(kv, "units", "bytes");
 
-		vpd_print_blob(intf, kv, &table);
+		vpd_print_blob(intf, blob_kv, &table);
 
 		kv_pair_print(kv);
 		kv_pair_free(kv);
+		kv_pair_print(blob_kv);
+		kv_pair_free(blob_kv);
 	}
 
 	return 0;

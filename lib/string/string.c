@@ -194,3 +194,15 @@ char *strfield(const char *str, char delim, int n)
 	free(mystr);
 	return ret;
 }
+
+void rshift_nibbles(uint8_t array[], size_t len)
+{
+	int i;
+
+	for (i = len; i >= 0; i--) {
+		if (i == 0)
+			array[i] = array[i] >> 4;
+		else
+			array[i] = (array[i - 1] << 4) | (array[i] >> 4);
+	}
+}

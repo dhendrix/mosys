@@ -71,6 +71,11 @@ extern int find_pattern(void *haystack, size_t haystack_length,
 extern char *strfield(const char *str, char delim, int n);
 
 /*
+ * Right-shift nibbles in a given by 1 (4 bits)
+ */
+extern void rshift_nibbles(uint8_t array[], size_t len);
+
+/*
  * Find the min-length string.
  */
 #ifndef __minlen

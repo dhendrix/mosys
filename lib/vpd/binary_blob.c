@@ -73,6 +73,10 @@ int print_agz_blob(uint8_t *data, uint32_t size, struct kv_pair *kv)
 	kv_pair_add(kv, "3g_esn", tmpstr);
 	free(tmpstr);
 
+	tmpstr = buf2nicid(agz_blob->wlan_mac_id, NIC_ID_IEEE802);
+	kv_pair_add(kv, "wlan_macid", tmpstr);
+	free(tmpstr);
+
 	snprintf(s, sizeof(agz_blob->country_code) + 1,
 	         "%s", agz_blob->country_code);
 	kv_pair_add(kv, "country_code", s);

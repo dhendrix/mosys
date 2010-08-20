@@ -75,6 +75,14 @@ extern int find_pattern(void *haystack, size_t haystack_length,
 extern void rshift_nibbles(uint8_t array[], size_t len);
 
 /*
+ * lshift_nibbles - Left-shift nibbles in an array by 1 (4 bits)
+ *
+ * @array:	array to shift
+ * @len:	length of array
+ */
+extern void lshift_nibbles(uint8_t array[], size_t len);
+
+/*
  * Return a pointer to a dynamically allocated string representing the nth
  * field, delimited by delim, in str.
  */

@@ -209,6 +209,19 @@ void rshift_nibbles(uint8_t array[], size_t len)
 	}
 }
 
+/* Left-shift nibbles in an array by 1 (4 bits) */
+void lshift_nibbles(uint8_t array[], size_t len)
+{
+	int i;
+
+	for (i = 0; i < len; i++) {
+		if (i == len - 1)
+			array[i] = array[i] << 4;
+		else
+			array[i] = (array[i + 1] >> 4) | (array[i] << 4);
+	}
+}
+
 /**
  * nstr2buf - convert a string of numerical characters into binary form
  *

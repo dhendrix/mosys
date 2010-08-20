@@ -43,7 +43,7 @@ int print_agz_blob(uint8_t *data, uint32_t size, struct kv_pair *kv)
 {
 	struct agz_blob_0_3 *agz_blob = data;
 	char s[37];
-	char *tmpstr;
+	char *s2;
 
 	if (size != sizeof(*agz_blob)) {
 		lprintf(LOG_DEBUG, "AGZ binary blob expected size: %lu, "
@@ -63,18 +63,18 @@ int print_agz_blob(uint8_t *data, uint32_t size, struct kv_pair *kv)
 	uuid_unparse(agz_blob->uuid, s);
 	kv_pair_add(kv, "product_uuid", s);
 
-	tmpstr = buf2str(agz_blob->motherboard_serial_number,
+	s2 = buf2str(agz_blob->motherboard_serial_number,
 	                 sizeof(agz_blob->motherboard_serial_number));
-	kv_pair_add(kv, "motherboard_serial_number", tmpstr);
-	free(tmpstr);
+	kv_pair_add(kv, "motherboard_serial_number", s2);
+	free(s2);
 
-	tmpstr = buf2nicid(agz_blob->esn_3g, NIC_ID_IMEI);
-	kv_pair_add(kv, "3g_esn", tmpstr);
-	free(tmpstr);
+	s2 = buf2nicid(agz_blob->esn_3g, NIC_ID_IMEI);
+	kv_pair_add(kv, "3g_esn", s2);
+	free(s2);
 
-	tmpstr = buf2nicid(agz_blob->wlan_mac_id, NIC_ID_IEEE802);
-	kv_pair_add(kv, "wlan_macid", tmpstr);
-	free(tmpstr);
+	s2 = buf2nicid(agz_blob->wlan_mac_id, NIC_ID_IEEE802);
+	kv_pair_add(kv, "wlan_macid", s2);
+	free(s2);
 
 	snprintf(s, sizeof(agz_blob->country_code) + 1,
 	         "%s", agz_blob->country_code);

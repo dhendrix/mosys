@@ -44,7 +44,6 @@ int print_agz_blob(uint8_t *data, uint32_t size, struct kv_pair *kv)
 	struct agz_blob_0_3 *agz_blob = data;
 	char s[37];
 	char *tmpstr;
-	int i;
 
 	if (size != sizeof(*agz_blob)) {
 		lprintf(LOG_DEBUG, "AGZ binary blob expected size: %lu, "

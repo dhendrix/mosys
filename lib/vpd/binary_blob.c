@@ -68,8 +68,7 @@ int print_agz_blob(uint8_t *data, uint32_t size, struct kv_pair *kv)
 	kv_pair_add(kv, "motherboard_serial_number", tmpstr);
 	free(tmpstr);
 
-	tmpstr = buf2str(agz_blob->esn_3g,
-	                 sizeof(agz_blob->esn_3g));
+	tmpstr = buf2nicid(agz_blob->esn_3g, NIC_ID_IMEI);
 	kv_pair_add(kv, "3g_esn", tmpstr);
 	free(tmpstr);
 

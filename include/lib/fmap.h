@@ -37,7 +37,6 @@
 #define MOSYS_LIB_FMAP_H__
 
 #include <inttypes.h>
-#include <gcrypt.h>
 
 #define FMAP_SIGNATURE		"__FMAP__"
 #define FMAP_VER_MAJOR		1	/* this header's FMAP minor version */

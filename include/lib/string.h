@@ -67,7 +67,10 @@ extern int find_pattern(void *haystack, size_t haystack_length,
                         size_t align, size_t *offset);
 
 /*
- * Right-shift nibbles in a given by 1 (4 bits)
+ * rshift_nibbles - Right-shift nibbles in an array by 1 (4 bits)
+ *
+ * @array:	array to shift
+ * @len:	length of array
  */
 extern void rshift_nibbles(uint8_t array[], size_t len);
 

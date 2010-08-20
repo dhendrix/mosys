@@ -196,6 +196,7 @@ char *strfield(const char *str, char delim, int n)
 	return ret;
 }
 
+/* Right-shift nibbles in an array by 1 (4 bits) */
 void rshift_nibbles(uint8_t array[], size_t len)
 {
 	int i;

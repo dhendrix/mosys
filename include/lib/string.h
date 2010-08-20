@@ -106,6 +106,37 @@ extern char *strfield(const char *str, char delim, int n);
 extern int nstr2buf(uint8_t **buf, const char *str,
                     int base, const char *delim);
 
+/* Network device ID types */
+enum nic_id_type {
+	NIC_ID_UNSPECIFIED = 0,
+	NIC_ID_IEEE802,
+	NIC_ID_IMEI,
+	NIC_ID_IMEISV,
+	NIC_ID_MEID,
+};
+
+/* Network device ID lengths */
+enum {
+	NIC_ID_IEEE802_LENGTH = 6,
+	NIC_ID_IMEI_LENGTH = 8,
+	NIC_ID_IMEISV_LENGTH = 8,
+	NIC_ID_MEID_LENGTH = 7,
+};
+
+ /**
+ * buf2nicid - Convert raw data to a formatted, null-terminated NIC ID string
+ *
+ * @data:	raw data
+ * @type:	type of network ID to produce from input buffer
+ *
+ * For IEEE802.x (MAC-48), output will be in the form "01:23:45:67:89:ab"
+ * For IMEI, output will be in the form "22-666666-666666-1"
+ *
+ * returns an allocated network device ID string if successful
+ * returns NULL to indicate failure
+ */
+extern char *buf2nicid(uint8_t *inbuf, enum nic_id_type type);
+
 /*
  * Find the min-length string.
  */

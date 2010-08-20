@@ -304,3 +304,52 @@ nstr2buf_exit:
 		return -1;
 	return tmp_idx;
 }
+
+/* returns an allocated buffer containing network device ID string if
+   successful, NULL otherwise */
+char *buf2nicid(uint8_t *inbuf, enum nic_id_type type)
+{
+	char *outbuf = NULL;
+
+	if (inbuf == NULL)
+		return NULL;
+
+	switch(type){
+	case NIC_ID_IEEE802:
+		/*
+		 * Each raw byte will contain two hex digits. We also need 5
+		 * bytes for semi-colons (':') and one for the terminator.
+		 */
+		outbuf = mosys_malloc((2 * NIC_ID_IEEE802_LENGTH) + 5 + 1);
+		sprintf(outbuf, "%02x:%02x:%02x:%02x:%02x:%02x",
+	                inbuf[0], inbuf[1], inbuf[2], inbuf[3], inbuf[4],
+			inbuf[5]);
+
+		break;
+	case NIC_ID_IMEI:{
+		int len = (2 * NIC_ID_IMEI_LENGTH) + 3 + 1;
+		unsigned char tmp[NIC_ID_IMEI_LENGTH];
+
+		/*
+		 * Each raw byte will contain two hex digits. We also need 3
+		 * bytes for dashes ('-') and one for the terminator.
+		 */
+		outbuf = mosys_malloc(len);
+
+		/* The IMEI is a strange format... We need to shift all nibbles
+		 * left by one and truncate one nibble from the check digit */
+		memcpy(&tmp[0], inbuf, NIC_ID_IMEI_LENGTH);
+		lshift_nibbles(tmp, NIC_ID_IMEI_LENGTH);
+		sprintf(outbuf, "%02x-%02x%02x%02x-%02x%02x%02x-%x",
+	                tmp[0], tmp[1], tmp[2], tmp[3], tmp[4],
+			tmp[5], tmp[6], tmp[7] >> 4);
+		break;
+	}
+	default:
+		lprintf(LOG_DEBUG, "%s: unsupported NIC ID type: %d\n",
+		                   __func__, type);
+		return NULL;
+	}
+
+	return outbuf;
+}

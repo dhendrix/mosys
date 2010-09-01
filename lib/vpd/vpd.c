@@ -463,7 +463,7 @@ char *vpd_find_string(struct platform_intf *intf,
 }
 
 struct blob_handler blob_handlers[] = {
-	{ "b9468091-ccd2-4b8b-8300-8cd8336a14f6", print_agz_blob },
+	{ "b9468091-ccd2-4b8b-8300-8cd8336a14f6", print_agz_blob_v3 },
 	{ NULL },
 };
 

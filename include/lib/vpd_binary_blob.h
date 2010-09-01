@@ -55,6 +55,6 @@ struct blob_handler {
 	int (*print)(uint8_t *blob, uint32_t size, struct kv_pair *kv);
 };
 
-int print_agz_blob(uint8_t *data, uint32_t size, struct kv_pair *kv);
+int print_agz_blob_v3(uint8_t *data, uint32_t size, struct kv_pair *kv);
 
 #endif	/* MOSYS_LIB_VPD_BINARY_BLOB_H__ */

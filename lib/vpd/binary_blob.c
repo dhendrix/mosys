@@ -39,7 +39,7 @@
 #include "lib/vpd_tables.h"
 #include "lib/vpd_binary_blob.h"
 
-int print_agz_blob(uint8_t *data, uint32_t size, struct kv_pair *kv)
+int print_agz_blob_v3(uint8_t *data, uint32_t size, struct kv_pair *kv)
 {
 	struct agz_blob_0_3 *agz_blob = data;
 	char s[37];

@@ -6,10 +6,10 @@ menu "Binary Blob Configuration"
 	depends on BUILD_VPD
 
 # Binary blob targets
-config BUILD_AGZ_VENDOR_VPD_BLOB
-	bool "Build AGZ blob"
+config BUILD_AGZ_VENDOR_VPD_BLOB_V3
+	bool "Build AGZ blob v3"
 	default n
 
-source "tools/vpd_encode/Kconfig.agz_blob"
+source "tools/vpd_encode/Kconfig.agz_blob_v3"
 
 endmenu # Binary Blob Configuration

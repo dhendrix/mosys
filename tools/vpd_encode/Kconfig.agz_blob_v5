@@ -1,0 +1,69 @@
+#
+# AGZ Blob Configuration (version 5)
+#
+
+menu "AGZ Blob Configuration (version 5)"
+	depends on BUILD_AGZ_VENDOR_VPD_BLOB_V5
+
+config AGZ_BLOB_V5_FILENAME
+	string "Output filename"
+	default "agz_blob_v5.bin"
+	help
+	  Output filename for AGZ blob
+
+config AGZ_BLOB_V5_PRODUCT_NAME
+	string "Product Name"
+	default "To be filled in"
+	help
+	  16 character freeform ASCII string
+	  Unused nibbles or bytes will be zero-filled (0h or 00h).
+
+config AGZ_BLOB_V5_PRODUCT_MFG
+	string "Product Manufacturer"
+	default "To be filled in"
+	help
+	  16 character freeform ASCII string
+	  Unused nibbles or bytes will be zero-filled (0h or 00h).
+
+config AGZ_BLOB_V5_UUID
+	string "UUID"
+	default "00000000-0000-0000-0000-000000000000"
+        help
+          128-bit UUID, obeying RFC4122 format.
+          Example: 0bf40e9f-e9e9-4c42-a39b-ee1c54a4359a
+
+config AGZ_BLOB_V5_MB_SERIAL_NUMBER
+	string "Motherboard Serial Number"
+	default "00112233445566778899aabbccddeeff"
+	help
+	  32 character freeform ASCII string.
+	  Unused nibbles or bytes will be zero-filled (0h or 00h).
+
+config AGZ_BLOB_V5_3G_ESN
+	string "3G ESN"
+	default "01234abcde"
+	help
+	  10-byte ESN (hex digits)
+	  Unused nibbles or bytes will be zero-filled (0h or 00h).
+
+config AGZ_BLOB_V5_LOCAL_COUNTRY_CODE
+	string "Local Country Code"
+	default "TBD"
+	help
+	  6 character freeform ASCII string
+	  Unused nibbles or bytes will be zero-filled (0h or 00h).
+
+config AGZ_BLOB_V5_WLAN_MAC_ADDRESS
+	string "WLAN MAC Address"
+	default "00:00:00:00:00:00"
+	help
+	  Format for IEEE802.x MAC Address: 01:23:45:67:89:ab
+
+config AGZ_BLOB_V5_PRODUCT_SERIAL_NUMBER
+	string "Product Serial Number"
+	default "To be filled in"
+	help
+	  22 character freeform ASCII string
+	  Unused nibbles or bytes will be zero-filled (0h or 00h).
+
+endmenu # AGZ Blob Configuration

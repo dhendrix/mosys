@@ -36,10 +36,6 @@
 
 #include "vendor_blobs.h"
 
-#ifndef CONFIG_AGZ_BLOB_FILENAME
-#define CONFIG_AGZ_BLOB_FILENAME	"agz_blob.bin"
-#endif
-
 /* build_agz_vendor_blob - Build binary blob in format specified by vendor
  *
  * @buf:	buffer in which to store the blob
@@ -59,23 +55,23 @@ static int create_agz_blob_v3(uint8_t **buf)
 	memset(*buf, 0, len);
 	blob = (struct agz_blob_0_3 *)*buf;
 
-#ifdef CONFIG_AGZ_BLOB_PRODUCT_NAME
-	tmpstr = format_string(CONFIG_AGZ_BLOB_PRODUCT_NAME);
+#ifdef CONFIG_AGZ_BLOB_V3_PRODUCT_NAME
+	tmpstr = format_string(CONFIG_AGZ_BLOB_V3_PRODUCT_NAME);
 	memcpy(&blob->product_name[0], tmpstr,
 	       __min(strlen(tmpstr), sizeof(blob->product_name)));
 	free(tmpstr);
 #endif
-#ifdef CONFIG_AGZ_BLOB_PRODUCT_MFG
-	tmpstr = format_string(CONFIG_AGZ_BLOB_PRODUCT_MFG);
+#ifdef CONFIG_AGZ_BLOB_V3_PRODUCT_MFG
+	tmpstr = format_string(CONFIG_AGZ_BLOB_V3_PRODUCT_MFG);
 	memcpy(&blob->product_manufacturer[0], tmpstr,
 	       __min(strlen(tmpstr), sizeof(blob->product_manufacturer)));
 	free(tmpstr);
 #endif
-#ifdef CONFIG_AGZ_BLOB_UUID
+#ifdef CONFIG_AGZ_BLOB_V3_UUID
 	{
 		uuid_t uu;
 
-		if (uuid_parse(CONFIG_AGZ_BLOB_UUID, uu) < 0) {
+		if (uuid_parse(CONFIG_AGZ_BLOB_V3_UUID, uu) < 0) {
 			lprintf(LOG_ERR, "%s: Invalid UUID specified\n");
 			return -1;
 		}
@@ -83,38 +79,38 @@ static int create_agz_blob_v3(uint8_t **buf)
 		memcpy(&blob->uuid, &uu, sizeof(uu));
 	}
 #endif
-#ifdef CONFIG_AGZ_BLOB_MB_SERIAL_NUMBER
+#ifdef CONFIG_AGZ_BLOB_V3_MB_SERIAL_NUMBER
 	if ((tmplen = nstr2buf(&tmpstr, 
-	                       CONFIG_AGZ_BLOB_MB_SERIAL_NUMBER, 16, "")) < 0)
+	                      CONFIG_AGZ_BLOB_V3_MB_SERIAL_NUMBER, 16, "")) < 0)
 		return -1;
 	memcpy(&blob->motherboard_serial_number[0],
 	       tmpstr, __min(tmplen, sizeof(blob->motherboard_serial_number)));
 	free(tmpstr);
 #endif
 
-#ifdef CONFIG_AGZ_BLOB_3G_ESN
-	if ((tmplen = nstr2buf(&tmpstr, CONFIG_AGZ_BLOB_3G_ESN, 16, "-")) < 0)
+#ifdef CONFIG_AGZ_BLOB_V3_3G_ESN
+	if ((tmplen = nstr2buf(&tmpstr, CONFIG_AGZ_BLOB_V3_3G_ESN, 16, "-")) < 0)
 		return -1;
 	memcpy(&blob->esn_3g[0], tmpstr,
 	       __min(tmplen, sizeof(blob->esn_3g)));
 	free(tmpstr);
 #endif
-#ifdef CONFIG_AGZ_BLOB_LOCAL_COUNTRY_CODE
-	tmpstr = format_string(CONFIG_AGZ_BLOB_LOCAL_COUNTRY_CODE);
+#ifdef CONFIG_AGZ_BLOB_V3_LOCAL_COUNTRY_CODE
+	tmpstr = format_string(CONFIG_AGZ_BLOB_V3_LOCAL_COUNTRY_CODE);
 	memcpy(&blob->country_code[0], tmpstr,
 	       __min(strlen(tmpstr), sizeof(blob->country_code)));
 	free(tmpstr);
 #endif
-#ifdef CONFIG_AGZ_BLOB_WLAN_MAC_ADDRESS
+#ifdef CONFIG_AGZ_BLOB_V3_WLAN_MAC_ADDRESS
 	if ((tmplen = nstr2buf(&tmpstr,
-	                       CONFIG_AGZ_BLOB_WLAN_MAC_ADDRESS, 16, ":")) < 0)
+	                       CONFIG_AGZ_BLOB_V3_WLAN_MAC_ADDRESS, 16, ":")) < 0)
 		return -1;
 	memcpy(&blob->wlan_mac_id[0],
 	       tmpstr, __min(tmplen, sizeof(blob->wlan_mac_id)));
 	free(tmpstr);
 #endif
-#ifdef CONFIG_AGZ_BLOB_PRODUCT_SERIAL_NUMBER
-	tmpstr = format_string(CONFIG_AGZ_BLOB_PRODUCT_SERIAL_NUMBER);
+#ifdef CONFIG_AGZ_BLOB_V3_PRODUCT_SERIAL_NUMBER
+	tmpstr = format_string(CONFIG_AGZ_BLOB_V3_PRODUCT_SERIAL_NUMBER);
 	memcpy(&blob->product_serial_number[0],
 	       tmpstr, __min(strlen(tmpstr), sizeof(blob->product_serial_number)));
 	free(tmpstr);
@@ -130,9 +126,8 @@ static int create_agz_blob_v3(uint8_t **buf)
  * returns 0 to indicate success
  * returns <0 to indicate failure
  */
-int build_agz_vendor_blob(int version)
+int build_agz_vendor_blob(int version, char outfile[])
 {
-	char outfile[] = CONFIG_AGZ_BLOB_FILENAME;
 	int rc = 0;
 	int fd;
 	int len = -1;

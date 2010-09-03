@@ -29,3 +29,5 @@
 
 # always decend into the subdirectories
 obj-y	+= intel/
+
+obj-y	+= gpio.o

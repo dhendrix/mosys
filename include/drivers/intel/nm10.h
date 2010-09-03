@@ -19,6 +19,7 @@
 #ifndef MOSYS_DRIVERS_INTEL_NM10_H__
 #define MOSYS_DRIVERS_INTEL_NM10_H__
 
+#include "drivers/gpio.h"
 #include "drivers/intel/ich_generic.h"
 
 /*

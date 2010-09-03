@@ -299,22 +299,6 @@ struct flash_cb {
 	int (*size)(struct platform_intf *intf);
 };
 
-enum gpio_types {
-	GPIO_IN,
-	GPIO_OUT,
-};
-
-struct gpio_map {
-	int id;			/* gpio number */
-	enum gpio_types type;	/* input/output */
-	int dev;		/* device identifier */
-	int port;		/* port in device */
-	int pin;		/* pin in port in device */
-	int neg;		/* pin is negated */
-	const char *devname;	/* device name */
-	const char *name;	/* gpio name */
-};
-
 /* gpio callbacks */
 struct gpio_cb {
 	/* list all GPIOs for the platform */

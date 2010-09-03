@@ -26,6 +26,8 @@
 #include "mosys/log.h"
 #include "mosys/kv_pair.h"
 
+#include "drivers/gpio.h"
+
 #include "intf/pci.h"
 #include "intf/io.h"
 
@@ -192,40 +194,6 @@ static int nm10_set_gpio(struct platform_intf *intf,
 	}
 
 	return 0;
-}
-
-/*
- * kv_pair_print_gpio  -  print gpio info and state
- *
- * @gpio:	gpio data
- * @state:	gpio state
- */
-static void kv_pair_print_gpio(struct gpio_map *gpio, int state)
-{
-	struct kv_pair *kv;
-
-	kv = kv_pair_new();
-	kv_pair_add(kv, "device", gpio->devname);
-	kv_pair_fmt(kv, "id", "GPIO%02u", gpio->id);
-
-	switch (gpio->type) {
-	case GPIO_IN:
-		kv_pair_add(kv, "type", "IN");
-		break;
-	case GPIO_OUT:
-		kv_pair_add(kv, "type", "OUT");
-		break;
-	default:
-		lprintf(LOG_DEBUG, "Invalid GPIO type %d\n", gpio->type);
-		kv_pair_free(kv);
-		return;
-	}
-
-	kv_pair_fmt(kv, "state", "%d", state);
-	kv_pair_add(kv, "name", gpio->name);
-
-	kv_pair_print(kv);
-	kv_pair_free(kv);
 }
 
 /*

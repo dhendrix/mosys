@@ -38,3 +38,5 @@ CONFIG_EXPERIMENTAL_MARIO=y
 #
 # Tools
 #
+# CONFIG_ADD_TOOL_LIBRARIES is not set
+# CONFIG_BUILD_VPD is not set

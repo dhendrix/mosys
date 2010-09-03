@@ -43,4 +43,37 @@ enum ich_bbs nm10_get_bbs(struct platform_intf *intf);
   */
 int nm10_set_bbs(struct platform_intf *intf, enum ich_bbs bbs);
 
+/*
+ * nm10_read_gpio  - read GPIO status
+ *
+ * @intf:	platform interface
+ * @gpio:	gpio map
+ *
+ * returns GPIO state as 0 or 1
+ * returns <0 on read failure
+ */
+int nm10_read_gpio(struct platform_intf *intf, struct gpio_map *gpio);
+
+/*
+ * nm10_set_gpio  - set GPIO status
+ *
+ * @intf:	platform interface
+ * @gpio:	gpio map
+ * @status:	0/1
+ *
+ * returns 0 if successful
+ * returns <0 on read failure
+ */
+int nm10_set_gpio(struct platform_intf *intf, struct gpio_map *gpio, int state);
+
+/*
+ * nm10_gpio_list  -  list all GPIOs and their states
+ *
+ * @intf:	platform interface
+ *
+ * returns 0 if successful
+ * returns <0 if failure
+ */
+extern int nm10_gpio_list(struct platform_intf *intf);
+
 #endif /* MOSYS_DRIVERS_INTEL_NM10_H__ */

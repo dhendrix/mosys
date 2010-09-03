@@ -464,6 +464,7 @@ char *vpd_find_string(struct platform_intf *intf,
 
 struct blob_handler blob_handlers[] = {
 	{ "b9468091-ccd2-4b8b-8300-8cd8336a14f6", print_agz_blob_v3 },
+	{ "0eea3385-602a-4f6d-b593-6118dda238b2", print_agz_blob_v5 },
 	{ NULL },
 };
 

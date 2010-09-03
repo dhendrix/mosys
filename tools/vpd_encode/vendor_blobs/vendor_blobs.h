@@ -20,5 +20,6 @@
 #define VPD_ENCODE_VENDOR_BLOBS_H__ 
 
 int build_agz_vendor_blob_v3(int version);
+int build_agz_vendor_blob_v5(int version);
 
 #endif /* VPD_ENCODE_VENDOR_BLOBS_H__ */

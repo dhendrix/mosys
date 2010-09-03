@@ -119,6 +119,87 @@ static int create_agz_blob_v3(uint8_t **buf)
 	return len;
 }
 
+/*
+ *  Create a new v5 AGZ vendor blob
+ *
+ * @buf:	buffer in which to store the blob
+ *
+ * returns length of allocated buffer to indicate success
+ * returns <0 to indicate failure
+ */
+static int create_agz_blob_v5(uint8_t **buf)
+{
+	struct agz_blob_0_5 *blob;
+	int len = sizeof(struct agz_blob_0_5);
+	unsigned char *tmpstr;
+	int tmplen;
+
+	/* FIXME: Add sanity checking */
+	*buf = realloc(*buf, len);
+	memset(*buf, 0, len);
+	blob = (struct agz_blob_0_5 *)*buf;
+
+#ifdef CONFIG_AGZ_BLOB_V5_PRODUCT_NAME
+	tmpstr = format_string(CONFIG_AGZ_BLOB_V5_PRODUCT_NAME);
+	memcpy(&blob->product_name[0], tmpstr,
+	       __min(strlen(tmpstr), sizeof(blob->product_name)));
+	free(tmpstr);
+#endif
+#ifdef CONFIG_AGZ_BLOB_V5_PRODUCT_MFG
+	tmpstr = format_string(CONFIG_AGZ_BLOB_V5_PRODUCT_MFG);
+	memcpy(&blob->product_manufacturer[0], tmpstr,
+	       __min(strlen(tmpstr), sizeof(blob->product_manufacturer)));
+	free(tmpstr);
+#endif
+#ifdef CONFIG_AGZ_BLOB_V5_UUID
+	{
+		uuid_t uu;
+
+		if (uuid_parse(CONFIG_AGZ_BLOB_V5_UUID, uu) < 0) {
+			lprintf(LOG_ERR, "%s: Invalid UUID specified\n");
+			return -1;
+		}
+
+		memcpy(&blob->uuid, &uu, sizeof(uu));
+	}
+#endif
+#ifdef CONFIG_AGZ_BLOB_V5_MB_SERIAL_NUMBER
+	tmpstr = format_string(CONFIG_AGZ_BLOB_V5_MB_SERIAL_NUMBER);
+	memcpy(&blob->motherboard_serial_number[0], tmpstr,
+	       __min(strlen(tmpstr), sizeof(blob->motherboard_serial_number)));
+	free(tmpstr);
+#endif
+
+#ifdef CONFIG_AGZ_BLOB_V5_3G_ESN
+	tmpstr = format_string(CONFIG_AGZ_BLOB_V5_3G_ESN);
+	memcpy(&blob->esn_3g[0], tmpstr,
+	       __min(strlen(tmpstr), sizeof(blob->esn_3g)));
+	free(tmpstr);
+#endif
+#ifdef CONFIG_AGZ_BLOB_V5_LOCAL_COUNTRY_CODE
+	tmpstr = format_string(CONFIG_AGZ_BLOB_V5_LOCAL_COUNTRY_CODE);
+	memcpy(&blob->country_code[0], tmpstr,
+	       __min(strlen(tmpstr), sizeof(blob->country_code)));
+	free(tmpstr);
+#endif
+#ifdef CONFIG_AGZ_BLOB_V5_WLAN_MAC_ADDRESS
+	if ((tmplen = nstr2buf(&tmpstr,
+	                       CONFIG_AGZ_BLOB_V5_WLAN_MAC_ADDRESS, 16, ":")) < 0)
+		return -1;
+	memcpy(&blob->wlan_mac_id[0],
+	       tmpstr, __min(tmplen, sizeof(blob->wlan_mac_id)));
+	free(tmpstr);
+#endif
+#ifdef CONFIG_AGZ_BLOB_V5_PRODUCT_SERIAL_NUMBER
+	tmpstr = format_string(CONFIG_AGZ_BLOB_V5_PRODUCT_SERIAL_NUMBER);
+	memcpy(&blob->product_serial_number[0],
+	       tmpstr, __min(strlen(tmpstr), sizeof(blob->product_serial_number)));
+	free(tmpstr);
+#endif
+
+	return len;
+}
+
 /* build_agz_vendor_blob - Build binary blob in format specified by vendor
  *
  * @version:	version of the blob
@@ -144,6 +225,12 @@ int build_agz_vendor_blob(int version, char outfile[])
 	switch(version) {
 	case 3:
 		if ((len = create_agz_blob_v3(&buf)) < 0) {
+			rc = -1;
+			goto build_agz_blob_exit;
+		}
+		break;
+	case 5:
+		if ((len = create_agz_blob_v5(&buf)) < 0) {
 			rc = -1;
 			goto build_agz_blob_exit;
 		}

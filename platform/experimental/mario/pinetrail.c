@@ -39,7 +39,7 @@ const char *mario_pinetrail_id_list[] = {
 
 struct platform_cmd *mario_pinetrail_sub[] = {
 	&cmd_eeprom,
-//	&cmd_gpio,
+	&cmd_gpio,
 //	&cmd_nvram,
 	&cmd_platform,
 	&cmd_smbios,
@@ -133,7 +133,7 @@ static int mario_pinetrail_destroy(struct platform_intf *intf)
 
 struct platform_cb mario_pinetrail_cb = {
 	.eeprom		= &mario_pinetrail_eeprom_cb,
-//	.gpio		= &mario_pinetrail_gpio_cb,
+	.gpio		= &mario_pinetrail_gpio_cb,
 //	.nvram		= &mario_pinetrail_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,
 	.sysinfo 	= &mario_pinetrail_sysinfo_cb,

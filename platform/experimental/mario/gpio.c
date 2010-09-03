@@ -16,21 +16,37 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef MARIO_PINETRAIL_H__
-#define MARIO_PINETRAIL_H__
-
+#include <stdlib.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <string.h>
 #include <inttypes.h>
+
 #include "mosys/platform.h"
+#include "mosys/log.h"
+#include "mosys/kv_pair.h"
 
-/* platform callbacks */
-extern struct eeprom_cb mario_pinetrail_eeprom_cb;	/* eeprom.c */
-extern struct gpio_cb mario_pinetrail_gpio_cb;		/* gpio.c */
-extern struct sysinfo_cb mario_pinetrail_sysinfo_cb;	/* sysinfo.c */
-extern struct vpd_cb mario_pinetrail_vpd_cb;		/* vpd.c */
-extern struct nvram_cb mario_pinetrail_nvram_cb;	/* nvram.c */
+#include "drivers/gpio.h"
 
-/* functions called by setup routines */
-extern int mario_pinetrail_vpd_setup(struct platform_intf *intf);
-extern int mario_pinetrail_eeprom_setup(struct platform_intf *intf);
+#include "drivers/intel/nm10.h"
 
-#endif /* MARIO_PINETRAIL_H_ */
+#include "intf/pci.h"
+#include "intf/io.h"
+
+#include "lib/string.h"
+
+#include "pinetrail.h"
+
+#define GPIO_NM10	0
+
+#if 0
+/* gpio number, in/out, device, port, pin, negate, devname, name */
+struct gpio_map mario_pinetrail_gpio_map[] = {
+	/* id, type,    dev,          port, pin, neg, devname,   name */
+	{ 0,  0,        0,            0, 0,  0, NULL,   NULL } /* end */
+};
+#endif
+
+struct gpio_cb mario_pinetrail_gpio_cb = {
+	.list	= nm10_gpio_list,
+};

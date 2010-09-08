@@ -30,6 +30,8 @@
 
 #include "lib/smbios.h"
 
+#include "x86.h"
+
 /* FIXME: command/command_list.h is included magically via Makefile */
 const char *default_x86_id_list[] = {
 	"",
@@ -37,6 +39,7 @@ const char *default_x86_id_list[] = {
 };
 
 struct platform_cmd *platform_default_x86_sub[] = {
+	&cmd_eeprom,
 	&cmd_smbios,
 	&cmd_platform,
 	NULL
@@ -45,6 +48,7 @@ struct platform_cmd *platform_default_x86_sub[] = {
 struct sysinfo_cb default_x86_sysinfo_cb;
 
 struct platform_cb default_x86_cb = {
+	.eeprom = &default_x86_eeprom_cb,
 	.smbios = &smbios_sysinfo_cb,
 	.sysinfo = &default_x86_sysinfo_cb,
 };
@@ -54,6 +58,13 @@ const char *default_x86_probe(struct platform_intf *intf)
 	return intf->id_list[0];
 }
 
+static int default_x86_setup_post(struct platform_intf *intf)
+{
+	default_x86_eeprom_setup(intf);
+
+	return 0;
+}
+
 struct platform_intf platform_default_x86 = {
 	.type		= PLATFORM_X86,
 	.name		= "Default",
@@ -61,4 +72,5 @@ struct platform_intf platform_default_x86 = {
 	.id_list	= default_x86_id_list,
 	.sub		= platform_default_x86_sub,
 	.cb		= &default_x86_cb,
+	.setup_post	= &default_x86_setup_post,
 };

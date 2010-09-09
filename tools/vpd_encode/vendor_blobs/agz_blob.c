@@ -34,8 +34,6 @@
 #include "lib/string.h"
 #include "lib/vpd_binary_blob.h"
 
-#include "vendor_blobs.h"
-
 /* build_agz_vendor_blob - Build binary blob in format specified by vendor
  *
  * @buf:	buffer in which to store the blob

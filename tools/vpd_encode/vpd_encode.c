@@ -35,7 +35,6 @@
 #include "lib/vpd.h"
 
 #include "lib_vpd_encode.h"
-#include "vendor_blobs/vendor_blobs.h"
 
 #ifndef CONFIG_VPD_OUTFILE
 #define CONFIG_VPD_OUTFILE	"vpd.bin"
@@ -82,7 +81,8 @@ int main(int argc, char *argv[])
 
 #ifdef CONFIG_BUILD_AGZ_VENDOR_VPD_BLOB_V3
 	build_agz_vendor_blob(3, CONFIG_AGZ_BLOB_V3_FILENAME);
-#elif defined CONFIG_BUILD_AGZ_VENDOR_VPD_BLOB_V5
+#endif
+#ifdef CONFIG_BUILD_AGZ_VENDOR_VPD_BLOB_V5
 	build_agz_vendor_blob(5, CONFIG_AGZ_BLOB_V5_FILENAME);
 #endif
 

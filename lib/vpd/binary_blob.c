@@ -132,3 +132,50 @@ int print_agz_blob_v5(uint8_t *data, uint32_t size, struct kv_pair *kv)
 
 	return 0;
 }
+
+int print_google_blob_v1_1(uint8_t *data, uint32_t size, struct kv_pair *kv)
+{
+	struct google_blob_1_1 *google_blob = data;
+	char s[37];
+	char *s2;
+
+	if (size != sizeof(*google_blob)) {
+		lprintf(LOG_DEBUG, "Google binary blob expected size: %lu, "
+		                   "got: %lu\n", sizeof(*google_blob), size);
+		return -1;
+	}
+
+	kv_pair_add(kv, "blob_type", "google_blob");
+
+	snprintf(s, sizeof(google_blob->product_serial_number) + 1,
+	         "%s", google_blob->product_serial_number);
+	kv_pair_add(kv, "product_serial_number", s);
+
+	snprintf(s, sizeof(google_blob->product_sku) + 1,
+	         "%s", google_blob->product_sku);
+	kv_pair_add(kv, "product_sku", s);
+
+	uuid_unparse(google_blob->uuid, s);
+	kv_pair_add(kv, "product_uuid", s);
+
+	snprintf(s, sizeof(google_blob->motherboard_serial_number) + 1,
+	         "%s", google_blob->motherboard_serial_number);
+	kv_pair_add(kv, "motherboard_serial_number", s);
+
+	snprintf(s, sizeof(google_blob->imei_3g) + 1, "%s", google_blob->imei_3g);
+	kv_pair_add(kv, "imei_esn", s);
+
+	snprintf(s, sizeof(google_blob->ssd_serial_number) + 1,
+	         "%s", google_blob->ssd_serial_number);
+	kv_pair_fmt(kv, "ssd_serial_number", s);
+
+	snprintf(s, sizeof(google_blob->memory_serial_number) + 1,
+	         "%s", google_blob->memory_serial_number);
+	kv_pair_fmt(kv, "memory_serial_number", s);
+
+	s2 = buf2nicid(google_blob->wlan_mac_id, NIC_ID_IEEE802);
+	kv_pair_add(kv, "wlan_macid", s2);
+	free(s2);
+
+	return 0;
+}

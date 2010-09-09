@@ -16,4 +16,9 @@ config BUILD_AGZ_VENDOR_VPD_BLOB_V5
 	default n
 source "tools/vpd_encode/Kconfig.agz_blob_v5"
 
+config BUILD_GOOGLE_VPD_BLOB_V1_1
+	bool "Build Google blob v1.1"
+	default n
+source "tools/vpd_encode/Kconfig.google_blob_v1.1"
+
 endmenu # Binary Blob Configuration

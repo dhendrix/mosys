@@ -1,0 +1,69 @@
+#
+# Google Blob v1.1 Configuration
+#
+
+menu "Google Blob v1.1 Configuration"
+	depends on BUILD_GOOGLE_VPD_BLOB_V1_1
+
+config GOOGLE_BLOB_V1_1_FILENAME
+	string "Output filename"
+	default "google_blob_v1.1.bin"
+	help
+	  Output filename for Google VPD blob
+
+config GOOGLE_BLOB_V1_1_PRODUCT_SERIAL_NUMBER
+	string "Product Serial Number"
+	default "To be filled in"
+	help
+	  32 character freeform ASCII string
+	  Unused nibbles or bytes will be zero-filled (0h or 00h).
+
+config GOOGLE_BLOB_V1_1_PRODUCT_SKU
+	string "Product SKU"
+	default "To be filled in"
+	help
+	  16 character freeform ASCII string
+	  Unused nibbles or bytes will be zero-filled (0h or 00h).
+
+config GOOGLE_BLOB_V1_1_UUID
+	string "UUID"
+	default "88888888-4444-4444-4444-121212121212"
+        help
+          128-bit UUID, obeying RFC4122 format.
+          Example: 0bf40e9f-e9e9-4c42-a39b-ee1c54a4359a
+
+config GOOGLE_BLOB_V1_1_MB_SERIAL_NUMBER
+	string "Motherboard Serial Number"
+	default "To be filled in"
+	help
+	  16 character freeform ASCII string.
+	  Unused nibbles or bytes will be zero-filled (0h or 00h).
+
+config GOOGLE_BLOB_V1_1_3G_IMEI
+	string "3G IMEI"
+	default "01234abcde"
+	help
+	  16-byte 3G IMEI (ASCII)
+	  Unused nibbles or bytes will be zero-filled (0h or 00h).
+
+config GOOGLE_BLOB_V1_1_SSD_SERIAL_NUMBER
+	string "SSD Serial Number"
+	default "To be filled in"
+	help
+	  16 character freeform ASCII string
+	  Unused nibbles or bytes will be zero-filled (0h or 00h).
+
+config GOOGLE_BLOB_V1_1_MEMORY_SERIAL_NUMBER
+	string "Memory Serial Number"
+	default "To be filled in"
+	help
+	  16 character freeform ASCII string
+	  Unused nibbles or bytes will be zero-filled (0h or 00h).
+
+config GOOGLE_BLOB_V1_1_WLAN_MAC_ADDRESS
+	string "WLAN MAC Address"
+	default "01:23:45:67:89:ab"
+	help
+	  Format for IEEE802.x MAC Address: 01:23:45:67:89:ab
+
+endmenu # Google Blob Configuration

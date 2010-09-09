@@ -63,6 +63,18 @@ struct agz_blob_0_5 {
 	uint8_t product_serial_number[22];
 } __attribute__ ((packed));
 
+struct google_blob_1_1 {
+	/* Google VPD blob version 1.1 */
+	uint8_t product_serial_number[32];	/* ASCII */
+	uint8_t product_sku[16];		/* ASCII */
+	uint8_t uuid[16];			/* raw binary */
+	uint8_t motherboard_serial_number[16];	/* ASCII */
+	uint8_t imei_3g[16];			/* ASCII */
+	uint8_t ssd_serial_number[16];		/* ASCII */
+	uint8_t memory_serial_number[16];	/* ASCII */
+	uint8_t wlan_mac_id[6];			/* raw binary */
+} __attribute__ ((packed));
+
 struct blob_handler {
 	unsigned char *uuid;	/* string representation of UUID */
 	int (*print)(uint8_t *blob, uint32_t size, struct kv_pair *kv);
@@ -70,5 +82,6 @@ struct blob_handler {
 
 int print_agz_blob_v3(uint8_t *data, uint32_t size, struct kv_pair *kv);
 int print_agz_blob_v5(uint8_t *data, uint32_t size, struct kv_pair *kv);
+int print_google_blob_v1_1(uint8_t *data, uint32_t size, struct kv_pair *kv);
 
 #endif	/* MOSYS_LIB_VPD_BINARY_BLOB_H__ */

@@ -85,6 +85,9 @@ int main(int argc, char *argv[])
 #ifdef CONFIG_BUILD_AGZ_VENDOR_VPD_BLOB_V5
 	build_agz_vendor_blob(5, CONFIG_AGZ_BLOB_V5_FILENAME);
 #endif
+#ifdef CONFIG_BUILD_GOOGLE_VPD_BLOB_V1_1
+	build_google_vpd_blob(1.1, CONFIG_GOOGLE_BLOB_V1_1_FILENAME);
+#endif
 
 	fd = open(outfile, O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
 	if (fd < 0) {

@@ -31,3 +31,4 @@
 
 obj-$(CONFIG_BUILD_AGZ_VENDOR_VPD_BLOB_V3)		+= agz_blob.o
 obj-$(CONFIG_BUILD_AGZ_VENDOR_VPD_BLOB_V5)		+= agz_blob.o
+obj-$(CONFIG_BUILD_GOOGLE_VPD_BLOB_V1_1)		+= google_blob.o

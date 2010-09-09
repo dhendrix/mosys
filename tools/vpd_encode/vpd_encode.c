@@ -98,18 +98,23 @@ int main(int argc, char *argv[])
 	 * All structures belonging to the structure table are created first,
 	 * followed by the entry point structure.
 	 */
-	
+	lprintf(LOG_DEBUG, "%s: appending type0 table at structure table"
+	                   " offset: 0x%04x\n", __func__, table_len);
 	table_len = vpd_append_type0(1, &table, table_len);
 	if (table_len < 0)
 		goto do_exit_2;
 	num_structures++;
 
+	lprintf(LOG_DEBUG, "%s: appending type1 table at structure table"
+	                   " offset: 0x%04x\n", __func__, table_len);
 	table_len = vpd_append_type1(1, &table, table_len);
 	if (table_len < 0)
 		goto do_exit_2;
 	num_structures++;
 
 #ifdef CONFIG_BUILD_BBP0
+	lprintf(LOG_DEBUG, "%s: appending type241 table at structure table"
+	                   " offset: 0x%04x\n", __func__, table_len);
 	table_len = vpd_append_type241(0, &table, table_len,
 	                               CONFIG_BBP0_UUID,
 	                               CONFIG_BBP0_OFFSET,
@@ -123,6 +128,8 @@ int main(int argc, char *argv[])
 #endif
 
 #ifdef CONFIG_BUILD_BBP1
+	lprintf(LOG_DEBUG, "%s: appending type241 table at structure table"
+	                   " offset: 0x%04x\n", __func__, table_len);
 	table_len = vpd_append_type241(1, &table, table_len,
 	                               CONFIG_BBP1_UUID,
 	                               CONFIG_BBP1_OFFSET,
@@ -135,6 +142,8 @@ int main(int argc, char *argv[])
 	num_structures++;
 #endif
 
+	lprintf(LOG_DEBUG, "%s: appending type127 table at structure table"
+	                   " offset: 0x%04x\n", __func__, table_len);
 	table_len = vpd_append_type127(1, &table, table_len);
 	if (table_len < 0)
 		goto do_exit_2;

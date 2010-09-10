@@ -85,11 +85,10 @@ static int create_google_blob_v1_1(uint8_t **buf)
 	free(tmpstr);
 #endif
 #ifdef CONFIG_GOOGLE_BLOB_V1_1_3G_IMEI
-	if ((tmplen = nstr2buf(&tmpstr,
-	                 CONFIG_GOOGLE_BLOB_V1_1_3G_IMEI, 16, "-")) < 0)
-		return -1;
-	memcpy(&blob->imei_3g[0], tmpstr,
-	       __min(tmplen, sizeof(blob->imei_3g)));
+	tmpstr = format_string(CONFIG_GOOGLE_BLOB_V1_1_3G_IMEI);
+	memcpy(&blob->imei_3g[0],
+	       tmpstr, __min(strlen(tmpstr),
+	       sizeof(blob->imei_3g)));
 	free(tmpstr);
 #endif
 #ifdef CONFIG_GOOGLE_BLOB_V1_1_SSD_SERIAL_NUMBER

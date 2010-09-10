@@ -80,7 +80,8 @@ static int create_google_blob_v1_1(uint8_t **buf)
 #ifdef CONFIG_GOOGLE_BLOB_V1_1_MB_SERIAL_NUMBER
 	tmpstr = format_string(CONFIG_GOOGLE_BLOB_V1_1_MB_SERIAL_NUMBER);
 	memcpy(&blob->motherboard_serial_number[0],
-	       tmpstr, __min(tmplen, sizeof(blob->motherboard_serial_number)));
+	       tmpstr, __min(strlen(tmpstr),
+	       sizeof(blob->motherboard_serial_number)));
 	free(tmpstr);
 #endif
 #ifdef CONFIG_GOOGLE_BLOB_V1_1_3G_IMEI

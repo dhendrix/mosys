@@ -106,7 +106,7 @@ static int create_google_blob_v1_1(uint8_t **buf)
 #endif
 #ifdef CONFIG_GOOGLE_BLOB_V1_1_WLAN_MAC_ADDRESS
 	if ((tmplen = nstr2buf(&tmpstr,
-	                CONFIG_GOOGLE_BLOB_V1_1_WLAN_MAC_ADDRESS, 16, ":")) < 0)
+	                CONFIG_GOOGLE_BLOB_V1_1_WLAN_MAC_ADDRESS, 16, ":-")) < 0)
 		return -1;
 	memcpy(&blob->wlan_mac_id[0],
 	       tmpstr, __min(tmplen, sizeof(blob->wlan_mac_id)));

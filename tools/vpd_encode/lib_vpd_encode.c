@@ -205,16 +205,19 @@ int vpd_append_type241(uint16_t handle, uint8_t **buf,
 {
 	struct vpd_header *header;
 	struct vpd_table_binary_blob_pointer *data;
-	uint8_t *strings;
+	uint8_t *strings, *p;
 	size_t struct_len, total_len;
+	int string_index = 1;
 
 	/* FIXME: Add sanity checking */
 	struct_len = sizeof(struct vpd_header) +
-	             sizeof(struct vpd_table_binary_blob_pointer) +
-	             strlen(vendor) + 1 +
-	             strlen(desc) + 1 +
-	             strlen(variant) + 1 +
-		     1;			/* structure terminator */
+	             sizeof(struct vpd_table_binary_blob_pointer);
+	if (vendor)
+		struct_len += strlen(vendor) + 1;
+	if (desc)
+		struct_len += strlen(desc) + 1;
+	if (variant)
+		struct_len += strlen(variant) + 1;
 	total_len = len + struct_len;
 
 	*buf = realloc(*buf, total_len);
@@ -223,6 +226,7 @@ int vpd_append_type241(uint16_t handle, uint8_t **buf,
 	header = *buf + len;
 	data = (uint8_t *)header + sizeof(*header);
 	strings = (uint8_t *)data + sizeof(*data);
+	p = strings;
 
 	/* fill in structure header details */
 	header->type = VPD_TYPE_BINARY_BLOB_POINTER;
@@ -231,11 +235,31 @@ int vpd_append_type241(uint16_t handle, uint8_t **buf,
 
 	data->struct_major_version = 1;
 	data->struct_minor_version = 0;
-	data->vendor = 1;
-	data->description = 2;
+
+	if (vendor) {
+		data->vendor = string_index;
+		string_index++;
+		sprintf(p, "%s%c", vendor, '\0');
+		p += strlen(vendor) + 1;
+	}
+
+	if (desc) {
+		data->description = 2;
+		string_index++;
+		sprintf(p, "%s%c", desc, '\0');
+		p += strlen(desc) + 1;
+	}
+
 	data->major_version = 0;
 	data->minor_version = 1;
-	data->variant = 3;
+
+	if (variant) {
+		data->variant = string_index;
+		string_index++;
+		sprintf(p, "%s%c", variant, '\0');
+		p += strlen(variant) + 1;
+	}
+
 	memset(&data->reserved[0], 0, 5);
 
 	if (uuid_parse(uuid, &data->uuid[0]) < 0) {
@@ -245,13 +269,6 @@ int vpd_append_type241(uint16_t handle, uint8_t **buf,
 
 	data->offset = offset;
 	data->size = size;
-
-	sprintf(strings, "%s%c%s%c%s%c",
-	                 vendor, '\0',
-	                 desc, '\0',
-	                 variant, '\0');
-
-	memset(*buf + struct_len, 0, 1);	/* terminator */
 
 	lprintf(LOG_DEBUG, "%s: total length (including strings): %u\n",
 	        __func__, (unsigned)total_len);

@@ -21,8 +21,17 @@ config VPD_OUTFILE
 	  File to write VPD to.
 
 source "tools/vpd_encode/Kconfig.entry"
+
+config BUILD_VPD_TYPE0_STRUCTURE
+	bool "Type 0 (firmware information) structure"
+	default y
 source "tools/vpd_encode/Kconfig.type0"
+
+config BUILD_VPD_TYPE1_STRUCTURE
+	bool "Type 1 (system information) structure"
+	default y
 source "tools/vpd_encode/Kconfig.type1"
+
 source "tools/vpd_encode/Kconfig.type241"
 source "tools/vpd_encode/Kconfig.blobs"
 

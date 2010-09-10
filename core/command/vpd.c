@@ -85,7 +85,7 @@ static int vpd_print_firmware_cmd(struct platform_intf *intf,
 
 	if (vpd_find_table(intf, VPD_TYPE_FIRMWARE, 0, &table,
 	                   vpd_rom_base, vpd_rom_size) < 0)
-		return -1;
+		return 0;
 
 	kv = kv_pair_new();
 	kv_pair_fmt(kv, "table_type", "%d", table.header.type);
@@ -111,7 +111,7 @@ static int vpd_print_system_cmd(struct platform_intf *intf,
 
 	if (vpd_find_table(intf, VPD_TYPE_SYSTEM, 0, &table,
 	                   vpd_rom_base, vpd_rom_size) < 0)
-		return -1;
+		return 0;
 
 	kv = kv_pair_new();
 	kv_pair_fmt(kv, "table_type", "%d", table.header.type);

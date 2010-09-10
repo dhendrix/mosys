@@ -3,7 +3,7 @@
 #
 
 menu "System Information (Type 1)"
-	depends on BUILD_VPD
+	depends on BUILD_VPD_TYPE1_STRUCTURE
 
 config SYSTEM_MANUFACTURER
 	string "System manufacturer"

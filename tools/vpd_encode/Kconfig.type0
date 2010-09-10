@@ -3,7 +3,7 @@
 #
 
 menu "Firmware Information (Type 0)"
-	depends on BUILD_VPD
+	depends on BUILD_VPD_TYPE0_STRUCTURE
 
 config FIRMWARE_VENDOR
 	string "Firmware vendor"

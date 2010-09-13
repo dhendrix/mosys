@@ -30,6 +30,7 @@
 #include <inttypes.h>
 #include <errno.h>
 
+#include "mosys/globals.h"
 #include "mosys/log.h"
 
 #include "lib/vpd.h"
@@ -78,6 +79,7 @@ int main(int argc, char *argv[])
 	}
 
 	mosys_log_init(PROGRAM, CONFIG_LOGLEVEL+verbose, NULL);
+	mosys_set_verbosity(verbose);
 
 #ifdef CONFIG_BUILD_AGZ_VENDOR_VPD_BLOB_V3
 	build_agz_vendor_blob(3, CONFIG_AGZ_BLOB_V3_FILENAME);

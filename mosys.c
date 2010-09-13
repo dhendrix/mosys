@@ -248,7 +248,7 @@ int mosys_main(int argc, char **argv)
 	}
 
 	/* set the global verbosity level */
-	mosys_set_verbosity(verbose);
+	mosys_set_verbosity(CONFIG_LOGLEVEL+verbose);
 
 	/* try to identify the platform */
 	intf = mosys_platform_setup(p_opt);

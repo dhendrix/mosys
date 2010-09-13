@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include <inttypes.h>
 
+#include "mosys/globals.h"
 #include "mosys/log.h"
 #include "mosys/kv_pair.h"
 #include "mosys/platform.h"
@@ -113,6 +114,13 @@ static int smbios_info_system_cmd(struct platform_intf *intf,
 	kv_pair_add(kv, "version", table.string[table.data.system.version]);
 	kv_pair_add(kv, "serial_number",
 		    table.string[table.data.system.serial_number]);
+
+	if (mosys_get_verbosity() > CONFIG_LOGLEVEL) {
+		kv_pair_add(kv, "sku_number",
+		            table.string[table.data.system.sku_number]);
+		kv_pair_add(kv, "family",
+		            table.string[table.data.system.family]);
+	}
 
 	kv_pair_print(kv);
 	kv_pair_free(kv);

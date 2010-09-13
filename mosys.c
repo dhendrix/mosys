@@ -233,10 +233,11 @@ int mosys_main(int argc, char **argv)
 
 	/*
 	 * Init the logging system and the default log output file (stderr).
-	 * Anything logged with a level below CONFIG_LOGLEVEL will not be logged
+	 * Anything logged with a level above CONFIG_LOGLEVEL will not be logged
 	 * at all. We use the number of "-v" arguments on the commandline as
 	 * a bias against the default threshold.  The more times you use
-	 * "-v", the lower your logging threshold becomes.
+	 * "-v", the greater your logging level becomes, and the more
+	 * information will be printed.
 	 */
 	mosys_log_init(PROGRAM, CONFIG_LOGLEVEL+verbose, NULL);
 

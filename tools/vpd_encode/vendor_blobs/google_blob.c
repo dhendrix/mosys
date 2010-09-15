@@ -27,6 +27,7 @@
 #include <unistd.h>
 #include <uuid/uuid.h>
 
+#include "mosys/alloc.h"
 #include "mosys/log.h"
 #include "mosys/output.h"
 
@@ -48,7 +49,7 @@ static int create_google_blob_v1_1(uint8_t **buf)
 	unsigned char *tmpstr;
 	int tmplen;
 
-	*buf = realloc(*buf, len);
+	*buf = mosys_realloc(*buf, len);
 	memset(*buf, 0, len);
 	blob = (struct google_blob_1_1 *)*buf;
 

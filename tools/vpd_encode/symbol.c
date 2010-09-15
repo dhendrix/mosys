@@ -187,15 +187,7 @@ static struct vpd_symbol *parse_symbol(const char *str, size_t len)
 		   this character is read */
 		string_builder_add_char(sb, *p);
 
-		if ((!isspace(*(p + 1))) ||
-		    (index != len - (sizeof(char) * 2))) {
-			lprintf(LOG_ERR, "Error parsing \"%s\": "
-			        "not a boolean\n", symbol->name);
-			free_vpd_symbol(symbol);
-			free_string_builder(sb);
-			symbol = NULL;
-			goto parse_symbol_exit;
-		}
+		/* FIXME: Add sanity checking */
 		symbol->type = BOOLEAN;
 	}
 

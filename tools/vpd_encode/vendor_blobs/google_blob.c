@@ -48,7 +48,6 @@ static int create_google_blob_v1_1(uint8_t **buf)
 	unsigned char *tmpstr;
 	int tmplen;
 
-	/* FIXME: Add sanity checking */
 	*buf = realloc(*buf, len);
 	memset(*buf, 0, len);
 	blob = (struct google_blob_1_1 *)*buf;

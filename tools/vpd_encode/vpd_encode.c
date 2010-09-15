@@ -37,19 +37,31 @@
 
 #include "lib_vpd_encode.h"
 
+#include "symbol.h"
+
 #ifndef CONFIG_VPD_OUTFILE
 #define CONFIG_VPD_OUTFILE	"vpd.bin"
 #endif
 
+#ifndef VPD_ENCODE_CONFIG
+static char *vpd_encode_config = "vpd_encode.config";
+#else
+static char *vpd_encode_config = VPD_ENCODE_CONFIG;
+#endif
+
 static void usage(void)
 {
-	printf("usage: %s [options] [commands]\n"
+	printf("usage: %s [options] <configfile>\n"
                     "\n"
                     "  Options:\n"
                     "    -v            verbose (can be used multiple times)\n"
                     "    -h            print this help\n"
                     "    -V            print version\n"
-                    "\n", PROGRAM);
+                    "\n"
+		    "  A configuration file can be specified which will\n"
+		    "  override values specified at build-time.\n",
+		    "\n",
+		    PROGRAM);
 }
 
 int main(int argc, char *argv[])
@@ -61,6 +73,7 @@ int main(int argc, char *argv[])
 	struct vpd_entry *eps = NULL;
 	uint8_t *table = NULL;		/* the structure table */
 	int table_len = 0, num_structures = 0;
+	struct stat s;
 
 	while ((argflag = getopt(argc, argv, "vVh")) > 0) {
 		switch (argflag) {
@@ -78,8 +91,19 @@ int main(int argc, char *argv[])
 		}
 	}
 
+	/* set up logging and verbosity level */
 	mosys_log_init(PROGRAM, CONFIG_LOGLEVEL+verbose, NULL);
 	mosys_set_verbosity(verbose);
+
+	if (argv[optind]) {
+		printf("setting config as %s\n", argv[optind]);
+		vpd_encode_config = argv[optind];
+		printf("config: %s\n", vpd_encode_config);
+	}
+	stat(vpd_encode_config, &s);
+	if (S_ISREG(s.st_mode) || S_ISLNK(s.st_mode)) {
+		gen_symtab(vpd_encode_config);
+	}
 
 #ifdef CONFIG_BUILD_AGZ_VENDOR_VPD_BLOB_V3
 	build_agz_vendor_blob(3, CONFIG_AGZ_BLOB_V3_FILENAME);
@@ -188,6 +212,7 @@ do_exit_2:
 	free(eps);
 	free(table);
 do_exit_1:
+	cleanup_symtab();
 	close(fd);
 	mosys_log_halt();
 	return rc;

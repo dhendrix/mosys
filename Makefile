@@ -306,7 +306,8 @@ CFLAGS_GCOV	= -fprofile-arcs -ftest-coverage
 # Use LINUXINCLUDE when you must reference the include/ directory.
 # Needed to be compatible with the O= option
 LINUXINCLUDE    := -Iinclude \
-                   -include include/generated/autoconf.h
+                   -include include/generated/autoconf.h \
+                   -Itools/vpd_encode
 
 KERNELVERSION	= $(RELEASENAME)
 
@@ -643,13 +644,18 @@ $(PROGRAM): $(vmlinux-all)
 	$(Q)$(CC) $(CFLAGS) $(EXTRA_CFLAGS) $(MOSYS_MACROS) $(LINUXINCLUDE) \
 	-o $@ $@.c $?
 
+VPD_ENCODE_DEFCONFIG	:= "vpd_encode.config"
 VPD_ENCODE_MACROS	:= -DPROGRAM=\"vpd_encode\" \
-			   -DVERSION=\"$(KERNELVERSION)\"
+			   -DVERSION=\"$(KERNELVERSION)\" \
+			   -DVPD_ENCODE_CONFIG=\"$(VPD_ENCODE_DEFCONFIG)\"
+
 # FIXME: should only depend on libs/ being a prerequisite
 vpd_encode: $(core-y) $(libs-y)
 	$(Q)$(CC) $(CFLAGS) $(VPD_ENCODE_MACROS) \
 	$(EXTRA_CFLAGS) -Itools/vpd_encode $(LINUXINCLUDE) \
 	-o $@ tools/vpd_encode/$@.c $?
+	$(Q)cp .config $(VPD_ENCODE_DEFCONFIG)
+	$(Q)echo vpd_encode config file saved as "$(VPD_ENCODE_DEFCONFIG)"
 
 TOOLS	+= vpd_encode
 

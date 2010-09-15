@@ -57,4 +57,14 @@ extern char *sym2str(const char *symbol);
  */
 extern int sym2bool(const char *symbol);
 
+/*
+ * update_symbol - add/edit symbol table entry
+ *
+ * @str:	symbol=value pair to update
+ *
+ * returns pointer to symbol structure to indicate success
+ * returns NULL to indicate failure
+ */
+extern struct vpd_symbol *update_symbol(const char *str);
+
 #endif	/* VPD_ENCODE_SYMBOL_H__ */

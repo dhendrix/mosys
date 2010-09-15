@@ -308,3 +308,40 @@ int sym2bool(const char *symbol)
 
 	return val;
 }
+
+struct vpd_symbol *update_symbol(const char *str)
+{
+	struct vpd_symbol *input, *s = NULL;
+
+	/* process input string as a symbol */
+	input = parse_symbol(str, strlen(str));
+	if (!input)
+		return NULL;
+
+	s = lookup_symbol(input->name);
+	if (!s) {		/* insert new symbol */
+		symbols = list_insert_before(symbols, input);
+	} else {		/* edit existing symbol */
+		switch(s->type){
+		case BOOLEAN:
+			s->value = input->value;
+			break;
+		case NUMERIC:
+			s->value = input->value;
+			break;
+		case STRING:
+			free(s->value);
+			s->value = mosys_strdup(input->value);
+			break;
+		default:
+			lprintf(LOG_ERR, "cannot insert symbol: %s\n", str);
+			break;
+		}
+
+		free(input->name);
+		free(input->value);
+		free(input);
+	}
+
+	return s;
+}

@@ -54,12 +54,20 @@ static void usage(void)
 	printf("usage: %s [options] <configfile>\n"
                     "\n"
                     "  Options:\n"
+                    "    -u            update (or add) a symbol by supplying a symbol=value pair\n"
                     "    -v            verbose (can be used multiple times)\n"
                     "    -h            print this help\n"
                     "    -V            print version\n"
                     "\n"
 		    "  A configuration file can be specified which will\n"
-		    "  override values specified at build-time.\n",
+		    "  override values specified at build-time.\n"
+		    "\n"
+		    "  Symbols may be overridden or added using the -s option.\n"
+		    "  Examples:\n"
+		    "  Boolean: vpd_encode -s CONFIG_MY_BOOLEAN=y\n"
+		    "  Number:  vpd_encode -s CONFIG_MY_NUMBER=0x01234567\n"
+		    "  String:  vpd_encode -s 'CONFIG_MY_STRING=\"mystring\"'\n"
+		    "  Note: Make sure to enclose double-quotes as necessary for your shell.\n"
 		    "\n",
 		    PROGRAM);
 }
@@ -74,8 +82,9 @@ int main(int argc, char *argv[])
 	uint8_t *table = NULL;		/* the structure table */
 	int table_len = 0, num_structures = 0;
 	struct stat s;
+	struct ll_node *user_symbols = NULL;
 
-	while ((argflag = getopt(argc, argv, "vVh")) > 0) {
+	while ((argflag = getopt(argc, argv, "vVhu:")) > 0) {
 		switch (argflag) {
 		case 'v':
 			verbose++;
@@ -86,6 +95,9 @@ int main(int argc, char *argv[])
 		case 'h':
 			usage();
 			exit(EXIT_SUCCESS);
+		case 'u':
+			user_symbols = list_insert_before(user_symbols, optarg);
+			break;
 		default:
 			break;
 		}
@@ -103,6 +115,16 @@ int main(int argc, char *argv[])
 	stat(vpd_encode_config, &s);
 	if (S_ISREG(s.st_mode) || S_ISLNK(s.st_mode)) {
 		gen_symtab(vpd_encode_config);
+	}
+
+
+	if (user_symbols) {
+		struct ll_node *tmp = list_head(user_symbols);
+
+		while (tmp) {
+			update_symbol(tmp->data);
+			tmp = tmp->next;
+		}
 	}
 
 #ifdef CONFIG_BUILD_AGZ_VENDOR_VPD_BLOB_V3

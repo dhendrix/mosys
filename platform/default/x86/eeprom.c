@@ -79,6 +79,8 @@ static int default_x86_firmware_read(struct platform_intf *intf,
 		lprintf(LOG_DEBUG, "%s: failed to read device\n", __func__);
 		return -1;
 	}
+
+	return 0;
 }
 
 static struct eeprom_dev default_x86_firmware = {

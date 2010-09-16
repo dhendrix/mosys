@@ -43,7 +43,10 @@
 #include <errno.h>
 #include <net/if.h>
 
+#if 0
+/* FIXME: linux/sockios.h not needed for the limited functionality we use */
 #include <linux/sockios.h>
+#endif
 
 #include "mosys/platform.h"
 #include "mosys/alloc.h"

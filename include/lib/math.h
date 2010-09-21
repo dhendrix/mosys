@@ -22,7 +22,7 @@
 #include <inttypes.h>
 #include <sys/types.h>
 
-#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0])
+#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
 
 /*
  * Count the number of low-order 0 bits.

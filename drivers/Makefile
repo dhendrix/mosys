@@ -31,3 +31,4 @@
 obj-y	+= intel/
 
 obj-y	+= gpio.o
+obj-y	+= superio.o	# FIXME: should this depend on PLATFORM_ARCH_X86?

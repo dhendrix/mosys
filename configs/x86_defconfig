@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Mosys version: KERNELVERSION
-# Thu Jul  1 17:03:20 2010
+# Mosys version: 1.0.06.184
+# Wed Sep 22 21:57:09 2010
 #
 
 #
@@ -9,6 +9,7 @@
 #
 CONFIG_ADVANCED_OPTIONS=y
 CONFIG_LOGLEVEL=4
+CONFIG_CHIPSET_INTEL_NM10=y
 
 #
 # Platforms

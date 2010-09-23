@@ -1,3 +1,4 @@
 # driver subdirectories will have Kconfig files to list symbols
 
 source "drivers/intel/Kconfig"
+source "drivers/ite/Kconfig"

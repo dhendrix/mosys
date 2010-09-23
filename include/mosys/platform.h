@@ -256,6 +256,7 @@ struct sysinfo_cb {
 	const char *(*name)(struct platform_intf *intf);
 	const char *(*version)(struct platform_intf *intf);
 	const char *(*family)(struct platform_intf *intf);
+	const char *(*variant)(struct platform_intf *intf);
 
 	/* Boot-time initialization. This may include things the BIOS / kernel
 	   did not initialize.  */

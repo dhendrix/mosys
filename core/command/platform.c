@@ -69,6 +69,16 @@ static int platform_family_cmd(struct platform_intf *intf,
 	return print_platforminfo("family", intf->cb->sysinfo->family(intf));
 }
 
+static int platform_variant_cmd(struct platform_intf *intf,
+                               struct platform_cmd *cmd,
+                               int argc, char **argv)
+{
+	if (!intf->cb || !intf->cb->sysinfo || !intf->cb->sysinfo->variant)
+		return -ENOSYS;
+
+	return print_platforminfo("variant", intf->cb->sysinfo->variant(intf));
+}
+
 static int print_platforminfo(const char *key, const char *value)
 {
 	struct kv_pair *kv = kv_pair_new();
@@ -109,6 +119,12 @@ struct platform_cmd platform_cmds[] = {
 		.desc	= "Display Platform Family",
 		.type	= ARG_TYPE_GETTER,
 		.arg	= { .func = platform_family_cmd }
+	},
+	{
+		.name	= "variant",
+		.desc	= "Display Platform Variant",
+		.type	= ARG_TYPE_GETTER,
+		.arg	= { .func = platform_variant_cmd }
 	},
 	{NULL}
 };

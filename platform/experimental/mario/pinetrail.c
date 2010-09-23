@@ -19,12 +19,15 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include "mosys/alloc.h"
 #include "mosys/command_list.h"
 #include "mosys/platform.h"
 #include "mosys/intf_list.h"
 #include "mosys/log.h"
 
+#include "lib/acpi.h"
 #include "lib/file.h"
+#include "lib/math.h"
 #include "lib/smbios.h"
 #include "lib/vpd.h"
 
@@ -47,46 +50,47 @@ struct platform_cmd *mario_pinetrail_sub[] = {
 	NULL
 };
 
-static char mario_hwid[] = "{D3178EA2-58C9-4DD7-9676-95DBF45290BB}";
+static const char *hwids[] = {
+	"{D3178EA2-58C9-4DD7-9676-95DBF45290BB}",
+};
+
 const char *mario_pinetrail_probe(struct platform_intf *intf)
 {
 	int fd;
-	char *buf;
+	char hwid_path[64];
 
 	if (probed_platform_id)
 		return probed_platform_id;
 
-	/*
-	 * Mario is using an experimental identifier called the "HWID". It's a
-	 * GUID that is found somewhere in ACPI space and exposed via sysfs.
-	 */
-	fd = file_open("/sys/devices/platform/chromeos_acpi/HWID", FILE_READ);
-	buf = malloc(strlen(mario_hwid));
-	if (read(fd, buf, strlen(mario_hwid)) < 0) {
-		lprintf(LOG_DEBUG, "%s: Could not open ACPI HWID\n", __func__);
-		free(buf);
-		return NULL;
-	}
-	lprintf(LOG_DEBUG, "%s: HWID: %s\n", __func__, buf);
-	if (!strcmp(buf, mario_hwid)) {
-		/* FIXME: this basically just assigns a human-readable name
-		   to the platform */
-		lprintf(LOG_DEBUG, "%s: Matched ACPI HWID\n", __func__);
-		probed_platform_id = strdup(mario_pinetrail_id_list[0]);
-	}
-	free(buf);
+	/* Attempt identification using chromeos-specific "HWID" */
+	sprintf(hwid_path, "%s/HWID", CHROMEOS_ACPI_PATH);
+	fd = file_open(hwid_path, FILE_READ);
+	if (fd) {
+		char buf[256];
+		int i, len = 0;
 
-#if 0
+		lprintf(LOG_DEBUG, "%s: attempting to match HWID\n", __func__);
+		len = read(fd, buf, sizeof(buf));
+
+		for (i = 0; i < ARRAY_SIZE(hwids); i++) {
+			lprintf(LOG_DEBUG, "\"%s\" ?= \"%s\" :", buf, hwids[i]);
+
+			if (!strncmp(buf, hwids[i], strlen(hwids[i]))) {
+				lprintf(LOG_DEBUG, " yes.\n");
+				/* assign a canonical platform name */
+				probed_platform_id = mosys_strdup(
+				                    mario_pinetrail_id_list[0]);
+				return probed_platform_id;
+			}
+		}
+	}
+
 	/*
-	 * The pinetrail reference platform uses the model presented in the
-	 * SMBIOS type 1 table for identification. For this string to be
-	 * found, some common ops must first be set up.
+	 * Try SMBIOS type 1 table for identification. For this to work, some
+	 * "common" ops (ie mmio) must first be set up.
 	 */
 	if (intf && !intf->op)
 		intf->op = &platform_common_op;
-
-	/* Usually this level of caution isn't required, but since this is very
-	   early we should be cautious... */
 	if (intf && intf->cb && intf->cb->sysinfo && intf->cb->sysinfo->name)
 		probed_platform_id = intf->cb->sysinfo->name(intf);
 
@@ -101,7 +105,6 @@ const char *mario_pinetrail_probe(struct platform_intf *intf)
 		                                       SMBIOS_LEGACY_ENTRY_BASE,
 		                                       SMBIOS_LEGACY_ENTRY_LEN);
 	}
-#endif
 
 	return probed_platform_id;
 }

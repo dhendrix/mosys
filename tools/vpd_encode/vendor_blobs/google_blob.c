@@ -35,6 +35,9 @@
 #include "lib/string.h"
 #include "lib/vpd_binary_blob.h"
 
+#include "symbol.h"	/* FIXME: This is actually in the parent dir. Include
+			 * paths for vpd_encode are kind of wonky */
+
 /* create_google_blob_v1_1 - Build binary blob in format specified by vendor
  *
  * @buf:	buffer in which to store the blob
@@ -46,72 +49,65 @@ static int create_google_blob_v1_1(uint8_t **buf)
 {
 	struct google_blob_1_1 *blob;
 	int len = sizeof(struct google_blob_1_1);
-	unsigned char *tmpstr;
-	int tmplen;
+	char *s;
 
 	*buf = mosys_realloc(*buf, len);
 	memset(*buf, 0, len);
 	blob = (struct google_blob_1_1 *)*buf;
 
-#ifdef CONFIG_GOOGLE_BLOB_V1_1_PRODUCT_SERIAL_NUMBER
-	tmpstr = format_string(CONFIG_GOOGLE_BLOB_V1_1_PRODUCT_SERIAL_NUMBER);
-	memcpy(&blob->product_serial_number[0], tmpstr,
-	       __min(strlen(tmpstr), sizeof(blob->product_serial_number)));
-	free(tmpstr);
-#endif
-#ifdef CONFIG_GOOGLE_BLOB_V1_1_PRODUCT_SKU
-	tmpstr = format_string(CONFIG_GOOGLE_BLOB_V1_1_PRODUCT_SKU);
-	memcpy(&blob->product_sku[0], tmpstr,
-	       __min(strlen(tmpstr), sizeof(blob->product_sku)));
-	free(tmpstr);
-#endif
-#ifdef CONFIG_GOOGLE_BLOB_V1_1_UUID
-	{
+	if ((s = sym2str("CONFIG_GOOGLE_BLOB_V1_1_PRODUCT_SERIAL_NUMBER"))) {
+		memcpy(&blob->product_serial_number[0], s,
+		       __min(strlen(s), sizeof(blob->product_serial_number)));
+	}
+
+	if ((s = sym2str("CONFIG_GOOGLE_BLOB_V1_1_PRODUCT_SKU"))) {
+		memcpy(&blob->product_sku[0], s,
+		       __min(strlen(s), sizeof(blob->product_sku)));
+	}
+
+	if ((s = sym2str("CONFIG_GOOGLE_BLOB_V1_1_UUID"))) {
 		uuid_t uu;
 
-		if (uuid_parse(CONFIG_GOOGLE_BLOB_V1_1_UUID, uu) < 0) {
+		if (uuid_parse(s, uu) < 0) {
 			lprintf(LOG_ERR, "%s: Invalid UUID specified\n");
 			return -1;
 		}
 
 		memcpy(&blob->uuid, &uu, sizeof(uu));
 	}
-#endif
-#ifdef CONFIG_GOOGLE_BLOB_V1_1_MB_SERIAL_NUMBER
-	tmpstr = format_string(CONFIG_GOOGLE_BLOB_V1_1_MB_SERIAL_NUMBER);
-	memcpy(&blob->motherboard_serial_number[0],
-	       tmpstr, __min(strlen(tmpstr),
-	       sizeof(blob->motherboard_serial_number)));
-	free(tmpstr);
-#endif
-#ifdef CONFIG_GOOGLE_BLOB_V1_1_3G_IMEI
-	tmpstr = format_string(CONFIG_GOOGLE_BLOB_V1_1_3G_IMEI);
-	memcpy(&blob->imei_3g[0],
-	       tmpstr, __min(strlen(tmpstr),
-	       sizeof(blob->imei_3g)));
-	free(tmpstr);
-#endif
-#ifdef CONFIG_GOOGLE_BLOB_V1_1_SSD_SERIAL_NUMBER
-	tmpstr = format_string(CONFIG_GOOGLE_BLOB_V1_1_SSD_SERIAL_NUMBER);
-	memcpy(&blob->ssd_serial_number[0],
-	       tmpstr, __min(strlen(tmpstr), sizeof(blob->ssd_serial_number)));
-	free(tmpstr);
-#endif
-#ifdef CONFIG_GOOGLE_BLOB_V1_1_MEMORY_SERIAL_NUMBER
-	tmpstr = format_string(CONFIG_GOOGLE_BLOB_V1_1_MEMORY_SERIAL_NUMBER);
-	memcpy(&blob->memory_serial_number[0],
-	       tmpstr, __min(strlen(tmpstr),
-	       sizeof(blob->memory_serial_number)));
-	free(tmpstr);
-#endif
-#ifdef CONFIG_GOOGLE_BLOB_V1_1_WLAN_MAC_ADDRESS
-	if ((tmplen = nstr2buf(&tmpstr,
-	                CONFIG_GOOGLE_BLOB_V1_1_WLAN_MAC_ADDRESS, 16, ":-")) < 0)
-		return -1;
-	memcpy(&blob->wlan_mac_id[0],
-	       tmpstr, __min(tmplen, sizeof(blob->wlan_mac_id)));
-	free(tmpstr);
-#endif
+
+
+	if ((s = sym2str("CONFIG_GOOGLE_BLOB_V1_1_MB_SERIAL_NUMBER"))){
+		memcpy(&blob->motherboard_serial_number[0],
+		       s, __min(strlen(s),
+			        sizeof(blob->motherboard_serial_number)));
+	}
+
+	if ((s = sym2str("CONFIG_GOOGLE_BLOB_V1_1_3G_IMEI"))) {
+		memcpy(&blob->imei_3g[0],
+		       s, __min(strlen(s), sizeof(blob->imei_3g)));
+	}
+
+	if ((s = sym2str("CONFIG_GOOGLE_BLOB_V1_1_SSD_SERIAL_NUMBER"))) {
+		memcpy(&blob->ssd_serial_number[0],
+		       s, __min(strlen(s), sizeof(blob->ssd_serial_number)));
+	}
+
+	if ((s = sym2str("CONFIG_GOOGLE_BLOB_V1_1_MEMORY_SERIAL_NUMBER"))) {
+		memcpy(&blob->memory_serial_number[0],
+		       s, __min(strlen(s),sizeof(blob->memory_serial_number)));
+	}
+
+	if ((s = sym2str("CONFIG_GOOGLE_BLOB_V1_1_WLAN_MAC_ADDRESS"))) {
+		unsigned char *mac = NULL;
+		int len;
+
+		if ((len = nstr2buf(&mac, s, 16, ":-")) < 0)
+			return -1;
+		memcpy(&blob->wlan_mac_id[0], mac,
+		       __min(len, sizeof(blob->wlan_mac_id)));
+		free(mac);
+	}
 
 	return len;
 }

@@ -321,6 +321,13 @@ struct fru_cb {
 	             struct eeprom *eeprom, const char *fname);
 };
 
+/* ec callbacks */
+struct ec_cb {
+	const char *(*vendor)(struct platform_intf *intf);
+	const char *(*name)(struct platform_intf *intf);
+	const char *(*version)(struct platform_intf *intf);
+};
+
 /* pci callbacks */
 struct pci_function_info;
 struct pci_cb {
@@ -343,6 +350,7 @@ struct platform_cb {
 	struct fru_cb *fru;		/* fru callbacks */
 	struct pci_cb *pci;		/* pci callbacks */
 	struct vpd_cb *vpd;		/* vpd callbacks */
+	struct ec_cb *ec;		/* ec callbacks */
 };
 
 /*

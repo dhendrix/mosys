@@ -27,6 +27,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+obj-y		+= ec.o
 obj-y		+= eeprom.o
 obj-y		+= gpio.o
 obj-y		+= i2c.o

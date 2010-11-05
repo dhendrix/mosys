@@ -33,5 +33,5 @@ obj-y					+= vendor_blobs/
 # Note: vpd_encode.c contains main() and will be compiled at the end
 # via the top-level Makefile
 obj-$(CONFIG_BUILD_VPD)			+= lib_vpd_encode.o symbol.o
-obj-$(BUILD_VPD_TYPE0_STRUCTURE)	+= type0.o
-obj-$(BUILD_VPD_TYPE1_STRUCTURE)	+= type1.o
+obj-$(CONFIG_BUILD_VPD_TYPE0_STRUCTURE)	+= type0.o
+obj-$(CONFIG_BUILD_VPD_TYPE1_STRUCTURE)	+= type1.o

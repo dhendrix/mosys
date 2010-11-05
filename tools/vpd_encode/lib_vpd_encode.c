@@ -35,7 +35,7 @@
 #include "lib/vpd_tables.h"
 
 /* print buffer (for debugging) */
-static void print_buf(enum log_levels threshold, void *buf, size_t len)
+void print_buf(enum log_levels threshold, void *buf, size_t len)
 {
 	size_t i;
 	uint8_t *x;

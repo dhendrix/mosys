@@ -34,6 +34,8 @@
 #include "lib/vpd.h"
 #include "lib/vpd_tables.h"
 
+#include "lib_vpd_encode.h"
+
 /**
  * vpd_append_type1 - append type 1 (system info) structure
  *

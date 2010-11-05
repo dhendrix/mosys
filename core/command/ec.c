@@ -32,7 +32,7 @@ static int ec_info(struct platform_intf *intf,
 	if (!intf->cb->ec ||
 	    !intf->cb->ec->vendor ||
 	    !intf->cb->ec->name ||
-	    !intf->cb->ec->firmware) {
+	    !intf->cb->ec->fw_version) {
 		return -ENOSYS;
 	}
 
@@ -40,7 +40,7 @@ static int ec_info(struct platform_intf *intf,
 
 	kv_pair_add(kv, "vendor", intf->cb->ec->vendor(intf));
 	kv_pair_add(kv, "name", intf->cb->ec->name(intf));
-	kv_pair_add(kv, "firmware", intf->cb->ec->firmware(intf));
+	kv_pair_add(kv, "fw_version", intf->cb->ec->fw_version(intf));
 
 	kv_pair_print(kv);
 	kv_pair_free(kv);

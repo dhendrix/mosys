@@ -325,7 +325,7 @@ struct fru_cb {
 struct ec_cb {
 	const char *(*vendor)(struct platform_intf *intf);
 	const char *(*name)(struct platform_intf *intf);
-	const char *(*firmware)(struct platform_intf *intf);
+	const char *(*fw_version)(struct platform_intf *intf);
 };
 
 /* pci callbacks */

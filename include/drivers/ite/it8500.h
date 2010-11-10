@@ -32,6 +32,8 @@ enum {
 	IT8500_IOBAD1,
 };
 
+struct platform_intf;	/* forward declare */
+
 /*
  * it8500_get_sioport - return port used for super i/o config
  *

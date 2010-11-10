@@ -16,26 +16,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef MARIO_PINETRAIL_H__
-#define MARIO_PINETRAIL_H__
-
 #include <inttypes.h>
+
+#include "drivers/ite/it8500.h"
+
 #include "mosys/platform.h"
 
-/* platform callbacks */
-extern struct eeprom_cb mario_pinetrail_eeprom_cb;	/* eeprom.c */
-extern struct gpio_cb mario_pinetrail_gpio_cb;		/* gpio.c */
-extern struct sysinfo_cb mario_pinetrail_sysinfo_cb;	/* sysinfo.c */
-extern struct vpd_cb mario_pinetrail_vpd_cb;		/* vpd.c */
-extern struct nvram_cb mario_pinetrail_nvram_cb;	/* nvram.c */
-extern struct ec_cb mario_pinetrail_ec_cb;		/* ec.c */
+int mario_pinetrail_ec_setup(struct platform_intf *intf)
+{
+	int rc = 0;
 
-/* functions called by setup routines */
-extern int mario_pinetrail_vpd_setup(struct platform_intf *intf);
-extern int mario_pinetrail_eeprom_setup(struct platform_intf *intf);
-extern int mario_pinetrail_ec_setup(struct platform_intf *intf);
+	/* invert logic -- it8500_detect will return 1 if it finds an it8500 EC */
+	if (!it8500_detect(intf))
+		rc = 1;
 
-/* misc */
-extern int mario_pinetrail_ec_mbid(struct platform_intf *intf);
+	return rc;
+}
 
-#endif /* MARIO_PINETRAIL_H_ */
+struct ec_cb mario_pinetrail_ec_cb = {
+//	.vendor		= mario_pinetrail_ec_vendor,
+//	.name		= mario_pinetrail_ec_name,
+//	.fw_version	= mario_pinetrail_ec_fw_version,
+};

@@ -17,6 +17,7 @@ config EXPERIMENTAL_AGZ
 config EXPERIMENTAL_MARIO
 	depends on PLATFORM_ARCH_X86 && PLATFORM_EXPERIMENTAL
 	select CHIPSET_INTEL_NM10
+	select EC_ITE_IT8500
 	bool "mario pinetrail reference board"
 	default n
 

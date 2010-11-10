@@ -47,6 +47,7 @@ struct platform_cmd *mario_pinetrail_sub[] = {
 	&cmd_platform,
 	&cmd_smbios,
 	&cmd_vpd,
+	&cmd_ec,
 	NULL
 };
 
@@ -119,6 +120,7 @@ static int mario_pinetrail_setup_post(struct platform_intf *intf)
 		lprintf(LOG_INFO, "VPD not found\n");
 
 	rc |= mario_pinetrail_eeprom_setup(intf);
+	rc |= mario_pinetrail_ec_setup(intf);
 
 	if (rc)
 		lprintf(LOG_DEBUG, "%s: failed\n", __func__);
@@ -135,6 +137,7 @@ static int mario_pinetrail_destroy(struct platform_intf *intf)
 }
 
 struct platform_cb mario_pinetrail_cb = {
+	.ec		= &mario_pinetrail_ec_cb,
 	.eeprom		= &mario_pinetrail_eeprom_cb,
 	.gpio		= &mario_pinetrail_gpio_cb,
 //	.nvram		= &mario_pinetrail_nvram_cb,

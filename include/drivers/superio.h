@@ -32,6 +32,13 @@
 #define SIO_CHIPVER	0x22
 #define SIO_CTL		0x23
 
+struct sio_id {
+	char *vendor;
+	char *name;
+	uint8_t chipid[2];
+	uint8_t chipver;
+};
+
 /*
  * sio_read - read from SuperIO
  *
@@ -56,5 +63,7 @@ extern uint8_t sio_read(struct platform_intf *intf, uint16_t port, uint8_t reg);
  */
 extern void sio_write(struct platform_intf *intf, uint16_t port,
                       uint8_t reg, uint8_t data);
+
+const struct sio_id *get_sio_id(struct platform_intf *intf, uint16_t port);
 
 #endif	/* MOSYS_DRIVERS_SUPERIO_H__ */

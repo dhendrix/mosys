@@ -28,7 +28,42 @@
 #include "drivers/superio.h"
 #include "drivers/ite/it8500.h"
 
-static int port = -1;
+/*
+ * returns 1 to indicate success
+ * returns 0 if no port determined, but no error occurred
+ * returns <0 to indicate error
+ */
+int it8500_get_sioport(struct platform_intf *intf, uint16_t *port)
+{
+	uint8_t ports[] = { 0x2e, 0x4e };
+	int i;
+	int rc = 0;
+	static int port_internal = -1;
+
+	if (port_internal > 0) {
+		*port = (uint16_t)port_internal;
+		return 1;
+	}
+
+	for (i = 0; i < ARRAY_SIZE(ports); i++) {
+		if (sio_read(intf, ports[i], SIO_LDNSEL) != 0xff) {
+			port_internal = ports[i];
+			break;
+		}
+	}
+
+	if (port_internal < 0) {
+		lprintf(LOG_DEBUG, "%s: Port probing failed\n", __func__);
+		rc = 0;
+	} else {
+		lprintf(LOG_DEBUG, "%s: Using port 0x%02x\n",
+		                   __func__, port_internal);
+		*port = (uint16_t)port_internal;
+		rc = 1;
+	}
+
+	return rc;
+}
 
 /*
  * returns 1 to indicate it8500 found

@@ -33,6 +33,18 @@ enum {
 };
 
 /*
+ * it8500_get_sioport - return port used for super i/o config
+ *
+ * @intf:	platform interface
+ * @port:	buffer to fill
+ *
+ * returns 1 to indicate success
+ * returns 0 if no port determined, but no error occurred
+ * returns <0 to indicate error
+ */
+extern int it8500_get_sioport(struct platform_intf *intf, uint16_t *port);
+
+/*
  * it8500_detect - detect ITE 8500 EC
  *
  * @intf:	platform interface

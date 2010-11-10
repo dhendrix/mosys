@@ -71,23 +71,11 @@ int it8500_get_sioport(struct platform_intf *intf, uint16_t *port)
  */
 int it8500_detect(struct platform_intf *intf)
 {
-	uint8_t ports[] = { 0x2e, 0x4e };
-	int i;
 	uint16_t chipid = 0;
+	uint16_t port;
 
-	for (i = 0; i < ARRAY_SIZE(ports); i++) {
-		if (sio_read(intf, ports[i], SIO_LDNSEL) != 0xff) {
-			port = ports[i];
-			break;
-		}
-	}
-
-	if (port < 0) {
-		lprintf(LOG_DEBUG, "%s: Port probing failed\n", __func__);
-		return -1;
-	} else {
-		lprintf(LOG_DEBUG, "%s: Using port %d\n", __func__, port);
-	}
+	if (it8500_get_sioport(intf, &port) <= 0)
+		return 0;
 
 	chipid = sio_read(intf, port, SIO_CHIPID1) << 8 |
 	         sio_read(intf, port, SIO_CHIPID2);
@@ -108,8 +96,11 @@ int it8500_detect(struct platform_intf *intf)
 uint16_t it8500_get_iobad(struct platform_intf *intf, int bank, uint8_t ldn)
 {
 	uint8_t iobad_msb, iobad_lsb;
-	uint16_t iobad;
+	uint16_t iobad, port;
 	uint8_t ldn_orig;
+
+	if (it8500_get_sioport(intf, &port) <= 0)
+		return 0;
 
 	ldn_orig = sio_read(intf, port, SIO_LDNSEL);
 	sio_write(intf, port, SIO_LDNSEL, ldn);

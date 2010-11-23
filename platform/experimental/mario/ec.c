@@ -17,11 +17,74 @@
  */
 
 #include <inttypes.h>
+#include <unistd.h>
 
 #include "drivers/superio.h"
 #include "drivers/ite/it8500.h"
 
+#include "mosys/log.h"
 #include "mosys/platform.h"
+
+#include "intf/io.h"
+
+/* These are firmware-specific and not generically useful for it8500 */
+#define MARIO_EC_MBX_CMD		0x02
+#define MARIO_EC_MBX_IDX0		0x04
+#define MARIO_EC_MBX_IDX1		0x05
+#define MARIO_EC_MBX_DATA0		0x06
+#define MARIO_EC_MBX_DATA1		0x07
+#define MARIO_EC_MBX_OEM		0x31
+
+#define MARIO_EC_CMD_FW_VERSION		0x10
+#define MARIO_EC_CMD_READ_MBID		0x12
+#define MARIO_EC_CMD_READ_ECRAM		0x22
+#define MARIO_EC_CMD_WRITE_ECRAM	0x23
+
+#define MARIO_EC_MAX_TIMEOUT_US		2000000	/* arbitrarily picked */
+#define MARIO_EC_DELAY_US		1000
+
+static void ec_wait(struct platform_intf *intf, uint16_t mbx_base)
+{
+	uint8_t tmp8;
+	unsigned int t;
+
+	for (t = 0; t < MARIO_EC_MAX_TIMEOUT_US; t += MARIO_EC_DELAY_US) {
+		io_read8(intf, mbx_base + 1, &tmp8);
+		if (tmp8 == 0x00)
+			break;
+	}
+
+	if (!t)
+		lprintf(LOG_ERR, "%s: busy loop timed out\n", __func__);
+	else
+		lprintf(LOG_DEBUG, "%s: timeout value: %u\n", __func__, t);
+}
+
+static uint8_t ecram_read8(struct platform_intf *intf, uint16_t offset)
+{
+	uint16_t mbx_base;
+	uint8_t tmp8 = 0;
+
+	mbx_base = it8500_get_iobad(intf, IT8500_IOBAD1, IT8500_LDN_BRAM);
+	io_write8(intf, mbx_base, MARIO_EC_MBX_CMD);
+	ec_wait(intf, mbx_base);
+
+	/* set EC RAM index pointers */
+	io_write8(intf, mbx_base, MARIO_EC_MBX_IDX0);
+	io_write8(intf, mbx_base + 1, offset & 0xff);
+	io_write8(intf, mbx_base, MARIO_EC_MBX_IDX1);
+	io_write8(intf, mbx_base + 1, (offset >> 8) & 0xff);
+
+	/* issue "read EC RAM" command */
+	io_write8(intf, mbx_base, MARIO_EC_MBX_CMD);
+	io_write8(intf, mbx_base + 1, MARIO_EC_CMD_READ_MBID);
+	ec_wait(intf, mbx_base);
+
+	io_write8(intf, mbx_base, 0x06);	/* data port */
+	io_read8(intf, mbx_base + 1, &tmp8);
+
+	return tmp8;
+}
 
 /*
  * mario_pinetrail_ec_name - return EC firmware name string

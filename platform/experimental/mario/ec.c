@@ -170,8 +170,42 @@ char *mario_pinetrail_ec_mbid(struct platform_intf *intf)
 	return ret;
 }
 
+/*
+ * mario_pinetrail_ec_version - return allocated EC firmware version
+ *
+ * @intf:	platform interface
+ *
+ * returns 0 if successful
+ * returns <0 if failure
+ */
+static const char *mario_pinetrail_ec_fw_version(struct platform_intf *intf)
+{
+	uint16_t mbx_base;
+	static char version[5];
+
+	mbx_base = it8500_get_iobad(intf, IT8500_IOBAD1, IT8500_LDN_BRAM);
+	io_write8(intf, mbx_base, MARIO_EC_MBX_CMD);
+	io_write8(intf, mbx_base + 1, MARIO_EC_CMD_FW_VERSION);
+	ec_wait(intf, mbx_base);
+
+	io_write8(intf, mbx_base, MARIO_EC_MBX_IDX0);
+	io_read8(intf, mbx_base + 1, &version[0]);
+
+	io_write8(intf, mbx_base, MARIO_EC_MBX_IDX1);
+	io_read8(intf, mbx_base + 1, &version[1]);
+
+	io_write8(intf, mbx_base, MARIO_EC_MBX_DATA0);
+	io_read8(intf, mbx_base + 1, &version[2]);
+
+	io_write8(intf, mbx_base, MARIO_EC_MBX_DATA1);
+	io_read8(intf, mbx_base + 1, &version[3]);
+
+	version[4] = '\0';
+	return version;
+}
+
 struct ec_cb mario_pinetrail_ec_cb = {
 	.vendor		= mario_pinetrail_ec_vendor,
 	.name		= mario_pinetrail_ec_name,
-//	.fw_version	= mario_pinetrail_ec_fw_version,
+	.fw_version	= mario_pinetrail_ec_fw_version,
 };

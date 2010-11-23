@@ -20,6 +20,8 @@
 
 #include "lib/smbios.h"
 
+#include "pinetrail.h"
+
 static const char *mario_pinetrail_get_vendor(struct platform_intf *intf)
 {
 	if (intf->cb && intf->cb->smbios)
@@ -44,8 +46,14 @@ static const char *mario_pinetrail_get_family(struct platform_intf *intf)
 		return NULL;
 }
 
+static const char *mario_pinetrail_get_variant(struct platform_intf *intf)
+{
+	return mario_pinetrail_ec_mbid(intf);
+}
+
 struct sysinfo_cb mario_pinetrail_sysinfo_cb = {
 	.vendor		= &mario_pinetrail_get_vendor,
 	.name		= &mario_pinetrail_get_name,
 	.family		= &mario_pinetrail_get_family,
+	.variant	= &mario_pinetrail_get_variant,
 };

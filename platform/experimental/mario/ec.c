@@ -22,6 +22,7 @@
 #include "drivers/superio.h"
 #include "drivers/ite/it8500.h"
 
+#include "mosys/alloc.h"
 #include "mosys/log.h"
 #include "mosys/platform.h"
 
@@ -141,6 +142,32 @@ int mario_pinetrail_ec_setup(struct platform_intf *intf)
 		rc = 1;
 
 	return rc;
+}
+
+/*
+ * mario_pinetrail_ec_mbid - return allocated mainboard ID string
+ *
+ * @intf:	platform interface
+ *
+ * Mainboard ID string is determined based upon EC strapping.
+ *
+ * returns 0 if successful
+ * returns <0 if failure
+ */
+char *mario_pinetrail_ec_mbid(struct platform_intf *intf)
+{
+	uint8_t tmp8;
+	char *ret;
+
+	tmp8 = ecram_read8(intf, 0x051e);
+	switch(tmp8 & 0x07) {
+	default:
+		ret = mosys_strdup("Unknown");
+		break;
+	}
+
+	lprintf(LOG_DEBUG, "mbid 0x%02x: %s\n", tmp8 & 0x0f, ret);
+	return ret;
 }
 
 struct ec_cb mario_pinetrail_ec_cb = {

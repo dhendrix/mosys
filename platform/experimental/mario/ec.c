@@ -55,7 +55,7 @@ static void ec_wait(struct platform_intf *intf, uint16_t mbx_base)
 			break;
 	}
 
-	if (!t)
+	if (t >= MARIO_EC_MAX_TIMEOUT_US)
 		lprintf(LOG_ERR, "%s: busy loop timed out\n", __func__);
 	else
 		lprintf(LOG_DEBUG, "%s: timeout value: %u\n", __func__, t);

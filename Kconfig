@@ -31,6 +31,14 @@ config LOGLEVEL
 	  LOG_DEBUG	7	debug-level messages	
 	  LOG_SPEW	8	excessive debug messages
 
+config DEBUG_INFO
+	bool "Optimize mosys binary for debugging"
+	default n
+	help
+	  This will add flags to the compiler to insert debugging info. Use
+	  this to debug the actual binary, for example, if you are experiencing
+	  instability (segfaults).
+
 endmenu
 
 source "drivers/Kconfig"

@@ -234,6 +234,9 @@ int gen_symtab(const char *file)
 		if (line[0] == '#')
 			continue;
 
+		if (isspace(line[0]))
+			continue;
+
 		symbol = parse_symbol(line, read);
 		if (symbol)
 			symbols = list_insert_before(symbols, symbol);

@@ -205,7 +205,7 @@ int vpd_append_type241(uint16_t handle, uint8_t **buf,
 {
 	struct vpd_header *header;
 	struct vpd_table_binary_blob_pointer *data;
-	uint8_t *strings, *p;
+	uint8_t *string_ptr;
 	size_t struct_len, total_len;
 	int string_index = 1;
 
@@ -225,8 +225,7 @@ int vpd_append_type241(uint16_t handle, uint8_t **buf,
 
 	header = *buf + len;
 	data = (uint8_t *)header + sizeof(*header);
-	strings = (uint8_t *)data + sizeof(*data);
-	p = strings;
+	string_ptr = (uint8_t *)data + sizeof(*data);
 
 	/* fill in structure header details */
 	header->type = VPD_TYPE_BINARY_BLOB_POINTER;
@@ -239,15 +238,15 @@ int vpd_append_type241(uint16_t handle, uint8_t **buf,
 	if (vendor) {
 		data->vendor = string_index;
 		string_index++;
-		sprintf(p, "%s%c", vendor, '\0');
-		p += strlen(vendor) + 1;
+		sprintf(string_ptr, "%s%c", vendor, '\0');
+		string_ptr += strlen(vendor) + 1;
 	}
 
 	if (desc) {
 		data->description = 2;
 		string_index++;
-		sprintf(p, "%s%c", desc, '\0');
-		p += strlen(desc) + 1;
+		sprintf(string_ptr, "%s%c", desc, '\0');
+		string_ptr += strlen(desc) + 1;
 	}
 
 	data->major_version = 0;
@@ -256,8 +255,8 @@ int vpd_append_type241(uint16_t handle, uint8_t **buf,
 	if (variant) {
 		data->variant = string_index;
 		string_index++;
-		sprintf(p, "%s%c", variant, '\0');
-		p += strlen(variant) + 1;
+		sprintf(string_ptr, "%s%c", variant, '\0');
+		string_ptr += strlen(variant) + 1;
 	}
 
 	memset(&data->reserved[0], 0, 5);

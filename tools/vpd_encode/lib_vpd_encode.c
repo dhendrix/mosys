@@ -218,6 +218,7 @@ int vpd_append_type241(uint16_t handle, uint8_t **buf,
 		struct_len += strlen(desc) + 1;
 	if (variant)
 		struct_len += strlen(variant) + 1;
+	struct_len += 1;	/* structure terminator */
 	total_len = len + struct_len;
 
 	*buf = realloc(*buf, total_len);

@@ -100,7 +100,7 @@ int vpd_append_type0(uint16_t handle, uint8_t **buf, size_t len)
 	/* FIXME: add code to handle characteristics + extension */
 #endif	/* CONFIG_ADVANCED_OPTIONS */
 
-	memset(*buf + struct_len, 0, 1);	/* terminator */
+	memset(&buf[struct_len], 0, 1);	/* terminator */
 
 	lprintf(LOG_DEBUG, "%s: total length (including strings): %u\n",
 	        __func__, (unsigned)total_len);

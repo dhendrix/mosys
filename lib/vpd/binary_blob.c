@@ -33,6 +33,7 @@
 #include <stdlib.h>
 #include <uuid/uuid.h>
 
+#include "mosys/alloc.h"
 #include "mosys/log.h"
 
 #include "lib/string.h"
@@ -176,6 +177,70 @@ int print_google_blob_v1_1(uint8_t *data, uint32_t size, struct kv_pair *kv)
 	s2 = buf2nicid(google_blob->wlan_mac_id, NIC_ID_IEEE802);
 	kv_pair_add(kv, "wlan_macid", s2);
 	free(s2);
+
+	return 0;
+}
+
+/*
+ * print_google_blob_v2_0 - print google blob version 2.0
+ *
+ * @data: pointer to the beginning of blob data
+ * @size: this argument is ignored -- it exists only to match function
+ *        signatures for this type of callback.
+ * @kv_pair: key=value pair
+ *
+ * The version 2.0 Google blob is different; it does not use a fixed format.
+ * Instead, it is to be interpreted from a key-value format. The format is:
+ * |--------------------------------------------------------------|
+ * | type | key length | key string | value length | value string |
+ * |--------------------------------------------------------------|
+ *  1 byte     1 byte      varies        1 byte       varies
+ *
+ * Note: Strings are not NULL-terminated
+ *
+ */
+int print_google_blob_v2_0(uint8_t *data, uint32_t size, struct kv_pair *kv)
+{
+	uint8_t *entry = data;
+	enum google_blob_v2_0_field_type {
+		GOOGLE_BLOB_V2_0_TERMINATOR = 0x00,
+		GOOGLE_BLOB_V2_0_STRING = 0x01,
+	} type;
+
+	kv_pair_add(kv, "blob_type", "google_blob");
+
+	type = entry[0];
+	while (type != GOOGLE_BLOB_V2_0_TERMINATOR) {
+		unsigned int key_length = 0, value_length;
+		char *key_string, *value_string;
+		int pos = 1;	/* start counting at key length */
+
+		key_length = entry[pos] & ~0x80;
+		while (entry[pos] & 0x80) {
+			/* if highest bit is set, then continue to interpret
+			   the next byte as the lower 7 significant bits */
+			key_length = (key_length << 7) | (entry[pos] & ~0x80);
+			pos++;
+		}
+
+		lprintf(LOG_DEBUG, "type: %02x, length: %02x\n", type, key_length);
+		key_string = mosys_malloc(key_length + 1);
+		memcpy(key_string, &entry[2], key_length);
+		key_string[key_length + 1] = '\0';
+
+		value_length = entry[2 + key_length];
+		value_string = mosys_malloc(value_length + 1);
+		memcpy(value_string, &entry[2 + key_length + 1], value_length);
+		value_string[value_length + 1] = '\0';
+
+		kv_pair_add(kv, key_string, value_string);
+		free(key_string);
+		free(value_string);
+
+		/* advance the pointer and determine the next type */
+		entry += 2 + key_length + 1 + value_length;
+		type = entry[0];
+	}
 
 	return 0;
 }

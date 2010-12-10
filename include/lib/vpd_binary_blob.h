@@ -83,5 +83,6 @@ struct blob_handler {
 int print_agz_blob_v3(uint8_t *data, uint32_t size, struct kv_pair *kv);
 int print_agz_blob_v5(uint8_t *data, uint32_t size, struct kv_pair *kv);
 int print_google_blob_v1_1(uint8_t *data, uint32_t size, struct kv_pair *kv);
+int print_google_blob_v2_0(uint8_t *data, uint32_t size, struct kv_pair *kv);
 
 #endif	/* MOSYS_LIB_VPD_BINARY_BLOB_H__ */

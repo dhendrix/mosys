@@ -486,24 +486,58 @@ extern int vpd_print_blob(struct platform_intf *intf,
 	}
 
 	if (handler && handler->print) {
-		uint8_t *blob = mosys_malloc(table->data.blob.size);
-		
-		if (mmio_read(intf, vpd_rom_base + table->data.blob.offset,
-		              table->data.blob.size, blob) < 0) {
-			lprintf(LOG_DEBUG, "%s: cannot map %lu bytes at offset "
-					   "%lu\n", table->data.blob.offset,
-					   table->data.blob.size);
-			rc = -1;
-		} else {
-			lprintf(LOG_DEBUG, "%s: blob offset: 0x%x, blob size: "
-			                   "%u\n", __func__,
-			                   table->data.blob.offset,
-			                   table->data.blob.size);
+		/*
+		 * Structures with a size in the table will be treated as fixed-
+		 * length. Tables without will be treated as variable length.
+		 */
+		if (table->data.blob.size) {
+			uint8_t *blob = mosys_malloc(table->data.blob.size);
+			uint32_t offset = vpd_rom_base+table->data.blob.offset;
+
+			if (mmio_read(intf, offset,
+			              table->data.blob.size, blob) < 0) {
+				lprintf(LOG_DEBUG, "%s: cannot map %lu bytes at"
+				                   " offset %lu\n",
+						   table->data.blob.offset,
+						   table->data.blob.size);
+				rc = -1;
+			} else {
+				lprintf(LOG_DEBUG, "%s: blob offset: 0x%x, blob size: "
+				                   "%u\n", __func__,
+				                   table->data.blob.offset,
+				                   table->data.blob.size);
+			}
 
 			rc = handler->print(blob, table->data.blob.size, kv);
-		}
+			free(blob);
+		} else {
+			uint8_t *blob;
+			uint32_t offset, size;
+			
+			/*
+			 * Since we don't know the size in advance, we'll just
+			 * mmap the remainder of the ROM.
+			 * FIXME: This is sub-optimal... Can we do better?
+			 */
+			offset = vpd_rom_base + table->data.blob.offset;
+			size = vpd_rom_size - table->data.blob.offset;
+			blob = mosys_malloc(size);
 
-		free(blob);
+			if (mmio_read(intf, offset, size, blob) < 0) {
+				lprintf(LOG_DEBUG, "%s: cannot map %lu bytes at"
+				                   " offset %lu\n",
+						   offset, size);
+				rc = -1;
+			} else {
+				lprintf(LOG_DEBUG, "%s: blob offset: 0x%x, blob size: "
+				                   "%u\n", __func__,
+				                   table->data.blob.offset,
+				                   table->data.blob.size);
+			}
+
+			rc = handler->print(blob, size, kv);
+			free(blob);
+		}
 	} else {
 		lprintf(LOG_DEBUG, "%s: no suitable handler found\n");
 	}

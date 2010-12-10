@@ -481,7 +481,7 @@ extern int vpd_print_blob(struct platform_intf *intf,
 
 	uuid_unparse(table->data.blob.uuid, s);
 
-	for (handler = &blob_handlers[0]; handler && handler->print; handler++) {
+	for (handler = &blob_handlers[0]; handler; handler++) {
 		if (!strcmp(handler->uuid, s)) {
 			lprintf(LOG_DEBUG, "found matching uuid: %s\n", s);
 			break;

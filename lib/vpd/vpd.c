@@ -480,7 +480,7 @@ extern int vpd_print_blob(struct platform_intf *intf,
 
 	for (handler = &blob_handlers[0]; handler && handler->print; handler++) {
 		if (!strcmp(handler->uuid, s)) {
-			lprintf(LOG_DEBUG, "found matching uuid\n");
+			lprintf(LOG_DEBUG, "found matching uuid: %s\n", s);
 			break;
 		}
 	}

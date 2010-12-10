@@ -483,13 +483,14 @@ extern int vpd_print_blob(struct platform_intf *intf,
 
 	for (handler = &blob_handlers[0]; handler; handler++) {
 		if (!strcmp(handler->uuid, s)) {
-			lprintf(LOG_DEBUG, "found matching uuid: %s\n", s);
+			lprintf(LOG_DEBUG, "%s: found matching uuid: %s\n",
+			        __func__, s);
 			break;
 		}
 	}
 
 	if (!handler || !handler->print) {
-		lprintf(LOG_DEBUG, "%s: no suitable handler found\n");
+		lprintf(LOG_DEBUG, "%s: no suitable handler found\n", __func__);
 		return -1;
 	}
 

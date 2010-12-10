@@ -463,10 +463,14 @@ char *vpd_find_string(struct platform_intf *intf,
 }
 
 struct blob_handler blob_handlers[] = {
-	{ "b9468091-ccd2-4b8b-8300-8cd8336a14f6", print_agz_blob_v3 },
-	{ "0eea3385-602a-4f6d-b593-6118dda238b2", print_agz_blob_v5 },
-	{ "08f8a2b0-15fd-4cfd-968f-8378f2c508ce", print_google_blob_v1_1 },
-	{ "0a7c23d3-8a27-4252-99bf-7868a2e26b61", print_google_blob_v2_0 },
+	{ .uuid = "b9468091-ccd2-4b8b-8300-8cd8336a14f6",
+	  .print = print_agz_blob_v3 },
+	{ .uuid = "0eea3385-602a-4f6d-b593-6118dda238b2",
+	  .print = print_agz_blob_v5 },
+	{ .uuid = "08f8a2b0-15fd-4cfd-968f-8378f2c508ce",
+	  .print = print_google_blob_v1_1 },
+	{ .uuid = "0a7c23d3-8a27-4252-99bf-7868a2e26b61",
+	  .print = print_google_blob_v2_0 },
 	{ NULL },
 };
 

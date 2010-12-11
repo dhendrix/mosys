@@ -470,6 +470,7 @@ struct blob_handler blob_handlers[] = {
 	{ .uuid = "08f8a2b0-15fd-4cfd-968f-8378f2c508ce",
 	  .print = print_google_blob_v1_1 },
 	{ .uuid = "0a7c23d3-8a27-4252-99bf-7868a2e26b61",
+	  .get = get_google_blob_v2_0,
 	  .print = print_google_blob_v2_0 },
 	{ NULL },
 };
@@ -498,6 +499,8 @@ extern int vpd_get_blob(struct platform_intf *intf,
 					   offset, actual_size);
 			ret = -1;
 			goto vpd_get_blob_exit;
+		} else {
+			return actual_size;
 		}
 	}
 

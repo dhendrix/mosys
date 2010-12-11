@@ -35,10 +35,16 @@
 
 #include "mosys/alloc.h"
 #include "mosys/log.h"
+#include "mosys/output.h"	/* FIXME: for print_buffer() */
 
 #include "lib/string.h"
 #include "lib/vpd_tables.h"
 #include "lib/vpd_binary_blob.h"
+
+enum google_blob_v2_0_field_type {
+	GOOGLE_BLOB_V2_0_TERMINATOR = 0x00,
+	GOOGLE_BLOB_V2_0_STRING = 0x01,
+} type;
 
 int print_agz_blob_v3(uint8_t *data, uint32_t size, struct kv_pair *kv)
 {
@@ -182,6 +188,50 @@ int print_google_blob_v1_1(uint8_t *data, uint32_t size, struct kv_pair *kv)
 }
 
 /*
+ * get_google_blob_v2_0 - Copy the google blob from "data" to "result"
+ *
+ * @data:	pointer to beginning of blob data
+ * @result:	buffer to store the google blob in
+ *
+ * This function will allocate memory which the caller must free.
+ *
+ * returns the size of the result to indicate success
+ * returns <0 to indicate error
+ */
+
+int get_google_blob_v2_0(uint8_t **dst, const uint8_t *src, int max_size)
+{
+	uint8_t *entry = (uint8_t *)src;
+	int len;
+	enum google_blob_v2_0_field_type type;
+
+	type = entry[0];
+	while (type != GOOGLE_BLOB_V2_0_TERMINATOR) {
+		unsigned int key_length = 0, value_length;
+		int pos = 1;	/* start counting at key length */
+
+		key_length = entry[pos] & ~0x80;
+		while (entry[pos] & 0x80) {
+			/* if highest bit is set, then continue to interpret
+			   the next byte as the lower 7 significant bits */
+			key_length = (key_length << 7) | (entry[pos] & ~0x80);
+			pos++;
+		}
+
+		value_length = entry[2 + key_length];
+
+		/* advance the pointer and determine the next type */
+		entry += 2 + key_length + 1 + value_length;
+		type = entry[0];
+	}
+
+	len = entry - src + 1;
+	*dst= mosys_malloc(len);
+	memcpy((void *)*dst, src, len);
+	return len;
+}
+
+/*
  * print_google_blob_v2_0 - print google blob version 2.0
  *
  * @data: pointer to the beginning of blob data
@@ -202,10 +252,7 @@ int print_google_blob_v1_1(uint8_t *data, uint32_t size, struct kv_pair *kv)
 int print_google_blob_v2_0(uint8_t *data, uint32_t size, struct kv_pair *kv)
 {
 	uint8_t *entry = data;
-	enum google_blob_v2_0_field_type {
-		GOOGLE_BLOB_V2_0_TERMINATOR = 0x00,
-		GOOGLE_BLOB_V2_0_STRING = 0x01,
-	} type;
+	enum google_blob_v2_0_field_type type;
 
 	kv_pair_add(kv, "blob_type", "google_blob");
 

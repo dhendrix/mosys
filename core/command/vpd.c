@@ -17,9 +17,12 @@
  */
 
 #include <errno.h>
+#include <fcntl.h>
+#include <inttypes.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <inttypes.h>
+#include <unistd.h>
+#include <sys/stat.h>
 
 #include "mosys/log.h"
 #include "mosys/kv_pair.h"
@@ -28,13 +31,6 @@
 #include "lib/string.h"
 #include "lib/vpd.h"
 #include "lib/vpd_tables.h"
-
-static int vpd_dump_cmd(struct platform_intf *intf,
-                        struct platform_cmd *cmd, int argc, char **argv)
-{
-	/* FIXME: implement this */
-	return -ENOSYS;
-}
 
 static int vpd_find_string_cmd(struct platform_intf *intf,
                                struct platform_cmd *cmd, int argc, char **argv)
@@ -183,6 +179,74 @@ static int vpd_print_all_cmd(struct platform_intf *intf,
 	return rc;
 }
 
+static int vpd_dump_blobs_cmd(struct platform_intf *intf,
+                              struct platform_cmd *cmd,
+                              int argc, char **argv)
+{
+	int handle, type, start, end;
+
+	if ((argc < 1)) {
+		platform_cmd_usage(cmd);
+		return -1;
+	}
+	type = strtol(argv[0], NULL, 0);
+	if (type != VPD_TYPE_BINARY_BLOB_POINTER)
+		return -1;
+
+	if (argc == 2) {
+		handle = strtol(argv[1], NULL, 0);
+		if ((handle < 0) || (handle > 0xffff) || (errno == ERANGE)) {
+			lprintf(LOG_ERR, "bad handle: %s\n", argv[1]);
+			return -1;
+		}
+		start = handle;
+		end = start + 1;
+	} else {
+		start = 0;
+		end = 0xffff;
+	}
+
+	/* find the VPD structure table entry */
+	for (handle = start; handle < end; handle++) {
+		int size, fd = -1;
+		uint8_t *buf;
+		struct vpd_table table;
+		char filename[128];	/* FIXME: use string_builder here */
+
+		if (vpd_find_table(intf, type, handle, &table,
+		                   vpd_rom_base, vpd_rom_size) < 0) {
+			lprintf(LOG_DEBUG, "cannot find binary blob pointer\n");
+			break;
+		}
+
+		size = vpd_get_blob(intf, &table.data.blob, &buf);
+		sprintf(filename, "%s%d_%d.bin", "type", type, handle);
+
+		if ((fd = open(filename,
+		               O_CREAT | O_WRONLY | O_TRUNC,
+			       S_IRUSR | S_IWUSR | S_IRGRP)) < 0) {
+			lperror(LOG_ERR, "Could not create file \"%s\": %s",
+			        filename, strerror(errno));
+			free(buf);
+			return -1;
+		}
+
+		if (write(fd, buf, size) != size) {
+			lperror(LOG_ERR, "Could not write file \"%s\": %s",
+			        filename, strerror(errno));
+			free(buf);
+			close(fd);
+			return -1;
+		}
+
+		lprintf(LOG_NOTICE, "Wrote %s\n", filename);
+		close(fd);
+		free(buf);
+	}
+
+	return 0;
+}
+
 struct platform_cmd vpd_find_cmds[] = {
 	{
 		.name	= "string",
@@ -229,6 +293,36 @@ struct platform_cmd vpd_print_cmds[] = {
 	{ NULL }
 };
 
+struct platform_cmd vpd_dump_cmds[] = {
+#if 0
+	{
+		.name	= "all",
+		.desc	= "Print All Tables",
+		.type	= ARG_TYPE_GETTER,
+		.arg	= { .func = vpd_dump_all_cmd }
+	},
+	{
+		.name	= "firmware",
+		.desc	= "Firmware Information Table",
+		.type	= ARG_TYPE_GETTER,
+		.arg	= { .func = vpd_dump_firmware_cmd }
+	},
+	{
+		.name	= "system",
+		.desc	= "System Information Table",
+		.type	= ARG_TYPE_GETTER,
+		.arg	= { .func = vpd_dump_system_cmd }
+	},
+#endif
+	{
+		.name	= "blobs",
+		.desc	= "Binary Blobs",
+		.type	= ARG_TYPE_GETTER,
+		.arg	= { .func = vpd_dump_blobs_cmd }
+	},
+	{ NULL }
+};
+
 struct platform_cmd vpd_cmds[] = {
 	{
 		.name	= "print",
@@ -238,10 +332,10 @@ struct platform_cmd vpd_cmds[] = {
 	},
 	{
 		.name	= "dump",
-		.desc	= "Dump VPD to File (does not include binary blobs)",
-		.usage	= "<file>",
-		.type	= ARG_TYPE_GETTER,
-		.arg	= { .func = vpd_dump_cmd }
+		.desc	= "Dump VPD Structure to File",
+		.usage	= "<type>",
+		.type	= ARG_TYPE_SUB,
+		.arg	= { .sub = vpd_dump_cmds }
 	},
 	{
 		.name	= "find",

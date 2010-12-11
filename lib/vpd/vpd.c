@@ -474,6 +474,79 @@ struct blob_handler blob_handlers[] = {
 	{ NULL },
 };
 
+/* This function will allocate memory for buffer which the caller must free */
+extern int vpd_get_blob(struct platform_intf *intf,
+                        struct vpd_table_binary_blob_pointer *bbp,
+                        uint8_t **buf)
+{
+	struct blob_handler *handler;
+	char s[37];
+	int ret = 0, max_size, actual_size;
+	uint32_t offset;
+	uint8_t *tmp = NULL;
+
+	/* This is the trival case -- Blob size and offset are given via the
+	 * VPD structure table, so finding and copying it is trivial. */
+	if (bbp->size) {
+		offset = vpd_rom_base + bbp->offset;
+		actual_size = bbp->size;
+		*buf = mosys_malloc(actual_size);
+
+		if (mmio_read(intf, offset, actual_size, (void *)*buf) < 0) {
+			lprintf(LOG_DEBUG, "%s: cannot map %lu bytes at offset"
+			                   " %lu\n", __func__,
+					   offset, actual_size);
+			ret = -1;
+			goto vpd_get_blob_exit;
+		}
+	}
+
+	/* If the blob is variable-length, things get more complicated... */
+	uuid_unparse(bbp->uuid, s);
+	for (handler = &blob_handlers[0]; handler; handler++) {
+		if (!strcmp(handler->uuid, s)) {
+			lprintf(LOG_DEBUG, "found matching uuid: %s\n", s);
+			break;
+		}
+	}
+
+	if (!handler->get) {
+		lprintf(LOG_DEBUG, "%s: no suitable handler found\n", __func__);
+		ret = -1;
+		goto vpd_get_blob_exit;
+	}
+
+	/*
+	 * Since we don't know the size in advance, we'll mmap the
+	 * remainder of the ROM.
+	 * FIXME: This is sub-optimal... Can we do better?
+	 */
+	offset = vpd_rom_base + bbp->offset;
+	max_size = vpd_rom_size - bbp->offset;
+	tmp = mosys_malloc(max_size);
+	/* FIXME: debug print */
+	lprintf(LOG_DEBUG, "mapping 0x%08x bytes at 0x%08x\n",
+	        max_size, offset);
+	if (mmio_read(intf, offset, max_size, tmp) < 0) {
+		lprintf(LOG_DEBUG, "%s: cannot map %lu bytes at offset"
+		                   " %lu\n", __func__,
+				   offset, max_size);
+		ret = -1;
+		goto vpd_get_blob_exit;
+	}
+	if ((actual_size = handler->get(buf, tmp, max_size)) < 0) {
+		ret = -1;
+		goto vpd_get_blob_exit;
+	}
+
+	/* if all is well, we'll return the size of the binary blob */
+	ret = actual_size;
+
+vpd_get_blob_exit:
+	free(tmp);
+	return ret;
+}
+
 extern int vpd_print_blob(struct platform_intf *intf,
                           struct kv_pair *kv, struct vpd_table *table)
 {

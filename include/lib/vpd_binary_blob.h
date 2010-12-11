@@ -77,6 +77,7 @@ struct google_blob_1_1 {
 
 struct blob_handler {
 	unsigned char *uuid;	/* string representation of UUID */
+	int (*get)(uint8_t **dst, const uint8_t *src, int max_size);
 	int (*print)(uint8_t *blob, uint32_t size, struct kv_pair *kv);
 };
 

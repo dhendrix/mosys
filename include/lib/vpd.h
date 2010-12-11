@@ -49,7 +49,9 @@ extern int vpd_find_table(struct platform_intf *intf,
 extern char *vpd_find_string(struct platform_intf *intf,
                              enum vpd_types type, int number,
                              unsigned int baseaddr, unsigned int len);
-
+extern int vpd_get_blob(struct platform_intf *intf,
+                        struct vpd_table_binary_blob_pointer *bbp,
+                        uint8_t **buf);
 extern int vpd_print_blob(struct platform_intf *intf,
                           struct kv_pair *kv, struct vpd_table *table);
 

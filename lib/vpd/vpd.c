@@ -527,9 +527,6 @@ extern int vpd_get_blob(struct platform_intf *intf,
 	offset = vpd_rom_base + bbp->offset;
 	max_size = vpd_rom_size - bbp->offset;
 	tmp = mosys_malloc(max_size);
-	/* FIXME: debug print */
-	lprintf(LOG_DEBUG, "mapping 0x%08x bytes at 0x%08x\n",
-	        max_size, offset);
 	if (mmio_read(intf, offset, max_size, tmp) < 0) {
 		lprintf(LOG_DEBUG, "%s: cannot map %lu bytes at offset"
 		                   " %lu\n", __func__,

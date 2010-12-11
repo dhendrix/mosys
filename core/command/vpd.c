@@ -147,6 +147,7 @@ static int vpd_print_blobs_cmd(struct platform_intf *intf,
 		blob_kv = kv_pair_new();
 
 		kv_pair_fmt(kv, "table_type", "%d", table.header.type);
+		kv_pair_fmt(kv, "handle", "%u", table.header.handle);
 		kv_pair_add(kv, "vendor",
 			    table.string[table.data.blob.vendor]);
 		kv_pair_add(kv, "description",

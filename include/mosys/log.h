@@ -43,8 +43,9 @@ enum log_levels {
 	LOG_ERR,		/* error conditions */
 	LOG_WARNING,		/* warning conditions */
 	LOG_NOTICE,		/* normal but significant condition */
-	LOG_INFO,		/* informational */
+	LOG_INFO,		/* informational messages */
 	LOG_DEBUG,		/* debug-level messages */
+	LOG_SPEW,		/* excessive debug messages */
 };
 
 /*

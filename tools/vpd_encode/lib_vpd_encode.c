@@ -89,7 +89,7 @@ int vpd_append_string()
 #endif
 
 /**
- * vpd_crete_eps - create an entry point structure
+ * vpd_create_eps - create an entry point structure
  *
  * @structure_table_len:	structure table len
  * @num_structures:		number of structures in structure table
@@ -103,7 +103,10 @@ int vpd_append_string()
  * FIXME: This function needs to be more intelligent about parsing tables and
  * obtaining information on its own. These arguments need to go away.
  */
-struct vpd_entry *vpd_create_eps(uint16_t structure_table_len,
+struct vpd_entry *vpd_create_eps(uint8_t major_ver,
+                                 uint8_t minor_ver,
+                                 uint16_t structure_table_length,
+                                 uint32_t structure_table_address,
                                  uint16_t num_structures)
 {
 	struct vpd_entry *eps = NULL;
@@ -117,8 +120,8 @@ struct vpd_entry *vpd_create_eps(uint16_t structure_table_len,
 	memcpy(eps->anchor_string, VPD_ENTRY_MAGIC, 4);
 	/* Note: entry point length should be 0x1F for v2.6 */
 	eps->entry_length = sizeof(struct vpd_entry);
-	eps->major_ver = CONFIG_EPS_VPD_MAJOR_VERSION;
-	eps->minor_ver = CONFIG_EPS_VPD_MINOR_VERSION;
+	eps->major_ver = major_ver;
+	eps->minor_ver = minor_ver;
 	/* EPS revision based on version 2.1 or later */
 	eps->entry_rev = 0;
 	/* note: nothing done with EPS formatted area */
@@ -126,24 +129,10 @@ struct vpd_entry *vpd_create_eps(uint16_t structure_table_len,
 	/* Intermediate EPS (IEPS) stuff */
 	memcpy(eps->inter_anchor_string, "_DMI_", 5);
 
-	/* FIXME: implement vpd_table_length() and vpd_num_structures() */
-	eps->table_length = structure_table_len;
-
-#ifdef CONFIG_EPS_STRUCTURE_TABLE_ADDRESS
-	/* FIXME: this needs to be better */
-	eps->table_address = CONFIG_EPS_STRUCTURE_TABLE_ADDRESS;
-#else
-	/* immediately follow the entry point structure, assuming EPS is at
-	   address 0x00000000 */
-	eps->table_address = eps->entry_length;
-#endif
-#ifdef CONFIG_EPS_NUM_STRUCTURES
-	eps->table_entry_count = CONFIG_EPS_NUM_STRUCTURES;
-#else
+	eps->table_length = structure_table_length;
+	eps->table_address = structure_table_address;
 	eps->table_entry_count = num_structures;
-#endif
-	eps->bcd_revision = (CONFIG_EPS_VPD_MAJOR_VERSION << 4) |
-	                    CONFIG_EPS_VPD_MINOR_VERSION;
+	eps->bcd_revision = (major_ver << 4) | minor_ver;
 
 	/* calculate IEPS checksum first, then the EPS checksum */
 	eps->inter_anchor_cksum = zero8_csum(&eps->inter_anchor_string[0], 0xf);

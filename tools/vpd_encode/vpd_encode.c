@@ -80,7 +80,8 @@ int main(int argc, char *argv[])
 	int verbose = 0;
 	struct vpd_entry *eps = NULL;
 	uint8_t *table = NULL;		/* the structure table */
-	int table_len = 0, num_structures = 0;
+	int table_len = 0;
+	uint16_t num_structures = 0;
 	struct stat s;
 	struct ll_node *user_symbols = NULL;
 
@@ -210,7 +211,16 @@ int main(int argc, char *argv[])
 	 * about the size of the structure table and number of structures within
 	 * the table
 	 */
-	eps = vpd_create_eps(table_len, num_structures);
+	eps = vpd_create_eps(CONFIG_EPS_VPD_MAJOR_VERSION,
+	                     CONFIG_EPS_VPD_MINOR_VERSION,
+	                     (uint16_t)table_len,
+	                     CONFIG_EPS_STRUCTURE_TABLE_ADDRESS,
+#ifdef CONFIG_EPS_NUM_STRUCTURES
+	                     CONFIG_EPS_NUM_STRUCTURES
+#else
+	                     num_structures
+#endif
+			);
 
 	/* for now we will simply write the entry point followed by the
 	   structure table */

@@ -160,9 +160,9 @@ static struct vpd_symbol *parse_symbol(const char *str, size_t len)
 		symbol->type = STRING;
 	} else if (isdigit(*p)) {
 		char *endptr;
-		unsigned long long u;
+		long long int u;
 
-		u = strtoull(p, &endptr, 0);
+		u = strtoll(p, &endptr, 0);
 
 		/* finish parsing the string for error checking */
 		while (!isspace(*p) && index < len) {
@@ -179,7 +179,7 @@ static struct vpd_symbol *parse_symbol(const char *str, size_t len)
 			goto parse_symbol_exit;
 		}
 
-		string_builder_sprintf(sb, "%llu", u);
+		string_builder_sprintf(sb, "%lld", u);
 
 		symbol->type = NUMERIC;
 	} else if (*p == 'y' || *p == 'n') {

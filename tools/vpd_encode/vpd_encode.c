@@ -151,14 +151,14 @@ int main(int argc, char *argv[])
 	 * All structures belonging to the structure table are created first,
 	 * followed by the entry point structure.
 	 */
-#ifdef CONFIG_BUILD_VPD_TYPE0_STRUCTURE
-	lprintf(LOG_DEBUG, "%s: appending type0 table at structure table"
-	                   " offset: 0x%04x\n", __func__, table_len);
-	table_len = vpd_append_type0(1, &table, table_len);
-	if (table_len < 0)
-		goto do_exit_2;
-	num_structures++;
-#endif
+	if (sym2bool("CONFIG_BUILD_VPD_TYPE0_STRUCTURE")) {
+		lprintf(LOG_DEBUG, "%s: appending type0 table at structure "
+		        "table offset: 0x%04x\n", __func__, table_len);
+		table_len = sym2type0(1, &table, table_len);
+		if (table_len < 0)
+			goto do_exit_2;
+		num_structures++;
+	}
 
 #ifdef CONFIG_BUILD_VPD_TYPE1_STRUCTURE
 	lprintf(LOG_DEBUG, "%s: appending type1 table at structure table"

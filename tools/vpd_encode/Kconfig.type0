@@ -16,19 +16,22 @@ config FIRMWARE_VERSION
 	  This is a freeform string that may contain core and OEM version
 	  information.
 
-config FIRMWARE_START_SEGMENT
-	hex "Firmware start segment"
-	depends on VPD_ADVANCED_OPTIONS
-	default 0xE000
-	help
-	  Starting address segment
-
 config FIRMWARE_RELEASE_DATE
 	string "Firmware release date (mm/dd/yyyy)"
 	default "01/01/1970"
 	help
 	  String number fo the firmware release date. The date string, if
 	  supplied, is mm/dd/yyyy format.
+
+config FIRMWARE_START
+	depends on VPD_ADVANCED_OPTIONS
+	string "Firmware start location"
+	default 0
+	help
+	  Native address offset of firmware runtime image, relative
+	  to beginning of ROM. This should be presented as the CPU-native
+	  addressing format when the CPU is first powered on (byte offset
+	  or segment descriptor).
 
 config FIRMWARE_ROM_SIZE
 	int "Size of system firmware ROM (in 64KB blocks)"

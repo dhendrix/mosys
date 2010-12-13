@@ -18,6 +18,7 @@
  * FIXME: this code is absolutely atrocious and needs to be re-written
  */
 
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <inttypes.h>
@@ -35,6 +36,7 @@
 #include "lib/vpd_tables.h"
 
 #include "lib_vpd_encode.h"
+#include "symbol.h"
 
 /**
  * vpd_append_type0 - append type 0 (firmware info) structure to a buffer
@@ -42,11 +44,23 @@
  * @handle:	handle for this structure
  * @buf:	buffer to append to
  * @len:	length of buffer
+ * @vendor:	firmware vendor (string)
+ * @version:	firmware version (string)
+ * @start:	offset of firmware runtime code in ROM image
+ * @date:	firmware release date (string)
+ * @rom_size:	ROM size (in 64KB blocks)
+ * @major_ver:	firmware major version
+ * @minor_ver:	firmware minor version
+ * @ec_major_ver: EC firmware major version
+ * @ec_minor_ver: EC firmware minor version
  *
  * returns total size of newly re-sized buffer if successful
  * returns <0 to indicate failure
  */
-int vpd_append_type0(uint16_t handle, uint8_t **buf, size_t len)
+int vpd_append_type0(uint16_t handle, uint8_t **buf, size_t len,
+                     char *vendor, char *version, uint16_t start, char *date,
+                     uint8_t rom_size, uint8_t major_ver, uint8_t minor_ver,
+		     uint8_t ec_major_ver, uint8_t ec_minor_ver)
 {
 	struct vpd_header *header;
 	struct vpd_table_firmware *data;
@@ -56,9 +70,9 @@ int vpd_append_type0(uint16_t handle, uint8_t **buf, size_t len)
 	/* FIXME: Add sanity checking */
 	struct_len = sizeof(struct vpd_header) +
 	             sizeof(struct vpd_table_firmware) +
-	             strlen(CONFIG_FIRMWARE_VENDOR) + 1 +
-	             strlen(CONFIG_FIRMWARE_VERSION) + 1 +
-	             strlen(CONFIG_FIRMWARE_RELEASE_DATE) + 1 +
+	             strlen(vendor) + 1 +
+	             strlen(version) + 1 +
+	             strlen(date) + 1 +
 		     1;			/* structure terminator */
 	total_len = len + struct_len;
 
@@ -76,29 +90,18 @@ int vpd_append_type0(uint16_t handle, uint8_t **buf, size_t len)
 
 	data->vendor = 1;
 	data->version = 2;
-#ifdef CONFIG_FIRMWARE_START_ADDRESS
-	data->start_address = CONFIG_FIRMWARE_START_ADDRESS;
-#else
-	data->start_address = 0;
-#endif
-	data->rom_size_64k_blocks = CONFIG_FIRMWARE_ROM_SIZE - 1;
-	data->major_ver = CONFIG_SYSTEM_FIRMWARE_MAJOR_RELEASE;
-	data->minor_ver = CONFIG_SYSTEM_FIRMWARE_MINOR_RELEASE;
-	data->ec_major_ver = CONFIG_EC_FIRMWARE_MAJOR_RELEASE;
-	data->ec_minor_ver = CONFIG_EC_FIRMWARE_MINOR_RELEASE;
+	data->start_address = start,
+	data->rom_size_64k_blocks = rom_size - 1;
+	data->major_ver = major_ver;
+	data->minor_ver = minor_ver;
+	data->ec_major_ver = ec_major_ver;
+	data->ec_minor_ver = ec_minor_ver;
 
 	data->release_date = 3;
 	sprintf(strings, "%s%c%s%c%s%c",
-	                 CONFIG_FIRMWARE_VENDOR, '\0',
-	                 CONFIG_FIRMWARE_VERSION, '\0',
-	                 CONFIG_FIRMWARE_RELEASE_DATE, '\0');
-
-#ifdef CONFIG_ADVANCED_OPTIONS
-#ifdef CONFIG_FIRMWARE_START_SEGMENT
-	data->start_address = (uint16_t)CONFIG_FIRMWARE_START_SEGMENT;
-#endif
-	/* FIXME: add code to handle characteristics + extension */
-#endif	/* CONFIG_ADVANCED_OPTIONS */
+	                 vendor, '\0',
+	                 version, '\0',
+	                 date, '\0');
 
 	memset(&buf[struct_len], 0, 1);	/* terminator */
 
@@ -108,3 +111,68 @@ int vpd_append_type0(uint16_t handle, uint8_t **buf, size_t len)
 	return total_len;
 }
 
+/**
+ * sym2type0 - extract symbols and append firmware info table to buffer
+ *
+ * @handle:	handle for this structure
+ * @buf:	buffer to append to
+ * @len:	length of buffer
+ *
+ * This function is intended to hide tedious symbol extraction steps from
+ * higher-level logic.
+ *
+ * returns total size of newly re-sized buffer if successful
+ * returns <0 to indicate failure
+ */
+int sym2type0(uint16_t handle, uint8_t **buf, size_t len)
+{
+	char *vendor, *version, *release_date;
+	uint16_t start;
+	uint8_t rom_size, major_ver, minor_ver, ec_major_ver, ec_minor_ver;
+	char *tmp;
+
+	errno = 0;
+	vendor = version = release_date = NULL;
+
+	/* strings */
+	if (!(vendor = sym2str("CONFIG_FIRMWARE_VENDOR"))) return -1;
+	if (!(version = sym2str("CONFIG_FIRMWARE_VERSION"))) return -1;
+	if (!(release_date = sym2str("CONFIG_FIRMWARE_RELEASE_DATE"))) return -1;
+
+	/* optional values */
+	tmp = sym2str("CONFIG_FIRMWARE_START");
+	if (tmp) {
+		start = (uint16_t)strtoul(tmp, NULL, 0);
+		if (errno) return -1;
+	} else {
+		/* set default value */
+		start = 0;
+	}
+
+	/* required values */
+	if (!(tmp = sym2str("CONFIG_FIRMWARE_ROM_SIZE"))) return -1;
+	rom_size = (uint8_t)strtoul(tmp, NULL, 0);
+	if (errno) return -1;
+
+	if (!(tmp = sym2str("CONFIG_SYSTEM_FIRMWARE_MAJOR_RELEASE"))) return -1;
+	major_ver = (uint8_t)strtoul(tmp, NULL, 0);
+	if (errno) return -1;
+
+	if (!(tmp = sym2str("CONFIG_SYSTEM_FIRMWARE_MINOR_RELEASE"))) return -1;
+	minor_ver = (uint8_t)strtoul(tmp, NULL, 0);
+	if (errno) return -1;
+
+	if (!(tmp = sym2str("CONFIG_EC_FIRMWARE_MAJOR_RELEASE"))) return -1;
+	ec_major_ver = (uint8_t)strtoul(tmp, NULL, 0);
+	if (errno) return -1;
+
+	if (!(tmp = sym2str("CONFIG_EC_FIRMWARE_MINOR_RELEASE"))) return -1;
+	lprintf(LOG_INFO, "checkpoint 7\n");
+	ec_minor_ver = (uint8_t)strtoul(tmp, NULL, 0);
+	lprintf(LOG_INFO, "checkpoint 8\n");
+	if (errno) return -1;
+
+	return vpd_append_type0(handle, buf, len, vendor, version, start,
+	                        release_date, rom_size, major_ver, minor_ver,
+				ec_major_ver, ec_minor_ver);
+}

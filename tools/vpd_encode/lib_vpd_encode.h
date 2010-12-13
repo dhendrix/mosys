@@ -24,7 +24,11 @@ extern struct vpd_entry *vpd_create_eps(uint8_t major_ver,
                                         uint16_t structure_table_length,
                                         uint32_t structure_table_address,
                                         uint16_t num_structures);
-extern int vpd_append_type0(uint16_t handle, uint8_t **buf, size_t len);
+extern int vpd_append_type0(uint16_t handle, uint8_t **buf, size_t len,
+                            char *vendor, char *version, uint16_t start,
+			    char *date, uint8_t rom_size, uint8_t major_ver,
+			    uint8_t minor_ver, uint8_t ec_major_ver,
+			    uint8_t ec_minor_ver);
 extern int vpd_append_type1(uint16_t handle, uint8_t **buf, size_t len);
 extern int vpd_append_type127(uint16_t handle, uint8_t **buf, size_t len);
 

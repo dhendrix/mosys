@@ -157,7 +157,7 @@ int mario_pinetrail_ec_setup(struct platform_intf *intf)
 char *mario_pinetrail_ec_mbid(struct platform_intf *intf)
 {
 	uint8_t tmp8;
-	char *ret;
+	char *ret = NULL;
 
 	tmp8 = ecram_read8(intf, 0x051e);
 	switch(tmp8 & 0x07) {

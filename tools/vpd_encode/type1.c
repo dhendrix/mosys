@@ -35,6 +35,7 @@
 #include "lib/vpd_tables.h"
 
 #include "lib_vpd_encode.h"
+#include "symbol.h"
 
 /**
  * vpd_append_type1 - append type 1 (system info) structure
@@ -43,10 +44,19 @@
  * @buf:	buffer to append to
  * @len:	length of buffer
  *
+ * @product_name:	name of the product
+ * @version:		version of the product
+ * @serial_number:	serial number of the product
+ * @uuid:		uuid of the product
+ * @sku:		SKU of the product
+ * @family:		family the product belongs in
+ *
  * returns total size of newly re-sized buffer if successful
  * returns <0 to indicate failure
  */
-int vpd_append_type1(uint16_t handle, uint8_t **buf, size_t len)
+int vpd_append_type1(uint16_t handle, uint8_t **buf, size_t len,
+                     char *manufacturer, char *product_name, char *version,
+		     char *serial_number, char *uuid, char *sku, char *family)
 {
 	struct vpd_header *header;
 	struct vpd_table_system *data;
@@ -56,12 +66,12 @@ int vpd_append_type1(uint16_t handle, uint8_t **buf, size_t len)
 	/* FIXME: Add sanity checking */
 	struct_len = sizeof(struct vpd_header) +
 	             sizeof(struct vpd_table_system) +
-	             strlen(CONFIG_SYSTEM_MANUFACTURER) + 1 +
-	             strlen(CONFIG_SYSTEM_PRODUCT_NAME) + 1 +
-	             strlen(CONFIG_SYSTEM_VERSION) + 1 +
-	             strlen(CONFIG_SYSTEM_SERIAL_NUMBER) + 1 +
-	             strlen(CONFIG_SYSTEM_SKU) + 1 +
-	             strlen(CONFIG_SYSTEM_FAMILY) + 1 +
+	             strlen(manufacturer) + 1 +
+	             strlen(product_name) + 1 +
+	             strlen(version) + 1 +
+	             strlen(serial_number) + 1 +
+	             strlen(sku) + 1 +
+	             strlen(family) + 1 +
 		     1;			/* structure terminator */
 	total_len = len + struct_len;
 
@@ -81,23 +91,19 @@ int vpd_append_type1(uint16_t handle, uint8_t **buf, size_t len)
 	data->name = 2;
 	data->version = 3;
 	data->serial_number = 4;
-#ifdef CONFIG_SYSTEM_UUID
-	if (uuid_parse(CONFIG_SYSTEM_UUID, data->uuid) < 0) {
-		printf("invalid UUID \"%s\" specified\n", CONFIG_SYSTEM_UUID);
-		goto vpd_create_type1_fail;
-	}
-#endif
-	data->wakeup_type = 0;	/* FIXME: we're basically ignoring this */
+	if (uuid_parse(uuid, data->uuid) < 0)
+		printf("invalid UUID \"%s\" specified\n", uuid);
+	data->wakeup_type = 0; /* for legacy smbios compatibility only */
 	data->sku_number = 5;
 	data->family = 6;
 
 	sprintf(strings, "%s%c%s%c%s%c%s%c%s%c%s%c",
-	                 CONFIG_SYSTEM_MANUFACTURER, '\0',
-	                 CONFIG_SYSTEM_PRODUCT_NAME, '\0',
-	                 CONFIG_SYSTEM_VERSION, '\0',
-	                 CONFIG_SYSTEM_SERIAL_NUMBER, '\0',
-	                 CONFIG_SYSTEM_SKU, '\0',
-	                 CONFIG_SYSTEM_FAMILY, '\0');
+	                 manufacturer, '\0',
+	                 product_name, '\0',
+	                 version, '\0',
+	                 serial_number, '\0',
+	                 sku, '\0',
+	                 family, '\0');
 
 	memset(*buf + struct_len, 0, 1);	/* terminator */
 
@@ -106,7 +112,35 @@ int vpd_append_type1(uint16_t handle, uint8_t **buf, size_t len)
 	print_buf(LOG_DEBUG, data, total_len);
 
 	return total_len;
+}
 
-vpd_create_type1_fail:
-	return -1;
+/**
+ * sym2type1 - extract symbols and append system info table to buffer
+ *
+ * @handle:	handle for this structure
+ * @buf:	buffer to append to
+ * @len:	length of buffer
+ *
+ * This function is intended to hide tedious symbol extraction steps from
+ * higher-level logic.
+ *
+ * returns total size of newly re-sized buffer if successful
+ * returns <0 to indicate failure
+ */
+int sym2type1(uint16_t handle, uint8_t **buf, size_t len)
+{
+	char *manufacturer, *name, *version, *serial_num,
+	     *uuid, *sku, *family;
+
+	/* All strings are required in this data structure */
+	if (!(manufacturer = sym2str("CONFIG_SYSTEM_MANUFACTURER"))) return -1;
+	if (!(name = sym2str("CONFIG_SYSTEM_PRODUCT_NAME"))) return -1;
+	if (!(version = sym2str("CONFIG_SYSTEM_VERSION"))) return -1;
+	if (!(serial_num = sym2str("CONFIG_SYSTEM_SERIAL_NUMBER"))) return -1;
+	if (!(uuid = sym2str("CONFIG_SYSTEM_UUID"))) return -1;
+	if (!(sku = sym2str("CONFIG_SYSTEM_SKU"))) return -1;
+	if (!(family = sym2str("CONFIG_SYSTEM_FAMILY"))) return -1;
+
+	return vpd_append_type1(handle, buf, len, manufacturer, name,
+	                        version, serial_num, uuid, sku, family);
 }

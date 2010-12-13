@@ -36,6 +36,6 @@ extern int mario_pinetrail_eeprom_setup(struct platform_intf *intf);
 extern int mario_pinetrail_ec_setup(struct platform_intf *intf);
 
 /* misc */
-extern int mario_pinetrail_ec_mbid(struct platform_intf *intf);
+extern char *mario_pinetrail_ec_mbid(struct platform_intf *intf);
 
 #endif /* MARIO_PINETRAIL_H_ */

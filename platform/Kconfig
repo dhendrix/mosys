@@ -3,12 +3,26 @@
 #
 
 menu "Platforms"
+config BIG_ENDIAN
+	bool
+	default n
+
+config LITTLE_ENDIAN
+	bool
+	default n
+
+choice PLATFORM_ARCH
+	prompt "Platform Host Architecture"
 
 config PLATFORM_ARCH_ARMEL
 	bool "ARM endian-little platforms"
+	select LITTLE_ENDIAN
 
 config PLATFORM_ARCH_X86
 	bool "x86 platforms"
+	select BIG_ENDIAN
+
+endchoice
 
 source "platform/default/Kconfig"
 source "platform/hp/Kconfig"

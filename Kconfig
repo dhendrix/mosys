@@ -7,10 +7,10 @@ config KERNELVERSION
 
 menu "General setup"
 config ADVANCED_OPTIONS
-	bool "Configure optional fields"
+	bool "Advanced configuration"
 	default n
 	help
-	  This will enable advanced options to be selected
+	  This will enable advanced options to be selected and configured
 
 config LOGLEVEL
 	int "Log level threshold"

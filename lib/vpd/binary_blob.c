@@ -195,9 +195,9 @@ static int get_string(uint8_t **p)
 	do {
 		/* if highest bit is set, then continue to interpret bits
 		   6:0 of the next byte as the next 7 significant bits */
-#if CONFIG_BIG_ENDIAN == 1
+#if defined CONFIG_BIG_ENDIAN && CONFIG_BIG_ENDIAN == 1
 		len = len + ((**p & ~0x80) << shiftwidth);
-#elif CONFIG_LITTLE_ENDIAN == 1
+#elif defined CONFIG_LITTLE_ENDIAN && CONFIG_LITTLE_ENDIAN == 1
 		len = (len << shiftwidth) | (**p & ~0x80);
 #endif
 		(*p)++;

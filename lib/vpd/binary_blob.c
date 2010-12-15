@@ -287,42 +287,25 @@ int get_google_blob_v2_0(uint8_t **dst, const uint8_t *src, int max_len)
  */
 int print_google_blob_v2_0(uint8_t *data, uint32_t size, struct kv_pair *kv)
 {
-	uint8_t *entry = data;
-	enum google_blob_v2_0_field_type type;
+	struct entry entry;
+	int len = 0, entry_len;
 
 	kv_pair_add(kv, "blob_type", "google_blob");
 
-	type = entry[0];
-	while (type != GOOGLE_BLOB_V2_0_TERMINATOR) {
-		unsigned int key_length = 0, value_length;
-		char *key_string, *value_string;
-		int pos = 1;	/* start counting at key length */
+	while ((entry_len = get_entry(data + len, &entry)) > 1) {
+		char *key, *value;
 
-		key_length = entry[pos] & ~0x80;
-		while (entry[pos] & 0x80) {
-			/* if highest bit is set, then continue to interpret
-			   the next byte as the lower 7 significant bits */
-			key_length = (key_length << 7) | (entry[pos] & ~0x80);
-			pos++;
-		}
+		key = mosys_malloc(entry.key_length + 1);
+		snprintf(key, entry.key_length + 1, "%s", entry.key);
 
-		lprintf(LOG_DEBUG, "type: %02x, length: %02x\n", type, key_length);
-		key_string = mosys_malloc(key_length + 1);
-		memcpy(key_string, &entry[2], key_length);
-		key_string[key_length + 1] = '\0';
+		value = mosys_malloc(entry.value_length + 1);
+		snprintf(value, entry.value_length + 1, "%s", entry.value);
 
-		value_length = entry[2 + key_length];
-		value_string = mosys_malloc(value_length + 1);
-		memcpy(value_string, &entry[2 + key_length + 1], value_length);
-		value_string[value_length + 1] = '\0';
+		kv_pair_fmt(kv, key, value);
 
-		kv_pair_add(kv, key_string, value_string);
-		free(key_string);
-		free(value_string);
-
-		/* advance the pointer and determine the next type */
-		entry += 2 + key_length + 1 + value_length;
-		type = entry[0];
+		free(key);
+		free(value);
+		len += entry_len;
 	}
 
 	return 0;

@@ -187,6 +187,57 @@ int print_google_blob_v1_1(uint8_t *data, uint32_t size, struct kv_pair *kv)
 	return 0;
 }
 
+/* sets *p to point at the beginning of the string and returns string length */
+static int get_string(uint8_t **p)
+{
+	int len = 0, shiftwidth = 0;
+
+	do {
+		/* if highest bit is set, then continue to interpret bits
+		   6:0 of the next byte as the next 7 significant bits */
+#if CONFIG_BIG_ENDIAN == 1
+		len = len + ((**p & ~0x80) << shiftwidth);
+#elif CONFIG_LITTLE_ENDIAN == 1
+		len = (len << shiftwidth) | (**p & ~0x80);
+#endif
+		(*p)++;
+		shiftwidth += 7;
+	} while (**p & 0x80);
+
+	return len;
+}
+
+struct entry {
+	enum google_blob_v2_0_field_type type;
+	int key_length;
+	uint8_t *key;
+	int value_length;
+	uint8_t *value;
+};
+
+static int get_entry(const uint8_t *src, struct entry *entry)
+{
+	uint8_t *p = (uint8_t *)src;
+
+	if (*p == GOOGLE_BLOB_V2_0_TERMINATOR)
+		return 1;
+	if (*p != GOOGLE_BLOB_V2_0_STRING)
+		return -1;
+
+	entry->type = *p;
+
+	p++;
+	entry->key_length = get_string(&p);
+	entry->key = p;
+
+	p += entry->key_length;
+	entry->value_length = get_string(&p);
+	entry->value = p;
+
+	p += entry->value_length;
+	return p - src;
+}
+
 /*
  * get_google_blob_v2_0 - Copy the google blob from "data" to "result"
  *
@@ -199,33 +250,18 @@ int print_google_blob_v1_1(uint8_t *data, uint32_t size, struct kv_pair *kv)
  * returns <0 to indicate error
  */
 
-int get_google_blob_v2_0(uint8_t **dst, const uint8_t *src, int max_size)
+int get_google_blob_v2_0(uint8_t **dst, const uint8_t *src, int max_len)
 {
-	uint8_t *entry = (uint8_t *)src;
-	int len;
-	enum google_blob_v2_0_field_type type;
+	int len = 0, entry_len;
+	struct entry entry;
 
-	type = entry[0];
-	while (type != GOOGLE_BLOB_V2_0_TERMINATOR) {
-		unsigned int key_length = 0, value_length;
-		int pos = 1;	/* start counting at key length */
-
-		key_length = entry[pos] & ~0x80;
-		while (entry[pos] & 0x80) {
-			/* if highest bit is set, then continue to interpret
-			   the next byte as the lower 7 significant bits */
-			key_length = (key_length << 7) | (entry[pos] & ~0x80);
-			pos++;
-		}
-
-		value_length = entry[2 + key_length];
-
-		/* advance the pointer and determine the next type */
-		entry += 2 + key_length + 1 + value_length;
-		type = entry[0];
+	while ((entry_len = get_entry(src + len, &entry)) > 1) {
+		len += entry_len;
+		if (len > max_len)
+			return -1;
 	}
 
-	len = entry - src + 1;
+	len++;	/* for terminator */
 	*dst= mosys_malloc(len);
 	memcpy((void *)*dst, src, len);
 	return len;

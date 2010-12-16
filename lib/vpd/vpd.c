@@ -321,7 +321,7 @@ static int vpd_itr_next(struct platform_intf *intf)
 
 	/* check for overflow */
 	if (vpd_itr->current >= (vpd_itr->data +
-				    vpd_itr->entry->table_length)) {
+				 vpd_itr->entry->table_length - 1)) {
 		/* start pointer over */
 		lprintf(LOG_DEBUG, "vpd_itr_next: search wrapped\n");
 		vpd_itr->current = vpd_itr->data;

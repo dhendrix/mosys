@@ -356,7 +356,7 @@ static int smbios_itr_next(struct platform_intf *intf)
 
 	/* check for overflow */
 	if (smbios_itr->current >= (smbios_itr->data +
-				    smbios_itr->entry->table_length)) {
+				    smbios_itr->entry->table_length - 1)) {
 		/* start pointer over */
 		lprintf(LOG_DEBUG, "smbios_itr_next: search wrapped\n");
 		smbios_itr->current = smbios_itr->data;

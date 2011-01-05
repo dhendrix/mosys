@@ -138,6 +138,18 @@ enum {
 extern char *buf2nicid(uint8_t *inbuf, enum nic_id_type type);
 
 /*
+ * strlfind - linear search for string in set of strings
+ *
+ * @str:		string to search for
+ * @arr:		array to search
+ * @case_sensitive:	boolean for case sensitivity
+ *
+ * returns pointer to array entry if string is found
+ * returns NULL otherwise
+ */
+const char *strlfind(const char *str, const char *arr[], int case_sensitive);
+
+/*
  * Find the min-length string.
  */
 #ifndef __minlen

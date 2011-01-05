@@ -39,33 +39,28 @@
 
 #include "lib/acpi.h"
 #include "lib/smbios.h"
+#include "lib/string.h"
 
 int probe_hwid(const char *hwids[])
 {
 	char *id;
-	int i, found = 0;
+	int ret = 0;
 
 	if (acpi_get_hwid(&id) < 0)
 		return 0;
 
-	/* Attempt identification using chromeos-specific "HWID" */
-	for (i = 0; hwids[i] != NULL; i++) {
-		lprintf(LOG_DEBUG, "\"%s\" ?= \"%s\": ", id, hwids[i]);
-		if (!strncasecmp(id, hwids[i], strlen(hwids[i]))) {
-			found = 1;
-			lprintf(LOG_DEBUG, "Yes.\n");
-			break;
-		}
-		lprintf(LOG_DEBUG, "No.\n");
+	if (strlfind(id, hwids, 0)) {
+		ret = 1;
+		lprintf(LOG_DEBUG, "%s: matched id \"%s\"\n", __func__, id);
 	}
-
-	return found;
+	free(id);
+	return ret;
 }
 
 int probe_smbios(struct platform_intf *intf, const char *ids[])
 {
 	char *id;
-	int i, found = 0;
+	int ret = 0;
 
 	/* Attempt to obtain platform ID string using sysinfo callback */
 	if (intf && intf->cb && intf->cb->sysinfo && intf->cb->sysinfo->name)
@@ -80,18 +75,11 @@ int probe_smbios(struct platform_intf *intf, const char *ids[])
 		                       SMBIOS_LEGACY_ENTRY_LEN);
 	}
 
-	if (!id)
-		return 0;
-
-	for (i = 0; ids[i] != NULL; i++) {
-		lprintf(LOG_DEBUG, "\"%s\" ?= \"%s\": ", id, ids[i]);
-		if (!strncasecmp(id, ids[i], strlen(ids[i]))) {
-			found = 1;
-			lprintf(LOG_DEBUG, "Yes.\n");
-			break;
-		}
-		lprintf(LOG_DEBUG, "No.\n");
+	if (!id) {
+		ret = 0;
+	} else if (strlfind(id, ids, 0)) {
+		ret = 1;
+		lprintf(LOG_DEBUG, "%s: matched id \"%s\"\n", __func__, id);
 	}
-
-	return found;
+	return ret;
 }

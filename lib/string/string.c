@@ -353,3 +353,34 @@ char *buf2nicid(uint8_t *inbuf, enum nic_id_type type)
 
 	return outbuf;
 }
+
+const char *strlfind(const char *str, const char *arr[], int cs)
+{
+	int i;
+	const char *ret = NULL;
+
+	if (cs < 0 || cs > 1)
+		return NULL;
+
+	for (i = 0; arr[i] != NULL; i++) {
+		lprintf(LOG_SPEW, "%s: \"%s\" ?= \"%s\": ",
+		                  __func__, str, arr[i]);
+		if (cs) {
+			if (!strncmp(str, arr[i], strlen(arr[i]))) {
+				ret = arr[i];
+				lprintf(LOG_SPEW, "Yes.\n");
+				break;
+			}
+		} else {
+			if (!strncasecmp(str, arr[i], strlen(arr[i]))) {
+				ret = arr[i];
+				lprintf(LOG_SPEW, "Yes.\n");
+				break;
+			}
+		}
+
+		lprintf(LOG_SPEW, "No.\n");
+	}
+
+	return ret;
+}

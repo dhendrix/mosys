@@ -25,15 +25,11 @@
 #include "mosys/intf_list.h"
 #include "mosys/log.h"
 
-#include "lib/acpi.h"
-#include "lib/file.h"
-#include "lib/math.h"
+#include "lib/probe.h"
 #include "lib/smbios.h"
 #include "lib/vpd.h"
 
 #include "pinetrail.h"
-
-static const char *probed_platform_id;
 
 const char *mario_pinetrail_id_list[] = {
 	"Mario",
@@ -53,61 +49,31 @@ struct platform_cmd *mario_pinetrail_sub[] = {
 
 static const char *hwids[] = {
 	"{D3178EA2-58C9-4DD7-9676-95DBF45290BB}",
+	"{9D799111-A88A-439E-9E1F-FBBB41B00A9A}",
+	NULL
 };
 
-const char *mario_pinetrail_probe(struct platform_intf *intf)
+int mario_pinetrail_probe(struct platform_intf *intf)
 {
-	int fd;
-	char hwid_path[64];
+	const char *id = NULL;
+	static int status = 0, probed = 0;
 
-	if (probed_platform_id)
-		return probed_platform_id;
+	if (probed)
+		return status;
 
-	/* Attempt identification using chromeos-specific "HWID" */
-	sprintf(hwid_path, "%s/HWID", CHROMEOS_ACPI_PATH);
-	fd = file_open(hwid_path, FILE_READ);
-	if (fd) {
-		char buf[256];
-		int i, len = 0;
-
-		lprintf(LOG_DEBUG, "%s: attempting to match HWID\n", __func__);
-		len = read(fd, buf, sizeof(buf));
-
-		for (i = 0; i < ARRAY_SIZE(hwids); i++) {
-			lprintf(LOG_DEBUG, "\"%s\" ?= \"%s\" :", buf, hwids[i]);
-
-			if (!strncmp(buf, hwids[i], strlen(hwids[i]))) {
-				lprintf(LOG_DEBUG, " yes.\n");
-				/* assign a canonical platform name */
-				probed_platform_id = mosys_strdup(
-				                    mario_pinetrail_id_list[0]);
-				return probed_platform_id;
-			}
-		}
+	if (probe_hwid(hwids)) {
+		status = 1;
+		goto mario_pinetrail_probe_exit;
 	}
 
-	/*
-	 * Try SMBIOS type 1 table for identification. For this to work, some
-	 * "common" ops (ie mmio) must first be set up.
-	 */
-	if (intf && !intf->op)
-		intf->op = &platform_common_op;
-	if (intf && intf->cb && intf->cb->sysinfo && intf->cb->sysinfo->name)
-		probed_platform_id = intf->cb->sysinfo->name(intf);
-
-	/*
-	 * if the sysinfo callback didn't work, then perhaps we can try finding
-	 * the string by directly invoking smbios_find_string.
-	 */
-	if (!probed_platform_id) {
-		probed_platform_id = smbios_find_string(intf,
-		                                       SMBIOS_TYPE_SYSTEM,
-		                                       1,
-		                                       SMBIOS_LEGACY_ENTRY_BASE,
-		                                       SMBIOS_LEGACY_ENTRY_LEN);
+	if (probe_smbios(intf, mario_pinetrail_id_list)) {
+		status = 1;
+		goto mario_pinetrail_probe_exit;
 	}
 
-	return probed_platform_id;
+mario_pinetrail_probe_exit:
+	probed = 1;
+	return status;
 }
 
 /* late setup routine; not critical to core functionality */
@@ -129,9 +95,6 @@ static int mario_pinetrail_setup_post(struct platform_intf *intf)
 
 static int mario_pinetrail_destroy(struct platform_intf *intf)
 {
-	if (probed_platform_id)
-		free((char *)probed_platform_id);
-
 	/* FIXME: unmap vpd stuff */
 	return 0;
 }

@@ -33,6 +33,7 @@
 #include "mosys/platform.h"
 #include "mosys/output.h"
 
+#include "lib/string.h"
 
 /*
  * mosys_platform_setup  -  identify platform, setup interfaces and commands
@@ -46,82 +47,67 @@ struct platform_intf *mosys_platform_setup(const char *p_opt)
 {
 	struct platform_intf **_intf, *intf;
 	struct platform_intf *ret = NULL;
-	const char **id, *name = NULL;
 	int intf_found = 0;
-
-	if (p_opt)
-		name = mosys_strdup(p_opt);
 
 	/* attempt to probe platform name and match it to an interface */
 	for (_intf = platform_intf_list; _intf && *_intf; _intf++) {
 		intf = *_intf;
 
-		if (!p_opt && intf->probe)
-			name = intf->probe(intf);
+		lprintf(LOG_DEBUG, "Checking platform %s\n", intf->name);
 
-		if (!name)
-			continue;
+		/* use common operations by default */
+		intf->op = &platform_common_op;
 
-		/* check each id against board name */
-		/* FIXME: We should match vendor and product IDs */
-		for (id = intf->id_list; id && *id; id++) {
-			lprintf(LOG_DEBUG,
-				"Checking platform %s ('%s' ?= '%s')\n",
-				intf->name, name, *id);
-
-			if (0 == strncasecmp(*id, name, strlen(*id))) {
-				lprintf(LOG_DEBUG, "  Matched\n");
+		/* platform name specified by user */
+		if (p_opt) {
+			if (strlfind(p_opt, &intf->id_list[0], 0)) {
 				intf_found = 1;
-
-				/* use common operations by default */
-				intf->op = &platform_common_op;
-
-				/* overwrite name field with matched data */
-				intf->name = mosys_strdup(name);
-
-				/* call platform-specific setup if found */
-				if (intf->setup && intf->setup(intf) < 0) {
-					/* free name which was overridden during setup */
-					free((char *)intf->name);
-					ret = NULL;
-					break;
-				}
-
-				/* prepare interface operations */
-				if (intf_op_setup(intf) < 0) {
-					if (intf->destroy)
-						intf->destroy(intf);
-					intf_op_destroy(intf);
-					/* free name which was overridden during setup */
-					free((char *)intf->name);
-					ret = NULL;
-					break;
-				}
-
-				/* call platform-specific post-setup if found */
-				if (intf->setup_post &&
-				    intf->setup_post(intf) < 0) {
-					if (intf->destroy)
-						intf->destroy(intf);
-					/* free name which was overridden during setup */
-					free((char *)intf->name);
-					ret = NULL;
-					break;
-				}
-
-				ret = intf;
 				break;
 			} else {
-				lprintf(LOG_DEBUG, "  Did not match\n");
+				continue;
 			}
 		}
 
-		if (intf_found)
+		/* auto-detect */
+		if (intf->probe && intf->probe(intf)) {
+			lprintf(LOG_DEBUG, "Platform %s found (via "
+				"probing)\n", intf->name);
+			intf_found = 1;
 			break;
+		}
 	}
 
-	if (p_opt)
-		free((char *)name);
+	if (!intf_found && p_opt)
+		goto mosys_platform_setup_exit;
+
+	/* call platform-specific setup if found */
+	if (intf->setup && intf->setup(intf) < 0)
+		goto mosys_platform_setup_exit;
+
+	/* prepare interface operations */
+	if (intf_op_setup(intf) < 0) {
+		if (intf->destroy)
+			intf->destroy(intf);
+		intf_op_destroy(intf);
+		goto mosys_platform_setup_exit;
+	}
+
+	/* call platform-specific post-setup if found */
+	if (intf->setup_post &&
+	    intf->setup_post(intf) < 0) {
+		if (intf->destroy)
+			intf->destroy(intf);
+		goto mosys_platform_setup_exit;
+	}
+
+	if (!intf_found) {
+		/* default platform will be used */
+		lprintf(LOG_WARNING, "Unable to auto-detect platform. Limited "
+		                     "functionality only.\n");
+	}
+	ret = intf;
+
+mosys_platform_setup_exit:
 	return ret;
 }
 
@@ -144,8 +130,6 @@ void mosys_platform_destroy(struct platform_intf *intf)
 		/* cleanup interface operations */
 		intf_op_destroy(intf);
 
-		/* free name which was overridden during setup */
-		free((char *)intf->name);
 	}
 }
 

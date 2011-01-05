@@ -23,6 +23,7 @@
 #include "mosys/intf_list.h"
 #include "mosys/log.h"
 
+#include "lib/probe.h"
 #include "lib/smbios.h"
 
 #include "z600.h"
@@ -41,37 +42,22 @@ struct platform_cmd *platform_hp_z600_sub[] = {
 	NULL
 };
 
-const char *hp_z600_probe(struct platform_intf *intf)
+int hp_z600_probe(struct platform_intf *intf)
 {
-	if (probed_platform_id)
-		return probed_platform_id;
+	const char *id = NULL;
+	static int status = 0, probed = 0;
 
-	/*
-	 * The z600 uses the model presented in the SMBIOS type 1 table
-	 * for identification. For this string to be found, some common ops
-	 * must first be set up.
-	 */
-	if (intf && !intf->op)
-		intf->op = &platform_common_op;
+	if (probed)
+		return status;
 
-	/* Usually this level of caution isn't required, but since this is very
-	   early we should be cautious... */
-	if (intf && intf->cb && intf->cb->sysinfo && intf->cb->sysinfo->name)
-		probed_platform_id = intf->cb->sysinfo->name(intf);
-
-	/*
-	 * if the sysinfo callback didn't work, then perhaps we can try finding
-	 * the string by directly invoking smbios_find_string.
-	 */
-	if (!probed_platform_id) {
-		probed_platform_id = smbios_find_string(intf,
-		                                       SMBIOS_TYPE_SYSTEM,
-		                                       1,
-		                                       SMBIOS_LEGACY_ENTRY_BASE,
-		                                       SMBIOS_LEGACY_ENTRY_LEN);
+	if (probe_smbios(intf, hp_z600_id_list)) {
+		status = 1;
+		goto z600_pinetrail_probe_exit;
 	}
 
-	return probed_platform_id;
+z600_pinetrail_probe_exit:
+	probed = 1;
+	return status;
 }
 
 static int hp_z600_destroy(struct platform_intf *intf)

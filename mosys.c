@@ -211,7 +211,7 @@ int mosys_main(int argc, char **argv)
 			s_opt = 1;
 			break;
 		case 'p':
-			p_opt = mosys_strdup(optarg);	/* FIXME */
+			p_opt = optarg;
 			break;
 		case 'V':
 			printf("mosys version %s\n", VERSION);

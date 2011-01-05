@@ -34,7 +34,6 @@
 
 /* FIXME: command/command_list.h is included magically via Makefile */
 const char *default_x86_id_list[] = {
-	"",
 	NULL
 };
 

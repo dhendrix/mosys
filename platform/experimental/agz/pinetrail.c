@@ -24,7 +24,7 @@
 #include "mosys/intf_list.h"
 #include "mosys/log.h"
 
-#include "lib/file.h"
+#include "lib/probe.h"
 #include "lib/smbios.h"
 #include "lib/vpd.h"
 
@@ -47,63 +47,32 @@ struct platform_cmd *agz_pinetrail_sub[] = {
 	NULL
 };
 
-static char agz_hwid[] = "{9707217C-7943-4376-A812-FA05C318A16F}";
-const char *agz_pinetrail_probe(struct platform_intf *intf)
+static const char *hwids[] = {
+	"{9707217C-7943-4376-A812-FA05C318A16F}",
+	NULL
+};
+
+int agz_pinetrail_probe(struct platform_intf *intf)
 {
-	int fd;
-	char *buf;
+	const char *id = NULL;
+	static int status = 0, probed = 0;
 
-	if (probed_platform_id)
-		return probed_platform_id;
+	if (probed)
+		return status;
 
-	/*
-	 * AGZ is using an experimental identifier called the "HWID". It's a
-	 * GUID that is found somewhere in ACPI space and exposed via sysfs.
-	 */
-	fd = file_open("/sys/devices/platform/chromeos_acpi/HWID", FILE_READ);
-	buf = malloc(strlen(agz_hwid));
-	if (read(fd, buf, strlen(agz_hwid)) < 0) {
-		lprintf(LOG_DEBUG, "%s: Could not open ACPI HWID\n", __func__);
-		free(buf);
-		return NULL;
+	if (probe_hwid(hwids)) {
+		status = 1;
+		goto agz_pinetrail_probe_exit;
 	}
-	lprintf(LOG_DEBUG, "%s: HWID: %s\n", __func__, buf);
-	if (!strcmp(buf, agz_hwid)) {
-		/* FIXME: this basically just assigns a human-readable name
-		   to the platform */
-		lprintf(LOG_DEBUG, "%s: Matched ACPI HWID\n", __func__);
-		probed_platform_id = strdup(agz_pinetrail_id_list[0]);
+
+	if (probe_smbios(intf, agz_pinetrail_id_list)) {
+		status = 1;
+		goto agz_pinetrail_probe_exit;
 	}
-	free(buf);
 
-#if 0
-	/*
-	 * The pinetrail reference platform uses the model presented in the
-	 * SMBIOS type 1 table for identification. For this string to be
-	 * found, some common ops must first be set up.
-	 */
-	if (intf && !intf->op)
-		intf->op = &platform_common_op;
-
-	/* Usually this level of caution isn't required, but since this is very
-	   early we should be cautious... */
-	if (intf && intf->cb && intf->cb->sysinfo && intf->cb->sysinfo->name)
-		probed_platform_id = intf->cb->sysinfo->name(intf);
-
-	/*
-	 * if the sysinfo callback didn't work, then perhaps we can try finding
-	 * the string by directly invoking smbios_find_string.
-	 */
-	if (!probed_platform_id) {
-		probed_platform_id = smbios_find_string(intf,
-		                                       SMBIOS_TYPE_SYSTEM,
-		                                       1,
-		                                       SMBIOS_LEGACY_ENTRY_BASE,
-		                                       SMBIOS_LEGACY_ENTRY_LEN);
-	}
-#endif
-
-	return probed_platform_id;
+agz_pinetrail_probe_exit:
+	probed = 1;
+	return status;
 }
 
 /* late setup routine; not critical to core functionality */

@@ -33,6 +33,7 @@ obj-y		+= eeprom/
 obj-y		+= file/
 obj-y		+= fmap/
 obj-y		+= math/
+obj-y		+= misc/
 obj-y		+= smbios/
 obj-y		+= string/
 obj-y		+= vpd/

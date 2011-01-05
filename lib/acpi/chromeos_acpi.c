@@ -16,21 +16,35 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef MOSYS_LIB_ACPI_H__
-#define MOSYS_LIB_ACPI_H__
+#include <stdlib.h>
+#include <unistd.h>
 
-/* Chrome OS ACPI stuff */
-#define CHROMEOS_ACPI_PATH	"/sys/devices/platform/chromeos_acpi/"
-#define CHROMEOS_HWID_MAXLEN	256
+#include "mosys/alloc.h"
+#include "mosys/log.h"
 
-/*
- * acpi_get_hwid - retrieve hardware ID and store in a newly allocated buffer
- *
- * @buf:	buffer to store hardware ID in
- *
- * returns length of hardware id to indicate success
- * returns <0 to indicate error
- */
-extern int acpi_get_hwid(char **buf);
+#include "lib/acpi.h"
+#include "lib/file.h"
 
-#endif /* MOSYS_LIB_ACPI_H__ */
+int acpi_get_hwid(char **buf)
+{
+	char path[] = CHROMEOS_ACPI_PATH"HWID";
+	int fd, len = -1;
+
+	fd = file_open(path, FILE_READ);
+	if (fd < 0)
+		return -1;
+
+	*buf = mosys_malloc(CHROMEOS_HWID_MAXLEN);
+	memset(*buf, 0, CHROMEOS_HWID_MAXLEN);
+	len = read(fd, *buf, CHROMEOS_HWID_MAXLEN);
+	if (len < 0) {
+		lprintf(LOG_DEBUG, "%s: failed to read hwid from %s\n",
+		                   __func__, path);
+	} else {
+		lprintf(LOG_SPEW, "%s: len: %d, path: %s, hwid: %s\n",
+		                  __func__, len, path, *buf);
+	}
+
+	close(fd);
+	return len;
+}

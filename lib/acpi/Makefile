@@ -27,12 +27,4 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-obj-y		+= acpi/
-obj-y		+= crypto/	# TODO: Make this a build option
-obj-y		+= eeprom/
-obj-y		+= file/
-obj-y		+= fmap/
-obj-y		+= math/
-obj-y		+= smbios/
-obj-y		+= string/
-obj-y		+= vpd/
+obj-y		+= chromeos_acpi.o

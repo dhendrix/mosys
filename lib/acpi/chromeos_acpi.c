@@ -40,6 +40,7 @@ int acpi_get_hwid(char **buf)
 	if (len < 0) {
 		lprintf(LOG_DEBUG, "%s: failed to read hwid from %s\n",
 		                   __func__, path);
+		free(*buf);
 	} else {
 		lprintf(LOG_SPEW, "%s: len: %d, path: %s, hwid: %s\n",
 		                  __func__, len, path, *buf);

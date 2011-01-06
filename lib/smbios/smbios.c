@@ -186,6 +186,9 @@ int smbios_find_entry(struct platform_intf *intf, struct smbios_entry *entry,
 		 * in situations where the SMBIOS address is out of spec and not
 		 * easy to find from userspace (possibly due to EFI).
 		 */
+		lprintf(LOG_DEBUG, "%s: Attempting to get SMBIOS base address "
+		                   "from kernel log\n", __func__);
+
 		if ((klog_size = klogctl(10, NULL, 0)) < 0)
 			return -1;
 

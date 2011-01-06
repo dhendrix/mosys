@@ -54,7 +54,6 @@ static const char *hwids[] = {
 
 int agz_pinetrail_probe(struct platform_intf *intf)
 {
-	const char *id = NULL;
 	static int status = 0, probed = 0;
 
 	if (probed)

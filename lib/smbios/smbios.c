@@ -34,6 +34,7 @@
 
 #include "intf/mmio.h"
 
+#include "lib/file.h"
 #include "lib/smbios.h"
 #include "lib/string.h"
 
@@ -209,6 +210,43 @@ int smbios_find_entry(struct platform_intf *intf, struct smbios_entry *entry,
 		}
 
 		free(buf);
+	}
+
+	/*
+	 * Try obtaining SMBIOS address from /var/log/messages (first entry
+	 * found will be used). This should be considered unreliable and used
+	 * as a last resort.
+	 */
+	if (!found) {
+		FILE *fp;
+		char *line = NULL;
+		size_t line_offset, bytes;
+
+		lprintf(LOG_DEBUG, "%s: Attempting to get SMBIOS base address "
+		                   "from /var/log/messages\n", __func__);
+		fp = fopen("/var/log/messages", "r");
+		/* read /var/log/messages one line at a time since it can get
+		   rather large */
+		while (fp && ((getline(&line, &bytes, fp)) > 0)) {
+			if (find_pattern(line, bytes,
+			             "SMBIOS=", 7, 1, &line_offset) == 0) {
+				baseaddr = strtoull(line + line_offset + 7,
+				                    NULL, 0);
+				lprintf(LOG_DEBUG, "%s: SMBIOS=0x%08x\n",
+					           __func__, baseaddr);
+				data = mmio_map(intf, O_RDONLY, baseaddr, len);
+				offset = 0;
+				found = 1;
+			}
+			if (line) {
+				free(line);
+				line = NULL;
+			}
+
+			if (found)
+				break;
+		}
+		fclose(fp);
 	}
 
 	if (!found) {

@@ -92,6 +92,10 @@ static size_t mario_host_firmware_size(struct platform_intf *intf,
 	                      SMBIOS_LEGACY_ENTRY_BASE,
 	                      SMBIOS_LEGACY_ENTRY_LEN) < 0) {
 		lprintf(LOG_INFO, "Unable to calculate VPD address\n");
+
+		/* fake it */
+		lprintf(LOG_INFO, "Assuming 4MB firmware ROM\n");
+		rom_size = 4096 * 1024;
 	} else {
 		rom_size = (table.data.bios.rom_size_64k_blocks + 1) * 64 * 1024;
 	}

@@ -434,7 +434,7 @@ drivers-y	:=
 libs-y		:=
 tools-y		:= tools/
 #FIXME: Clean up core-y
-core-y		:= core/ intf/ platform/ lib/ $(tools-y) drivers/
+core-y		:= core/ intf/ drivers/ platform/ lib/ $(tools-y)
 
 # Tools that are compiled separately
 

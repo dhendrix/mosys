@@ -39,6 +39,7 @@ const char *alex_pinetrail_id_list[] = {
 };
 
 struct platform_cmd *alex_pinetrail_sub[] = {
+	&cmd_ec,
 	&cmd_eeprom,
 	&cmd_gpio,
 //	&cmd_nvram,
@@ -84,6 +85,11 @@ static int alex_pinetrail_setup_post(struct platform_intf *intf)
 	if (alex_pinetrail_vpd_setup(intf) < 0)
 		lprintf(LOG_INFO, "VPD not found\n");
 
+	if (alex_pinetrail_ec_setup(intf) < 0) {
+		lprintf(LOG_WARNING, "Non-fatal error: Failed to setup "
+		                     "EC callbacks.\n");
+
+	}
 	rc |= alex_pinetrail_eeprom_setup(intf);
 
 	if (rc)
@@ -96,11 +102,13 @@ static int alex_pinetrail_destroy(struct platform_intf *intf)
 	if (probed_platform_id)
 		free((char *)probed_platform_id);
 
+	alex_pinetrail_ec_destroy(intf);
 	/* FIXME: unmap vpd stuff */
 	return 0;
 }
 
 struct platform_cb alex_pinetrail_cb = {
+	.ec		= &alex_pinetrail_ec_cb,
 	.eeprom		= &alex_pinetrail_eeprom_cb,
 	.gpio		= &alex_pinetrail_gpio_cb,
 //	.nvram		= &alex_pinetrail_nvram_cb,

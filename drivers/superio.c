@@ -34,6 +34,8 @@
 
 static struct sio_id superio_ids[] = {
 	{ "ite", "it8500", { 0x85, 0x00 } },
+	{ "smsc", "mec1308", { 0x2d, 0x00 } },
+	{ "smsc", "mec1308", { 0x4d, 0x01 } },
 };
 
 uint8_t sio_read(struct platform_intf *intf, uint16_t port, uint8_t reg)
@@ -63,7 +65,7 @@ const struct sio_id *get_sio_id(struct platform_intf *intf, uint16_t port)
 
 	if (done)
 		return id;
-
+	lprintf(LOG_DEBUG, "%s: using port 0x%04x\n", __func__, port);
 	id_byte[0] = sio_read(intf, port, SIO_CHIPID1);
 	id_byte[1] = sio_read(intf, port, SIO_CHIPID2);
 

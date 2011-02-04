@@ -27,10 +27,4 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# always decend into the subdirectories
-obj-y	+= intel/
-obj-y	+= ite/
-obj-y	+= smsc/
-
-obj-y	+= gpio.o
-obj-y	+= superio.o	# FIXME: should this depend on PLATFORM_ARCH_X86?
+obj-$(CONFIG_EC_SMSC_MEC1308)	+= mec1308.o

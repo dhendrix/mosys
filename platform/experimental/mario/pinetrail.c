@@ -39,6 +39,7 @@ const char *mario_pinetrail_id_list[] = {
 struct platform_cmd *mario_pinetrail_sub[] = {
 	&cmd_eeprom,
 	&cmd_gpio,
+	&cmd_i2c,
 //	&cmd_nvram,
 	&cmd_platform,
 	&cmd_smbios,

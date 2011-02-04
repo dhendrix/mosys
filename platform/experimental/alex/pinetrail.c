@@ -42,6 +42,7 @@ struct platform_cmd *alex_pinetrail_sub[] = {
 	&cmd_ec,
 	&cmd_eeprom,
 	&cmd_gpio,
+	&cmd_i2c,
 //	&cmd_nvram,
 	&cmd_platform,
 	&cmd_smbios,

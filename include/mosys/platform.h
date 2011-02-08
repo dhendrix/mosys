@@ -155,6 +155,8 @@ struct memory_cb {
 	int (*dimm_speed)(struct platform_intf *intf,
 	                  int dimm, struct kv_pair *kv);
 	int (*dimm_present)(struct platform_intf *intf, int dimm);
+	int (*dimm_spd)(struct platform_intf *intf,
+	                int dimm, unsigned char *buf);
 	uint32_t (*error_count)(struct platform_intf *intf,
 	                        enum dimm_error_type type, int dimm);
 	int (*error_clear)(struct platform_intf *intf,

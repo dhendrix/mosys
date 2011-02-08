@@ -25,6 +25,7 @@
 /* platform callbacks */
 extern struct eeprom_cb mario_pinetrail_eeprom_cb;	/* eeprom.c */
 extern struct gpio_cb mario_pinetrail_gpio_cb;		/* gpio.c */
+extern struct memory_cb mario_pinetrail_memory_cb;	/* memory.c */
 extern struct sysinfo_cb mario_pinetrail_sysinfo_cb;	/* sysinfo.c */
 extern struct vpd_cb mario_pinetrail_vpd_cb;		/* vpd.c */
 extern struct nvram_cb mario_pinetrail_nvram_cb;	/* nvram.c */

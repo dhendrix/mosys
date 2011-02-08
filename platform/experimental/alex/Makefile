@@ -30,6 +30,7 @@
 obj-$(CONFIG_EXPERIMENTAL_ALEX)	+= ec.o
 obj-$(CONFIG_EXPERIMENTAL_ALEX)	+= eeprom.o
 obj-$(CONFIG_EXPERIMENTAL_ALEX)	+= gpio.o
+obj-$(CONFIG_EXPERIMENTAL_ALEX)	+= memory.o
 #obj-$(CONFIG_EXPERIMENTAL_ALEX)	+= nvram.o
 obj-$(CONFIG_EXPERIMENTAL_ALEX)	+= pinetrail.o
 obj-$(CONFIG_EXPERIMENTAL_ALEX)	+= sysinfo.o

@@ -16,23 +16,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef AGZ_PINETRAIL_H__
-#define AGZ_PINETRAIL_H__
-
-#include <inttypes.h>
 #include "mosys/platform.h"
 
-/* platform callbacks */
-extern struct eeprom_cb agz_pinetrail_eeprom_cb;	/* eeprom.c */
-extern struct sysinfo_cb agz_pinetrail_sysinfo_cb;	/* sysinfo.c */
-extern struct vpd_cb agz_pinetrail_vpd_cb;		/* vpd.c */
-extern struct gpio_cb agz_pinetrail_gpio_cb;		/* gpio.c */
-extern struct nvram_cb agz_pinetrail_nvram_cb;		/* nvram.c */
-extern struct memory_cb agz_pinetrail_memory_cb;	/* memory.c */
+#define ALEX_DIMM_COUNT		1
 
-/* functions called by setup routines */
-extern int agz_pinetrail_vpd_setup(struct platform_intf *intf);
-extern int agz_pinetrail_eeprom_setup(struct platform_intf *intf);
+/*
+ * dimm_count  -  return total number of dimm slots
+ *
+ * @intf:       platform interface
+ *
+ * returns dimm slot count
+ */
+static int alex_dimm_count(struct platform_intf *intf)
+{
+	return ALEX_DIMM_COUNT;
+}
 
-
-#endif /* AGZ_PINETRAIL_H_ */
+struct memory_cb alex_pinetrail_memory_cb = {
+	.dimm_count	 = alex_dimm_count,
+};

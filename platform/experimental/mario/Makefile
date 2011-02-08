@@ -30,6 +30,7 @@
 obj-$(CONFIG_EXPERIMENTAL_MARIO)	+= ec.o
 obj-$(CONFIG_EXPERIMENTAL_MARIO)	+= eeprom.o
 obj-$(CONFIG_EXPERIMENTAL_MARIO)	+= gpio.o
+obj-$(CONFIG_EXPERIMENTAL_MARIO)	+= memory.o
 #obj-$(CONFIG_EXPERIMENTAL_MARIO)	+= nvram.o
 obj-$(CONFIG_EXPERIMENTAL_MARIO)	+= pinetrail.o
 obj-$(CONFIG_EXPERIMENTAL_MARIO)	+= sysinfo.o

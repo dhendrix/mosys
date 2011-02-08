@@ -68,7 +68,7 @@ struct spd_eeprom {
 };
 
 struct spd_device {
-	int dimm_num; /* Google DIMM number in system. */
+	int dimm_num; /* DIMM number in system. */
 	enum spd_type type; /* SPD type. */
 	struct i2c_addr smbus; /* Address of DIMM in system. */
 	struct spd_eeprom eeprom;

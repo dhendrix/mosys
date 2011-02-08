@@ -32,8 +32,9 @@
 #include "lib/valstr.h"
 
 #include "lib/ddr2.h"
-#include "lib/jedec_id.h"
 #include "lib/spd.h"
+
+#include "jedec_id.h"
 
 static const char *cas_latency(struct spd_reg *reg,
                                const uint8_t * eeprom, uint8_t byte)

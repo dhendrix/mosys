@@ -32,8 +32,9 @@
 #include "lib/math.h"
 #include "lib/string.h"
 
-#include "lib/jedec_id.h"
 #include "lib/spd.h"
+
+#include "jedec_id.h"
 
 /* Register Specific Functions */
 const char *spd_table_lookup(struct spd_reg *reg,

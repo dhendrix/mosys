@@ -24,8 +24,9 @@
 
 #include <stdlib.h>
 
-#include "lib/jedec_id.h"
 #include "lib/string.h"
+
+#include "jedec_id.h"
 
 /*
  * JEDEC Standard Manufacturer's Identification Code

@@ -31,8 +31,9 @@
 #include "lib/valstr.h"
 
 #include "lib/ddr3.h"
-#include "lib/jedec_id.h"
 #include "lib/spd.h"
+
+#include "jedec_id.h"
 
 /*
  * spd_print_field_ddr3  -  add common DDR SPD fields into key=value pair

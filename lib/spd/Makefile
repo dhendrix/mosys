@@ -1,4 +1,4 @@
-# 2010, Google Inc.
+# 2011, Google Inc.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -27,14 +27,10 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-obj-y		+= acpi/
-obj-y		+= crypto/	# TODO: Make this a build option
-obj-y		+= eeprom/
-obj-y		+= file/
-obj-y		+= fmap/
-obj-y		+= math/
-obj-y		+= misc/
-obj-y		+= smbios/
-obj-y		+= spd/
-obj-y		+= string/
-obj-y		+= vpd/
+#obj-y		+= ddr1.o
+obj-y		+= ddr2.o
+obj-y		+= ddr3.o
+#obj-y		+= fbdimm.o
+obj-y		+= jedec_id.o
+obj-y		+= spd.o
+obj-y		+= spd_fields.o

@@ -55,7 +55,7 @@ static int memory_dump_cmd(struct platform_intf *intf,
 //extern struct platform_cmd smbios_memory_dimm_cmds[];
 
 /* SPD information */
-//extern struct platform_cmd memory_spd_cmds[];
+extern struct platform_cmd memory_spd_cmds[];
 
 /* AMB information */
 //extern struct platform_cmd memory_amb_cmds[];
@@ -112,14 +112,6 @@ struct platform_cmd memory_cmds[] = {
 #endif
 #if 0
 	{
-		.name	= "spd",
-		.desc	= "Raw SPD information",
-		.type	= ARG_TYPE_SUB,
-		.arg	= { .sub = memory_spd_cmds }
-	},
-#endif
-#if 0
-	{
 		.name	= "amb",
 		.desc	= "Raw AMB information",
 		.type	= ARG_TYPE_SUB,
@@ -149,6 +141,12 @@ struct platform_cmd memory_cmds[] = {
 		.arg	= { .sub = memory_print_cmds }
 	},
 #endif
+	{
+		.name	= "spd",
+		.desc	= "Information form SPD",
+		.type	= ARG_TYPE_SUB,
+		.arg	= { .sub = memory_spd_cmds }
+	},
 	{ NULL }
 };
 

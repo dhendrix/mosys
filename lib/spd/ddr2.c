@@ -473,10 +473,9 @@ int spd_print_field_ddr2(struct platform_intf *intf, struct kv_pair *kv,
 		ret = 1;
 		break;
 
-	/* module size -- keep in MB or legacy parsers might break */
 	case SPD_GET_SIZE:
 		/* get size (in bytes) and convert to MB (2^20) */
-		kv_pair_fmt(kv, "size", "%llu",
+		kv_pair_fmt(kv, "size_mb", "%llu",
 		            ddr2_module_size(byte) >> 20);
 		ret = 1;
 		break;

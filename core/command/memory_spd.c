@@ -353,6 +353,32 @@ static int memory_spd_print_timings_cmd(struct platform_intf *intf,
 	return 0;
 }
 
+static int memory_spd_print_all_cmd(struct platform_intf *intf,
+                                    struct platform_cmd *cmd,
+                                    int argc, char **argv)
+{
+	int rc = 0, dimm;
+
+	if (!intf->cb->memory ||
+	    !intf->cb->memory->dimm_count)
+		return -ENOSYS;
+
+	if (argc) {
+		dimm = strtol(argv[0], NULL, 0);
+		if ((dimm < 0) ||
+		    (dimm > (intf->cb->memory->dimm_count(intf) - 1))) {
+			lprintf(LOG_ERR, "Invalid DIMM: %d\n", dimm);
+			return -EINVAL;
+		}
+	}
+
+	rc |= memory_spd_print_id_cmd(intf, cmd, argc, argv);
+	rc |= memory_spd_print_geometry_cmd(intf, cmd, argc, argv);
+	rc |= memory_spd_print_timings_cmd(intf, cmd, argc, argv);
+
+	return rc;
+}
+
 static struct platform_cmd memory_spd_print_cmds[] = {
 	{
 		.name	= "geometry",
@@ -374,6 +400,13 @@ static struct platform_cmd memory_spd_print_cmds[] = {
 		.usage	= "<dimm number>",
 		.type	= ARG_TYPE_GETTER,
 		.arg	= { .func = memory_spd_print_timings_cmd }
+	},
+	{
+		.name	= "all",
+		.desc	= "Print all of the above",
+		.usage	= "<dimm number>",
+		.type	= ARG_TYPE_GETTER,
+		.arg	= { .func = memory_spd_print_all_cmd }
 	},
 	{ NULL }
 };

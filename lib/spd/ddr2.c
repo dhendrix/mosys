@@ -420,11 +420,11 @@ int spd_print_field_ddr2(struct platform_intf *intf, struct kv_pair *kv,
 		}
 		tstr = jedec_manufacturer(table, (byte[64 + table]) & 0x7F);
 		if (tstr) {
-			kv_pair_fmt(kv, "mfg_id", "%u-%u: %s",
+			kv_pair_fmt(kv, "module_mfg", "%u-%u: %s",
 				    table + 1, byte[64 + table], tstr);
 			ret = 1;
 		} else {
-			kv_pair_fmt(kv, "mfg_id", "%u-%u",
+			kv_pair_fmt(kv, "module_id", "%u-%u",
 				    table + 1, byte[64 + table]);
 			ret = 1;
 		}

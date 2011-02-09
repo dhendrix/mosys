@@ -68,10 +68,10 @@ int spd_print_field_ddr3(struct platform_intf *intf, struct kv_pair *kv,
 		tstr = jedec_manufacturer(manuf_lsb, manuf_msb);
 
 		if (tstr != NULL) {
-			kv_pair_fmt(kv, "mfg_id", "%u-%u: %s", manuf_lsb + 1,
+			kv_pair_fmt(kv, "module_mfg", "%u-%u: %s", manuf_lsb + 1,
 			            manuf_msb, tstr);
 		} else {
-			kv_pair_fmt(kv, "mfg_id", "%u-%u", manuf_lsb + 1,
+			kv_pair_fmt(kv, "module_mfg", "%u-%u", manuf_lsb + 1,
 			            manuf_msb);
 		}
 		ret = 1;
@@ -90,10 +90,10 @@ int spd_print_field_ddr3(struct platform_intf *intf, struct kv_pair *kv,
 		tstr = jedec_manufacturer(manuf_lsb, manuf_msb);
 
 		if (tstr != NULL) {
-			kv_pair_fmt(kv, "mfg_id_dram", "%u-%u: %s",
+			kv_pair_fmt(kv, "dram_mfg", "%u-%u: %s",
 			            manuf_lsb + 1, manuf_msb, tstr);
 		} else {
-			kv_pair_fmt(kv, "mfg_id_dram", "%u-%u",
+			kv_pair_fmt(kv, "dram_mfg", "%u-%u",
 			            manuf_lsb + 1, manuf_msb);
 		}
 		ret = 1;

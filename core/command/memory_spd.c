@@ -169,6 +169,67 @@ static int memory_spd_list_cmd(struct platform_intf *intf,
 	return ret;
 }
 #endif
+static int memory_spd_print_geometry(struct platform_intf *intf, int dimm)
+{
+	struct kv_pair *kv;
+	struct spd_device *spd;
+	uint8_t *spd_data;
+
+	if (!intf->cb->memory->spd ||
+	    !intf->cb->memory->spd->read)
+		return -ENOSYS;
+
+	kv = kv_pair_new();
+
+	spd = new_spd_device(intf, dimm);
+	if (spd == NULL) {
+		lprintf(LOG_DEBUG,
+			"Failed to read from SPD %u (not present?)\n", dimm);
+		return 0;	/* not an error */
+	}
+
+	spd_data = &spd->eeprom.data[0];
+
+	kv_pair_fmt(kv, "dimm", "%u", dimm);
+	spd_print_field(intf, kv, spd_data, SPD_GET_SIZE);
+	spd_print_field(intf, kv, spd_data, SPD_GET_RANKS);
+	spd_print_field(intf, kv, spd_data, SPD_GET_WIDTH);
+
+	kv_pair_print(kv);
+	kv_pair_free(kv);
+
+	free(spd);
+	return 0;
+}
+
+static int memory_spd_print_geometry_cmd(struct platform_intf *intf,
+                                         struct platform_cmd *cmd,
+                                         int argc, char **argv)
+{
+	int dimm = 0, last_dimm;
+
+	if (!intf->cb->memory ||
+	    !intf->cb->memory->dimm_count)
+		return -ENOSYS;
+
+	last_dimm = intf->cb->memory->dimm_count(intf);
+
+	if (argc) {
+		dimm = strtol(argv[0], NULL, 0);
+		if ((dimm < 0) || (dimm > (last_dimm - 1))) {
+			lprintf(LOG_ERR, "Invalid DIMM: %d\n", dimm);
+			return -EINVAL;
+		}
+		memory_spd_print_geometry(intf, dimm);
+	} else {
+		do {
+			memory_spd_print_geometry(intf, dimm);
+			dimm++;
+		} while (dimm < last_dimm);
+	}
+
+	return 0;
+}
 
 static int memory_spd_print_id(struct platform_intf *intf, int dimm)
 {
@@ -233,15 +294,13 @@ static int memory_spd_print_id_cmd(struct platform_intf *intf,
 }
 
 static struct platform_cmd memory_spd_print_cmds[] = {
-#if 0
 	{
 		.name	= "geometry",
 		.desc	= "Print module geometry and capacity",
 		.usage	= "<dimm number>",
 		.type	= ARG_TYPE_GETTER,
-		.arg	= { .func = memory_spd_print_geometry }
+		.arg	= { .func = memory_spd_print_geometry_cmd }
 	},
-#endif
 	{
 		.name	= "id",
 		.desc	= "Print module ID information",

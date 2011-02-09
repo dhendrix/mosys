@@ -176,6 +176,10 @@ static int memory_spd_print_id(struct platform_intf *intf, int dimm)
 	struct spd_device *spd;
 	uint8_t *spd_data;
 
+	if (!intf->cb->memory->spd ||
+	    !intf->cb->memory->spd->read)
+		return -ENOSYS;
+
 	kv = kv_pair_new();
 
 	spd = new_spd_device(intf, dimm);
@@ -186,24 +190,11 @@ static int memory_spd_print_id(struct platform_intf *intf, int dimm)
 	}
 
 	spd_data = &spd->eeprom.data[0];
-	/* add various fields */
+
 	kv_pair_fmt(kv, "dimm", "%u", dimm);
 	spd_print_field(intf, kv, spd_data, SPD_GET_MFG_ID);
-	spd_print_field(intf, kv, spd_data, SPD_GET_MFG_ID_DRAM);
-#if 0
-	spd_print_field(intf, kv, spd_data, SPD_GET_MFG_LOC);
-	spd_print_field(intf, kv, spd_data, SPD_GET_MFG_DATE);
-#endif
 	spd_print_field(intf, kv, spd_data, SPD_GET_SERIAL_NUMBER);
 	spd_print_field(intf, kv, spd_data, SPD_GET_PART_NUMBER);
-
-#if 0
-	/* print raw spd if we are not in value-only print mode */
-	if (mosys_get_kv_pair_style() != KV_STYLE_VALUE) {
-		if (spd_print_raw(kv, spd->eeprom.length, spd_data) < 0)
-			lprintf(LOG_DEBUG, "Unable to add raw SPD\n");
-	}
-#endif
 
 	kv_pair_print(kv);
 	kv_pair_free(kv);
@@ -219,23 +210,24 @@ static int memory_spd_print_id_cmd(struct platform_intf *intf,
 	int dimm = 0, last_dimm;
 
 	if (!intf->cb->memory ||
-	    !intf->cb->memory->dimm_count ||
-	    !intf->cb->memory->dimm_spd)
+	    !intf->cb->memory->dimm_count)
 		return -ENOSYS;
 
+	last_dimm = intf->cb->memory->dimm_count(intf);
+
 	if (argc) {
-		dimm = (uint8_t)strtol(argv[0], NULL, 0);
-		if ((dimm < 0) || (dimm > intf->cb->memory->dimm_count(intf))) {
+		dimm = strtol(argv[0], NULL, 0);
+		if ((dimm < 0) || (dimm > (last_dimm - 1))) {
 			lprintf(LOG_ERR, "Invalid DIMM: %d\n", dimm);
 			return -EINVAL;
 		}
-		last_dimm = dimm;
-	}
-
-	do {
 		memory_spd_print_id(intf, dimm);
-		dimm++;
-	} while (dimm < last_dimm);
+	} else {
+		do {
+			memory_spd_print_id(intf, dimm);
+			dimm++;
+		} while (dimm < last_dimm);
+	}
 
 	return 0;
 }
@@ -273,7 +265,7 @@ struct platform_cmd memory_spd_cmds[] = {
 	{
 		.name	= "print",
 		.desc	= "Print SPD Information",
-		.usage	= "[dimm number]",
+		.usage	= "<dimm number>",
 		.type	= ARG_TYPE_SUB,
 		.arg	= { .sub = memory_spd_print_cmds }
 	},

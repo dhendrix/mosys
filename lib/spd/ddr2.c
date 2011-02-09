@@ -432,19 +432,19 @@ int spd_print_field_ddr2(struct platform_intf *intf, struct kv_pair *kv,
 	}
 
 	case SPD_GET_MFG_LOC: /* manufacturing loction */
-		kv_pair_fmt(kv, "mfg_loc", "0x%02X",
+		kv_pair_fmt(kv, "mfg_loc", "0x%02x",
 		            ddr2_mfg_loc(byte));
 		ret = 1;
 		break;
 
 	case SPD_GET_MFG_DATE: /* manufacturing date (BCD values) */
-		kv_pair_fmt(kv, "mfg_date", "20%02X-wk%02X", byte[93],
+		kv_pair_fmt(kv, "mfg_date", "20%02x-wk%02x", byte[93],
 			    byte[94]);
 		ret = 1;
 		break;
 
 	case SPD_GET_SERIAL_NUMBER: /* module serial number */
-		kv_pair_fmt(kv, "serial_number", "0x%02X%02X%02X%02X",
+		kv_pair_fmt(kv, "serial_number", "%02x%02x%02x%02x",
 			    byte[95], byte[96], byte[97], byte[98]);
 		ret = 1;
 		break;
@@ -468,7 +468,7 @@ int spd_print_field_ddr2(struct platform_intf *intf, struct kv_pair *kv,
 	}
 
 	case SPD_GET_REVISION_CODE: /* module revision code */
-		kv_pair_fmt(kv, "revision_code", "0x%02X%02X", byte[91],
+		kv_pair_fmt(kv, "revision_code", "0x%02x%02x", byte[91],
 			    byte[92]);
 		ret = 1;
 		break;
@@ -504,7 +504,7 @@ int spd_print_field_ddr2(struct platform_intf *intf, struct kv_pair *kv,
 		break;
 
 	case SPD_GET_CHECKSUM: /* SPD checksum */
-		kv_pair_fmt(kv, "checksum", "0x%02X",
+		kv_pair_fmt(kv, "checksum", "0x%02x",
 		            ddr2_jedec_checksum(byte));
 		ret = 1;
 		break;

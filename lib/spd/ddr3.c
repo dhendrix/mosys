@@ -122,7 +122,7 @@ int spd_print_field_ddr3(struct platform_intf *intf, struct kv_pair *kv,
 
 	case SPD_GET_SERIAL_NUMBER:
 	{
-		kv_pair_fmt(kv, "serial_number", "0x%02x%02x%02x%02x",
+		kv_pair_fmt(kv, "serial_number", "%02x%02x%02x%02x",
 		            byte[DDR3_SPD_REG_MODULE_MANUF_SERIAL_0],
 		            byte[DDR3_SPD_REG_MODULE_MANUF_SERIAL_1],
 		            byte[DDR3_SPD_REG_MODULE_MANUF_SERIAL_2],

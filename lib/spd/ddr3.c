@@ -63,7 +63,7 @@ int spd_print_field_ddr3(struct platform_intf *intf, struct kv_pair *kv,
 		const char *tstr;
 
 		manuf_lsb = byte[DDR3_SPD_REG_MODULE_MANUF_JEDEC_ID_LSB] & 0x7f;
-		manuf_msb = byte[DDR3_SPD_REG_MODULE_MANUF_JEDEC_ID_MSB];
+		manuf_msb = byte[DDR3_SPD_REG_MODULE_MANUF_JEDEC_ID_MSB] & 0x7f;
 
 		tstr = jedec_manufacturer(manuf_lsb, manuf_msb);
 
@@ -85,7 +85,7 @@ int spd_print_field_ddr3(struct platform_intf *intf, struct kv_pair *kv,
 		const char *tstr;
 
 		manuf_lsb = byte[DDR3_SPD_REG_DRAM_MANUF_JEDEC_ID_LSB] & 0x7f;
-		manuf_msb = byte[DDR3_SPD_REG_DRAM_MANUF_JEDEC_ID_MSB];
+		manuf_msb = byte[DDR3_SPD_REG_DRAM_MANUF_JEDEC_ID_MSB] & 0x7f;
 
 		tstr = jedec_manufacturer(manuf_lsb, manuf_msb);
 

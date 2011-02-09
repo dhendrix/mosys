@@ -117,35 +117,37 @@ extern int spd_print_field(struct platform_intf *intf,
 extern int spd_print_raw(struct kv_pair *kv, int len, uint8_t *data);
 
 /*
- * spd_read_dimm  -  Read from SPD configuration space
+ * spd_read_i2c  -  Read from SPD configuration space
  *
  * @intf:	platform interface
- * @dimm:       logical dimm number
- * @reg:	amb configuration register
+ * @bus:	i2c bus
+ * @address:	i2c address
+ * @reg:	register offset
  * @length:	number of bytes to read
  * @data:       data buffer
  *
  * returns number of bytes read
  * returns <0 to indicate error
  */
-extern int spd_read_dimm(struct platform_intf *intf, int dimm, int reg,
-                         int length, void *data);
+extern int spd_read_i2c(struct platform_intf *intf, int bus,
+                        int addr, int reg, int length, void *data);
 
 #if 0
 /*
- * spd_write_dimm  -  Write to SPD configuration space
+ * spd_write_i2c  -  Write to SPD configuration space
  *
  * @intf:	platform interface
- * @dimm:       logical dimm number
- * @reg:	amb configuration register
- * @length:	number of bytes to read
+ * @bus:	i2c bus
+ * @address:	i2c address
+ * @reg:	register offset
+ * @length:	number of bytes to write
  * @data:       data buffer
  *
  * returns number of bytes written
  * returns <0 to indicate error
  */
-extern int spd_write_dimm(struct platform_intf *intf, int dimm, int reg,
-                          int length, const void *data);
+extern int spd_write_i2c(struct platform_intf *intf, int bus,
+                         int addr, int reg, int length, const void *data);
 #endif
 
 /* spd_raw_access - read/write access method to SPDs

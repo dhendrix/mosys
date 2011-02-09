@@ -140,6 +140,13 @@ enum dimm_threshold_type {
 /* memory related callbacks */
 struct smbios_table;
 struct memory_component;
+struct memory_spd_cb {
+	int (*read)(struct platform_intf *intf,
+	            int dimm, int reg, int len, unsigned char *buf);
+	int (*write)(struct platform_intf *intf,
+	             int dimm, int reg, int len, unsigned char *buf);
+};
+
 struct memory_cb {
 	int (*dimm_count)(struct platform_intf *intf);
 	int (*dimm_map)(struct platform_intf *intf,
@@ -155,8 +162,6 @@ struct memory_cb {
 	int (*dimm_speed)(struct platform_intf *intf,
 	                  int dimm, struct kv_pair *kv);
 	int (*dimm_present)(struct platform_intf *intf, int dimm);
-	int (*dimm_spd)(struct platform_intf *intf,
-	                int dimm, unsigned char *buf);
 	uint32_t (*error_count)(struct platform_intf *intf,
 	                        enum dimm_error_type type, int dimm);
 	int (*error_clear)(struct platform_intf *intf,
@@ -171,6 +176,8 @@ struct memory_cb {
 	                         uint64_t physical_address,
 	                         struct memory_component *components,
 	                         size_t *num_components);
+
+	struct memory_spd_cb *spd;
 };
 
 /* eventlog clearing and status */

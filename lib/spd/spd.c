@@ -96,34 +96,12 @@ int spd_raw_access(struct platform_intf *intf, int bus, int address,
 	return spd_raw_i2c(intf, bus, address, reg, length, data, rw);
 }
 
-/*
- * spd_read_dimm  -  Read from SPD configuration space
- *
- * @intf:	platform interface
- * @dimm:       logical dimm number
- * @reg:	amb configuration register
- * @length:	number of bytes to read
- * @data:       data buffer
- *
- * returns number of bytes read
- * returns <0 to indicate error
- */
-int spd_read_dimm(struct platform_intf *intf, int dimm, int reg,
-                  int length, void *data)
+int spd_read_i2c(struct platform_intf *intf, int bus,
+                 int address, int reg, int length, void *data)
 {
-	int bus, address;
 	const char module[] = "eeprom";
 
 	if (!intf->cb->memory || !intf->cb->memory->dimm_map)
-		return -1;
-
-	/* convert logical dimm map */
-	bus = intf->cb->memory->dimm_map(intf, DIMM_TO_BUS, dimm);
-	if (bus < 0)
-		return -1;
-
-	address = intf->cb->memory->dimm_map(intf, DIMM_TO_ADDRESS, dimm);
-	if (address < 0)
 		return -1;
 
 	/* Read info from /sys */
@@ -155,20 +133,8 @@ int spd_read_dimm(struct platform_intf *intf, int dimm, int reg,
 }
 
 #if 0
-/*
- * spd_write_dimm  -  Write to SPD configuration space
- *
- * @intf:	platform interface
- * @dimm:       logical dimm number
- * @reg:	register number
- * @length:	number of bytes to write
- * @data:       data buffer
- *
- * returns number of bytes written
- * returns <0 to indicate error
- */
-int spd_write_dimm(struct platform_intf *intf, int dimm, int reg,
-                   int length, const void *data)
+int spd_write_i2c(struct platform_intf *intf,
+                  int dimm, int reg, int length, const void *data)
 {
 	int bus, address;
 
@@ -185,8 +151,8 @@ int spd_write_dimm(struct platform_intf *intf, int dimm, int reg,
 		return -1;
 
 	//FIXME: we cast data to remove the const - can we do better?
-	return spd_raw_access(intf, bus, address, reg,
-	                      length, (void *)data, SPD_WRITE);
+	return intf->cb->memory->spd->write(intf, bus, address, reg,
+	                                    length, (void *)data);
 }
 #endif
 
@@ -206,36 +172,17 @@ int override_spd_raw_access(spd_raw_override override)
 struct spd_device *new_spd_device(struct platform_intf *intf, int dimm)
 {
 	struct spd_device *spd;
-	int bus;
-	int address;
 
 	if (intf == NULL || dimm < 0) {
 		return NULL;
 	}
 
-	/* convert logical dimm map */
-	bus = intf->cb->memory->dimm_map(intf, DIMM_TO_BUS, dimm);
-	if (bus < 0) {
-		lperror(LOG_DEBUG,
-		        "Unable to obtain SMBus bus for DIMM %d.\n", dimm);
-		return NULL;
-	}
-
-	address = intf->cb->memory->dimm_map(intf, DIMM_TO_ADDRESS, dimm);
-	if (address < 0) {
-		lperror(LOG_DEBUG,
-		        "Unable to obtain SMBus address for DIMM %d.\n", dimm);
-		return NULL;
-	}
-
 	spd = mosys_malloc(sizeof(*spd));
 	spd->dimm_num = dimm;
-	spd->smbus.bus = bus;
-	spd->smbus.addr = address;
 	memset(&spd->eeprom.data[0], 0xff, SPD_MAX_LENGTH);
 
-	if (spd_read_dimm(intf, dimm, 0, 3,
-	                  &spd->eeprom.data[0]) != 3) {
+	if (intf->cb->memory->spd->read(intf, dimm, 0, 3,
+	                                &spd->eeprom.data[0]) != 3) {
 		free(spd);
 		return NULL;
 	}
@@ -252,8 +199,10 @@ struct spd_device *new_spd_device(struct platform_intf *intf, int dimm)
 	}
 
 	/* Fill in copy of SPD eeprom area. */
-	if (spd_read_dimm(intf, dimm, 0, spd->eeprom.length,
-	                  &spd->eeprom.data[0]) != spd->eeprom.length) {
+	if (intf->cb->memory->spd->read(intf, dimm, 0,
+	                                spd->eeprom.length,
+	                                &spd->eeprom.data[0])
+			!= spd->eeprom.length) {
 		lperror(LOG_DEBUG,
 		        "Unable to read full contents of SPD from DIMM %d.\n",
 		        dimm);

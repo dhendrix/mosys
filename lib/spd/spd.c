@@ -187,7 +187,7 @@ struct spd_device *new_spd_device(struct platform_intf *intf, int dimm)
 		return NULL;
 	}
 
-	spd->type = (enum spd_type)spd->eeprom.data[2];
+	spd->dram_type = (enum spd_dram_type)spd->eeprom.data[2];
 	spd->eeprom.length = spd_total_size(&spd->eeprom.data[0]);
 
 	/* Invalid length. */

@@ -33,6 +33,7 @@
 #include "lib/string.h"
 
 #include "lib/spd.h"
+#include "lib/valstr.h"
 
 #include "jedec_id.h"
 
@@ -137,7 +138,6 @@ const char *spd_revision_code(struct spd_reg *reg,
 	return buf;
 }
 
-
 /*
  * spd_total_size  -  determine total bytes in spd from first few bytes
  *
@@ -152,8 +152,8 @@ int spd_total_size(uint8_t *data)
 	int size;
 
 	switch (data[2]) {
-	case SPD_TYPE_DDR:
-	case SPD_TYPE_DDR2:{
+	case SPD_DRAM_TYPE_DDR:
+	case SPD_DRAM_TYPE_DDR2:{
 		if (data[1] == 0) {
 			lprintf(LOG_DEBUG, "Undefined SPD size, "
 					   "assuming %d bytes\n",
@@ -165,8 +165,8 @@ int spd_total_size(uint8_t *data)
 
 		break;
 	}
-	case SPD_TYPE_DDR3:
-	case SPD_TYPE_FBDIMM:{
+	case SPD_DRAM_TYPE_DDR3:
+	case SPD_DRAM_TYPE_FBDIMM:{
 		uint8_t tmp;
 
 		tmp = ((data[0] & __mask(6, 4)) >> 4);
@@ -227,7 +227,7 @@ int spd_print_reg(struct platform_intf *intf,
 		struct spd_reg *regmap;
 
 		/* Continue if not matching SPD type. */
-		if (callback->type != byte[2]) {
+		if (callback->dram_type != byte[2]) {
 			continue;
 		}
 
@@ -303,13 +303,13 @@ int spd_print_field(struct platform_intf *intf,
 		return -1;
 
 	switch (byte[2]) {
-//	case SPD_TYPE_DDR:
+//	case SPD_DRAM_TYPE_DDR:
 //		return spd_print_field_ddr1(intf, kv, data, type);
-	case SPD_TYPE_DDR2:
+	case SPD_DRAM_TYPE_DDR2:
 		return spd_print_field_ddr2(intf, kv, data, type);
-//	case SPD_TYPE_FBDIMM:
+//	case SPD_DRAM_TYPE_FBDIMM:
 //		return spd_print_field_fbdimm(intf, kv, data, type);
-	case SPD_TYPE_DDR3:
+	case SPD_DRAM_TYPE_DDR3:
 		return spd_print_field_ddr3(intf, kv, data, type);
 	default:
 		lprintf(LOG_ERR, "SPD type %02x not supported\n", byte[2]);

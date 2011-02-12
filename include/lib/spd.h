@@ -34,12 +34,12 @@ struct kv_pair;
 struct platform_intf;
 struct spd_reg;
 
-/* different types for SPD */
-enum spd_type {
-	SPD_TYPE_DDR = 0x07,
-	SPD_TYPE_DDR2 = 0x08,
-	SPD_TYPE_FBDIMM = 0x09,
-	SPD_TYPE_DDR3 = 0x0b,
+/* different types of DRAM (fundamental memory type) for SPD */
+enum spd_dram_type {
+	SPD_DRAM_TYPE_DDR	= 0x07,
+	SPD_DRAM_TYPE_DDR2	= 0x08,
+	SPD_DRAM_TYPE_FBDIMM	= 0x09,
+	SPD_DRAM_TYPE_DDR3	= 0x0b,
 };
 
 /* spd register handlers */
@@ -53,7 +53,7 @@ struct spd_reg {
 };
 
 struct spd_callbacks {
-	enum spd_type type;
+	enum spd_dram_type dram_type;
 	struct spd_reg *regs;
 	int num_regs;
 };
@@ -69,7 +69,7 @@ struct spd_eeprom {
 
 struct spd_device {
 	int dimm_num; /* DIMM number in system. */
-	enum spd_type type; /* SPD type. */
+	enum spd_dram_type dram_type; /* Fundamental DRAM type. */
 	struct i2c_addr smbus; /* Address of DIMM in system. */
 	struct spd_eeprom eeprom;
 };
@@ -79,6 +79,8 @@ struct spd_device {
  * these are found in different locations on DDR/DDR2 vs. FBDIMM
  */
 enum spd_field_type {
+	SPD_GET_DRAM_TYPE,      /* DRAM type */
+	SPD_GET_MODULE_TYPE,    /* DIMM type */
 	SPD_GET_MFG_ID,		/* Module Manufacturer ID */
 	SPD_GET_MFG_ID_DRAM,	/* DRAM Manufacturer ID */
 	SPD_GET_MFG_LOC,	/* Module Manufacturing Location */

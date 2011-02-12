@@ -271,9 +271,21 @@ static struct spd_reg spd_reg_ddr2[] = {
 };
 
 struct spd_callbacks ddr2_callbacks = {
-	.type = SPD_TYPE_DDR2,
+	.dram_type = SPD_DRAM_TYPE_DDR2,
 	.regs = spd_reg_ddr2,
 	.num_regs = sizeof(spd_reg_ddr2)/sizeof(spd_reg_ddr2[0]),
+};
+
+const struct valstr ddr2_module_type_lut[] = {
+	{ 0x00, "Undefined" },
+	{ 0x01, "RDIMM" },
+	{ 0x02, "UDIMM" },
+	{ 0x04, "SO-DIMM" },
+	{ 0x06, "72b-SO-CDIMM" },
+	{ 0x07, "72b-SO-RDIMM" },
+	{ 0x08, "MICRO-DIMM" },
+	{ 0x0a, "MINI-RDIMM" },
+	{ 0x40, "MINI-UDIMM" },
 };
 
 uint8_t ddr2_num_rows(const uint8_t *spd)
@@ -406,6 +418,15 @@ int spd_print_field_ddr2(struct platform_intf *intf, struct kv_pair *kv,
 	const uint8_t *byte = data;
 
 	switch (type) {
+	case SPD_GET_DRAM_TYPE:
+		kv_pair_add(kv, "dram_type", "DDR2");
+		ret = 1;
+		break;
+	case SPD_GET_MODULE_TYPE:
+		kv_pair_add(kv, "module_type",
+		            val2str(byte[3], ddr2_module_type_lut));
+		ret = 1;
+		break;
 	case SPD_GET_MFG_ID:{ /* module manufacturer id */
 		int table;
 		const char *tstr;

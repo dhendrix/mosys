@@ -72,11 +72,11 @@ int spd_print_field_ddr3(struct platform_intf *intf, struct kv_pair *kv,
 	ret =  0;
 	switch (type) {
 	case SPD_GET_DRAM_TYPE:
-		kv_pair_add(kv, "dram_type", "DDR3");
+		kv_pair_add(kv, "dram", "DDR3");
 		ret = 1;
 		break;
 	case SPD_GET_MODULE_TYPE:
-		kv_pair_add(kv, "module_type",
+		kv_pair_add(kv, "module",
 		            val2str(byte[DDR3_SPD_REG_MODULE_TYPE],
 		            ddr3_module_type_lut));
 		ret = 1;

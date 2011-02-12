@@ -419,12 +419,13 @@ int spd_print_field_ddr2(struct platform_intf *intf, struct kv_pair *kv,
 
 	switch (type) {
 	case SPD_GET_DRAM_TYPE:
-		kv_pair_add(kv, "dram_type", "DDR2");
+		kv_pair_add(kv, "dram", "DDR2");
 		ret = 1;
 		break;
 	case SPD_GET_MODULE_TYPE:
-		kv_pair_add(kv, "module_type",
-		            val2str(byte[3], ddr2_module_type_lut));
+		kv_pair_add(kv, "module",
+		            val2str(byte[DDR2_SPD_REG_MODULE_TYPE],
+		            ddr2_module_type_lut));
 		ret = 1;
 		break;
 	case SPD_GET_MFG_ID:{ /* module manufacturer id */

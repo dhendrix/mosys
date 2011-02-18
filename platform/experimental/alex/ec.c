@@ -58,6 +58,13 @@
 #define ALEX_EC_MAX_TIMEOUT_US		2000000	/* arbitrarily picked */
 #define ALEX_EC_DELAY_US		5000
 
+#define ALEX_EC_CMD_PASSTHRU		0x55	/* force EC to process word */
+#define ALEX_EC_CMD_PASSTHRU_SUCCESS	0xaa	/* success code for passthru */
+#define ALEX_EC_CMD_PASSTHRU_FAIL	0xfe	/* failure code for passthru */
+#define ALEX_EC_CMD_PASSTHRU_ENTER	"PathThruMode"	/* not a typo... */
+#define ALEX_EC_CMD_PASSTHRU_START	"Start"
+#define ALEX_EC_CMD_PASSTHRU_EXIT	"End_Mode"
+
 static uint16_t ec_port;
 static uint16_t mbx_idx;
 static uint16_t mbx_data;
@@ -118,6 +125,41 @@ static void mbx_clear(struct platform_intf *intf)
 }
 
 /*
+ * alex_pinetrail_ec_testmbx - place mailbox in known state
+ *
+ * @intf:	platform interface
+ *
+ * returns 0 if successful
+ * returns <0 to indicate failure
+ */
+static int alex_pinetrail_ec_unwedge(struct platform_intf *intf)
+{
+	int i;
+	uint8_t tmp8;
+
+	/* attempt to get out of passthru mode (assuming we're in it) */
+	for (i = 0; i < strlen(ALEX_EC_CMD_PASSTHRU_EXIT); i++) {
+		mbx_write(intf, ALEX_EC_MBX_DATA_START + i,
+		          ALEX_EC_CMD_PASSTHRU_EXIT[i]);
+	}
+
+	if (mbx_write(intf, ALEX_EC_MBX_CMD, ALEX_EC_CMD_PASSTHRU)) {
+		lprintf(LOG_DEBUG, "%s: exit passthru command timed out\n",
+		        __func__);
+		return -1;
+	}
+
+	tmp8 = mbx_read(intf, ALEX_EC_MBX_DATA_START);
+	if (tmp8 != ALEX_EC_CMD_PASSTHRU_SUCCESS) {
+		lprintf(LOG_DEBUG, "%s: failed to exit passthru mode, "
+		        " result=%02x\n", __func__, tmp8);
+		return -1;
+	}
+
+	return 0;
+}
+
+/*
  * alex_pinetrail_ec_name - return EC firmware name string
  *
  * @intf:	platform interface
@@ -165,29 +207,61 @@ static const char *alex_pinetrail_ec_vendor(struct platform_intf *intf)
  * alex_pinetrail_ec_version - return allocated EC firmware version string
  *
  * @intf:	platform interface
+ * @buf:	buffer to store version string in
+ * @len:	bytes in version string
  *
  * returns 0 if successful
  * returns <0 if failure
  */
-static const char *alex_pinetrail_ec_fw_version(struct platform_intf *intf)
+static int alex_pinetrail_ec_fw_version(struct platform_intf *intf,
+                                                uint8_t *buf, int len)
 {
 	int i;
-	static uint8_t version[ALEX_EC_MBX_DATA_LEN];
+
+	memset(buf, 0, len);
 
 	mbx_clear(intf);
-	mbx_write(intf, ALEX_EC_MBX_CMD, ALEX_EC_CMD_FW_VERSION);
+	if (mbx_write(intf, ALEX_EC_MBX_CMD, ALEX_EC_CMD_FW_VERSION) < 0)
+		return -1;
 
-	/* Firmware version is pre-determined to be 10 bytes */
+	for (i = 0; i < len; i++)
+		buf[i] = mbx_read(intf, ALEX_EC_MBX_DATA_START + i);
+	return 0;
+}
+
+static const char *alex_pinetrail_ec_fw_version_wrapper(struct platform_intf *intf)
+{
+	static uint8_t version[ALEX_EC_MBX_DATA_LEN];
+	uint8_t foo[ALEX_EC_MBX_DATA_LEN];
+	int i, num_tries = 3;
+
+	memset(foo, 0, sizeof(foo));
 	memset(version, 0, sizeof(version));
-	for (i = 0; i < ALEX_EC_MBX_DATA_LEN; i++)
-		version[i] = mbx_read(intf, ALEX_EC_MBX_DATA_START + i);
+
+	for (i = 0; i < num_tries; i++) {
+		if (alex_pinetrail_ec_fw_version(intf, version,
+		                                 ALEX_EC_MBX_DATA_LEN)) {
+			lprintf(LOG_DEBUG, "%s: attempting to unwedge EC\n",
+			                   __func__);
+			alex_pinetrail_ec_unwedge(intf);
+		}
+
+		if (memcmp(version, foo, ALEX_EC_MBX_DATA_LEN)) {
+			lprintf(LOG_DEBUG, "%s: attempting to unwedge EC\n",
+			                   __func__);
+			alex_pinetrail_ec_unwedge(intf);
+		} else {
+			break;
+		}
+	}
+
 	return version;
 }
 
 struct ec_cb alex_pinetrail_ec_cb = {
 	.vendor		= alex_pinetrail_ec_vendor,
 	.name		= alex_pinetrail_ec_name,
-	.fw_version	= alex_pinetrail_ec_fw_version,
+	.fw_version	= alex_pinetrail_ec_fw_version_wrapper,
 };
 
 int alex_pinetrail_ec_setup(struct platform_intf *intf)

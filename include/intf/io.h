@@ -78,7 +78,7 @@ struct io_intf {
 };
 
 /* IO operations based on system access */
-extern struct io_intf io_sys_intf;
+extern struct io_intf io_intf;
 
 /*
  * The following are helpers to make call-sites easier

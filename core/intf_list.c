@@ -40,7 +40,7 @@
 struct platform_op platform_common_op = {
 	.pci		= &pci_file_intf,
 	.i2c		= &i2c_dev_intf,
-	.io		= &io_sys_intf,
+	.io		= &io_intf,
 	.mmio		= &mmio_mmap_intf,
 #if 0
 	.amb		= &amb_mmio_intf,

@@ -210,6 +210,8 @@ CONFIG_SHELL := $(shell if [ -x "$$BASH" ]; then echo $$BASH; \
 	  else if [ -x /bin/bash ]; then echo /bin/bash; \
 	  else echo sh; fi ; fi)
 
+# FIXME: CFLAGS must have a -O option due to usage of inb/outb and similar
+# functions on x86. See outb man page for details.
 HOSTCC       ?= gcc
 HOSTLD       ?= ld
 HOSTCXX      ?= g++

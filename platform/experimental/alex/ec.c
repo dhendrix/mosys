@@ -44,6 +44,9 @@
 
 #include "intf/io.h"
 
+#define ALEX_EC_DEFAULT_SIO_PORT	0x2e
+#define ALEX_EC_DEFAULT_MBX_IOBAD	0xa00
+
 /* These are firmware-specific and not generically useful for mec1308 */
 #define ALEX_EC_MBX_CMD			0x82
 #define ALEX_EC_MBX_EXTCMD		0x83
@@ -273,15 +276,23 @@ int alex_pinetrail_ec_setup(struct platform_intf *intf)
 	if (!mec1308_detect(intf))
 		rc = 1;
 
-	if (mec1308_get_sioport(intf, &ec_port) <= 0)
-		return -1;
+	if (mec1308_get_sioport(intf, &ec_port) <= 0) {
+		lprintf(LOG_DEBUG, "%s: Could not probe EC via superio, assuming "
+		                   "siocfg port 0x%02x and mailbox iobad "
+				   "0x%04x\n", __func__,
+		                   ALEX_EC_DEFAULT_SIO_PORT,
+		                   ALEX_EC_DEFAULT_MBX_IOBAD);
+		ec_port = ALEX_EC_DEFAULT_SIO_PORT;
+		mbx_idx = ALEX_EC_DEFAULT_MBX_IOBAD;
+	} else {
+		mbx_idx = mec1308_get_iobad(intf, ec_port, MEC1308_LDN_MBX);
+		mbx_data = mbx_idx + 1;
 
-	mbx_idx = mec1308_get_iobad(intf, ec_port, MEC1308_LDN_MBX);
-	mbx_data = mbx_idx + 1;
+		lprintf(LOG_DEBUG, "%s: ec_port: 0x%04x, mbx_idx: 0x%04x, "
+			           "mbx_data: 0x%04x\n", __func__, ec_port,
+				   mbx_idx, mbx_data);
+	}
 
-	lprintf(LOG_DEBUG, "%s: ec_port: 0x%04x, mbx_idx: 0x%04x, "
-		           "mbx_data: 0x%04x\n", __func__, ec_port,
-			   mbx_idx, mbx_data);
 	mec1308_sio_exit(intf, ec_port);
 
 	/* Attempt to exit SPI passthru mode. This is a benign operation if

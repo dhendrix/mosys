@@ -242,7 +242,7 @@ static const char *alex_pinetrail_ec_fw_version_wrapper(struct platform_intf *in
 	memset(version, 0, sizeof(version));
 
 	for (i = 0; i < num_tries; i++) {
-		int j;
+		int j, retry = 0;
 
 		if (alex_pinetrail_ec_fw_version(intf, version,
 		                                 ALEX_EC_MBX_DATA_LEN)) {
@@ -259,8 +259,11 @@ static const char *alex_pinetrail_ec_fw_version_wrapper(struct platform_intf *in
 						   __func__, version);
 				alex_ec_exit_passthru_mode(intf);
 			}
+			retry = 1;
 		}
 
+		if (retry)
+			continue;
 		lprintf(LOG_DEBUG, "%s: ec firmware version: \"%s\"\n",
 		                   __func__, version);
 		break;

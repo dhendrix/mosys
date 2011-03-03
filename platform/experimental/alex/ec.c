@@ -32,6 +32,7 @@
  * Note: This file shares some code with the Flashrom project.
  */
 
+#include <ctype.h>
 #include <inttypes.h>
 #include <unistd.h>
 
@@ -236,27 +237,33 @@ static int alex_pinetrail_ec_fw_version(struct platform_intf *intf,
 static const char *alex_pinetrail_ec_fw_version_wrapper(struct platform_intf *intf)
 {
 	static uint8_t version[ALEX_EC_MBX_DATA_LEN];
-	uint8_t foo[ALEX_EC_MBX_DATA_LEN];
 	int i, num_tries = 3;
 
-	memset(foo, 0, sizeof(foo));
 	memset(version, 0, sizeof(version));
 
 	for (i = 0; i < num_tries; i++) {
+		int j;
+
 		if (alex_pinetrail_ec_fw_version(intf, version,
 		                                 ALEX_EC_MBX_DATA_LEN)) {
-			lprintf(LOG_DEBUG, "%s: attempting to unwedge EC\n",
+			lprintf(LOG_DEBUG, "%s: unable to issue command, "
+			                   "attempting to unwedge EC\n",
 			                   __func__);
 			alex_ec_exit_passthru_mode(intf);
 		}
 
-		if (memcmp(version, foo, ALEX_EC_MBX_DATA_LEN)) {
-			lprintf(LOG_DEBUG, "%s: attempting to unwedge EC\n",
-			                   __func__);
-			alex_ec_exit_passthru_mode(intf);
-		} else {
-			break;
+		for (j = 0; j < ALEX_EC_MBX_DATA_LEN; j++) {
+			if (!isascii(version[j])) {
+				lprintf(LOG_DEBUG, "%s: bad output detected: \"%s\", "
+				                   "attempting to unwedge EC\n",
+						   __func__, version);
+				alex_ec_exit_passthru_mode(intf);
+			}
 		}
+
+		lprintf(LOG_DEBUG, "%s: ec firmware version: \"%s\"\n",
+		                   __func__, version);
+		break;
 	}
 
 	return version;

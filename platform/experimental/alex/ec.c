@@ -132,7 +132,7 @@ static void mbx_clear(struct platform_intf *intf)
  * returns 0 if successful
  * returns <0 to indicate failure
  */
-static int alex_pinetrail_ec_unwedge(struct platform_intf *intf)
+static int alex_ec_exit_passthru_mode(struct platform_intf *intf)
 {
 	int i;
 	uint8_t tmp8;
@@ -150,10 +150,11 @@ static int alex_pinetrail_ec_unwedge(struct platform_intf *intf)
 	}
 
 	tmp8 = mbx_read(intf, ALEX_EC_MBX_DATA_START);
-	if (tmp8 != ALEX_EC_CMD_PASSTHRU_SUCCESS) {
-		lprintf(LOG_DEBUG, "%s: failed to exit passthru mode, "
-		        " result=%02x\n", __func__, tmp8);
-		return -1;
+	lprintf(LOG_DEBUG, "%s: result: 0x%02x ", __func__, tmp8);
+	if (tmp8 == ALEX_EC_CMD_PASSTHRU_SUCCESS) {
+		lprintf(LOG_DEBUG, "(exited passthru mode)\n");
+	} else if (tmp8 == ALEX_EC_CMD_PASSTHRU_FAIL) {
+		lprintf(LOG_DEBUG, "(failed to exit passthru mode)\n");
 	}
 
 	return 0;
@@ -243,13 +244,13 @@ static const char *alex_pinetrail_ec_fw_version_wrapper(struct platform_intf *in
 		                                 ALEX_EC_MBX_DATA_LEN)) {
 			lprintf(LOG_DEBUG, "%s: attempting to unwedge EC\n",
 			                   __func__);
-			alex_pinetrail_ec_unwedge(intf);
+			alex_ec_exit_passthru_mode(intf);
 		}
 
 		if (memcmp(version, foo, ALEX_EC_MBX_DATA_LEN)) {
 			lprintf(LOG_DEBUG, "%s: attempting to unwedge EC\n",
 			                   __func__);
-			alex_pinetrail_ec_unwedge(intf);
+			alex_ec_exit_passthru_mode(intf);
 		} else {
 			break;
 		}
@@ -282,6 +283,13 @@ int alex_pinetrail_ec_setup(struct platform_intf *intf)
 		           "mbx_data: 0x%04x\n", __func__, ec_port,
 			   mbx_idx, mbx_data);
 	mec1308_sio_exit(intf, ec_port);
+
+	/* Attempt to exit SPI passthru mode. This is a benign operation if
+	   we are not already in passthru mode. */
+	lprintf(LOG_DEBUG, "%s: attempting to exit passthru mode (this may"
+	                   " fail safely)\n", __func__);
+	alex_ec_exit_passthru_mode(intf);
+
 	return rc;
 }
 

@@ -294,6 +294,7 @@ int alex_pinetrail_ec_setup(struct platform_intf *intf)
 		                   ALEX_EC_DEFAULT_MBX_IOBAD);
 		ec_port = ALEX_EC_DEFAULT_SIO_PORT;
 		mbx_idx = ALEX_EC_DEFAULT_MBX_IOBAD;
+		mbx_data = mbx_idx + 1;
 	} else {
 		mbx_idx = mec1308_get_iobad(intf, ec_port, MEC1308_LDN_MBX);
 		mbx_data = mbx_idx + 1;

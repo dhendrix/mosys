@@ -123,7 +123,7 @@ static size_t alex_ec_firmware_size(struct platform_intf *intf,
 {
 	/* FIXME: the actual mechanism for obtaining this info is not yet
 	 * supported by mosys, so we'll cheat for now */
-	return 2048 * 1024;
+	return 128 * 1024;
 }
 
 static int alex_ec_firmware_read(struct platform_intf *intf,

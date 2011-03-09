@@ -47,6 +47,7 @@
 enum fmap_flags {
 	FMAP_AREA_STATIC	= 1 << 0,
 	FMAP_AREA_COMPRESSED	= 1 << 1,
+	FMAP_AREA_RO		= 1 << 2,
 };
 
 struct crypto_algo;	/* forward declaration */

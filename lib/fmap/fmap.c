@@ -55,8 +55,9 @@
 #include "lib/valstr.h"
 
 static const struct valstr flag_lut[] = {
-	{ 1 << 0, "static" },
-	{ 1 << 1, "compressed" },
+	{ FMAP_AREA_STATIC, "static" },
+	{ FMAP_AREA_COMPRESSED, "compressed" },
+	{ FMAP_AREA_RO, "ro" },
 };
 
 off_t fmap_find(const uint8_t *image, size_t image_len)

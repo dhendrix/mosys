@@ -138,49 +138,56 @@ static int print_fmap_areas(const char *name, struct fmap *fmap)
 	return 0;
 }
 
-static int eeprom_map_cmd(struct platform_intf *intf,
-                          struct platform_cmd *cmd, int argc, char **argv)
+/*
+ * returns 1 to indicate success, fmap area found
+ * returns 0 to indicate success, no fmap area found
+ * returns <0 to indicate failure (e.g. file error) 
+ */
+static int eeprom_map_cmd_file(struct platform_intf *intf, char *filename)
 {
-	struct eeprom *eeprom;
-	char *name = NULL;
-	int fd = 0;
-	int rc = 0;
+	struct stat s;
+	uint8_t *blob;
+	off_t offset;
+	int rc = -1, fd;
 
-	if (!intf->cb->eeprom || !intf->cb->eeprom->eeprom_list)
+	if ((fd = file_open(filename, FILE_READ)) < 0)
 		return -1;
 
-	if (argc)
-		name = argv[0];
-
-	if ((fd = file_open(name, FILE_READ)) >= 0) {
-		struct stat s;
-		uint8_t *blob;
-		off_t offset;
-
-		if (fstat(fd, &s) < 0) {
-			lprintf(LOG_ERR, "cannot stat \"%s\"\n", name);
-			rc = -1;
-			goto eeprom_map_cmd_exit;
-		}
-
-		blob = mmap(NULL, s.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
-		if (blob == MAP_FAILED) {
-			lprintf(LOG_ERR, "unable to mmap \"%s\"\n", name);
-			rc = -1;
-			close(fd);
-			goto eeprom_map_cmd_exit;
-		}
-
-		if ((offset = fmap_find(blob, s.st_size)) < 0) {
-			lprintf(LOG_ERR, "unable to find fmap\n");
-			rc = -1;
-		} else {
-			rc = print_fmap_areas(name,
-			                      (struct fmap *)(blob + offset));
-		}
-
-		munmap(blob, s.st_size);
+	if (fstat(fd, &s) < 0) {
+		lprintf(LOG_ERR, "cannot stat \"%s\"\n", filename);
+		goto eeprom_map_cmd_file_exit_1;
 	}
+
+	blob = mmap(NULL, s.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
+	if (blob == MAP_FAILED) {
+		lprintf(LOG_ERR, "unable to mmap \"%s\"\n", filename);
+		goto eeprom_map_cmd_file_exit_1;
+	}
+
+	if ((offset = fmap_find(blob, s.st_size)) < 0) {
+		lprintf(LOG_ERR, "unable to find fmap\n");
+		goto eeprom_map_cmd_file_exit_2;
+	}
+
+	if (print_fmap_areas(filename, (struct fmap *)(blob + offset)) >= 0)
+		rc = 1;
+
+eeprom_map_cmd_file_exit_2:
+	munmap(blob, s.st_size);
+eeprom_map_cmd_file_exit_1:
+	close(fd);
+	return rc;
+}
+
+/*
+ * returns 1 to indicate success, fmap area found
+ * returns 0 to indicate success, no fmap area found
+ * returns <0 to indicate failure (e.g. eeprom not found)
+ */
+static int eeprom_map_cmd_eeprom(struct platform_intf *intf, char *name)
+{
+	int rc = -1;
+	struct eeprom *eeprom;
 
 	for (eeprom = intf->cb->eeprom->eeprom_list;
 	     eeprom && eeprom->name;
@@ -193,18 +200,49 @@ static int eeprom_map_cmd(struct platform_intf *intf,
 		if (!eeprom->device || !eeprom->device->get_map)
 			continue;
 
+		rc = 0;		/* eeprom found; update again if fmap found */
 		fmap = eeprom->device->get_map(intf, eeprom);
-		if (!fmap) {
+		if (!fmap)
 			continue;
-		} else {
-			if (print_fmap_areas(eeprom->name, fmap) < 0)
-				rc = -1;
-		}
+		else
+			if (print_fmap_areas(eeprom->name, fmap) >= 0)
+				rc = 1;
 
 		free(fmap);
 	}
 
+	return rc;
+}
+
+static int eeprom_map_cmd(struct platform_intf *intf,
+                          struct platform_cmd *cmd, int argc, char **argv)
+{
+	int rc = 0;
+
+	if (!intf->cb->eeprom || !intf->cb->eeprom->eeprom_list)
+		return -1;
+
+	if (argc) {
+		if (argc != 1) {
+			platform_cmd_usage(cmd);
+			rc = -1;
+			goto eeprom_map_cmd_exit;
+		}
+
+		lprintf(LOG_DEBUG, "%s: attempting to read fmap from file\n",
+		                   __func__);
+		if (eeprom_map_cmd_file(intf, argv[0]) == 1)
+			goto eeprom_map_cmd_exit;
+	}
+
+	lprintf(LOG_DEBUG, "%s: attempting to read fmap from eeprom\n",
+	                   __func__);
+	if (eeprom_map_cmd_eeprom(intf, argv[0]) < 0)
+		rc = -1;
+
 eeprom_map_cmd_exit:
+	if (rc < 0)
+		lprintf(LOG_ERR, "could not read flash map\n", __func__);
 	return rc;
 }
 

@@ -137,10 +137,10 @@ static int alex_spd_read(struct platform_intf *intf,
 {
 	int ret = 0;
 
-	/* Try VPD first, then try I2C */
-	if ((ret = alex_spd_read_vpd(intf, dimm, reg, len, buf)) == len)
-		return ret;
+	/* Try I2C first, then try VPD */
 	if ((ret = alex_spd_read_i2c(intf, dimm, reg, len, buf)) == len)
+		return ret;
+	if ((ret = alex_spd_read_vpd(intf, dimm, reg, len, buf)) == len)
 		return ret;
 	return -1;
 }

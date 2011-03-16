@@ -506,7 +506,7 @@ extern int vpd_get_blob(struct platform_intf *intf,
 
 	/* If the blob is variable-length, things get more complicated... */
 	uuid_unparse(bbp->uuid, s);
-	for (handler = &blob_handlers[0]; handler; handler++) {
+	for (handler = &blob_handlers[0]; handler && handler->uuid; handler++) {
 		if (!strcmp(handler->uuid, s)) {
 			lprintf(LOG_DEBUG, "found matching uuid: %s\n", s);
 			break;

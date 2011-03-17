@@ -41,29 +41,30 @@
 
 /* gpio number, in/out, device, port, pin, negate, devname, name */
 struct gpio_map alex_pinetrail_gpio_map[] = {
-	/* id, type,    dev,          port, pin, neg, devname,   name */
-	{  0, GPIO_OUT, GPIO_NM10,    0,    0,   1,  "NM10", "BM_BUSY#" },
-	{  6, GPIO_IN,  GPIO_NM10,    0,    6,   1,  "NM10", "EC_SCI#" },
-	{  7, GPIO_OUT, GPIO_NM10,    0,    7,   1,  "NM10", "SIM_CD#" },
-	{  8, GPIO_OUT, GPIO_NM10,    0,    8,   0,  "NM10", "MC1_DISABLE" },
-	{  9, GPIO_OUT, GPIO_NM10,    0,    9,   0,  "NM10", "PCH_GPIO9" },
-	{ 10, GPIO_OUT, GPIO_NM10,    0,   10,   0,  "NM10", "PCH_GPIO10" },
-	{ 11, GPIO_OUT, GPIO_NM10,    0,   11,   1,  "NM10", "SMBALERT#" },
-	{ 12, GPIO_OUT, GPIO_NM10,    0,   12,   1,  "NM10", "PCH_GPIO12" },
-	{ 13, GPIO_IN,  GPIO_NM10,    0,   13,   1,  "NM10", "PCH_GPIO13" },
-	{ 14, GPIO_OUT, GPIO_NM10,    0,   14,   1,  "NM10", "PCH_GPIO14" },
-	{ 15, GPIO_OUT, GPIO_NM10,    0,   15,   1,  "NM10", "PCH_GPIO15" },
-	{ 24, GPIO_OUT, GPIO_NM10,    0,   24,   1,  "NM10", "PCH_GPIO24" },
-	{ 26, GPIO_OUT, GPIO_NM10,    0,   26,   1,  "NM10", "PCH_GPIO26" },
-	{ 27, GPIO_OUT, GPIO_NM10,    0,   27,   1,  "NM10", "WLAN_DISABLE#" },
-	{ 28, GPIO_OUT, GPIO_NM10,    0,   28,   1,  "NM10", "WWAN_DISABLE#" },
-	{ 33, GPIO_OUT, GPIO_NM10,    1,   1,    1,  "NM10", "BT_DISABLE#" },
-	{ 34, GPIO_OUT, GPIO_NM10,    1,   2,    1,  "NM10", "SPI_WP" },
-	{ 38, GPIO_IN,  GPIO_NM10,    1,   6,    1,  "NM10", "REC_MODE#" },
-	{ 39, GPIO_OUT, GPIO_NM10,    1,   7,    1,  "NM10", "LS_TP_INT" },
-	{ 49, GPIO_OUT, GPIO_NM10,    1,   17,   1,  "NM10", "H_PWRGD" },
+	/* Note: Debug connector pins (CHP_*) may be bi-directional */
+	/* id, type,    dev,          port, pin, neg, devname, name */
+	{   0, GPIO_OUT, GPIO_NM10,    0,     0,   1, "NM10", "BM_BUSY#" },
+	{   1, GPIO_IN,  GPIO_NM10,    0,     1,   0, "NM10", "KBC3_DVP_MODE" },
+	{   6, GPIO_IN,  GPIO_NM10,    0,     6,   1, "NM10", "KBC3_RUNSCI#" },
+	{   7, GPIO_OUT, GPIO_NM10,    0,     7,   0, "NM10", "SIM3_C4DET" },	/* neg? */
+	{   8, GPIO_OUT, GPIO_NM10,    0,     8,   1, "NM10", "CHP3_MINICARD_PWRON#" },
+	{   9, GPIO_IN,  GPIO_NM10,    0,     9,   0, "NM10", "CHP3_LS_INT" },
+//	{  10, GPIO_,  GPIO_NM10,    0,    10,   X,  "NM10", "CHP3_DEBUG10" },
+	{  12, GPIO_IN,  GPIO_NM10,    0,    12,   1, "NM10", "KBC3_WAKESCI#" },
+//	{  13, GPIO_,  GPIO_NM10,    0,    13,   X,  "NM10", "CHP3_DEBUG13" },
+	{  14, GPIO_IN,  GPIO_NM10,    0,    14,   0, "NM10", "CHP_TP_INT" },
+	{  24, GPIO_IN,  GPIO_NM10,    0,    24,   0, "NM10", "CHP3_BOARD_ID0" },
+//	{  25, GPIO_,   GPIO_NM10,   0,    25,   X, "NM10", "" }, /* dmi ac coupling mode */
+	{  26, GPIO_IN,  GPIO_NM10,    0,    26,   0, "NM10", "CHP3_BOARD_ID1" },
+	{  27, GPIO_IN,  GPIO_NM10,    0,    27,   1, "NM10", "CHP3_RFOFF_WLAN#" },
+	{  28, GPIO_IN,  GPIO_NM10,    0,    28,   1, "NM10", "CHP3_RFOFF_HSDPA#" },
+	{  33, GPIO_IN,  GPIO_NM10,    1,     1,   1, "NM10", "CHP3_RFOFF_BT#" },
+	{  34, GPIO_IN,  GPIO_NM10,    1,     2,   0, "NM10", "KBC3_SPI_WP" },
+	{  36, GPIO_IN,  GPIO_NM10,    1,     4,   0, "NM10", "BOARD_CONFIG" },
+	{  38, GPIO_IN,  GPIO_NM10,    1,     6,   1, "NM10", "CHP3_REC_MODE#" },
+	{  49, GPIO_IN,  GPIO_NM10,    1,    17,   0, "NM10", "CPU1_PWRGD" },
 
-	{ 0,  0,        0,               0, 0,  0, NULL,   NULL } /* end */
+	{   0,       0,          0,    0,     0,   0,   NULL, NULL } /* end */
 };
 
 static struct gpio_map *platform_gpio_map = alex_pinetrail_gpio_map;

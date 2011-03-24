@@ -22,6 +22,7 @@
 #include "mosys/mosys.h"
 
 struct kv_pair;
+struct gpio_map;
 
 #if 0
 /* disabled via build option for mosys standalone binary */
@@ -311,6 +312,10 @@ struct flash_cb {
 
 /* gpio callbacks */
 struct gpio_cb {
+	/* read level for a specific GPIO */
+	int (*read)(struct platform_intf *intf, struct gpio_map *gpio);
+	/* get mapping for a specific GPIO */
+	struct gpio_map *(*map)(struct platform_intf *intf, const char *name);
 	/* list all GPIOs for the platform */
 	int (*list)(struct platform_intf *intf);
 	/* set a specific GPIO state to 0 or 1 */

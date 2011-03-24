@@ -20,6 +20,10 @@
 #include "mosys/platform.h"
 #include <uuid/uuid.h>
 
+#include "drivers/gpio.h"
+
+#include "intf/mmio.h"
+
 #include "lib/spd.h"
 #include "lib/vpd.h"
 
@@ -95,39 +99,32 @@ static int alex_spd_read_i2c(struct platform_intf *intf,
 static int alex_spd_read_vpd(struct platform_intf *intf,
                              int dimm, int reg, int len, uint8_t *buf)
 {
-	int i, ret = 0;
-	uint8_t *tmp;
-	struct vpd_table table;
-	struct vpd_table_binary_blob_pointer *bbp;
-	uuid_t spd_uuid;
+	uint8_t *spd;
+	struct gpio_map *gpio = NULL;
+	int level;
+	int ret = -1;
 
-	/* FIXME: Put SPD UUID in one of the VPD headers. */
-	if (uuid_parse("75f4926b-9e43-4b32-8979-eb20c0eda76a", spd_uuid) < 0)
+	if (!intf->cb->gpio || !intf->cb->gpio->map || !intf->cb->gpio->read)
 		return -1;
 
-	/* Note: There is only one DIMM in this machine, so we only need to
-	 * find the first binary blob pointer with the SPD type */
-	/* FIXME: 2 is arbitrary. We can probably do better... */
-	for (i = 0; i < 2; i++) {
-		if (vpd_find_table(intf, VPD_TYPE_BINARY_BLOB_POINTER, i,
-		                   &table, vpd_rom_base, vpd_rom_size) < 0)
-			continue;
-
-		bbp = &table.data.blob;
-		if (memcmp(bbp->uuid, spd_uuid, sizeof(spd_uuid)))
-			continue;
-
-		if (vpd_get_blob(intf, bbp, &tmp) > 0) {
-			memcpy(buf + reg, tmp, len);
-			ret = len;
-			break;
-		}
-	}
-
-	if (ret <= 0) {
-		lprintf(LOG_DEBUG, "%s: Cannot find SPD\n", __func__);
+	/* The BOARD_CONFIG GPIO (GPIO36) toggles which SPD blob (written
+	 * in the VPD area) to use. */
+	if ((gpio = intf->cb->gpio->map(intf, "BOARD_CONFIG")) == NULL)
 		return -1;
-	}
+
+	level = intf->cb->gpio->read(intf, gpio);
+	lprintf(LOG_DEBUG, "%s: %s level: %d\n", __func__, gpio->name, level);
+	if (level == 0)
+		spd = (uint8_t *)(vpd_rom_base + 0x220400);
+	else if (level == 1)
+		spd = (uint8_t *)(vpd_rom_base + 0x220500);
+	else
+		return -1;
+
+	lprintf(LOG_DEBUG, "%s: reading %d bytes from 0x%lx\n",
+	                   __func__, len, spd + reg);
+	if (mmio_read(intf, spd + reg, len, buf) == 0)
+		ret = len;
 
 	return ret;
 }
@@ -137,7 +134,13 @@ static int alex_spd_read(struct platform_intf *intf,
 {
 	int ret = 0;
 
-	/* Try I2C first, then try VPD */
+	/*
+	 * There is 1 DIMM in Alex, however SPD information can come from
+	 * one of three sources due to possible removal of the SPD EEPROM:
+	 * 1. I2C. Try this first.
+	 * 2. VPD -- If GPIO36 == 0, it will use information stored in the
+	 *           VPD region.
+	 */
 	if ((ret = alex_spd_read_i2c(intf, dimm, reg, len, buf)) == len)
 		return ret;
 	if ((ret = alex_spd_read_vpd(intf, dimm, reg, len, buf)) == len)

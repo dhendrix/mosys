@@ -40,7 +40,7 @@
 #define GPIO_NM10	0
 
 /* gpio number, in/out, device, port, pin, negate, devname, name */
-struct gpio_map alex_pinetrail_gpio_map[] = {
+static struct gpio_map platform_gpio_map[] = {
 	/* Note: Debug connector pins (CHP_*) may be bi-directional */
 	/* id, type,    dev,          port, pin, neg, devname, name */
 	{   0, GPIO_OUT, GPIO_NM10,    0,     0,   1, "NM10", "BM_BUSY#" },
@@ -67,7 +67,60 @@ struct gpio_map alex_pinetrail_gpio_map[] = {
 	{   0,       0,          0,    0,     0,   0,   NULL, NULL } /* end */
 };
 
-static struct gpio_map *platform_gpio_map = alex_pinetrail_gpio_map;
+/*
+ * alex_pinetrail_gpio_read  -  read level for one GPIO
+ *
+ * @intf:	platform interface
+ * @name:	name of GPIO to get state for
+ *
+ * returns pointer to GPIO map entry if successful
+ * returns NULL to indicate failure
+ */
+static int alex_pinetrail_gpio_read(struct platform_intf *intf,
+                                    struct gpio_map *gpio)
+{
+	int ret = 0;
+
+	switch (gpio->dev) {
+	case GPIO_NM10:
+		ret = nm10_read_gpio(intf, gpio);
+		break;
+	default:
+		ret = -1;
+	}
+
+	return ret;
+}
+
+/*
+ * alex_pinetrail_gpio_map  -  get mapping info for one GPIO
+ *
+ * @intf:	platform interface
+ * @name:	name of GPIO to get state for
+ *
+ * returns pointer to GPIO map entry if successful
+ * returns NULL to indicate failure
+ */
+struct gpio_map *alex_pinetrail_gpio_map(struct platform_intf *intf,
+                                         const char *name)
+{
+	int i;
+	struct gpio_map *gpio = NULL;
+
+	for (i = 0; platform_gpio_map[i].name != NULL; i++) {
+		struct gpio_map *tmp;
+
+		tmp = &platform_gpio_map[i];
+
+		/* look for GPIO by name */
+		if (!strncmp(name, tmp->name, __minlen(name, tmp->name))) {
+			gpio = tmp;
+			break;
+		}
+	}
+
+	return gpio;
+}
 
 /*
  * alex_pinetrail_gpio_list  -  list all GPIOs and their states
@@ -145,6 +198,8 @@ static int alex_pinetrail_gpio_set(struct platform_intf *intf,
 }
 
 struct gpio_cb alex_pinetrail_gpio_cb = {
+	.read	= alex_pinetrail_gpio_read,
+	.map	= alex_pinetrail_gpio_map,
 	.list	= alex_pinetrail_gpio_list,
 	.set	= alex_pinetrail_gpio_set,
 };

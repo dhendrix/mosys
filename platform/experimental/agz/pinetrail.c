@@ -34,6 +34,7 @@ static const char *probed_platform_id;
 
 const char *agz_pinetrail_id_list[] = {
 	"AGZ",
+	"BGZ",
 	NULL
 };
 
@@ -51,6 +52,7 @@ struct platform_cmd *agz_pinetrail_sub[] = {
 
 static const char *hwids[] = {
 	"{9707217C-7943-4376-A812-FA05C318A16F}",
+	"{FA42644C-CF3A-4692-A9D3-1A667CB232E9}",
 	NULL
 };
 

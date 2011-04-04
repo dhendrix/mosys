@@ -241,11 +241,13 @@ int mosys_main(int argc, char **argv)
 	 */
 	mosys_log_init(PROGRAM, CONFIG_LOGLEVEL+verbose, NULL);
 
+#if defined(CONFIG_USE_IPC_LOCK)
 	/* try to get lock */
 	if (!force_lock && (mosys_acquire_big_lock(LOCK_TIMEOUT_SECS) < 0)) {
 		rc = -1;
 		goto do_exit_1;
 	}
+#endif
 
 	/* set the global verbosity level */
 	mosys_set_verbosity(CONFIG_LOGLEVEL+verbose);
@@ -275,7 +277,9 @@ int mosys_main(int argc, char **argv)
 do_exit_3:
 	mosys_platform_destroy(intf);
 do_exit_2:
+#if defined(CONFIG_USE_IPC_LOCK)
 	mosys_release_big_lock();
+#endif
 do_exit_1:
 	mosys_log_halt();
 

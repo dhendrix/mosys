@@ -30,15 +30,17 @@
 obj-y		+= command/
 
 obj-y		+= alloc.o
-obj-y		+= big_lock.o
 obj-y		+= callbacks.o
-obj-y		+= csem.o
 obj-y		+= file_backed_range.o
 obj-y		+= globals.o
-obj-y		+= ipc_lock.o
 obj-y		+= intf_list.o
 obj-y		+= kv_pair.o
 obj-y		+= list.o
 obj-y		+= log.o
 obj-y		+= output.o
 obj-y		+= platform.o
+
+# Big lock objects
+obj-$(CONFIG_USE_IPC_LOCK)	+= big_lock.o
+obj-$(CONFIG_USE_IPC_LOCK)	+= ipc_lock.o
+obj-$(CONFIG_USE_IPC_LOCK)	+= csem.o

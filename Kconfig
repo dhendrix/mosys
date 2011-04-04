@@ -31,6 +31,14 @@ config LOGLEVEL
 	  LOG_DEBUG	7	debug-level messages	
 	  LOG_SPEW	8	excessive debug messages
 
+config USE_IPC_LOCK
+	bool "Use IPC locking mechanism"
+	default y
+	help
+	  The IPC locking mechanism ensures that mosys does not run at the
+	  the same time as processes holding known IPC locks. For example,
+	  this prevents multiple instances of mosys from running.
+
 config DEBUG_INFO
 	bool "Optimize mosys binary for debugging"
 	default n

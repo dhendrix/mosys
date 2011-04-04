@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Mosys version: 1.0.07.299
-# Sun Apr  3 20:08:26 2011
+# Mosys version: 1.0.07.300
+# Sun Apr  3 20:11:52 2011
 #
 
 #
@@ -9,6 +9,7 @@
 #
 # CONFIG_ADVANCED_OPTIONS is not set
 CONFIG_LOGLEVEL=4
+CONFIG_USE_IPC_LOCK=y
 # CONFIG_DEBUG_INFO is not set
 
 #

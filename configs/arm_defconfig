@@ -1,18 +1,21 @@
 #
 # Automatically generated make config: don't edit
-# Mosys version: KERNELVERSION
-# Thu Jul  1 17:03:55 2010
+# Mosys version: 1.0.07.300
+# Sun Apr  3 20:18:20 2011
 #
 
 #
 # General setup
 #
-CONFIG_ADVANCED_OPTIONS=y
-CONFIG_LOGLEVEL=5
+# CONFIG_ADVANCED_OPTIONS is not set
+CONFIG_LOGLEVEL=4
+# CONFIG_DEBUG_INFO is not set
 
 #
 # Platforms
 #
+# CONFIG_BIG_ENDIAN is not set
+CONFIG_LITTLE_ENDIAN=y
 CONFIG_PLATFORM_ARCH_ARMEL=y
 # CONFIG_PLATFORM_ARCH_X86 is not set
 
@@ -24,7 +27,7 @@ CONFIG_PLATFORM_DEFAULT=y
 #
 # HP Platform Support
 #
-CONFIG_PLATFORM_HP=y
+# CONFIG_PLATFORM_HP is not set
 
 #
 # Experimental Platform Support
@@ -32,5 +35,14 @@ CONFIG_PLATFORM_HP=y
 CONFIG_PLATFORM_EXPERIMENTAL=y
 
 #
+# Device Drivers
+#
+# CONFIG_CHIPSET_INTEL_NM10 is not set
+# CONFIG_EC_ITE_IT8500 is not set
+# CONFIG_EC_SMSC_MEC1308 is not set
+
+#
 # Tools
 #
+# CONFIG_ADD_TOOL_LIBRARIES is not set
+# CONFIG_BUILD_VPD is not set

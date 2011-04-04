@@ -1,5 +1,5 @@
 # ite config variables
 
 config EC_ITE_IT8500
-	bool
-	default 0
+	bool "IT8500"
+	default n

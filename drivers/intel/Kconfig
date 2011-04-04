@@ -1,5 +1,5 @@
 # intel config variables
 
 config CHIPSET_INTEL_NM10
-	bool
-	default 0
+	bool "NM10"
+	default n

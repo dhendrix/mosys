@@ -65,11 +65,13 @@ static int io_setup(struct platform_intf *intf)
 	if (stat(IOPORT_DEV, &s) < 0) {
 		lprintf(LOG_DEBUG, "%s: using raw port IO\n", __func__);
 		intf->op->io = &io_raw_intf;
+#if defined(PLATFORM_ARCH_X86)
 		if (iopl(3) != 0) {
 			lprintf(LOG_ERR, "%s: cannot set IO permissions\n",
 			                 __func__);
 			ret = -1;
 		}
+#endif
 	} else {
 		lprintf(LOG_DEBUG, "%s: using file-backed port IO\n", __func__);
 		intf->op->io = &io_sys_intf;

@@ -43,4 +43,21 @@ extern int probe_hwid(const char *hwids[]);
  */
 extern int probe_smbios(struct platform_intf *intf, const char *ids[]);
 
+/*
+ * probe_cpuinfo - probe /proc/cpuinfo for system info
+ *
+ * @key:	key to search for
+ * @value:	value to search for
+ *
+ * This function assumes the format is colon-delimited with unknown number of
+ * spaces between the key, colon, and value. For example
+ * key     : value
+ *
+ * returns 1 to indicate matching key:value pair found
+ * returns 0 to indicate no matching key:value pair found (clean exit)
+ * returns <0 to indicate error
+ */
+extern int probe_cpuinfo(struct platform_intf *intf,
+                         const char *key, const char *value);
+
 #endif /* MOSYS_LIB_PROBE_H__ */

@@ -32,14 +32,21 @@
  * Software Foundation.
  */
 
+#include <ctype.h>
 #include <string.h>
+#include <limits.h>
 
+#include "mosys/globals.h"
 #include "mosys/log.h"
 #include "mosys/platform.h"
 
 #include "lib/acpi.h"
 #include "lib/smbios.h"
 #include "lib/string.h"
+
+#ifndef LINE_MAX
+#define LINE_MAX	512
+#endif
 
 int probe_hwid(const char *hwids[])
 {
@@ -81,5 +88,41 @@ int probe_smbios(struct platform_intf *intf, const char *ids[])
 		ret = 1;
 		lprintf(LOG_DEBUG, "%s: matched id \"%s\"\n", __func__, id);
 	}
+	return ret;
+}
+
+int probe_cpuinfo(struct platform_intf *intf,
+                  const char *key, const char *value)
+{
+	FILE *cpuinfo;
+	int ret = 0;
+	char path[PATH_MAX];
+
+	sprintf(path, "%s/proc/cpuinfo", mosys_get_root_prefix());
+	cpuinfo = fopen(path, "rb");
+	if (!cpuinfo)
+		return 0;
+
+	while (!feof(cpuinfo)) {
+		char line[LINE_MAX], *ptr;
+
+		if (fgets(line, sizeof(line), cpuinfo) == NULL)
+			break;
+		ptr = line;
+
+		if (strncmp(ptr, key, strlen(key)))
+			continue;
+
+		ptr += strlen(key);
+		while (isspace((unsigned char)*ptr) || (*ptr == ':'))
+			ptr++;
+
+		if (!strncmp(ptr, value, strlen(value))) {
+			ret = 1;
+			break;
+		}
+	}
+
+	fclose(cpuinfo);
 	return ret;
 }

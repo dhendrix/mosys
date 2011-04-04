@@ -28,6 +28,7 @@ extern struct platform_intf platform_default_x86;
 /* experimental */
 extern struct platform_intf platform_alex_pinetrail;
 extern struct platform_intf platform_agz_pinetrail;
+extern struct platform_intf platform_kaen_tegra2;
 extern struct platform_intf platform_mario_pinetrail;
 
 /* hp */
@@ -44,6 +45,9 @@ struct platform_intf *platform_intf_list[] = {
 #endif
 #ifdef CONFIG_EXPERIMENTAL_AGZ
 	&platform_agz_pinetrail,
+#endif
+#ifdef CONFIG_EXPERIMENTAL_KAEN
+	&platform_kaen_tegra2,
 #endif
 #ifdef CONFIG_EXPERIMENTAL_MARIO
 	&platform_mario_pinetrail,

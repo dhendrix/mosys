@@ -41,7 +41,6 @@ static const char *kaen_tegra2_get_name(struct platform_intf *intf)
 	char *ret = NULL;
 
 	ret = mosys_strdup(intf->name);
-	add_destroy_callback(free, ret);
 
 	return (const char *)ret;
 }
@@ -88,7 +87,6 @@ static const char *kaen_tegra2_get_version(struct platform_intf *intf)
 			i++;
 		}
 		ret[i] = '\0';
-		add_destroy_callback(free, ret);
 	}
 
 	fclose(cpuinfo);

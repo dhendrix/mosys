@@ -35,4 +35,10 @@ config EXPERIMENTAL_MARIO
 	bool "mario pinetrail reference board"
 	default n
 
+config EXPERIMENTAL_SEABOARD
+	depends on PLATFORM_ARCH_ARMEL && PLATFORM_EXPERIMENTAL
+	select SOC_NVIDIA_TEGRA2
+	bool "seaboard tegra2 reference board"
+	default n
+
 endmenu

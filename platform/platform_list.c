@@ -30,6 +30,7 @@ extern struct platform_intf platform_alex_pinetrail;
 extern struct platform_intf platform_agz_pinetrail;
 extern struct platform_intf platform_kaen_tegra2;
 extern struct platform_intf platform_mario_pinetrail;
+extern struct platform_intf platform_seaboard_tegra2;
 
 /* hp */
 extern struct platform_intf platform_hp_z600;
@@ -51,6 +52,9 @@ struct platform_intf *platform_intf_list[] = {
 #endif
 #ifdef CONFIG_EXPERIMENTAL_MARIO
 	&platform_mario_pinetrail,
+#endif
+#ifdef CONFIG_EXPERIMENTAL_SEABOARD
+	&platform_seaboard_tegra2,
 #endif
 
 	/* place default platform last */

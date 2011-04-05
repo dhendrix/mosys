@@ -39,6 +39,7 @@ const char *agz_pinetrail_id_list[] = {
 };
 
 struct platform_cmd *agz_pinetrail_sub[] = {
+	&cmd_ec,
 	&cmd_eeprom,
 	&cmd_gpio,
 	&cmd_i2c,
@@ -88,6 +89,7 @@ static int agz_pinetrail_setup_post(struct platform_intf *intf)
 	if (agz_pinetrail_vpd_setup(intf) < 0)
 		lprintf(LOG_INFO, "VPD not found\n");
 
+	rc |= agz_pinetrail_ec_setup(intf);
 	rc |= agz_pinetrail_eeprom_setup(intf);
 
 	if (rc)
@@ -100,11 +102,13 @@ static int agz_pinetrail_destroy(struct platform_intf *intf)
 	if (probed_platform_id)
 		free((char *)probed_platform_id);
 
+	agz_pinetrail_ec_destroy(intf);
 	/* FIXME: unmap vpd stuff */
 	return 0;
 }
 
 struct platform_cb agz_pinetrail_cb = {
+	.ec		= &agz_pinetrail_ec_cb,
 	.eeprom		= &agz_pinetrail_eeprom_cb,
 	.gpio		= &agz_pinetrail_gpio_cb,
 	.memory		= &agz_pinetrail_memory_cb,

@@ -23,6 +23,7 @@
 #include "mosys/platform.h"
 
 /* platform callbacks */
+extern struct ec_cb agz_pinetrail_ec_cb;		/* ec.c */
 extern struct eeprom_cb agz_pinetrail_eeprom_cb;	/* eeprom.c */
 extern struct sysinfo_cb agz_pinetrail_sysinfo_cb;	/* sysinfo.c */
 extern struct vpd_cb agz_pinetrail_vpd_cb;		/* vpd.c */
@@ -31,6 +32,8 @@ extern struct nvram_cb agz_pinetrail_nvram_cb;		/* nvram.c */
 extern struct memory_cb agz_pinetrail_memory_cb;	/* memory.c */
 
 /* functions called by setup routines */
+extern int agz_pinetrail_ec_setup(struct platform_intf *intf);
+extern void agz_pinetrail_ec_destroy(struct platform_intf *intf);
 extern int agz_pinetrail_vpd_setup(struct platform_intf *intf);
 extern int agz_pinetrail_eeprom_setup(struct platform_intf *intf);
 

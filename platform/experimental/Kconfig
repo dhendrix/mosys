@@ -18,6 +18,7 @@ config EXPERIMENTAL_ALEX
 config EXPERIMENTAL_AGZ
 	depends on PLATFORM_ARCH_X86 && PLATFORM_EXPERIMENTAL
 	select CHIPSET_INTEL_NM10
+	select EC_NUVOTON_NPCE781
 	bool "agz pinetrail reference board"
 	default n
 

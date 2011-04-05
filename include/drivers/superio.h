@@ -35,6 +35,7 @@
 struct sio_id {
 	char *vendor;
 	char *name;
+	uint8_t num_id_bytes;
 	uint8_t chipid[2];
 	uint8_t chipver;
 };

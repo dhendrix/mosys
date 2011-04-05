@@ -33,9 +33,9 @@
 #include "mosys/platform.h"
 
 static struct sio_id superio_ids[] = {
-	{ "ite", "it8500", { 0x85, 0x00 } },
-	{ "smsc", "mec1308", { 0x2d, 0x00 } },
-	{ "smsc", "mec1308", { 0x4d, 0x01 } },
+	{ "ite", "it8500", 2, { 0x85, 0x00 } },
+	{ "smsc", "mec1308", 2, { 0x2d, 0x00 } },
+	{ "smsc", "mec1308", 2, { 0x4d, 0x01 } },
 };
 
 uint8_t sio_read(struct platform_intf *intf, uint16_t port, uint8_t reg)
@@ -75,10 +75,17 @@ const struct sio_id *get_sio_id(struct platform_intf *intf, uint16_t port)
 				   superio_ids[i].chipid[0],
 				   superio_ids[i].chipid[1],
 				   id_byte[0], id_byte[1]);
-		if (superio_ids[i].chipid[0] == id_byte[0] &&
-		    superio_ids[i].chipid[1] == id_byte[1]) {
-			found = 1;
-			break;
+		if (superio_ids[i].num_id_bytes == 1) {
+			if (superio_ids[i].chipid[0] == id_byte[0]) {
+				found = 1;
+				break;
+			}
+		} else if (superio_ids[i].num_id_bytes == 2) {
+			if (superio_ids[i].chipid[0] == id_byte[0] &&
+			    superio_ids[i].chipid[1] == id_byte[1]) {
+				found = 1;
+				break;
+			}
 		}
 	}
 

@@ -32,29 +32,16 @@
  * Note: This file shares some code with the Flashrom project.
  */
 
-#include <ctype.h>
 #include <inttypes.h>
 #include <unistd.h>
 
 #include "drivers/superio.h"
 #include "drivers/nuvoton/npce781.h"
 
-#include "mosys/alloc.h"
 #include "mosys/log.h"
 #include "mosys/platform.h"
 
 #include "intf/io.h"
-
-/* These are firmware-specific and not generically useful for mec1308 */
-#define AGZ_EC_MBX_CMD			0x82
-#define AGZ_EC_MBX_EXTCMD		0x83
-#define AGZ_EC_MBX_DATA_START		0x84
-#define AGZ_EC_MBX_DATA_END		0x91
-#define AGZ_EC_MBX_DATA_LEN		(AGZ_EC_MBX_DATA_END - \
-                                         AGZ_EC_MBX_DATA_START)
-
-#define AGZ_EC_CMD_FW_VERSION		0x83
-#define AGZ_EC_CMD_FAN_RPM		0xBB
 
 static uint16_t ec_port;
 static uint16_t mbx_csr;

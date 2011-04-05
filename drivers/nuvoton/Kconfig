@@ -1,0 +1,5 @@
+# nuvoton config variables
+
+config EC_NUVOTON_NPCE781
+	bool "NPCE781"
+	default n

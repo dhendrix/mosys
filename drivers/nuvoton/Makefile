@@ -1,4 +1,4 @@
-# 2010, Google Inc.
+# 2011, Google Inc.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -27,11 +27,4 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# always decend into the subdirectories
-obj-y	+= intel/
-obj-y	+= ite/
-obj-y	+= nuvoton/
-obj-y	+= smsc/
-
-obj-y	+= gpio.o
-obj-y	+= superio.o	# FIXME: should this depend on PLATFORM_ARCH_X86?
+obj-$(CONFIG_EC_NUVOTON_NPCE781)	+= npce781.o

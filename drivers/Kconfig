@@ -4,6 +4,7 @@ menu "Device Drivers"
 
 source "drivers/intel/Kconfig"
 source "drivers/ite/Kconfig"
+source "drivers/nuvoton/Kconfig"
 source "drivers/smsc/Kconfig"
 
 endmenu

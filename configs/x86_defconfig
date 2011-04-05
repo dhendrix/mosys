@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Mosys version: 1.0.07.300
-# Sun Apr  3 20:11:52 2011
+# Mosys version: 1.0.07.309
+# Tue Apr  5 11:42:32 2011
 #
 
 #
@@ -45,6 +45,7 @@ CONFIG_EXPERIMENTAL_MARIO=y
 #
 CONFIG_CHIPSET_INTEL_NM10=y
 CONFIG_EC_ITE_IT8500=y
+# CONFIG_EC_NUVOTON_NPCE781 is not set
 CONFIG_EC_SMSC_MEC1308=y
 
 #

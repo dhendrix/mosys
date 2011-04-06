@@ -156,16 +156,19 @@ char *vpd_get_string(const char *ptr, int num)
  * @entry:	buffer to store entry pointer must be allocated by caller
  * @baseaddr:	address to begin search
  * @len:	length of region to search (in bytes)
+ * @offset:	offset to store entry point structure address, if found
  *
- * returns 0 if found
+ * returns 0 to indicate success
  * returns <0 if not found
  */
-int vpd_find_entry(struct platform_intf *intf, struct vpd_entry *entry,
-                   unsigned long int baseaddr, unsigned long int len)
+int vpd_find_entry(struct platform_intf *intf,
+                   struct vpd_entry *entry,
+                   unsigned long int baseaddr,
+                   unsigned long int len,
+                   size_t *offset)
 {
 	uint8_t csum;
 	uint8_t *data;
-	size_t offset;
 	int i;
 	uint8_t vpd_magic[] = VPD_ENTRY_MAGIC;
 
@@ -176,21 +179,21 @@ int vpd_find_entry(struct platform_intf *intf, struct vpd_entry *entry,
 	}
 
 	if (find_pattern(data, len,
-	                 &vpd_magic[0], 4, 16, &offset) < 0) {
+	                 &vpd_magic[0], 4, 16, offset) < 0) {
 		lprintf(LOG_DEBUG, "Unable to find VPD entry.\n");
 		mmio_unmap(intf, data, baseaddr, len);
 		return -1;
 	}
 
-	lprintf(LOG_DEBUG, "VPD Table Entry @ 0x%x\n", baseaddr + offset);
+	lprintf(LOG_DEBUG, "VPD Table Entry @ 0x%x\n", baseaddr + *offset);
 
 	/* copy entry into user-provided buffer */
 	memset(entry, 0, sizeof(*entry));
-	memcpy(entry, data + offset, sizeof(*entry));
+	memcpy(entry, data + *offset, sizeof(*entry));
 
 	/* verify entry pointer checksum */
 	for (csum = i = 0; i < entry->entry_length; i++)
-		csum += data[offset + i];
+		csum += data[*offset + i];
 
 	mmio_unmap(intf, data, baseaddr, len);
 
@@ -247,6 +250,10 @@ static void vpd_itr_destroy(void *arg)
 static int vpd_itr_setup(struct platform_intf *intf,
                          unsigned int baseaddr, unsigned int len)
 {
+	unsigned int addr, remaining;
+	size_t offset;
+	int entry_found = 0;
+
 	/* already setup? */
 	if (vpd_itr) {
 		/* reset to start of tables */
@@ -263,14 +270,33 @@ static int vpd_itr_setup(struct platform_intf *intf,
 	vpd_itr->entry = mosys_malloc(sizeof(*vpd_itr->entry));
 	memset(vpd_itr->entry, 0, sizeof(*vpd_itr->entry));
 
-	/* search for entry pointer */
-	if (vpd_find_entry(intf, vpd_itr->entry, baseaddr, len) < 0) {
-		vpd_itr_destroy(intf);
-		return -1;
-	}
-	if (vpd_itr->entry->table_length == 0) {
-		vpd_itr_destroy(intf);
-		return -1;
+	addr = baseaddr;
+	remaining = len;
+	while (!entry_found) {
+		uint32_t x;
+
+		/* search for entry pointer with a valid table */
+		if (vpd_find_entry(intf, vpd_itr->entry,
+		                   addr, remaining, &offset) < 0) {
+			vpd_itr_destroy(intf);
+			return -1;
+		}
+
+		x = vpd_itr->entry->table_address +
+		    vpd_itr->entry->table_length;
+
+		/* if a sanity check fails, continue to search for a
+		 * valid entry point */
+		if (x < vpd_itr->entry->table_address) {
+			lprintf(LOG_DEBUG, "Table address/length overrun\n");
+		} else if (vpd_itr->entry->table_length == 0) {
+			lprintf(LOG_DEBUG, "Zero table-length detected\n");
+		} else {
+			entry_found = 1;
+		}
+
+		addr = baseaddr + offset + 16;
+		remaining = baseaddr + len - addr;
 	}
 
 	/* mmap in entire vpd area */

@@ -45,4 +45,11 @@ extern void mosys_set_output_file(FILE *fp);
 extern int mosys_get_verbosity(void);
 extern void mosys_set_verbosity(int verbosity);
 
+/*
+ * OS detection
+ */
+#if (defined(__MACH__) && defined(__APPLE__))
+#define __DARWIN__
+#endif		/* OS detection */
+
 #endif /* MOSYS_GLOBALS_H__ */

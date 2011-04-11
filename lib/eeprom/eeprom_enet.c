@@ -41,6 +41,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
+
+#include <sys/socket.h>
 #include <net/if.h>
 
 #if 0
@@ -1119,6 +1121,7 @@ static int dump_regs(struct ethtool_drvinfo *info, struct ethtool_regs *regs)
 }
 #endif
 
+#if defined(__linux__)
 static int dump_eeprom(struct platform_intf *intf,
 		       struct ethtool_drvinfo *info,
 		       struct ifreq *ifr,
@@ -1145,6 +1148,7 @@ static int dump_eeprom(struct platform_intf *intf,
 
 	return 0;
 }
+#endif	/* __linux__ */
 
 #if 0
 static int dump_test(struct ethtool_drvinfo *info, struct ethtool_test *test,
@@ -1932,6 +1936,7 @@ static int do_nway_rst(int fd, struct ifreq *ifr)
 }
 #endif
 
+#if defined(__linux__)
 static int do_geeprom(struct platform_intf *intf, int fd, struct ifreq *ifr) {
 	int err;
 	struct ethtool_drvinfo drvinfo;
@@ -1969,6 +1974,11 @@ static int do_geeprom(struct platform_intf *intf, int fd, struct ifreq *ifr) {
 
 	return err;
 }
+#else
+static int do_geeprom(struct platform_intf *intf, int fd, struct ifreq *ifr) {
+	return -ENOSYS;
+}
+#endif	/* __linux__ */
 
 #if 0
 static int do_seeprom(int fd, struct ifreq *ifr)

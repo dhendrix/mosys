@@ -18,6 +18,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
+#if defined (__linux__)
 #ifndef ETHTOOL_UTIL_H__
 #define ETHTOOL_UTIL_H__
 
@@ -100,3 +101,4 @@ int smsc911x_dump_regs(struct ethtool_drvinfo *info, struct ethtool_regs *regs);
 #endif
 
 #endif /* ETHTOOL_UTIL_H__ */
+#endif	/* __linux__ */

@@ -19,6 +19,7 @@
 /* FIXME: much of this was scrubbed... might want to eventually figure out
  * what is public so we can make this more useful */
 
+#if defined (__linux__)
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -144,3 +145,5 @@ int tg3_dump_eeprom(struct platform_intf *intf,
 
 	return ret;
 }
+
+#endif	/* __linux__ */

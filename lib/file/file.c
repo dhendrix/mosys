@@ -32,6 +32,7 @@
 #include <dirent.h>
 
 #include "mosys/alloc.h"
+#include "mosys/globals.h"
 #include "mosys/list.h"
 #include "mosys/log.h"
 

@@ -52,4 +52,10 @@ extern void mosys_set_verbosity(int verbosity);
 #define __DARWIN__
 #endif		/* OS detection */
 
+#if defined(__linux__)
+#include <limits.h>
+#elif defined(__DARWIN__)
+#include <sys/syslimits.h>
+#endif
+
 #endif /* MOSYS_GLOBALS_H__ */

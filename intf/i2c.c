@@ -17,6 +17,7 @@
  *
  * i2c.c: I2C bus access via Linux I2C IOCTL interface.
  */
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -32,7 +33,6 @@
 #include "mosys/platform.h"
 
 #include "intf/i2c.h"
-#include "intf/linux-i2c-dev.h"
 
 #include "lib/math.h"
 #include "lib/string.h"
@@ -97,12 +97,16 @@ static int i2c_open_dev(struct platform_intf *intf, int bus, int address)
 		return -1;
 	}
 
+#if defined (__linux__)
 	if (ioctl(fd, I2C_SLAVE, address) < 0) {
 		lperror(LOG_NOTICE, "Unable to set I2C slave address to 0x%02x",
 		        address);
 		close(fd);
 		return -1;
 	}
+#else
+	return -ENOSYS;
+#endif
 
 	i2c_handles[i2c_handle_num].addr.bus = bus;
 	i2c_handles[i2c_handle_num].addr.addr = address;
@@ -419,8 +423,12 @@ static int i2c_write16_buf(int handle, int reg, const uint8_t *dp, int len)
 	// Spin waiting for device to recover.
 	for (i = 0; i < BLOCK_WRITE_RETRIES; ++i) {
 		usleep(BLOCK_WRITE_DELAY);
+#if defined(__linux__)
 		if (ioctl(fd, I2C_SLAVE, address) == 0)
 			return result;
+#else
+		return -ENOSYS;
+#endif
 	}
 	lperror(LOG_NOTICE,
 	        "i2c-%d-%02x didn't recover in %d usec\n",

@@ -24,6 +24,8 @@
 #define INTF_I2C_H__
 
 #include <inttypes.h>
+#include <errno.h>
+
 #include "mosys/list.h"
 
 #define I2C_HANDLE_MAX		64
@@ -199,5 +201,86 @@ struct i2c_data {
 	struct i2c_addr addr;
 	char *dir;
 };
+
+#if defined(__linux__)
+#include "intf/linux-i2c-dev.h"
+#else
+static inline int32_t i2c_smbus_write_quick(int file, uint8_t value)
+{
+	return -ENOSYS;
+}
+
+static inline int32_t i2c_smbus_read_byte(int file)
+{
+	return -ENOSYS;
+}
+
+static inline int32_t i2c_smbus_write_byte(int file, uint8_t value)
+{
+	return -ENOSYS;
+}
+
+static inline int32_t i2c_smbus_read_byte_data(int file, uint8_t command)
+{
+	return -ENOSYS;
+}
+
+static inline int32_t i2c_smbus_write_byte_data(int file, uint8_t command,
+                                                uint8_t value)
+{
+	return -ENOSYS;
+}
+
+static inline int32_t i2c_smbus_read_word_data(int file, uint8_t command)
+{
+	return -ENOSYS;
+}
+
+static inline int32_t i2c_smbus_write_word_data(int file, uint8_t command,
+                                                uint16_t value)
+{
+	return -ENOSYS;
+}
+
+static inline int32_t i2c_smbus_process_call(int file, uint8_t command,
+                                             uint16_t value)
+{
+	return -ENOSYS;
+}
+
+
+/* Returns the number of read bytes */
+static inline int32_t i2c_smbus_read_block_data(int file, uint8_t command,
+                                                uint8_t *values)
+{
+	return -ENOSYS;
+}
+
+static inline int32_t i2c_smbus_write_block_data(int file, uint8_t command,
+                                                 uint8_t length, uint8_t *values)
+{
+	return -ENOSYS;
+}
+
+/* Returns the number of read bytes */
+static inline int32_t i2c_smbus_read_i2c_block_data(int file, uint8_t command,
+                                                    uint8_t *values)
+{
+	return -ENOSYS;
+}
+
+static inline int32_t i2c_smbus_write_i2c_block_data(int file, uint8_t command,
+                                                uint8_t length, uint8_t *values)
+{
+	return -ENOSYS;
+}
+
+/* Returns the number of read bytes */
+static inline int32_t i2c_smbus_block_process_call(int file, uint8_t command,
+                                                uint8_t length, uint8_t *values)
+{
+	return -ENOSYS;
+}
+#endif
 
 #endif /* INTF_I2C_H__ */

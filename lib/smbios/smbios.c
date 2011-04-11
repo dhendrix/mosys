@@ -185,26 +185,20 @@ int smbios_find_entry(struct platform_intf *intf, struct smbios_entry *entry,
 	 */
 	if (!found) {
 		FILE *fp;
-		char *line = NULL;
-		size_t bytes;
+		char line[LINE_MAX];
 
 		lprintf(LOG_DEBUG, "%s: Attempting to get SMBIOS base address "
 		"from /sys/kernel/debug/efi_smbios_base\n", __func__);
 
 		/* ChromeOS currently exports smbios base in debugfs. */
 		fp = fopen("/sys/kernel/debug/efi_smbios_base", "r");
-		if ((fp > 0) && (getline(&line, &bytes, fp)) > 0) {
+		if ((fp > 0) && (fgets(&line[0], LINE_MAX, fp) != NULL)) {
 			baseaddr = strtoull(line, NULL, 0);
 			lprintf(LOG_DEBUG, "%s: SMBIOS=0x%08x\n",
 			                   __func__, baseaddr);
 			data = mmio_map(intf, O_RDONLY, baseaddr, len);
 			offset = 0;
 			found = 1;
-
-			if (line) {
-				free(line);
-				line = NULL;
-			}
 			fclose(fp);
 		}
 	}

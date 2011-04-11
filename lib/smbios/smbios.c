@@ -23,7 +23,10 @@
 #include <string.h>
 #include <fcntl.h>
 #include <ctype.h>
+
+#if defined (__linux__)
 #include <sys/klog.h>
+#endif
 
 #include "mosys/alloc.h"
 #include "mosys/callbacks.h"
@@ -206,6 +209,7 @@ int smbios_find_entry(struct platform_intf *intf, struct smbios_entry *entry,
 		}
 	}
 
+#ifndef __DARWIN__	/* FIXME: add support for OS X */
 	if (!found) {
 		char *buf;
 		int klog_size;
@@ -244,6 +248,7 @@ int smbios_find_entry(struct platform_intf *intf, struct smbios_entry *entry,
 
 		free(buf);
 	}
+#endif	/* __DARWIN__ */
 
 	if (!found) {
 		lprintf(LOG_DEBUG, "Unable to find SMBIOS entry.\n");

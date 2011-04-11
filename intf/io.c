@@ -24,7 +24,6 @@
 #include <errno.h>
 #include <unistd.h>
 #include <inttypes.h>
-#include <sys/io.h>
 #include <sys/stat.h>
 
 #include "mosys/file_backed_range.h"

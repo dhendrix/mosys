@@ -53,6 +53,8 @@ static void ec_wait(struct platform_intf *intf, uint16_t mbx_base)
 		io_read8(intf, mbx_base + 1, &tmp8);
 		if (tmp8 == 0x00)
 			break;
+
+		usleep(MARIO_EC_DELAY_US);
 	}
 
 	if (t >= MARIO_EC_MAX_TIMEOUT_US)

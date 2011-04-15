@@ -23,17 +23,13 @@
 
 #include <inttypes.h>
 
-#if defined (__i386__) || defined (__x86_64__)
-#if defined(__GLIBC__)
-#include <sys/io.h>
-#endif
-#endif
-
 #if defined(__DARWIN__)
 /* Header is part of the DirectHW library. */
 #include <DirectHW/DirectHW.h>
 #define off64_t off_t
 #define lseek64 lseek
+#else
+#include <sys/io.h>
 #endif
 
 enum io_access_width {

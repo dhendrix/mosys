@@ -50,6 +50,8 @@ int main(int argc, char **argv)
 	mosys_globals_init();
 	mosys_set_root_prefix(UNITTEST_DATA);
 
+	rc |= math_unittest();
+
 	if (rc == 0)
 		fprintf(stdout, "Unit tests passed.\n");
 	else

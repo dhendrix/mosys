@@ -77,4 +77,7 @@ extern uint8_t zero8_csum(uint8_t *buf, size_t len);
 # define __abs(x) (x < 0 ? -x : x)
 #endif
 
+/* unittest stuff */
+extern int math_unittest();
+
 #endif /* MOSYS_LIB_MATH_H__ */

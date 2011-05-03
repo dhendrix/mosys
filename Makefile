@@ -45,7 +45,8 @@
 #   directory
 
 NAME="Mosys"
-PROGRAM="mosys"
+PROGRAM=mosys
+TESTPROGRAM=$(PROGRAM)_test
 
 # Mosys will use the following version format: core.major.minor-revision
 # Here is a summery of each of those fields:
@@ -55,7 +56,7 @@ PROGRAM="mosys"
 # revision:	Patch number from version control system
 CORE	=  1
 MAJOR	=  1
-MINOR	= 00
+MINOR	= 01
 SVNVERSION := $(shell LC_ALL=C svnversion -cn . 2>/dev/null | sed -e "s/.*://" -e "s/\([0-9]*\).*/\1/" | grep "[0-9]" || LC_ALL=C svn info . 2>/dev/null | awk '/^Revision:/ {print $$2 }' | grep "[0-9]" || LC_ALL=C git svn info . 2>/dev/null | awk '/^Revision:/ {print $$2 }' | grep "[0-9]" || echo unknown)
 REVISION=$(SVNVERSION)
 
@@ -275,6 +276,10 @@ endif
 
 export quiet Q KBUILD_VERBOSE
 
+UNITTEST		?= n
+CMOCKERY_PATH		:= tools/cmockery
+CMOCKERY_INCLUDE	:= -I$(CMOCKERY_PATH)/src/google
+CMOCKERY_FIND_IGNORE	:= \( -name cmockery \) -prune -o
 
 # Look for make include files relative to root of kernel src
 MAKEFLAGS += --include-dir=$(srctree)
@@ -303,7 +308,7 @@ CHECKFLAGS     := -D__linux__ -Dlinux -D__STDC__ -Dunix -D__unix__ \
 		  -Wbitwise -Wno-return-void $(CF)
 #CFLAGS_KERNEL	=
 #AFLAGS_KERNEL	=
-CFLAGS_GCOV	= -fprofile-arcs -ftest-coverage
+CFLAGS_GCOV	:= -fprofile-arcs -ftest-coverage -lgcov
 
 # Use LINUXINCLUDE when you must reference the include/ directory.
 # Needed to be compatible with the O= option
@@ -329,8 +334,7 @@ KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -fno-delete-null-pointer-checks
 KBUILD_AFLAGS   := -D__ASSEMBLY__
 
-
-export VERSION PATCHLEVEL SUBLEVEL KERNELRELEASE KERNELVERSION
+export VERSION PATCHLEVEL SUBLEVEL KERNELRELEASE KERNELVERSION UNITTEST
 export MOSYS_MACROS EXTRA_CFLAGS LIBRARIES
 export ARCH SRCARCH CONFIG_SHELL HOSTCC HOSTCFLAGS HOSTLD HOSTLDFLAGS \
        CROSS_COMPILE AS LD CC
@@ -784,7 +788,7 @@ include/linux/version.h: $(srctree)/Makefile FORCE
 
 # Directories & files removed with 'make clean'
 CLEAN_DIRS  += $(MODVERDIR)
-CLEAN_FILES += $(PROGRAM) $(TOOLS)
+CLEAN_FILES += $(PROGRAM) $(TESTPROGRAM) $(TOOLS)
 
 # clean - Delete most, but leave enough to build external modules
 #
@@ -796,7 +800,18 @@ PHONY += $(clean-dirs) clean
 $(clean-dirs):
 	$(Q)$(MAKE) $(clean)=$(patsubst _clean_%,%,$@)
 
-clean: $(clean-dirs)
+# Note: Cmockery uses an html file for documentation, so we need
+# to be careful not to delete it along with lcov generated files.
+lcov-clean:
+	@find . $(RCS_FIND_IGNORE) $(CMOCKERY_FIND_IGNORE) \
+		\( -name '*.css' -o -name '*.gcda' -o -name '*.png' \
+		-o -name '*.css' -o -name '*.info' -o -name '*.html' \) \
+		-type f -print | xargs rm -f
+
+cmockery-clean:
+	$(Q)make -C tools/cmockery clean >/dev/null
+
+clean: $(clean-dirs) lcov-clean cmockery-clean
 	$(call cmd,rmdirs)
 	$(call cmd,rmfiles)
 	@find . $(RCS_FIND_IGNORE) \
@@ -980,6 +995,29 @@ tarball: export
 	@tar cjf $(EXPORTDIR)/$(PROGRAM)-$(RELEASENAME).tar.bz2 -C $(EXPORTDIR)/ $(TAROPTIONS) $(PROGRAM)-$(RELEASENAME)/
 	@rm -rf $(EXPORTDIR)/$(PROGRAM)-$(RELEASENAME)
 	@echo Created $(EXPORTDIR)/$(PROGRAM)-$(RELEASENAME).tar.bz2
+
+libcmockery.a:
+	@echo "Configuring cmockery..."
+	$(Q)cd $(CMOCKERY_PATH) && ./configure >/dev/null && cd -
+	@echo Building cmockery.
+	$(Q)make --quiet -C $(CMOCKERY_PATH)
+	ar rcs $@ $(CMOCKERY_PATH)/libcmockery_la-cmockery.o
+
+PHONY += test
+test: UNITTEST=y
+test: CFLAGS += $(CFLAGS_GCOV)
+test: KBUILD_CFLAGS+= $(CFLAGS_GCOV)
+test: LINUXINCLUDE += $(CMOCKERY_INCLUDE)
+test: MOSYS_MACROS += -DUNITTEST_DATA=\"$(UNITTEST_DATA)\"
+test: $(vmlinux-all) libcmockery.a
+	lcov --directory . --zerocounters
+	$(Q)$(CC) $(CFLAGS) $(EXTRA_CFLAGS) $(CFLAGS_GCOV) $(MOSYS_MACROS) \
+	$(LINUXINCLUDE) -o $(TESTPROGRAM) $(TESTPROGRAM).c $?
+	@echo "Running $(TESTPROGRAM)"
+	./$(TESTPROGRAM)
+	lcov -b $(shell pwd) --directory . --capture \
+	--output-file $(TESTPROGRAM).info --test-name $(TESTPROGRAM)
+	genhtml $(TESTPROGRAM).info
 
 # Declare the contents of the .PHONY variable as phony.  We keep that
 # information in a variable so we can use it in if_changed and friends.

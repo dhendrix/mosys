@@ -5,6 +5,10 @@ config KERNELVERSION
 	string
 	option env="KERNELVERSION"
 
+config UNITTEST
+       bool
+       option env="UNITTEST"
+
 menu "General setup"
 config ADVANCED_OPTIONS
 	bool "Advanced configuration"

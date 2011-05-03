@@ -254,9 +254,9 @@ int io_unittest(struct platform_intf *_intf)
 	mosys_set_root_prefix(root_prefix_for_test);
 
 	intf->op->io->setup(intf);
-	free(root_prefix_orig);
 	ret = run_tests(tests);
 	mosys_set_root_prefix(root_prefix_orig);
 
+	free(root_prefix_orig);
 	return ret;
 }

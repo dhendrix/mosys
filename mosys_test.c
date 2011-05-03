@@ -51,6 +51,7 @@ int main(int argc, char **argv)
 	mosys_set_root_prefix(UNITTEST_DATA);
 
 	rc |= math_unittest();
+	rc |= io_unittest(intf);
 
 	if (rc == 0)
 		fprintf(stdout, "Unit tests passed.\n");

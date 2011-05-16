@@ -59,15 +59,26 @@ static int agz_dimm_map(struct platform_intf *intf,
 		/* Node 0 */
 		{ 0, 0, 0, 2, 0x50 }
 	};
+	static int bus_offset = -1;
+	const char smbus_i801[] = "SMBus I801 adapter";
 
 	if (dimm < 0 || dimm >= intf->cb->memory->dimm_count(intf)) {
 		lprintf(LOG_ERR, "Invalid DIMM: %d\n", dimm);
 		return -1;
 	}
 
+	if (bus_offset == -1) {
+		if (intf->op->i2c->match_bus(intf, 2, smbus_i801))
+			bus_offset = 0;
+		else if (intf->op->i2c->match_bus(intf, 14, smbus_i801))
+			bus_offset = 12;
+		else
+			return -1;
+	}
+
 	switch (type) {
 	case DIMM_TO_BUS:
-		ret = agz_dimm_map[dimm].bus;
+		ret = agz_dimm_map[dimm].bus + bus_offset;
 		break;
 	case DIMM_TO_ADDRESS:
 		ret = agz_dimm_map[dimm].address;

@@ -50,6 +50,7 @@ int main(int argc, char **argv)
 	mosys_globals_init();
 	mosys_set_root_prefix(UNITTEST_DATA);
 
+	rc |= file_unittest(intf);
 	rc |= math_unittest();
 	rc |= io_unittest(intf);
 

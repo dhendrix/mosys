@@ -28,3 +28,4 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 obj-y		+= file.o
+obj-$(UNITTEST) += file_unittest.o

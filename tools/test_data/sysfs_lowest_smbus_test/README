@@ -1,0 +1,7 @@
+Haystacks with some needles hidden throughout.
+
+test0/ : no needles, just hay
+test1/ : needle is i2c-0, hay is in i2c-1 and i2c-2
+test2/ : needle is i2c-1, hay is in i2c-0 and i2c-2
+test3/ : needle is i2c-2, hay is in i2c-0 and i2c-1
+test4/ : needles are in i2c-0 and i2c-2, hay is in i2c-1

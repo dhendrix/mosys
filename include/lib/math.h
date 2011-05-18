@@ -74,7 +74,7 @@ extern uint8_t zero8_csum(uint8_t *buf, size_t len);
 #endif
 
 #ifndef __abs
-# define __abs(x) (x < 0 ? -x : x)
+# define __abs(x) ((x) < 0 ? -(x) : (x))
 #endif
 
 /* unittest stuff */

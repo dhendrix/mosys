@@ -126,6 +126,8 @@ static void macro_unittest(void **state)
 	assert_int_equal(0, __abs(0));
 	assert_int_equal(5, __abs(5));
 	assert_int_equal(5, __abs(-5));
+	assert_int_equal(5, __abs(5 - 10));
+	assert_int_equal(5, __abs(-2 + -3));
 }
 
 int math_unittest(void)

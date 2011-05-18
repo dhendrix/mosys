@@ -20,16 +20,14 @@
 #include <stdarg.h>
 #include <stddef.h>
 #include <setjmp.h>
-#include <stdio.h>
-#include <string.h>
 
 #include "cmockery.h"
 
 #include "mosys/globals.h"
+#include "mosys/list.h"
 #include "mosys/platform.h"
 
 #include "lib/file.h"
-#include "mosys/list.h"
 
 static void scanft_test(void **state) {
 	struct ll_node *list = NULL;
@@ -64,19 +62,22 @@ static void sysfs_lowest_smbus_test(void **state) {
 	char root[PATH_MAX];
 
 	/*
-	 * There are three haystacks, each with a needle.
+	 * Find "needle" in haystack of sysfs-style i2c-<bus> directories.
 	 *
+	 * test0/ : no needles, just hay
 	 * test1/ : needle is i2c-0, hay is in i2c-1 and i2c-2
 	 * test2/ : needle is i2c-1, hay is in i2c-0 and i2c-2
 	 * test3/ : needle is i2c-2, hay is in i2c-0 and i2c-1
+	 * test4/ : needles are in i2c-0 and i2c-2, hay is in i2c-1
 	 */
 	snprintf(root, sizeof(root), "%s/%s",
+	         mosys_get_root_prefix(), "sysfs_lowest_smbus_test/test0/");
+	assert_int_equal(-1, sysfs_lowest_smbus(root, "needle"));
+
+	snprintf(root, sizeof(root), "%s/%s",
 	         mosys_get_root_prefix(), "sysfs_lowest_smbus_test/test1/");
-	/* FIXME: for debugging */
-	printf("root: %s\n", root);
 	assert_int_equal(0, sysfs_lowest_smbus(root, "needle"));
 
-#if 0
 	snprintf(root, sizeof(root), "%s/%s",
 	         mosys_get_root_prefix(), "sysfs_lowest_smbus_test/test2");
 	assert_int_equal(1, sysfs_lowest_smbus(root, "needle"));
@@ -89,13 +90,12 @@ static void sysfs_lowest_smbus_test(void **state) {
 	snprintf(root, sizeof(root), "%s/%s",
 	         mosys_get_root_prefix(), "sysfs_lowest_smbus_test/nothing");
 	assert_int_equal(-1, sysfs_lowest_smbus(root, "needle"));
-#endif
 }
 
 int file_unittest(struct platform_intf *intf)
 {
 	UnitTest tests[] = {
-//		unit_test(scanft_test),
+		unit_test(scanft_test),
 		unit_test(sysfs_lowest_smbus_test),
 	};
 

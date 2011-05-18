@@ -34,4 +34,6 @@ extern struct ll_node *scanft(struct ll_node **list,
 
 extern void scanft_list_cleanup(struct ll_node **phead);
 
+extern int sysfs_lowest_smbus(const char *path, const char *name);
+
 #endif	/* MOSYS_LIB_FILE_H__ */

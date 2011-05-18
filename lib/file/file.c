@@ -30,6 +30,7 @@
 #include <errno.h>
 #include <sys/types.h>
 #include <dirent.h>
+#include <limits.h>	/* for PATH_MAX */
 
 #include "mosys/alloc.h"
 #include "mosys/globals.h"
@@ -242,4 +243,59 @@ void scanft_list_cleanup(struct ll_node **phead)
 {
 	list_foreach(*phead, scanft_free_node);
 	list_cleanup(phead);
+}
+
+/*
+ * sysfs_lowest_smbus: find lowest numbered smbus device matching name in sysfs
+ *
+ * @path:	sysfs path to start at
+ * @name:	name of device to match
+ *
+ * returns bus number if successful
+ * returns <0 to indicate failure
+ */
+int sysfs_lowest_smbus(const char *path, const char *name)
+{
+	struct ll_node *sysfs_ll = NULL, *tmp;
+	unsigned int sysfs_lowbus = ~0;
+	int ret = -1, found_bus_offset = 0;
+
+	/* populate linked list nodes with all sysfs sub-directories
+	 * containing a named device entry matching our criteria */
+	scanft(&sysfs_ll, path, "name", name, 1);
+	if (!sysfs_ll) {
+		lprintf(LOG_DEBUG, "%s: sysfs entry \"%s\" not found\n",
+		        __func__, name);
+		return -1;
+	}
+
+	if (list_count(sysfs_ll) > 1) {
+		lprintf(LOG_DEBUG, "%s: multpiple matches for \"%s\" found\n",
+		        __func__, name);
+	}
+
+	/* find lowest bus as reported by sysfs in the form of
+	 * /sys/bus/i2c/devices/i2c-<bus> */
+	for (tmp = sysfs_ll; tmp; tmp = tmp->next) {
+		char *pos;
+		unsigned int bus;
+
+		lprintf(LOG_DEBUG, "%s: scanning %s\n",
+		        __func__, (char *)tmp->data);
+		pos = strstr((const char *)tmp->data, "i2c-");
+		if (!pos)
+			continue;
+
+		errno = 0;
+		bus = strtol(pos + strlen("i2c-"), NULL, 10);
+		if (!errno && (bus < sysfs_lowbus)) {
+			sysfs_lowbus = bus;
+			found_bus_offset = 1;
+		}
+	}
+
+	scanft_list_cleanup(&sysfs_ll);
+	if (found_bus_offset)
+		ret = sysfs_lowbus;
+	return ret;
 }

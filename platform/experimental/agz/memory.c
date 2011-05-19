@@ -22,17 +22,12 @@
 #include "mosys/log.h"
 #include "mosys/platform.h"
 
+#include "drivers/intel/nm10.h"
+
 #include "lib/file.h"
 #include "lib/spd.h"
 
 #define AGZ_DIMM_COUNT	1
-
-/*
- * The full name is in the form "SMBus I801 adapter at <port>". Since this
- * device only has one adapter, we'll omit the port and use a partial match
- * to reduce fragileness.
- */
-#define AGZ_SMBUS_ADAPTER	"SMBus I801 adapter"
 
 /*
  * agz_dimm_count  -  return total number of dimm slots
@@ -96,7 +91,7 @@ static int agz_dimm_map(struct platform_intf *intf,
 
 		snprintf(path, sizeof(path), "%s/%s",
 		         mosys_get_root_prefix(), "/sys/bus/i2c/devices");
-		x = sysfs_lowest_smbus(path, AGZ_SMBUS_ADAPTER);
+		x = sysfs_lowest_smbus(path, NM10_SMBUS_ADAPTER);
 		if (x >= 0) {
 			bus_offset = x - lowest_known_bus;
 		} else {

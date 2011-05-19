@@ -810,7 +810,9 @@ lcov-clean:
 		-type f -print | xargs rm -f
 
 cmockery-clean:
-	$(Q)make -C tools/cmockery clean >/dev/null
+	$(shell if [ -e $(CMOCKERY_PATH)/Makefile ]; then \
+	                make -C $(CMOCKERY_PATH) clean >/dev/null; \
+	        fi)
 
 clean: $(clean-dirs) lcov-clean cmockery-clean
 	$(call cmd,rmdirs)

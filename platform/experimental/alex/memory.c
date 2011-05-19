@@ -16,14 +16,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
+#include <limits.h>
+
+#include "mosys/globals.h"
 #include "mosys/log.h"
 #include "mosys/platform.h"
-#include <uuid/uuid.h>
 
 #include "drivers/gpio.h"
+#include "drivers/intel/nm10.h"
 
 #include "intf/mmio.h"
 
+#include "lib/file.h"
 #include "lib/spd.h"
 #include "lib/vpd.h"
 
@@ -65,15 +69,49 @@ static int alex_dimm_map(struct platform_intf *intf,
 		/* Node 0 */
 		{ 0, 0, 0, 2, 0x50 }
 	};
+	static unsigned int first_run = 1;
+	static int bus_offset = 0;
 
 	if (dimm < 0 || dimm >= intf->cb->memory->dimm_count(intf)) {
 		lprintf(LOG_ERR, "Invalid DIMM: %d\n", dimm);
 		return -1;
 	}
 
+	/*
+	 * Determine offset for smbus numbering:
+	 * 1. Scan known bus numbers for lowest value.
+	 * 2. Scan /sys for SMBus entries that match the adapter name.
+	 * 3. Calculate the difference between the lowest expected bus number
+	 *    and the lowest bus number seen in sysfs matching the criteria.
+	 */
+	if (first_run) {
+		char path[PATH_MAX];
+		int lowest_known_bus = INT_MAX, x;
+
+		for (x = 0; x < intf->cb->memory->dimm_count(intf); x++) {
+			if (alex_dimm_map[x].bus < lowest_known_bus)
+				lowest_known_bus = alex_dimm_map[x].bus;
+		}
+
+		snprintf(path, sizeof(path), "%s/%s",
+		         mosys_get_root_prefix(), "/sys/bus/i2c/devices");
+		x = sysfs_lowest_smbus(path, NM10_SMBUS_ADAPTER);
+		if (x >= 0) {
+			lprintf(LOG_DEBUG, "%s: bus_offset: %d\n",
+			        __func__, bus_offset);
+			bus_offset = x - lowest_known_bus;
+		} else {
+			lprintf(LOG_DEBUG, "%s: unable to determine "
+			                   "bus offset\n", __func__);
+			bus_offset = 0;
+		}
+
+		first_run = 0;
+	}
+
 	switch (type) {
 	case DIMM_TO_BUS:
-		ret = alex_dimm_map[dimm].bus;
+		ret = alex_dimm_map[dimm].bus + bus_offset;
 		break;
 	case DIMM_TO_ADDRESS:
 		ret = alex_dimm_map[dimm].address;

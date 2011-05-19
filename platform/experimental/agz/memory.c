@@ -94,6 +94,8 @@ static int agz_dimm_map(struct platform_intf *intf,
 		x = sysfs_lowest_smbus(path, NM10_SMBUS_ADAPTER);
 		if (x >= 0) {
 			bus_offset = x - lowest_known_bus;
+			lprintf(LOG_DEBUG, "%s: bus_offset: %d\n",
+			        __func__, bus_offset);
 		} else {
 			lprintf(LOG_DEBUG, "%s: unable to determine "
 			                   "bus offset\n", __func__);

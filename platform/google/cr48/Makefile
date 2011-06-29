@@ -1,4 +1,4 @@
-# 2010, Google Inc.
+# 2011, Google Inc.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -27,11 +27,11 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-obj-$(CONFIG_EXPERIMENTAL_ALEX)	+= ec.o
-obj-$(CONFIG_EXPERIMENTAL_ALEX)	+= eeprom.o
-obj-$(CONFIG_EXPERIMENTAL_ALEX)	+= gpio.o
-obj-$(CONFIG_EXPERIMENTAL_ALEX)	+= memory.o
-#obj-$(CONFIG_EXPERIMENTAL_ALEX)	+= nvram.o
-obj-$(CONFIG_EXPERIMENTAL_ALEX)	+= pinetrail.o
-obj-$(CONFIG_EXPERIMENTAL_ALEX)	+= sysinfo.o
-obj-$(CONFIG_EXPERIMENTAL_ALEX)	+= vpd.o
+obj-$(CONFIG_GOOGLE_CR48)	+= ec.o
+obj-$(CONFIG_GOOGLE_CR48)	+= eeprom.o
+obj-$(CONFIG_GOOGLE_CR48)	+= gpio.o
+obj-$(CONFIG_GOOGLE_CR48)	+= memory.o
+#obj-$(CONFIG_GOOGLE_CR48)	+= nvram.o
+obj-$(CONFIG_GOOGLE_CR48)	+= pinetrail.o
+obj-$(CONFIG_GOOGLE_CR48)	+= sysinfo.o
+obj-$(CONFIG_GOOGLE_CR48)	+= vpd.o

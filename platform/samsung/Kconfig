@@ -1,0 +1,18 @@
+#
+# Samsung platform configuration
+#
+
+menu "Samsung Platform Support"
+
+config PLATFORM_SAMSUNG
+	bool "Samsung platform support"
+	default n
+
+config SAMSUNG_SERIES5
+	depends on PLATFORM_ARCH_X86 && PLATFORM_SAMSUNG
+	select CHIPSET_INTEL_NM10
+	select EC_SMSC_MEC1308
+	bool "Samsung Chromebook (Series 5)"
+	default n
+
+endmenu

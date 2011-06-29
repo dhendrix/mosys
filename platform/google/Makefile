@@ -1,4 +1,4 @@
-# 2010, Google Inc.
+# 2011, Google Inc.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -27,11 +27,4 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-obj-$(CONFIG_PLATFORM_DEFAULT)		+= default/
-obj-$(CONFIG_PLATFORM_EXPERIMENTAL)	+= experimental/
-obj-$(CONFIG_PLATFORM_ACER)		+= acer/
-obj-$(CONFIG_PLATFORM_HP)		+= hp/
-obj-$(CONFIG_PLATFORM_GOOGLE)		+= google/
-obj-$(CONFIG_PLATFORM_SAMSUNG)		+= samsung/
-
-obj-y					+= platform_list.o
+obj-$(CONFIG_GOOGLE_CR48)	+= cr48/

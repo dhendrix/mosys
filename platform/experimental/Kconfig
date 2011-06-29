@@ -8,31 +8,10 @@ config PLATFORM_EXPERIMENTAL
 	bool "Experimental platform support"
 	default n
 
-config EXPERIMENTAL_ALEX
-	depends on PLATFORM_ARCH_X86 && PLATFORM_EXPERIMENTAL
-	select CHIPSET_INTEL_NM10
-	select EC_SMSC_MEC1308
-	bool "alex pinetrail reference board"
-	default n
-
-config EXPERIMENTAL_AGZ
-	depends on PLATFORM_ARCH_X86 && PLATFORM_EXPERIMENTAL
-	select CHIPSET_INTEL_NM10
-	select EC_NUVOTON_NPCE781
-	bool "agz pinetrail reference board"
-	default n
-
 config EXPERIMENTAL_KAEN
 	depends on PLATFORM_ARCH_ARMEL && PLATFORM_EXPERIMENTAL
 	select SOC_NVIDIA_TEGRA2
 	bool "kaen tegra2 reference board"
-	default n
-
-config EXPERIMENTAL_MARIO
-	depends on PLATFORM_ARCH_X86 && PLATFORM_EXPERIMENTAL
-	select CHIPSET_INTEL_NM10
-	select EC_ITE_IT8500
-	bool "mario pinetrail reference board"
 	default n
 
 config EXPERIMENTAL_SEABOARD

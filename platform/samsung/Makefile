@@ -1,4 +1,4 @@
-# 2010, Google Inc.
+# 2011, Google Inc.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -27,11 +27,4 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-obj-$(CONFIG_EXPERIMENTAL_MARIO)	+= ec.o
-obj-$(CONFIG_EXPERIMENTAL_MARIO)	+= eeprom.o
-obj-$(CONFIG_EXPERIMENTAL_MARIO)	+= gpio.o
-obj-$(CONFIG_EXPERIMENTAL_MARIO)	+= memory.o
-#obj-$(CONFIG_EXPERIMENTAL_MARIO)	+= nvram.o
-obj-$(CONFIG_EXPERIMENTAL_MARIO)	+= pinetrail.o
-obj-$(CONFIG_EXPERIMENTAL_MARIO)	+= sysinfo.o
-obj-$(CONFIG_EXPERIMENTAL_MARIO)	+= vpd.o
+obj-$(CONFIG_SAMSUNG_SERIES5)	+= series5/

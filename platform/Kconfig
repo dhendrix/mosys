@@ -25,7 +25,10 @@ config PLATFORM_ARCH_X86
 endchoice
 
 source "platform/default/Kconfig"
+source "platform/acer/Kconfig"
+source "platform/google/Kconfig"
 source "platform/hp/Kconfig"
+source "platform/samsung/Kconfig"
 source "platform/experimental/Kconfig"
 
 endmenu

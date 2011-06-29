@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Mosys version: 1.0.07.309
-# Tue Apr  5 11:42:32 2011
+# Mosys version: 1.1.01.343
+# Wed Jun 29 15:14:34 2011
 #
 
 #
@@ -27,25 +27,40 @@ CONFIG_PLATFORM_DEFAULT=y
 CONFIG_DEFAULT_X86=y
 
 #
+# Acer Platform Support
+#
+CONFIG_PLATFORM_ACER=y
+CONFIG_ACER_CHROMIA700=y
+
+#
+# Google Platform Support
+#
+CONFIG_PLATFORM_GOOGLE=y
+CONFIG_GOOGLE_CR48=y
+
+#
 # HP Platform Support
 #
 CONFIG_PLATFORM_HP=y
 CONFIG_HP_Z600=y
 
 #
+# Samsung Platform Support
+#
+CONFIG_PLATFORM_SAMSUNG=y
+CONFIG_SAMSUNG_SERIES5=y
+
+#
 # Experimental Platform Support
 #
-CONFIG_PLATFORM_EXPERIMENTAL=y
-CONFIG_EXPERIMENTAL_ALEX=y
-CONFIG_EXPERIMENTAL_AGZ=y
-CONFIG_EXPERIMENTAL_MARIO=y
+# CONFIG_PLATFORM_EXPERIMENTAL is not set
 
 #
 # Device Drivers
 #
 CONFIG_CHIPSET_INTEL_NM10=y
 CONFIG_EC_ITE_IT8500=y
-# CONFIG_EC_NUVOTON_NPCE781 is not set
+CONFIG_EC_NUVOTON_NPCE781=y
 CONFIG_EC_SMSC_MEC1308=y
 
 #

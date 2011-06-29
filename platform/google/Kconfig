@@ -1,0 +1,18 @@
+#
+# Google platform configuration
+#
+
+menu "Google Platform Support"
+
+config PLATFORM_GOOGLE
+	bool "Google platform support"
+	default n
+
+config GOOGLE_CR48
+	depends on PLATFORM_ARCH_X86 && PLATFORM_GOOGLE
+	select CHIPSET_INTEL_NM10
+	select EC_ITE_IT8500
+	bool "Google Cr-48 Chromebook"
+	default n
+
+endmenu

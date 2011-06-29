@@ -36,28 +36,28 @@ extern struct platform_intf platform_seaboard_tegra2;
 extern struct platform_intf platform_hp_z600;
 
 struct platform_intf *platform_intf_list[] = {
+#ifdef CONFIG_ACER_CHROMIA700
+	&platform_agz_pinetrail,
+#endif
+#ifdef CONFIG_GOOGLE_CR48
+	&platform_mario_pinetrail,
+#endif
 #ifdef CONFIG_HP_Z600
 	&platform_hp_z600,
 #endif
-
-	/* experimental platforms */
-#ifdef CONFIG_EXPERIMENTAL_ALEX
+#ifdef CONFIG_SAMSUNG_SERIES5
 	&platform_alex_pinetrail,
 #endif
-#ifdef CONFIG_EXPERIMENTAL_AGZ
-	&platform_agz_pinetrail,
-#endif
+
+/* experimental platforms */
 #ifdef CONFIG_EXPERIMENTAL_KAEN
 	&platform_kaen_tegra2,
-#endif
-#ifdef CONFIG_EXPERIMENTAL_MARIO
-	&platform_mario_pinetrail,
 #endif
 #ifdef CONFIG_EXPERIMENTAL_SEABOARD
 	&platform_seaboard_tegra2,
 #endif
 
-	/* place default platform last */
+/* place default platform last */
 #ifdef CONFIG_DEFAULT_X86
 	&platform_default_x86,
 #endif

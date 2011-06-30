@@ -281,6 +281,7 @@ CMOCKERY_PATH		:= tools/cmockery
 CMOCKERY_INCLUDE	:= -I$(CMOCKERY_PATH)/src/google
 CMOCKERY_FIND_IGNORE	:= \( -name cmockery \) -prune -o
 UNITTEST_DATA          := $(addsuffix /tools/test_data/, $(shell pwd))
+GENHTML_OUTPUT_DIR	:= html
 
 # Look for make include files relative to root of kernel src
 MAKEFLAGS += --include-dir=$(srctree)
@@ -808,6 +809,7 @@ lcov-clean:
 		\( -name '*.css' -o -name '*.gcda' -o -name '*.png' \
 		-o -name '*.css' -o -name '*.info' -o -name '*.html' \) \
 		-type f -print | xargs rm -f
+	@rm -rf $(GENHTML_OUTPUT_DIR)/
 
 cmockery-clean:
 	$(shell if [ -e $(CMOCKERY_PATH)/Makefile ]; then \
@@ -1020,7 +1022,8 @@ test: $(vmlinux-all) libcmockery.a
 	./$(TESTPROGRAM)
 	lcov -b $(shell pwd) --directory . --capture \
 	--output-file $(TESTPROGRAM).info --test-name $(TESTPROGRAM)
-	genhtml $(TESTPROGRAM).info
+	genhtml -o $(GENHTML_OUTPUT_DIR)/ $(TESTPROGRAM).info
+	@echo "Check results in $(GENHTML_OUTPUT_DIR)/index.html"
 
 # Declare the contents of the .PHONY variable as phony.  We keep that
 # information in a variable so we can use it in if_changed and friends.

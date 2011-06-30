@@ -1,0 +1,7 @@
+This is a haystack to test scanft() function. A few needles have been
+thrown in to exercise edge case scenarios.
+
+./ : contains needle0 which is trivial to find
+dir1/ : contains needle1 and requires basic recursion to work
+dir2/ : contains needle2 and requires basic symlink handling to work
+dir3/ : tests that circular recursion won't crash scanft()

@@ -280,7 +280,7 @@ UNITTEST		?= n
 CMOCKERY_PATH		:= tools/cmockery
 CMOCKERY_INCLUDE	:= -I$(CMOCKERY_PATH)/src/google
 CMOCKERY_FIND_IGNORE	:= \( -name cmockery \) -prune -o
-UNITTEST_DATA          := $(addsuffix tools/test_data', $(shell pwd))
+UNITTEST_DATA          := $(addsuffix tools/test_data, $(shell pwd))
 
 # Look for make include files relative to root of kernel src
 MAKEFLAGS += --include-dir=$(srctree)

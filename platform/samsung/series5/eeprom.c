@@ -141,7 +141,7 @@ static struct eeprom_dev alex_ec_firmware = {
 	.get_map	= eeprom_get_fmap,
 };
 
-static struct eeprom alex_pinetrail_eeproms[] = {
+static struct eeprom samsung_series5_eeproms[] = {
 	{
 		.name		= "host_firmware",
 		.type		= EEPROM_TYPE_FW,
@@ -159,7 +159,7 @@ static struct eeprom alex_pinetrail_eeproms[] = {
 	{ 0 },
 };
 
-int alex_pinetrail_eeprom_setup(struct platform_intf *intf)
+int samsung_series5_eeprom_setup(struct platform_intf *intf)
 {
 	struct eeprom *eeprom;
 	int rc = 0;
@@ -174,6 +174,6 @@ int alex_pinetrail_eeprom_setup(struct platform_intf *intf)
 	return rc;
 }
 
-struct eeprom_cb alex_pinetrail_eeprom_cb = {
-	.eeprom_list	= alex_pinetrail_eeproms,
+struct eeprom_cb samsung_series5_eeprom_cb = {
+	.eeprom_list	= samsung_series5_eeproms,
 };

@@ -22,7 +22,7 @@
 #include "lib/smbios.h"
 #include "lib/vpd.h"
 
-int alex_pinetrail_vpd_setup(struct platform_intf *intf)
+int samsung_series5_vpd_setup(struct platform_intf *intf)
 {
 	struct smbios_table table;
 	unsigned int rom_base, rom_size;
@@ -55,7 +55,7 @@ int alex_pinetrail_vpd_setup(struct platform_intf *intf)
 	return 0;
 }
 
-static char *alex_pinetrail_vpd_get_serial(struct platform_intf *intf)
+static char *samsung_series5_vpd_get_serial(struct platform_intf *intf)
 {
 	if (intf->cb->vpd && intf->cb->vpd->system_serial)
 		return intf->cb->vpd->system_serial(intf);
@@ -64,7 +64,7 @@ static char *alex_pinetrail_vpd_get_serial(struct platform_intf *intf)
 
 }
 
-static char *alex_pinetrail_vpd_get_sku(struct platform_intf *intf)
+static char *samsung_series5_vpd_get_sku(struct platform_intf *intf)
 {
 	if (intf->cb->vpd && intf->cb->vpd->system_sku)
 		return intf->cb->vpd->system_sku(intf);
@@ -73,14 +73,14 @@ static char *alex_pinetrail_vpd_get_sku(struct platform_intf *intf)
 }
 
 
-static char *alex_pinetrail_vpd_get_google_hwqualid(struct platform_intf *intf)
+static char *samsung_series5_vpd_get_google_hwqualid(struct platform_intf *intf)
 {
 	/* FIXME: noop for now */
 	return NULL;
 }
 
-struct vpd_cb alex_pinetrail_vpd_cb = {
-	.system_serial		= &alex_pinetrail_vpd_get_serial,
-	.system_sku		= &alex_pinetrail_vpd_get_sku,
-	.google_hwqualid	= &alex_pinetrail_vpd_get_google_hwqualid,
+struct vpd_cb samsung_series5_vpd_cb = {
+	.system_serial		= &samsung_series5_vpd_get_serial,
+	.system_sku		= &samsung_series5_vpd_get_sku,
+	.google_hwqualid	= &samsung_series5_vpd_get_google_hwqualid,
 };

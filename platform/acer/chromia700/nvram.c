@@ -55,7 +55,7 @@ struct valstr standard_rtc_vars[] = {
 #endif
 
 #if 0
-static struct valstr agz_pinetrail_cmos_standard_vars[] = {
+static struct valstr acer_chromia700_cmos_standard_vars[] = {
 	/* 0x10 - 0x3f: standard cmos config space */
 	{ 0x2e, "csum_high" },
 	{ 0x2f, "csum_low" },
@@ -68,7 +68,7 @@ static struct valstr agz_pinetrail_cmos_standard_vars[] = {
 };
 #endif
 
-static struct valstr agz_pinetrail_cmos_oem_vars[] = {
+static struct valstr acer_chromia700_cmos_oem_vars[] = {
 	/* this is the subset of stuff we are usually interested in */
 	{ 0x6c, "boot_mode" },
 
@@ -84,8 +84,8 @@ struct cmos_map {
 	struct valstr *var_list;
 };
 
-struct cmos_map agz_pinetrail_cmos_map[] = {
-	{ CMOS_DEVICE_NM10, "NM10", 0, 128, 0x0e, agz_pinetrail_cmos_oem_vars },
+struct cmos_map acer_chromia700_cmos_map[] = {
+	{ CMOS_DEVICE_NM10, "NM10", 0, 128, 0x0e, acer_chromia700_cmos_oem_vars },
 };
 
 static const uint16_t nm10_cmos_port[] = { 0x70 };
@@ -106,10 +106,10 @@ static void nm10_write_cmos(struct platform_intf *intf,
 	io_write8(intf, nm10_cmos_port[addr] + 1, val);
 }
 
-static int agz_pinetrail_nvram_list(struct platform_intf *intf)
+static int acer_chromia700_nvram_list(struct platform_intf *intf)
 {
 	struct valstr *vs;
-	struct cmos_map *map = agz_pinetrail_cmos_map;
+	struct cmos_map *map = acer_chromia700_cmos_map;
 	struct kv_pair *kv = kv_pair_new();
 
 	/* handle each cmos bank */
@@ -132,7 +132,7 @@ static int agz_pinetrail_nvram_list(struct platform_intf *intf)
 	return 0;
 }
 
-static int agz_pinetrail_nvram_dump(struct platform_intf *intf)
+static int acer_chromia700_nvram_dump(struct platform_intf *intf)
 {
 	struct cmos_map *map;
 	int off, dev;
@@ -140,9 +140,10 @@ static int agz_pinetrail_nvram_dump(struct platform_intf *intf)
 
 	/* handle each cmos bank */
 	for (dev = 0;
-	     dev < sizeof(agz_pinetrail_cmos_map) / sizeof(agz_pinetrail_cmos_map[0]);
+	     dev < sizeof(acer_chromia700_cmos_map) /
+	           sizeof(acer_chromia700_cmos_map[0]);
 	     dev++) {
-		map = &agz_pinetrail_cmos_map[dev];
+		map = &acer_chromia700_cmos_map[dev];
 
 		if (map->length > sizeof(cmos_data))
 			continue;
@@ -166,16 +167,16 @@ static int agz_pinetrail_nvram_dump(struct platform_intf *intf)
 	return 0;
 }
 
-static int agz_pinetrail_nvram_clear(struct platform_intf *intf)
+static int acer_chromia700_nvram_clear(struct platform_intf *intf)
 {
 	struct cmos_map *map;
 	int off, dev;
 
 	/* handle each cmos bank */
 	for (dev = 0;
-	     dev < (sizeof(agz_pinetrail_cmos_map) / sizeof(struct cmos_map));
+	     dev < (sizeof(acer_chromia700_cmos_map) / sizeof(struct cmos_map));
 	     dev++) {
-		map = &agz_pinetrail_cmos_map[dev];
+		map = &acer_chromia700_cmos_map[dev];
 
 		switch (map->type) {
 		case CMOS_DEVICE_NM10:
@@ -192,8 +193,8 @@ static int agz_pinetrail_nvram_clear(struct platform_intf *intf)
 	return 0;
 }
 
-struct nvram_cb agz_pinetrail_nvram_cb = {
-	.list	= agz_pinetrail_nvram_list,
-	.dump	= agz_pinetrail_nvram_dump,
-	.clear	= agz_pinetrail_nvram_clear,
+struct nvram_cb acer_chromia700_nvram_cb = {
+	.list	= acer_chromia700_nvram_list,
+	.dump	= acer_chromia700_nvram_dump,
+	.clear	= acer_chromia700_nvram_clear,
 };

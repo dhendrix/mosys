@@ -90,14 +90,14 @@ static uint8_t ecram_read8(struct platform_intf *intf, uint16_t offset)
 }
 
 /*
- * mario_pinetrail_ec_name - return EC firmware name string
+ * google_cr48_ec_name - return EC firmware name string
  *
  * @intf:	platform interface
  *
  * returns 0 if successful
  * returns <0 if failure
  */
-static const char *mario_pinetrail_ec_name(struct platform_intf *intf)
+static const char *google_cr48_ec_name(struct platform_intf *intf)
 {
 	const struct sio_id *id = NULL;
 	uint16_t port;
@@ -113,14 +113,14 @@ static const char *mario_pinetrail_ec_name(struct platform_intf *intf)
 }
 
 /*
- * mario_pinetrail_ec_vendor - return EC vendor string
+ * google_cr48_ec_vendor - return EC vendor string
  *
  * @intf:	platform interface
  *
  * returns 0 if successful
  * returns <0 if failure
  */
-static const char *mario_pinetrail_ec_vendor(struct platform_intf *intf)
+static const char *google_cr48_ec_vendor(struct platform_intf *intf)
 {
 	const struct sio_id *id = NULL;
 	uint16_t port;
@@ -135,7 +135,7 @@ static const char *mario_pinetrail_ec_vendor(struct platform_intf *intf)
 	return id->vendor;
 }
 
-int mario_pinetrail_ec_setup(struct platform_intf *intf)
+int google_cr48_ec_setup(struct platform_intf *intf)
 {
 	int rc = 0;
 
@@ -147,7 +147,7 @@ int mario_pinetrail_ec_setup(struct platform_intf *intf)
 }
 
 /*
- * mario_pinetrail_ec_mbid - return allocated mainboard ID string
+ * google_cr48_ec_mbid - return allocated mainboard ID string
  *
  * @intf:	platform interface
  *
@@ -156,7 +156,7 @@ int mario_pinetrail_ec_setup(struct platform_intf *intf)
  * returns 0 if successful
  * returns <0 if failure
  */
-char *mario_pinetrail_ec_mbid(struct platform_intf *intf)
+char *google_cr48_ec_mbid(struct platform_intf *intf)
 {
 	uint8_t tmp8;
 	char *ret = NULL;
@@ -173,14 +173,14 @@ char *mario_pinetrail_ec_mbid(struct platform_intf *intf)
 }
 
 /*
- * mario_pinetrail_ec_version - return allocated EC firmware version
+ * google_cr48_ec_version - return allocated EC firmware version
  *
  * @intf:	platform interface
  *
  * returns 0 if successful
  * returns <0 if failure
  */
-static const char *mario_pinetrail_ec_fw_version(struct platform_intf *intf)
+static const char *google_cr48_ec_fw_version(struct platform_intf *intf)
 {
 	uint16_t mbx_base;
 	static char version[5];
@@ -206,8 +206,8 @@ static const char *mario_pinetrail_ec_fw_version(struct platform_intf *intf)
 	return version;
 }
 
-struct ec_cb mario_pinetrail_ec_cb = {
-	.vendor		= mario_pinetrail_ec_vendor,
-	.name		= mario_pinetrail_ec_name,
-	.fw_version	= mario_pinetrail_ec_fw_version,
+struct ec_cb google_cr48_ec_cb = {
+	.vendor		= google_cr48_ec_vendor,
+	.name		= google_cr48_ec_name,
+	.fw_version	= google_cr48_ec_fw_version,
 };

@@ -26,27 +26,27 @@
 extern struct platform_intf platform_default_x86;
 
 /* experimental */
-extern struct platform_intf platform_alex_pinetrail;
-extern struct platform_intf platform_agz_pinetrail;
 extern struct platform_intf platform_kaen_tegra2;
-extern struct platform_intf platform_mario_pinetrail;
 extern struct platform_intf platform_seaboard_tegra2;
 
-/* hp */
+/* production platforms */
+extern struct platform_intf platform_acer_chromia700;
+extern struct platform_intf platform_google_cr48;
 extern struct platform_intf platform_hp_z600;
+extern struct platform_intf platform_samsung_series5;
 
 struct platform_intf *platform_intf_list[] = {
 #ifdef CONFIG_ACER_CHROMIA700
-	&platform_agz_pinetrail,
+	&platform_acer_chromia700,
 #endif
 #ifdef CONFIG_GOOGLE_CR48
-	&platform_mario_pinetrail,
+	&platform_google_cr48,
 #endif
 #ifdef CONFIG_HP_Z600
 	&platform_hp_z600,
 #endif
 #ifdef CONFIG_SAMSUNG_SERIES5
-	&platform_alex_pinetrail,
+	&platform_samsung_series5,
 #endif
 
 /* experimental platforms */

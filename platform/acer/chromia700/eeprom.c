@@ -144,7 +144,7 @@ static struct eeprom_dev agz_ec_firmware = {
 	.get_map	= eeprom_get_fmap,
 };
 
-static struct eeprom agz_pinetrail_eeproms[] = {
+static struct eeprom acer_chromia700_eeproms[] = {
 	{
 		.name		= "host_firmware",
 		.type		= EEPROM_TYPE_FW,
@@ -162,7 +162,7 @@ static struct eeprom agz_pinetrail_eeproms[] = {
 	{ 0 },
 };
 
-int agz_pinetrail_eeprom_setup(struct platform_intf *intf)
+int acer_chromia700_eeprom_setup(struct platform_intf *intf)
 {
 	struct eeprom *eeprom;
 	int rc = 0;
@@ -177,6 +177,6 @@ int agz_pinetrail_eeprom_setup(struct platform_intf *intf)
 	return rc;
 }
 
-struct eeprom_cb agz_pinetrail_eeprom_cb = {
-	.eeprom_list	= agz_pinetrail_eeproms,
+struct eeprom_cb acer_chromia700_eeprom_cb = {
+	.eeprom_list	= acer_chromia700_eeproms,
 };

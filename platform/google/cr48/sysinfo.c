@@ -22,7 +22,7 @@
 
 #include "pinetrail.h"
 
-static const char *mario_pinetrail_get_vendor(struct platform_intf *intf)
+static const char *google_cr48_get_vendor(struct platform_intf *intf)
 {
 	if (intf->cb && intf->cb->smbios)
 		return intf->cb->smbios->system_vendor(intf);
@@ -30,7 +30,7 @@ static const char *mario_pinetrail_get_vendor(struct platform_intf *intf)
 		return NULL;
 }
 
-static const char *mario_pinetrail_get_name(struct platform_intf *intf)
+static const char *google_cr48_get_name(struct platform_intf *intf)
 {
 	if (intf->cb && intf->cb->smbios)
 		return intf->cb->smbios->system_name(intf);
@@ -38,7 +38,7 @@ static const char *mario_pinetrail_get_name(struct platform_intf *intf)
 		return NULL;
 }
 
-static const char *mario_pinetrail_get_family(struct platform_intf *intf)
+static const char *google_cr48_get_family(struct platform_intf *intf)
 {
 	if (intf->cb && intf->cb->smbios)
 		return intf->cb->smbios->system_family(intf);
@@ -46,14 +46,14 @@ static const char *mario_pinetrail_get_family(struct platform_intf *intf)
 		return NULL;
 }
 
-static const char *mario_pinetrail_get_variant(struct platform_intf *intf)
+static const char *google_cr48_get_variant(struct platform_intf *intf)
 {
-	return mario_pinetrail_ec_mbid(intf);
+	return google_cr48_ec_mbid(intf);
 }
 
-struct sysinfo_cb mario_pinetrail_sysinfo_cb = {
-	.vendor		= &mario_pinetrail_get_vendor,
-	.name		= &mario_pinetrail_get_name,
-	.family		= &mario_pinetrail_get_family,
-	.variant	= &mario_pinetrail_get_variant,
+struct sysinfo_cb google_cr48_sysinfo_cb = {
+	.vendor		= &google_cr48_get_vendor,
+	.name		= &google_cr48_get_name,
+	.family		= &google_cr48_get_family,
+	.variant	= &google_cr48_get_variant,
 };

@@ -77,14 +77,14 @@ static int mbx_wait(struct platform_intf *intf,
 }
 
 /*
- * agz_pinetrail_ec_name - return EC name
+ * acer_chromia700_ec_name - return EC name
  *
  * @intf:	platform interface
  *
  * returns 0 if successful
  * returns <0 if failure
  */
-static const char *agz_pinetrail_ec_name(struct platform_intf *intf)
+static const char *acer_chromia700_ec_name(struct platform_intf *intf)
 {
 	const struct sio_id *id = NULL;
 
@@ -96,14 +96,14 @@ static const char *agz_pinetrail_ec_name(struct platform_intf *intf)
 }
 
 /*
- * agz_pinetrail_ec_vendor - return EC vendor string
+ * acer_chromia700_ec_vendor - return EC vendor string
  *
  * @intf:	platform interface
  *
  * returns 0 if successful
  * returns <0 if failure
  */
-static const char *agz_pinetrail_ec_vendor(struct platform_intf *intf)
+static const char *acer_chromia700_ec_vendor(struct platform_intf *intf)
 {
 	const struct sio_id *id = NULL;
 
@@ -117,7 +117,7 @@ static const char *agz_pinetrail_ec_vendor(struct platform_intf *intf)
 }
 
 /*
- * agz_pinetrail_ec_version - return allocated EC firmware version string
+ * acer_chromia700_ec_version - return allocated EC firmware version string
  *
  * @intf:	platform interface
  * @buf:	buffer to store version string in
@@ -126,7 +126,7 @@ static const char *agz_pinetrail_ec_vendor(struct platform_intf *intf)
  * returns 0 if successful
  * returns <0 if failure
  */
-static const char *agz_pinetrail_ec_fw_version(struct platform_intf *intf)
+static const char *acer_chromia700_ec_fw_version(struct platform_intf *intf)
 {
 	static char version[5];	/* "X.YZ" */
 
@@ -185,13 +185,13 @@ static const char *agz_pinetrail_ec_fw_version(struct platform_intf *intf)
 	return version;
 }
 
-struct ec_cb agz_pinetrail_ec_cb = {
-	.vendor		= agz_pinetrail_ec_vendor,
-	.name		= agz_pinetrail_ec_name,
-	.fw_version	= agz_pinetrail_ec_fw_version,
+struct ec_cb acer_chromia700_ec_cb = {
+	.vendor		= acer_chromia700_ec_vendor,
+	.name		= acer_chromia700_ec_name,
+	.fw_version	= acer_chromia700_ec_fw_version,
 };
 
-int agz_pinetrail_ec_setup(struct platform_intf *intf)
+int acer_chromia700_ec_setup(struct platform_intf *intf)
 {
 	if (npce781_detect(intf) != 1)
 		return -1;
@@ -215,7 +215,7 @@ int agz_pinetrail_ec_setup(struct platform_intf *intf)
 	return 0;
 }
 
-void agz_pinetrail_ec_destroy(struct platform_intf *intf)
+void acer_chromia700_ec_destroy(struct platform_intf *intf)
 {
 	/* FIXME: do we need this? */
 }

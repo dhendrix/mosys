@@ -31,12 +31,12 @@
 
 #include "pinetrail.h"
 
-const char *mario_pinetrail_id_list[] = {
+const char *google_cr48_id_list[] = {
 	"Mario",
 	NULL
 };
 
-struct platform_cmd *mario_pinetrail_sub[] = {
+struct platform_cmd *google_cr48_sub[] = {
 	&cmd_eeprom,
 	&cmd_gpio,
 	&cmd_i2c,
@@ -55,7 +55,7 @@ static const char *hwids[] = {
 	NULL
 };
 
-int mario_pinetrail_probe(struct platform_intf *intf)
+int google_cr48_probe(struct platform_intf *intf)
 {
 	static int status = 0, probed = 0;
 
@@ -64,60 +64,60 @@ int mario_pinetrail_probe(struct platform_intf *intf)
 
 	if (probe_hwid(hwids)) {
 		status = 1;
-		goto mario_pinetrail_probe_exit;
+		goto google_cr48_probe_exit;
 	}
 
-	if (probe_smbios(intf, mario_pinetrail_id_list)) {
+	if (probe_smbios(intf, google_cr48_id_list)) {
 		status = 1;
-		goto mario_pinetrail_probe_exit;
+		goto google_cr48_probe_exit;
 	}
 
-mario_pinetrail_probe_exit:
+google_cr48_probe_exit:
 	probed = 1;
 	return status;
 }
 
 /* late setup routine; not critical to core functionality */
-static int mario_pinetrail_setup_post(struct platform_intf *intf)
+static int google_cr48_setup_post(struct platform_intf *intf)
 {
 	int rc = 0;
 
 	/* FIXME: until VPD is properly implemented, do not fail on setup */
-	if (mario_pinetrail_vpd_setup(intf) < 0)
+	if (google_cr48_vpd_setup(intf) < 0)
 		lprintf(LOG_INFO, "VPD not found\n");
 
-	rc |= mario_pinetrail_eeprom_setup(intf);
-	rc |= mario_pinetrail_ec_setup(intf);
+	rc |= google_cr48_eeprom_setup(intf);
+	rc |= google_cr48_ec_setup(intf);
 
 	if (rc)
 		lprintf(LOG_DEBUG, "%s: failed\n", __func__);
 	return rc;
 }
 
-static int mario_pinetrail_destroy(struct platform_intf *intf)
+static int google_cr48_destroy(struct platform_intf *intf)
 {
 	/* FIXME: unmap vpd stuff */
 	return 0;
 }
 
-struct platform_cb mario_pinetrail_cb = {
-	.ec		= &mario_pinetrail_ec_cb,
-	.eeprom		= &mario_pinetrail_eeprom_cb,
-	.gpio		= &mario_pinetrail_gpio_cb,
-	.memory		= &mario_pinetrail_memory_cb,
-//	.nvram		= &mario_pinetrail_nvram_cb,
+struct platform_cb google_cr48_cb = {
+	.ec		= &google_cr48_ec_cb,
+	.eeprom		= &google_cr48_eeprom_cb,
+	.gpio		= &google_cr48_gpio_cb,
+	.memory		= &google_cr48_memory_cb,
+//	.nvram		= &google_cr48_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,
-	.sysinfo 	= &mario_pinetrail_sysinfo_cb,
-	.vpd		= &mario_pinetrail_vpd_cb,
+	.sysinfo 	= &google_cr48_sysinfo_cb,
+	.vpd		= &google_cr48_vpd_cb,
 };
 
-struct platform_intf platform_mario_pinetrail = {
+struct platform_intf platform_google_cr48 = {
 	.type		= PLATFORM_X86_64,
 	.name		= "Mario",
-	.id_list	= mario_pinetrail_id_list,
-	.sub		= mario_pinetrail_sub,
-	.cb		= &mario_pinetrail_cb,
-	.probe		= &mario_pinetrail_probe,
-	.setup_post	= &mario_pinetrail_setup_post,
-	.destroy	= &mario_pinetrail_destroy,
+	.id_list	= google_cr48_id_list,
+	.sub		= google_cr48_sub,
+	.cb		= &google_cr48_cb,
+	.probe		= &google_cr48_probe,
+	.setup_post	= &google_cr48_setup_post,
+	.destroy	= &google_cr48_destroy,
 };

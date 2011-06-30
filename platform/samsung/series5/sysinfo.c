@@ -20,7 +20,7 @@
 
 #include "lib/smbios.h"
 
-static const char *alex_pinetrail_get_vendor(struct platform_intf *intf)
+static const char *samsung_series5_get_vendor(struct platform_intf *intf)
 {
 	if (intf->cb && intf->cb->smbios)
 		return intf->cb->smbios->system_vendor(intf);
@@ -28,7 +28,7 @@ static const char *alex_pinetrail_get_vendor(struct platform_intf *intf)
 		return NULL;
 }
 
-static const char *alex_pinetrail_get_name(struct platform_intf *intf)
+static const char *samsung_series5_get_name(struct platform_intf *intf)
 {
 	if (intf->cb && intf->cb->smbios)
 		return intf->cb->smbios->system_name(intf);
@@ -36,7 +36,7 @@ static const char *alex_pinetrail_get_name(struct platform_intf *intf)
 		return NULL;
 }
 
-static const char *alex_pinetrail_get_family(struct platform_intf *intf)
+static const char *samsung_series5_get_family(struct platform_intf *intf)
 {
 	if (intf->cb && intf->cb->smbios)
 		return intf->cb->smbios->system_family(intf);
@@ -44,8 +44,8 @@ static const char *alex_pinetrail_get_family(struct platform_intf *intf)
 		return NULL;
 }
 
-struct sysinfo_cb alex_pinetrail_sysinfo_cb = {
-	.vendor		= &alex_pinetrail_get_vendor,
-	.name		= &alex_pinetrail_get_name,
-	.family		= &alex_pinetrail_get_family,
+struct sysinfo_cb samsung_series5_sysinfo_cb = {
+	.vendor		= &samsung_series5_get_vendor,
+	.name		= &samsung_series5_get_name,
+	.family		= &samsung_series5_get_family,
 };

@@ -41,7 +41,7 @@
 #define GPIO_NPCE781	1
 
 /* gpio number, in/out, device, port, pin, negate, devname, name */
-struct gpio_map agz_pinetrail_gpio_map[] = {
+struct gpio_map acer_chromia700_gpio_map[] = {
 	/* FIXME: double check NM10 pins w14, w16, h19, m17 */
 	/* id, type,    dev,          port, pin, neg, devname,   name */
 	{  3, GPIO_IN,  GPIO_NPCE781, 0,    95,   1,  "NPCE781", "NBSWON#" },
@@ -77,17 +77,17 @@ struct gpio_map agz_pinetrail_gpio_map[] = {
 	{ 0,  0,        0,               0, 0,  0, NULL,   NULL } /* end */
 };
 
-static struct gpio_map *platform_gpio_map = agz_pinetrail_gpio_map;
+static struct gpio_map *platform_gpio_map = acer_chromia700_gpio_map;
 
 /*
- * agz_pinetrail_gpio_list  -  list all GPIOs and their states
+ * acer_chromia700_gpio_list  -  list all GPIOs and their states
  *
  * @intf:	platform interface
  *
  * returns 0 if successful
  * returns <0 if failure
  */
-static int agz_pinetrail_gpio_list(struct platform_intf *intf)
+static int acer_chromia700_gpio_list(struct platform_intf *intf)
 {
 	int i;
 
@@ -117,7 +117,7 @@ static int agz_pinetrail_gpio_list(struct platform_intf *intf)
 }
 
 /*
- * agz_pinetrail_gpio_set  -  set state for one GPIO
+ * acer_chromia700_gpio_set  -  set state for one GPIO
  *
  * @intf:	platform interface
  * @name:	GPIO name
@@ -126,7 +126,7 @@ static int agz_pinetrail_gpio_list(struct platform_intf *intf)
  * returns 0 if successful
  * returns <0 if failure
  */
-static int agz_pinetrail_gpio_set(struct platform_intf *intf,
+static int acer_chromia700_gpio_set(struct platform_intf *intf,
                            const char *name, int state)
 {
 	int i;
@@ -164,7 +164,7 @@ static int agz_pinetrail_gpio_set(struct platform_intf *intf,
 	return ret;
 }
 
-struct gpio_cb agz_pinetrail_gpio_cb = {
-	.list	= agz_pinetrail_gpio_list,
-	.set	= agz_pinetrail_gpio_set,
+struct gpio_cb acer_chromia700_gpio_cb = {
+	.list	= acer_chromia700_gpio_list,
+	.set	= acer_chromia700_gpio_set,
 };

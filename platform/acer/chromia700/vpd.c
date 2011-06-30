@@ -22,7 +22,7 @@
 #include "lib/smbios.h"
 #include "lib/vpd.h"
 
-int agz_pinetrail_vpd_setup(struct platform_intf *intf)
+int acer_chromia700_vpd_setup(struct platform_intf *intf)
 {
 	struct smbios_table table;
 	unsigned int rom_base, rom_size;
@@ -55,7 +55,7 @@ int agz_pinetrail_vpd_setup(struct platform_intf *intf)
 	return 0;
 }
 
-static char *agz_pinetrail_vpd_get_serial(struct platform_intf *intf)
+static char *acer_chromia700_vpd_get_serial(struct platform_intf *intf)
 {
 	if (intf->cb->vpd && intf->cb->vpd->system_serial)
 		return intf->cb->vpd->system_serial(intf);
@@ -64,7 +64,7 @@ static char *agz_pinetrail_vpd_get_serial(struct platform_intf *intf)
 
 }
 
-static char *agz_pinetrail_vpd_get_sku(struct platform_intf *intf)
+static char *acer_chromia700_vpd_get_sku(struct platform_intf *intf)
 {
 	if (intf->cb->vpd && intf->cb->vpd->system_sku)
 		return intf->cb->vpd->system_sku(intf);
@@ -73,14 +73,14 @@ static char *agz_pinetrail_vpd_get_sku(struct platform_intf *intf)
 }
 
 
-static char *agz_pinetrail_vpd_get_google_hwqualid(struct platform_intf *intf)
+static char *acer_chromia700_vpd_get_google_hwqualid(struct platform_intf *intf)
 {
 	/* FIXME: noop for now */
 	return NULL;
 }
 
-struct vpd_cb agz_pinetrail_vpd_cb = {
-	.system_serial		= &agz_pinetrail_vpd_get_serial,
-	.system_sku		= &agz_pinetrail_vpd_get_sku,
-	.google_hwqualid	= &agz_pinetrail_vpd_get_google_hwqualid,
+struct vpd_cb acer_chromia700_vpd_cb = {
+	.system_serial		= &acer_chromia700_vpd_get_serial,
+	.system_sku		= &acer_chromia700_vpd_get_sku,
+	.google_hwqualid	= &acer_chromia700_vpd_get_google_hwqualid,
 };

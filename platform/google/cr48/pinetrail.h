@@ -23,20 +23,20 @@
 #include "mosys/platform.h"
 
 /* platform callbacks */
-extern struct eeprom_cb mario_pinetrail_eeprom_cb;	/* eeprom.c */
-extern struct gpio_cb mario_pinetrail_gpio_cb;		/* gpio.c */
-extern struct memory_cb mario_pinetrail_memory_cb;	/* memory.c */
-extern struct sysinfo_cb mario_pinetrail_sysinfo_cb;	/* sysinfo.c */
-extern struct vpd_cb mario_pinetrail_vpd_cb;		/* vpd.c */
-extern struct nvram_cb mario_pinetrail_nvram_cb;	/* nvram.c */
-extern struct ec_cb mario_pinetrail_ec_cb;		/* ec.c */
+extern struct eeprom_cb google_cr48_eeprom_cb;		/* eeprom.c */
+extern struct gpio_cb google_cr48_gpio_cb;		/* gpio.c */
+extern struct memory_cb google_cr48_memory_cb;		/* memory.c */
+extern struct sysinfo_cb google_cr48_sysinfo_cb;	/* sysinfo.c */
+extern struct vpd_cb google_cr48_vpd_cb;		/* vpd.c */
+extern struct nvram_cb google_cr48_nvram_cb;		/* nvram.c */
+extern struct ec_cb google_cr48_ec_cb;			/* ec.c */
 
 /* functions called by setup routines */
-extern int mario_pinetrail_vpd_setup(struct platform_intf *intf);
-extern int mario_pinetrail_eeprom_setup(struct platform_intf *intf);
-extern int mario_pinetrail_ec_setup(struct platform_intf *intf);
+extern int google_cr48_vpd_setup(struct platform_intf *intf);
+extern int google_cr48_eeprom_setup(struct platform_intf *intf);
+extern int google_cr48_ec_setup(struct platform_intf *intf);
 
 /* misc */
-extern char *mario_pinetrail_ec_mbid(struct platform_intf *intf);
+extern char *google_cr48_ec_mbid(struct platform_intf *intf);
 
 #endif /* MARIO_PINETRAIL_H_ */

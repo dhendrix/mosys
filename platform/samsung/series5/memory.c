@@ -190,7 +190,7 @@ static struct memory_spd_cb alex_spd_cb = {
 	.read		= alex_spd_read,
 };
 
-struct memory_cb alex_pinetrail_memory_cb = {
+struct memory_cb samsung_series5_memory_cb = {
 	.dimm_count	= alex_dimm_count,
 	.dimm_map	= alex_dimm_map,
 	.spd		= &alex_spd_cb,

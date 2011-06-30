@@ -129,7 +129,7 @@ static void mbx_clear(struct platform_intf *intf)
 }
 
 /*
- * alex_pinetrail_ec_testmbx - place mailbox in known state
+ * samsung_series5_ec_testmbx - place mailbox in known state
  *
  * @intf:	platform interface
  *
@@ -165,14 +165,14 @@ static int alex_ec_exit_passthru_mode(struct platform_intf *intf)
 }
 
 /*
- * alex_pinetrail_ec_name - return EC firmware name string
+ * samsung_series5_ec_name - return EC firmware name string
  *
  * @intf:	platform interface
  *
  * returns 0 if successful
  * returns <0 if failure
  */
-static const char *alex_pinetrail_ec_name(struct platform_intf *intf)
+static const char *samsung_series5_ec_name(struct platform_intf *intf)
 {
 	const struct sio_id *id = NULL;
 
@@ -186,14 +186,14 @@ static const char *alex_pinetrail_ec_name(struct platform_intf *intf)
 }
 
 /*
- * alex_pinetrail_ec_vendor - return EC vendor string
+ * samsung_series5_ec_vendor - return EC vendor string
  *
  * @intf:	platform interface
  *
  * returns 0 if successful
  * returns <0 if failure
  */
-static const char *alex_pinetrail_ec_vendor(struct platform_intf *intf)
+static const char *samsung_series5_ec_vendor(struct platform_intf *intf)
 {
 	const struct sio_id *id = NULL;
 
@@ -209,7 +209,7 @@ static const char *alex_pinetrail_ec_vendor(struct platform_intf *intf)
 }
 
 /*
- * alex_pinetrail_ec_version - return allocated EC firmware version string
+ * samsung_series5_ec_version - return allocated EC firmware version string
  *
  * @intf:	platform interface
  * @buf:	buffer to store version string in
@@ -218,7 +218,7 @@ static const char *alex_pinetrail_ec_vendor(struct platform_intf *intf)
  * returns 0 if successful
  * returns <0 if failure
  */
-static int alex_pinetrail_ec_fw_version(struct platform_intf *intf,
+static int samsung_series5_ec_fw_version(struct platform_intf *intf,
                                                 uint8_t *buf, int len)
 {
 	int i;
@@ -234,7 +234,7 @@ static int alex_pinetrail_ec_fw_version(struct platform_intf *intf,
 	return 0;
 }
 
-static const char *alex_pinetrail_ec_fw_version_wrapper(struct platform_intf *intf)
+static const char *samsung_series5_ec_fw_version_wrapper(struct platform_intf *intf)
 {
 	static uint8_t version[ALEX_EC_MBX_DATA_LEN];
 	int i, num_tries = 3;
@@ -244,7 +244,7 @@ static const char *alex_pinetrail_ec_fw_version_wrapper(struct platform_intf *in
 	for (i = 0; i < num_tries; i++) {
 		int j, retry = 0;
 
-		if (alex_pinetrail_ec_fw_version(intf, version,
+		if (samsung_series5_ec_fw_version(intf, version,
 		                                 ALEX_EC_MBX_DATA_LEN)) {
 			lprintf(LOG_DEBUG, "%s: unable to issue command, "
 			                   "attempting to unwedge EC\n",
@@ -272,13 +272,13 @@ static const char *alex_pinetrail_ec_fw_version_wrapper(struct platform_intf *in
 	return version;
 }
 
-struct ec_cb alex_pinetrail_ec_cb = {
-	.vendor		= alex_pinetrail_ec_vendor,
-	.name		= alex_pinetrail_ec_name,
-	.fw_version	= alex_pinetrail_ec_fw_version_wrapper,
+struct ec_cb samsung_series5_ec_cb = {
+	.vendor		= samsung_series5_ec_vendor,
+	.name		= samsung_series5_ec_name,
+	.fw_version	= samsung_series5_ec_fw_version_wrapper,
 };
 
-int alex_pinetrail_ec_setup(struct platform_intf *intf)
+int samsung_series5_ec_setup(struct platform_intf *intf)
 {
 	int rc = 0;
 
@@ -315,7 +315,7 @@ int alex_pinetrail_ec_setup(struct platform_intf *intf)
 	return rc;
 }
 
-void alex_pinetrail_ec_destroy(struct platform_intf *intf)
+void samsung_series5_ec_destroy(struct platform_intf *intf)
 {
 	/* FIXME: do we need this? */
 	mec1308_sio_exit(intf, ec_port);

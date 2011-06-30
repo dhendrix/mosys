@@ -135,7 +135,7 @@ static struct memory_spd_cb agz_spd_cb = {
 	.read		= agz_spd_read,
 };
 
-struct memory_cb agz_pinetrail_memory_cb = {
+struct memory_cb acer_chromia700_memory_cb = {
 	.dimm_count	= agz_dimm_count,
 	.dimm_map	= agz_dimm_map,
 	.spd		= &agz_spd_cb,

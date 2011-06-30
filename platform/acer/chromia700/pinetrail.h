@@ -23,19 +23,19 @@
 #include "mosys/platform.h"
 
 /* platform callbacks */
-extern struct ec_cb agz_pinetrail_ec_cb;		/* ec.c */
-extern struct eeprom_cb agz_pinetrail_eeprom_cb;	/* eeprom.c */
-extern struct sysinfo_cb agz_pinetrail_sysinfo_cb;	/* sysinfo.c */
-extern struct vpd_cb agz_pinetrail_vpd_cb;		/* vpd.c */
-extern struct gpio_cb agz_pinetrail_gpio_cb;		/* gpio.c */
-extern struct nvram_cb agz_pinetrail_nvram_cb;		/* nvram.c */
-extern struct memory_cb agz_pinetrail_memory_cb;	/* memory.c */
+extern struct ec_cb acer_chromia700_ec_cb;		/* ec.c */
+extern struct eeprom_cb acer_chromia700_eeprom_cb;	/* eeprom.c */
+extern struct sysinfo_cb acer_chromia700_sysinfo_cb;	/* sysinfo.c */
+extern struct vpd_cb acer_chromia700_vpd_cb;		/* vpd.c */
+extern struct gpio_cb acer_chromia700_gpio_cb;		/* gpio.c */
+extern struct nvram_cb acer_chromia700_nvram_cb;		/* nvram.c */
+extern struct memory_cb acer_chromia700_memory_cb;	/* memory.c */
 
 /* functions called by setup routines */
-extern int agz_pinetrail_ec_setup(struct platform_intf *intf);
-extern void agz_pinetrail_ec_destroy(struct platform_intf *intf);
-extern int agz_pinetrail_vpd_setup(struct platform_intf *intf);
-extern int agz_pinetrail_eeprom_setup(struct platform_intf *intf);
+extern int acer_chromia700_ec_setup(struct platform_intf *intf);
+extern void acer_chromia700_ec_destroy(struct platform_intf *intf);
+extern int acer_chromia700_vpd_setup(struct platform_intf *intf);
+extern int acer_chromia700_eeprom_setup(struct platform_intf *intf);
 
 
 #endif /* AGZ_PINETRAIL_H_ */

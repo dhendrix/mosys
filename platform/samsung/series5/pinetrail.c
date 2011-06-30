@@ -33,12 +33,12 @@
 
 static const char *probed_platform_id;
 
-const char *alex_pinetrail_id_list[] = {
+const char *samsung_series5_id_list[] = {
 	"Alex",
 	NULL
 };
 
-struct platform_cmd *alex_pinetrail_sub[] = {
+struct platform_cmd *samsung_series5_sub[] = {
 	&cmd_ec,
 	&cmd_eeprom,
 	&cmd_gpio,
@@ -56,7 +56,7 @@ static const char *hwids[] = {
 	NULL
 };
 
-int alex_pinetrail_probe(struct platform_intf *intf)
+int samsung_series5_probe(struct platform_intf *intf)
 {
 	static int status = 0, probed = 0;
 
@@ -65,68 +65,68 @@ int alex_pinetrail_probe(struct platform_intf *intf)
 
 	if (probe_hwid(hwids)) {
 		status = 1;
-		goto alex_pinetrail_probe_exit;
+		goto samsung_series5_probe_exit;
 	}
 
-	if (probe_smbios(intf, alex_pinetrail_id_list)) {
+	if (probe_smbios(intf, samsung_series5_id_list)) {
 		status = 1;
-		goto alex_pinetrail_probe_exit;
+		goto samsung_series5_probe_exit;
 	}
 
-alex_pinetrail_probe_exit:
+samsung_series5_probe_exit:
 	probed = 1;
 	return status;
 }
 
 /* late setup routine; not critical to core functionality */
-static int alex_pinetrail_setup_post(struct platform_intf *intf)
+static int samsung_series5_setup_post(struct platform_intf *intf)
 {
 	int rc = 0;
 
 	/* FIXME: until VPD is properly implemented, do not fail on setup */
-	if (alex_pinetrail_vpd_setup(intf) < 0)
+	if (samsung_series5_vpd_setup(intf) < 0)
 		lprintf(LOG_INFO, "VPD not found\n");
 
-	if (alex_pinetrail_ec_setup(intf) < 0) {
+	if (samsung_series5_ec_setup(intf) < 0) {
 		lprintf(LOG_WARNING, "Non-fatal error: Failed to setup "
 		                     "EC callbacks.\n");
 
 	}
-	rc |= alex_pinetrail_eeprom_setup(intf);
+	rc |= samsung_series5_eeprom_setup(intf);
 
 	if (rc)
 		lprintf(LOG_DEBUG, "%s: failed\n", __func__);
 	return rc;
 }
 
-static int alex_pinetrail_destroy(struct platform_intf *intf)
+static int samsung_series5_destroy(struct platform_intf *intf)
 {
 	if (probed_platform_id)
 		free((char *)probed_platform_id);
 
-	alex_pinetrail_ec_destroy(intf);
+	samsung_series5_ec_destroy(intf);
 	/* FIXME: unmap vpd stuff */
 	return 0;
 }
 
-struct platform_cb alex_pinetrail_cb = {
-	.ec		= &alex_pinetrail_ec_cb,
-	.eeprom		= &alex_pinetrail_eeprom_cb,
-	.gpio		= &alex_pinetrail_gpio_cb,
-	.memory		= &alex_pinetrail_memory_cb,
-//	.nvram		= &alex_pinetrail_nvram_cb,
+struct platform_cb samsung_series5_cb = {
+	.ec		= &samsung_series5_ec_cb,
+	.eeprom		= &samsung_series5_eeprom_cb,
+	.gpio		= &samsung_series5_gpio_cb,
+	.memory		= &samsung_series5_memory_cb,
+//	.nvram		= &samsung_series5_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,
-	.sysinfo 	= &alex_pinetrail_sysinfo_cb,
-	.vpd		= &alex_pinetrail_vpd_cb,
+	.sysinfo 	= &samsung_series5_sysinfo_cb,
+	.vpd		= &samsung_series5_vpd_cb,
 };
 
-struct platform_intf platform_alex_pinetrail = {
+struct platform_intf platform_samsung_series5 = {
 	.type		= PLATFORM_X86_64,
 	.name		= "alex",
-	.id_list	= alex_pinetrail_id_list,
-	.sub		= alex_pinetrail_sub,
-	.cb		= &alex_pinetrail_cb,
-	.probe		= &alex_pinetrail_probe,
-	.setup_post	= &alex_pinetrail_setup_post,
-	.destroy	= &alex_pinetrail_destroy,
+	.id_list	= samsung_series5_id_list,
+	.sub		= samsung_series5_sub,
+	.cb		= &samsung_series5_cb,
+	.probe		= &samsung_series5_probe,
+	.setup_post	= &samsung_series5_setup_post,
+	.destroy	= &samsung_series5_destroy,
 };

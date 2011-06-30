@@ -20,7 +20,7 @@
 
 #include "lib/smbios.h"
 
-static const char *agz_pinetrail_get_vendor(struct platform_intf *intf)
+static const char *acer_chromia700_get_vendor(struct platform_intf *intf)
 {
 	if (intf->cb && intf->cb->smbios)
 		return intf->cb->smbios->system_vendor(intf);
@@ -28,7 +28,7 @@ static const char *agz_pinetrail_get_vendor(struct platform_intf *intf)
 		return NULL;
 }
 
-static const char *agz_pinetrail_get_name(struct platform_intf *intf)
+static const char *acer_chromia700_get_name(struct platform_intf *intf)
 {
 	if (intf->cb && intf->cb->smbios)
 		return intf->cb->smbios->system_name(intf);
@@ -36,7 +36,7 @@ static const char *agz_pinetrail_get_name(struct platform_intf *intf)
 		return NULL;
 }
 
-static const char *agz_pinetrail_get_family(struct platform_intf *intf)
+static const char *acer_chromia700_get_family(struct platform_intf *intf)
 {
 	if (intf->cb && intf->cb->smbios)
 		return intf->cb->smbios->system_family(intf);
@@ -44,8 +44,8 @@ static const char *agz_pinetrail_get_family(struct platform_intf *intf)
 		return NULL;
 }
 
-struct sysinfo_cb agz_pinetrail_sysinfo_cb = {
-	.vendor		= &agz_pinetrail_get_vendor,
-	.name		= &agz_pinetrail_get_name,
-	.family		= &agz_pinetrail_get_family,
+struct sysinfo_cb acer_chromia700_sysinfo_cb = {
+	.vendor		= &acer_chromia700_get_vendor,
+	.name		= &acer_chromia700_get_name,
+	.family		= &acer_chromia700_get_family,
 };

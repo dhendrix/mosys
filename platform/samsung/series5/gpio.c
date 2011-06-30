@@ -68,7 +68,7 @@ static struct gpio_map platform_gpio_map[] = {
 };
 
 /*
- * alex_pinetrail_gpio_read  -  read level for one GPIO
+ * samsung_series5_gpio_read  -  read level for one GPIO
  *
  * @intf:	platform interface
  * @name:	name of GPIO to get state for
@@ -76,7 +76,7 @@ static struct gpio_map platform_gpio_map[] = {
  * returns pointer to GPIO map entry if successful
  * returns NULL to indicate failure
  */
-static int alex_pinetrail_gpio_read(struct platform_intf *intf,
+static int samsung_series5_gpio_read(struct platform_intf *intf,
                                     struct gpio_map *gpio)
 {
 	int ret = 0;
@@ -93,7 +93,7 @@ static int alex_pinetrail_gpio_read(struct platform_intf *intf,
 }
 
 /*
- * alex_pinetrail_gpio_map  -  get mapping info for one GPIO
+ * samsung_series5_gpio_map  -  get mapping info for one GPIO
  *
  * @intf:	platform interface
  * @name:	name of GPIO to get state for
@@ -101,7 +101,7 @@ static int alex_pinetrail_gpio_read(struct platform_intf *intf,
  * returns pointer to GPIO map entry if successful
  * returns NULL to indicate failure
  */
-struct gpio_map *alex_pinetrail_gpio_map(struct platform_intf *intf,
+struct gpio_map *samsung_series5_gpio_map(struct platform_intf *intf,
                                          const char *name)
 {
 	int i;
@@ -123,14 +123,14 @@ struct gpio_map *alex_pinetrail_gpio_map(struct platform_intf *intf,
 }
 
 /*
- * alex_pinetrail_gpio_list  -  list all GPIOs and their states
+ * samsung_series5_gpio_list  -  list all GPIOs and their states
  *
  * @intf:	platform interface
  *
  * returns 0 if successful
  * returns <0 if failure
  */
-static int alex_pinetrail_gpio_list(struct platform_intf *intf)
+static int samsung_series5_gpio_list(struct platform_intf *intf)
 {
 	int i;
 
@@ -155,7 +155,7 @@ static int alex_pinetrail_gpio_list(struct platform_intf *intf)
 }
 
 /*
- * alex_pinetrail_gpio_set  -  set state for one GPIO
+ * samsung_series5_gpio_set  -  set state for one GPIO
  *
  * @intf:	platform interface
  * @name:	GPIO name
@@ -164,7 +164,7 @@ static int alex_pinetrail_gpio_list(struct platform_intf *intf)
  * returns 0 if successful
  * returns <0 if failure
  */
-static int alex_pinetrail_gpio_set(struct platform_intf *intf,
+static int samsung_series5_gpio_set(struct platform_intf *intf,
                            const char *name, int state)
 {
 	int i;
@@ -197,9 +197,9 @@ static int alex_pinetrail_gpio_set(struct platform_intf *intf,
 	return ret;
 }
 
-struct gpio_cb alex_pinetrail_gpio_cb = {
-	.read	= alex_pinetrail_gpio_read,
-	.map	= alex_pinetrail_gpio_map,
-	.list	= alex_pinetrail_gpio_list,
-	.set	= alex_pinetrail_gpio_set,
+struct gpio_cb samsung_series5_gpio_cb = {
+	.read	= samsung_series5_gpio_read,
+	.map	= samsung_series5_gpio_map,
+	.list	= samsung_series5_gpio_list,
+	.set	= samsung_series5_gpio_set,
 };

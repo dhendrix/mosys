@@ -141,7 +141,7 @@ static struct eeprom_dev mario_ec_firmware = {
 	.get_map	= eeprom_get_fmap,
 };
 
-static struct eeprom mario_pinetrail_eeproms[] = {
+static struct eeprom google_cr48_eeproms[] = {
 	{
 		.name		= "host_firmware",
 		.type		= EEPROM_TYPE_FW,
@@ -159,7 +159,7 @@ static struct eeprom mario_pinetrail_eeproms[] = {
 	{ 0 },
 };
 
-int mario_pinetrail_eeprom_setup(struct platform_intf *intf)
+int google_cr48_eeprom_setup(struct platform_intf *intf)
 {
 	struct eeprom *eeprom;
 	int rc = 0;
@@ -174,6 +174,6 @@ int mario_pinetrail_eeprom_setup(struct platform_intf *intf)
 	return rc;
 }
 
-struct eeprom_cb mario_pinetrail_eeprom_cb = {
-	.eeprom_list	= mario_pinetrail_eeproms,
+struct eeprom_cb google_cr48_eeprom_cb = {
+	.eeprom_list	= google_cr48_eeproms,
 };

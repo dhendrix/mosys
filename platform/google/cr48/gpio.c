@@ -41,7 +41,7 @@
 #define GPIO_IT8500	1
 
 /* gpio number, in/out, device, port, pin, negate, devname, name */
-struct gpio_map mario_pinetrail_gpio_map[] = {
+struct gpio_map google_cr48_gpio_map[] = {
 	/* id, type,    dev,          port, pin, neg, devname,   name */
 	{  0, GPIO_OUT, GPIO_NM10,    0,    0,   1,  "NM10", "BM_BUSY#" },
 	{  6, GPIO_IN,  GPIO_NM10,    0,    6,   1,  "NM10", "EC_SCI#" },
@@ -67,17 +67,17 @@ struct gpio_map mario_pinetrail_gpio_map[] = {
 	{ 0,  0,        0,               0, 0,  0, NULL,   NULL } /* end */
 };
 
-static struct gpio_map *platform_gpio_map = mario_pinetrail_gpio_map;
+static struct gpio_map *platform_gpio_map = google_cr48_gpio_map;
 
 /*
- * mario_pinetrail_gpio_list  -  list all GPIOs and their states
+ * google_cr48_gpio_list  -  list all GPIOs and their states
  *
  * @intf:	platform interface
  *
  * returns 0 if successful
  * returns <0 if failure
  */
-static int mario_pinetrail_gpio_list(struct platform_intf *intf)
+static int google_cr48_gpio_list(struct platform_intf *intf)
 {
 	int i;
 
@@ -107,7 +107,7 @@ static int mario_pinetrail_gpio_list(struct platform_intf *intf)
 }
 
 /*
- * mario_pinetrail_gpio_set  -  set state for one GPIO
+ * google_cr48_gpio_set  -  set state for one GPIO
  *
  * @intf:	platform interface
  * @name:	GPIO name
@@ -116,7 +116,7 @@ static int mario_pinetrail_gpio_list(struct platform_intf *intf)
  * returns 0 if successful
  * returns <0 if failure
  */
-static int mario_pinetrail_gpio_set(struct platform_intf *intf,
+static int google_cr48_gpio_set(struct platform_intf *intf,
                            const char *name, int state)
 {
 	int i;
@@ -154,7 +154,7 @@ static int mario_pinetrail_gpio_set(struct platform_intf *intf,
 	return ret;
 }
 
-struct gpio_cb mario_pinetrail_gpio_cb = {
-	.list	= mario_pinetrail_gpio_list,
-	.set	= mario_pinetrail_gpio_set,
+struct gpio_cb google_cr48_gpio_cb = {
+	.list	= google_cr48_gpio_list,
+	.set	= google_cr48_gpio_set,
 };

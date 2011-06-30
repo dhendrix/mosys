@@ -135,7 +135,7 @@ static struct memory_spd_cb mario_spd_cb = {
 	.read		= mario_spd_read,
 };
 
-struct memory_cb mario_pinetrail_memory_cb = {
+struct memory_cb google_cr48_memory_cb = {
 	.dimm_count	= mario_dimm_count,
 	.dimm_map	= mario_dimm_map,
 	.spd		= &mario_spd_cb,

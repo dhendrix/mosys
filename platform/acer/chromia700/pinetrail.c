@@ -32,14 +32,14 @@
 
 static const char *probed_platform_id;
 
-const char *agz_pinetrail_id_list[] = {
+const char *acer_chromia700_id_list[] = {
 	"AGZ",
 	"BGZ",
 	"ZGB",
 	NULL
 };
 
-struct platform_cmd *agz_pinetrail_sub[] = {
+struct platform_cmd *acer_chromia700_sub[] = {
 	&cmd_ec,
 	&cmd_eeprom,
 	&cmd_gpio,
@@ -58,7 +58,7 @@ static const char *hwids[] = {
 	NULL
 };
 
-int agz_pinetrail_probe(struct platform_intf *intf)
+int acer_chromia700_probe(struct platform_intf *intf)
 {
 	static int status = 0, probed = 0;
 
@@ -67,65 +67,65 @@ int agz_pinetrail_probe(struct platform_intf *intf)
 
 	if (probe_hwid(hwids)) {
 		status = 1;
-		goto agz_pinetrail_probe_exit;
+		goto acer_chromia700_probe_exit;
 	}
 
-	if (probe_smbios(intf, agz_pinetrail_id_list)) {
+	if (probe_smbios(intf, acer_chromia700_id_list)) {
 		status = 1;
-		goto agz_pinetrail_probe_exit;
+		goto acer_chromia700_probe_exit;
 	}
 
-agz_pinetrail_probe_exit:
+acer_chromia700_probe_exit:
 	probed = 1;
 	return status;
 }
 
 /* late setup routine; not critical to core functionality */
-static int agz_pinetrail_setup_post(struct platform_intf *intf)
+static int acer_chromia700_setup_post(struct platform_intf *intf)
 {
 	int rc = 0;
 
 	/* FIXME: until VPD is properly implemented, do not fail on setup */
-//	rc |= agz_pinetrail_vpd_setup(intf);
-	if (agz_pinetrail_vpd_setup(intf) < 0)
+//	rc |= acer_chromia700_vpd_setup(intf);
+	if (acer_chromia700_vpd_setup(intf) < 0)
 		lprintf(LOG_INFO, "VPD not found\n");
 
-	rc |= agz_pinetrail_ec_setup(intf);
-	rc |= agz_pinetrail_eeprom_setup(intf);
+	rc |= acer_chromia700_ec_setup(intf);
+	rc |= acer_chromia700_eeprom_setup(intf);
 
 	if (rc)
 		lprintf(LOG_DEBUG, "%s: failed\n", __func__);
 	return rc;
 }
 
-static int agz_pinetrail_destroy(struct platform_intf *intf)
+static int acer_chromia700_destroy(struct platform_intf *intf)
 {
 	if (probed_platform_id)
 		free((char *)probed_platform_id);
 
-	agz_pinetrail_ec_destroy(intf);
+	acer_chromia700_ec_destroy(intf);
 	/* FIXME: unmap vpd stuff */
 	return 0;
 }
 
-struct platform_cb agz_pinetrail_cb = {
-	.ec		= &agz_pinetrail_ec_cb,
-	.eeprom		= &agz_pinetrail_eeprom_cb,
-	.gpio		= &agz_pinetrail_gpio_cb,
-	.memory		= &agz_pinetrail_memory_cb,
-	.nvram		= &agz_pinetrail_nvram_cb,
+struct platform_cb acer_chromia700_cb = {
+	.ec		= &acer_chromia700_ec_cb,
+	.eeprom		= &acer_chromia700_eeprom_cb,
+	.gpio		= &acer_chromia700_gpio_cb,
+	.memory		= &acer_chromia700_memory_cb,
+	.nvram		= &acer_chromia700_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,
-	.sysinfo 	= &agz_pinetrail_sysinfo_cb,
-	.vpd		= &agz_pinetrail_vpd_cb,
+	.sysinfo 	= &acer_chromia700_sysinfo_cb,
+	.vpd		= &acer_chromia700_vpd_cb,
 };
 
-struct platform_intf platform_agz_pinetrail = {
+struct platform_intf platform_acer_chromia700 = {
 	.type		= PLATFORM_X86_64,
 	.name		= "AGZ",
-	.id_list	= agz_pinetrail_id_list,
-	.sub		= agz_pinetrail_sub,
-	.cb		= &agz_pinetrail_cb,
-	.probe		= &agz_pinetrail_probe,
-	.setup_post	= &agz_pinetrail_setup_post,
-	.destroy	= &agz_pinetrail_destroy,
+	.id_list	= acer_chromia700_id_list,
+	.sub		= acer_chromia700_sub,
+	.cb		= &acer_chromia700_cb,
+	.probe		= &acer_chromia700_probe,
+	.setup_post	= &acer_chromia700_setup_post,
+	.destroy	= &acer_chromia700_destroy,
 };

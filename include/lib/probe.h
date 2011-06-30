@@ -60,4 +60,18 @@ extern int probe_smbios(struct platform_intf *intf, const char *ids[]);
 extern int probe_cpuinfo(struct platform_intf *intf,
                          const char *key, const char *value);
 
+/*
+ * get_cpuinfo - extract value from /proc/cpuinfo
+ *
+ * @key:	key to search for
+ *
+ * This function assumes the format is colon-delimited with unknown number of
+ * spaces between the key, colon, and value. For example
+ * key     : value
+ *
+ * returns allocated string containing value if found
+ * returns NULL to indicate value not found or error
+ */
+extern const char *extract_cpuinfo(const char *key);
+
 #endif /* MOSYS_LIB_PROBE_H__ */

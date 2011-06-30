@@ -36,6 +36,7 @@
 #include <string.h>
 #include <limits.h>
 
+#include "mosys/alloc.h"
 #include "mosys/globals.h"
 #include "mosys/log.h"
 #include "mosys/platform.h"
@@ -125,4 +126,43 @@ int probe_cpuinfo(struct platform_intf *intf,
 
 	fclose(cpuinfo);
 	return ret;
+}
+
+const char *extract_cpuinfo(const char *key)
+{
+	FILE *cpuinfo;
+	char *ret = NULL;
+	char path[PATH_MAX];
+
+	sprintf(path, "%s/proc/cpuinfo", mosys_get_root_prefix());
+	cpuinfo = fopen(path, "rb");
+	if (!cpuinfo)
+		return 0;
+
+	while (!feof(cpuinfo)) {
+		char line[LINE_MAX], *ptr;
+		int i = 0;
+
+		if (fgets(line, sizeof(line), cpuinfo) == NULL)
+			break;
+		ptr = line;
+
+		if (strncmp(ptr, key, strlen(key)))
+			continue;
+
+		ptr += strlen(key);
+		while (isspace((unsigned char)*ptr) || (*ptr == ':'))
+			ptr++;
+
+		ret = mosys_malloc(strlen(ptr) + 1);
+		while (!isspace((unsigned char)*ptr)) {
+			ret[i] = *ptr;
+			ptr++;
+			i++;
+		}
+		ret[i] = '\0';
+	}
+
+	fclose(cpuinfo);
+	return (const char *)ret;
 }

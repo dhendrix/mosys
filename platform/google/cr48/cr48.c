@@ -29,17 +29,14 @@
 #include "lib/smbios.h"
 #include "lib/vpd.h"
 
-#include "pinetrail.h"
+#include "cr48.h"
 
-static const char *probed_platform_id;
-
-const char *samsung_series5_id_list[] = {
-	"Alex",
+const char *google_cr48_id_list[] = {
+	"Mario",
 	NULL
 };
 
-struct platform_cmd *samsung_series5_sub[] = {
-	&cmd_ec,
+struct platform_cmd *google_cr48_sub[] = {
 	&cmd_eeprom,
 	&cmd_gpio,
 	&cmd_i2c,
@@ -48,15 +45,17 @@ struct platform_cmd *samsung_series5_sub[] = {
 	&cmd_platform,
 	&cmd_smbios,
 	&cmd_vpd,
+	&cmd_ec,
 	NULL
 };
 
 static const char *hwids[] = {
-	"{97A1FBD6-FDE1-4FC5-BB81-286608B90FCE}",
+	"{D3178EA2-58C9-4DD7-9676-95DBF45290BB}",
+	"{9D799111-A88A-439E-9E1F-FBBB41B00A9A}",
 	NULL
 };
 
-int samsung_series5_probe(struct platform_intf *intf)
+int google_cr48_probe(struct platform_intf *intf)
 {
 	static int status = 0, probed = 0;
 
@@ -65,68 +64,60 @@ int samsung_series5_probe(struct platform_intf *intf)
 
 	if (probe_hwid(hwids)) {
 		status = 1;
-		goto samsung_series5_probe_exit;
+		goto google_cr48_probe_exit;
 	}
 
-	if (probe_smbios(intf, samsung_series5_id_list)) {
+	if (probe_smbios(intf, google_cr48_id_list)) {
 		status = 1;
-		goto samsung_series5_probe_exit;
+		goto google_cr48_probe_exit;
 	}
 
-samsung_series5_probe_exit:
+google_cr48_probe_exit:
 	probed = 1;
 	return status;
 }
 
 /* late setup routine; not critical to core functionality */
-static int samsung_series5_setup_post(struct platform_intf *intf)
+static int google_cr48_setup_post(struct platform_intf *intf)
 {
 	int rc = 0;
 
 	/* FIXME: until VPD is properly implemented, do not fail on setup */
-	if (samsung_series5_vpd_setup(intf) < 0)
+	if (google_cr48_vpd_setup(intf) < 0)
 		lprintf(LOG_INFO, "VPD not found\n");
 
-	if (samsung_series5_ec_setup(intf) < 0) {
-		lprintf(LOG_WARNING, "Non-fatal error: Failed to setup "
-		                     "EC callbacks.\n");
-
-	}
-	rc |= samsung_series5_eeprom_setup(intf);
+	rc |= google_cr48_eeprom_setup(intf);
+	rc |= google_cr48_ec_setup(intf);
 
 	if (rc)
 		lprintf(LOG_DEBUG, "%s: failed\n", __func__);
 	return rc;
 }
 
-static int samsung_series5_destroy(struct platform_intf *intf)
+static int google_cr48_destroy(struct platform_intf *intf)
 {
-	if (probed_platform_id)
-		free((char *)probed_platform_id);
-
-	samsung_series5_ec_destroy(intf);
 	/* FIXME: unmap vpd stuff */
 	return 0;
 }
 
-struct platform_cb samsung_series5_cb = {
-	.ec		= &samsung_series5_ec_cb,
-	.eeprom		= &samsung_series5_eeprom_cb,
-	.gpio		= &samsung_series5_gpio_cb,
-	.memory		= &samsung_series5_memory_cb,
-//	.nvram		= &samsung_series5_nvram_cb,
+struct platform_cb google_cr48_cb = {
+	.ec		= &google_cr48_ec_cb,
+	.eeprom		= &google_cr48_eeprom_cb,
+	.gpio		= &google_cr48_gpio_cb,
+	.memory		= &google_cr48_memory_cb,
+//	.nvram		= &google_cr48_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,
-	.sysinfo 	= &samsung_series5_sysinfo_cb,
-	.vpd		= &samsung_series5_vpd_cb,
+	.sysinfo 	= &google_cr48_sysinfo_cb,
+	.vpd		= &google_cr48_vpd_cb,
 };
 
-struct platform_intf platform_samsung_series5 = {
+struct platform_intf platform_google_cr48 = {
 	.type		= PLATFORM_X86_64,
-	.name		= "alex",
-	.id_list	= samsung_series5_id_list,
-	.sub		= samsung_series5_sub,
-	.cb		= &samsung_series5_cb,
-	.probe		= &samsung_series5_probe,
-	.setup_post	= &samsung_series5_setup_post,
-	.destroy	= &samsung_series5_destroy,
+	.name		= "Mario",
+	.id_list	= google_cr48_id_list,
+	.sub		= google_cr48_sub,
+	.cb		= &google_cr48_cb,
+	.probe		= &google_cr48_probe,
+	.setup_post	= &google_cr48_setup_post,
+	.destroy	= &google_cr48_destroy,
 };

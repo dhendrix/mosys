@@ -20,7 +20,7 @@
 
 #include "lib/smbios.h"
 
-#include "pinetrail.h"
+#include "cr48.h"
 
 static const char *google_cr48_get_vendor(struct platform_intf *intf)
 {

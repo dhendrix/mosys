@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef ALEX_PINETRAIL_H__
-#define ALEX_PINETRAIL_H__
+#ifndef SAMSUNG_SERIES5_H__
+#define SAMSUNG_SERIES5_H__
 
 #include <inttypes.h>
 #include "mosys/platform.h"
@@ -27,9 +27,9 @@ extern struct ec_cb samsung_series5_ec_cb;		/* ec.c */
 extern struct eeprom_cb samsung_series5_eeprom_cb;	/* eeprom.c */
 extern struct gpio_cb samsung_series5_gpio_cb;		/* gpio.c */
 extern struct memory_cb samsung_series5_memory_cb;	/* memory.c */
+extern struct nvram_cb samsung_series5_nvram_cb;	/* nvram.c */
 extern struct sysinfo_cb samsung_series5_sysinfo_cb;	/* sysinfo.c */
 extern struct vpd_cb samsung_series5_vpd_cb;		/* vpd.c */
-extern struct nvram_cb samsung_series5_nvram_cb;		/* nvram.c */
 
 /* functions called by setup routines */
 extern int samsung_series5_ec_setup(struct platform_intf *intf);
@@ -37,4 +37,4 @@ extern void samsung_series5_ec_destroy(struct platform_intf *intf);
 extern int samsung_series5_vpd_setup(struct platform_intf *intf);
 extern int samsung_series5_eeprom_setup(struct platform_intf *intf);
 
-#endif /* ALEX_PINETRAIL_H_ */
+#endif /* SAMSUNG_SERIES5_H_ */

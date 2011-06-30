@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include "mosys/alloc.h"
 #include "mosys/command_list.h"
 #include "mosys/platform.h"
 #include "mosys/intf_list.h"
@@ -28,24 +29,22 @@
 #include "lib/smbios.h"
 #include "lib/vpd.h"
 
-#include "pinetrail.h"
+#include "series5.h"
 
 static const char *probed_platform_id;
 
-const char *acer_chromia700_id_list[] = {
-	"AGZ",
-	"BGZ",
-	"ZGB",
+const char *samsung_series5_id_list[] = {
+	"Alex",
 	NULL
 };
 
-struct platform_cmd *acer_chromia700_sub[] = {
+struct platform_cmd *samsung_series5_sub[] = {
 	&cmd_ec,
 	&cmd_eeprom,
 	&cmd_gpio,
 	&cmd_i2c,
 	&cmd_memory,
-	&cmd_nvram,
+//	&cmd_nvram,
 	&cmd_platform,
 	&cmd_smbios,
 	&cmd_vpd,
@@ -53,12 +52,11 @@ struct platform_cmd *acer_chromia700_sub[] = {
 };
 
 static const char *hwids[] = {
-	"{9707217C-7943-4376-A812-FA05C318A16F}",
-	"{FA42644C-CF3A-4692-A9D3-1A667CB232E9}",
+	"{97A1FBD6-FDE1-4FC5-BB81-286608B90FCE}",
 	NULL
 };
 
-int acer_chromia700_probe(struct platform_intf *intf)
+int samsung_series5_probe(struct platform_intf *intf)
 {
 	static int status = 0, probed = 0;
 
@@ -67,65 +65,68 @@ int acer_chromia700_probe(struct platform_intf *intf)
 
 	if (probe_hwid(hwids)) {
 		status = 1;
-		goto acer_chromia700_probe_exit;
+		goto samsung_series5_probe_exit;
 	}
 
-	if (probe_smbios(intf, acer_chromia700_id_list)) {
+	if (probe_smbios(intf, samsung_series5_id_list)) {
 		status = 1;
-		goto acer_chromia700_probe_exit;
+		goto samsung_series5_probe_exit;
 	}
 
-acer_chromia700_probe_exit:
+samsung_series5_probe_exit:
 	probed = 1;
 	return status;
 }
 
 /* late setup routine; not critical to core functionality */
-static int acer_chromia700_setup_post(struct platform_intf *intf)
+static int samsung_series5_setup_post(struct platform_intf *intf)
 {
 	int rc = 0;
 
 	/* FIXME: until VPD is properly implemented, do not fail on setup */
-//	rc |= acer_chromia700_vpd_setup(intf);
-	if (acer_chromia700_vpd_setup(intf) < 0)
+	if (samsung_series5_vpd_setup(intf) < 0)
 		lprintf(LOG_INFO, "VPD not found\n");
 
-	rc |= acer_chromia700_ec_setup(intf);
-	rc |= acer_chromia700_eeprom_setup(intf);
+	if (samsung_series5_ec_setup(intf) < 0) {
+		lprintf(LOG_WARNING, "Non-fatal error: Failed to setup "
+		                     "EC callbacks.\n");
+
+	}
+	rc |= samsung_series5_eeprom_setup(intf);
 
 	if (rc)
 		lprintf(LOG_DEBUG, "%s: failed\n", __func__);
 	return rc;
 }
 
-static int acer_chromia700_destroy(struct platform_intf *intf)
+static int samsung_series5_destroy(struct platform_intf *intf)
 {
 	if (probed_platform_id)
 		free((char *)probed_platform_id);
 
-	acer_chromia700_ec_destroy(intf);
+	samsung_series5_ec_destroy(intf);
 	/* FIXME: unmap vpd stuff */
 	return 0;
 }
 
-struct platform_cb acer_chromia700_cb = {
-	.ec		= &acer_chromia700_ec_cb,
-	.eeprom		= &acer_chromia700_eeprom_cb,
-	.gpio		= &acer_chromia700_gpio_cb,
-	.memory		= &acer_chromia700_memory_cb,
-	.nvram		= &acer_chromia700_nvram_cb,
+struct platform_cb samsung_series5_cb = {
+	.ec		= &samsung_series5_ec_cb,
+	.eeprom		= &samsung_series5_eeprom_cb,
+	.gpio		= &samsung_series5_gpio_cb,
+	.memory		= &samsung_series5_memory_cb,
+//	.nvram		= &samsung_series5_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,
-	.sysinfo 	= &acer_chromia700_sysinfo_cb,
-	.vpd		= &acer_chromia700_vpd_cb,
+	.sysinfo 	= &samsung_series5_sysinfo_cb,
+	.vpd		= &samsung_series5_vpd_cb,
 };
 
-struct platform_intf platform_acer_chromia700 = {
+struct platform_intf platform_samsung_series5 = {
 	.type		= PLATFORM_X86_64,
-	.name		= "AGZ",
-	.id_list	= acer_chromia700_id_list,
-	.sub		= acer_chromia700_sub,
-	.cb		= &acer_chromia700_cb,
-	.probe		= &acer_chromia700_probe,
-	.setup_post	= &acer_chromia700_setup_post,
-	.destroy	= &acer_chromia700_destroy,
+	.name		= "alex",
+	.id_list	= samsung_series5_id_list,
+	.sub		= samsung_series5_sub,
+	.cb		= &samsung_series5_cb,
+	.probe		= &samsung_series5_probe,
+	.setup_post	= &samsung_series5_setup_post,
+	.destroy	= &samsung_series5_destroy,
 };

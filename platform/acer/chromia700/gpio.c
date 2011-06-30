@@ -35,7 +35,7 @@
 
 #include "lib/string.h"
 
-#include "pinetrail.h"
+#include "chromia700.h"
 
 #define GPIO_NM10	0
 #define GPIO_NPCE781	1

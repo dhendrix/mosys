@@ -35,7 +35,7 @@
 
 #include "lib/string.h"
 
-#include "pinetrail.h"
+#include "series5.h"
 
 #define GPIO_NM10	0
 

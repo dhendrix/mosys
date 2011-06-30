@@ -19,7 +19,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "mosys/alloc.h"
 #include "mosys/command_list.h"
 #include "mosys/platform.h"
 #include "mosys/intf_list.h"
@@ -29,33 +28,37 @@
 #include "lib/smbios.h"
 #include "lib/vpd.h"
 
-#include "pinetrail.h"
+#include "chromia700.h"
 
-const char *google_cr48_id_list[] = {
-	"Mario",
+static const char *probed_platform_id;
+
+const char *acer_chromia700_id_list[] = {
+	"AGZ",
+	"BGZ",
+	"ZGB",
 	NULL
 };
 
-struct platform_cmd *google_cr48_sub[] = {
+struct platform_cmd *acer_chromia700_sub[] = {
+	&cmd_ec,
 	&cmd_eeprom,
 	&cmd_gpio,
 	&cmd_i2c,
 	&cmd_memory,
-//	&cmd_nvram,
+	&cmd_nvram,
 	&cmd_platform,
 	&cmd_smbios,
 	&cmd_vpd,
-	&cmd_ec,
 	NULL
 };
 
 static const char *hwids[] = {
-	"{D3178EA2-58C9-4DD7-9676-95DBF45290BB}",
-	"{9D799111-A88A-439E-9E1F-FBBB41B00A9A}",
+	"{9707217C-7943-4376-A812-FA05C318A16F}",
+	"{FA42644C-CF3A-4692-A9D3-1A667CB232E9}",
 	NULL
 };
 
-int google_cr48_probe(struct platform_intf *intf)
+int acer_chromia700_probe(struct platform_intf *intf)
 {
 	static int status = 0, probed = 0;
 
@@ -64,60 +67,65 @@ int google_cr48_probe(struct platform_intf *intf)
 
 	if (probe_hwid(hwids)) {
 		status = 1;
-		goto google_cr48_probe_exit;
+		goto acer_chromia700_probe_exit;
 	}
 
-	if (probe_smbios(intf, google_cr48_id_list)) {
+	if (probe_smbios(intf, acer_chromia700_id_list)) {
 		status = 1;
-		goto google_cr48_probe_exit;
+		goto acer_chromia700_probe_exit;
 	}
 
-google_cr48_probe_exit:
+acer_chromia700_probe_exit:
 	probed = 1;
 	return status;
 }
 
 /* late setup routine; not critical to core functionality */
-static int google_cr48_setup_post(struct platform_intf *intf)
+static int acer_chromia700_setup_post(struct platform_intf *intf)
 {
 	int rc = 0;
 
 	/* FIXME: until VPD is properly implemented, do not fail on setup */
-	if (google_cr48_vpd_setup(intf) < 0)
+//	rc |= acer_chromia700_vpd_setup(intf);
+	if (acer_chromia700_vpd_setup(intf) < 0)
 		lprintf(LOG_INFO, "VPD not found\n");
 
-	rc |= google_cr48_eeprom_setup(intf);
-	rc |= google_cr48_ec_setup(intf);
+	rc |= acer_chromia700_ec_setup(intf);
+	rc |= acer_chromia700_eeprom_setup(intf);
 
 	if (rc)
 		lprintf(LOG_DEBUG, "%s: failed\n", __func__);
 	return rc;
 }
 
-static int google_cr48_destroy(struct platform_intf *intf)
+static int acer_chromia700_destroy(struct platform_intf *intf)
 {
+	if (probed_platform_id)
+		free((char *)probed_platform_id);
+
+	acer_chromia700_ec_destroy(intf);
 	/* FIXME: unmap vpd stuff */
 	return 0;
 }
 
-struct platform_cb google_cr48_cb = {
-	.ec		= &google_cr48_ec_cb,
-	.eeprom		= &google_cr48_eeprom_cb,
-	.gpio		= &google_cr48_gpio_cb,
-	.memory		= &google_cr48_memory_cb,
-//	.nvram		= &google_cr48_nvram_cb,
+struct platform_cb acer_chromia700_cb = {
+	.ec		= &acer_chromia700_ec_cb,
+	.eeprom		= &acer_chromia700_eeprom_cb,
+	.gpio		= &acer_chromia700_gpio_cb,
+	.memory		= &acer_chromia700_memory_cb,
+	.nvram		= &acer_chromia700_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,
-	.sysinfo 	= &google_cr48_sysinfo_cb,
-	.vpd		= &google_cr48_vpd_cb,
+	.sysinfo 	= &acer_chromia700_sysinfo_cb,
+	.vpd		= &acer_chromia700_vpd_cb,
 };
 
-struct platform_intf platform_google_cr48 = {
+struct platform_intf platform_acer_chromia700 = {
 	.type		= PLATFORM_X86_64,
-	.name		= "Mario",
-	.id_list	= google_cr48_id_list,
-	.sub		= google_cr48_sub,
-	.cb		= &google_cr48_cb,
-	.probe		= &google_cr48_probe,
-	.setup_post	= &google_cr48_setup_post,
-	.destroy	= &google_cr48_destroy,
+	.name		= "AGZ",
+	.id_list	= acer_chromia700_id_list,
+	.sub		= acer_chromia700_sub,
+	.cb		= &acer_chromia700_cb,
+	.probe		= &acer_chromia700_probe,
+	.setup_post	= &acer_chromia700_setup_post,
+	.destroy	= &acer_chromia700_destroy,
 };

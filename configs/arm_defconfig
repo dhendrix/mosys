@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Mosys version: 1.0.07.306
-# Mon Apr  4 16:17:30 2011
+# Mosys version: 1.1.01.346
+# Wed Jun 29 17:21:12 2011
 #
 
 #
@@ -26,14 +26,30 @@ CONFIG_PLATFORM_ARCH_ARMEL=y
 CONFIG_PLATFORM_DEFAULT=y
 
 #
+# Acer Platform Support
+#
+# CONFIG_PLATFORM_ACER is not set
+
+#
+# Google Platform Support
+#
+# CONFIG_PLATFORM_GOOGLE is not set
+
+#
 # HP Platform Support
 #
 # CONFIG_PLATFORM_HP is not set
 
 #
+# Samsung Platform Support
+#
+# CONFIG_PLATFORM_SAMSUNG is not set
+
+#
 # Experimental Platform Support
 #
 CONFIG_PLATFORM_EXPERIMENTAL=y
+CONFIG_EXPERIMENTAL_AEBL=y
 CONFIG_EXPERIMENTAL_KAEN=y
 CONFIG_EXPERIMENTAL_SEABOARD=y
 
@@ -42,6 +58,7 @@ CONFIG_EXPERIMENTAL_SEABOARD=y
 #
 # CONFIG_CHIPSET_INTEL_NM10 is not set
 # CONFIG_EC_ITE_IT8500 is not set
+# CONFIG_EC_NUVOTON_NPCE781 is not set
 # CONFIG_EC_SMSC_MEC1308 is not set
 
 #

@@ -16,18 +16,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#include <ctype.h>
-#include <stdio.h>
-#include <limits.h>
-
 #include "mosys/alloc.h"
-#include "mosys/callbacks.h"
-#include "mosys/globals.h"
 #include "mosys/platform.h"
 
-#ifndef LINE_MAX
-#define LINE_MAX	512
-#endif
+#include "lib/probe.h"
 
 #if 0
 static const char *kaen_tegra2_get_vendor(struct platform_intf *intf)
@@ -52,45 +44,9 @@ static const char *kaen_tegra2_get_family(struct platform_intf *intf)
 }
 #endif
 
-/* FIXME: this duplicates a lot of code from probe_cpuinfo. */
 static const char *kaen_tegra2_get_version(struct platform_intf *intf)
 {
-	FILE *cpuinfo;
-	char *ret = NULL;
-	char path[PATH_MAX];
-	char key[] = "Revision";
-
-	sprintf(path, "%s/proc/cpuinfo", mosys_get_root_prefix());
-	cpuinfo = fopen(path, "rb");
-	if (!cpuinfo)
-		return 0;
-
-	while (!feof(cpuinfo)) {
-		char line[LINE_MAX], *ptr;
-		int i = 0;
-
-		if (fgets(line, sizeof(line), cpuinfo) == NULL)
-			break;
-		ptr = line;
-
-		if (strncmp(ptr, key, strlen(key)))
-			continue;
-
-		ptr += strlen(key);
-		while (isspace((unsigned char)*ptr) || (*ptr == ':'))
-			ptr++;
-
-		ret = mosys_malloc(strlen(ptr) + 1);
-		while (!isspace((unsigned char)*ptr)) {
-			ret[i] = *ptr;
-			ptr++;
-			i++;
-		}
-		ret[i] = '\0';
-	}
-
-	fclose(cpuinfo);
-	return (const char *)ret;
+	return extract_cpuinfo("Revision");
 }
 
 struct sysinfo_cb kaen_tegra2_sysinfo_cb = {

@@ -219,9 +219,6 @@ static int eeprom_map_cmd(struct platform_intf *intf,
 {
 	int rc = 0;
 
-	if (!intf->cb->eeprom || !intf->cb->eeprom->eeprom_list)
-		return -1;
-
 	if (argc) {
 		if (argc != 1) {
 			platform_cmd_usage(cmd);
@@ -237,8 +234,9 @@ static int eeprom_map_cmd(struct platform_intf *intf,
 
 	lprintf(LOG_DEBUG, "%s: attempting to read fmap from eeprom\n",
 	                   __func__);
-	if (eeprom_map_cmd_eeprom(intf, argv[0]) < 0)
-		rc = -1;
+	if (!intf->cb->eeprom)
+		return -1;
+	rc = eeprom_map_cmd_eeprom(intf, argv[0]);
 
 eeprom_map_cmd_exit:
 	if (rc < 0)

@@ -37,7 +37,7 @@ const char *aebl_tegra2_id_list[] = {
 };
 
 struct platform_cmd *aebl_tegra2_sub[] = {
-//	&cmd_eeprom,
+	&cmd_eeprom,
 //	&cmd_gpio,
 //	&cmd_i2c,
 //	&cmd_memory,

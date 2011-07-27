@@ -3,3 +3,10 @@
 config CHIPSET_INTEL_NM10
 	bool "NM10"
 	default n
+
+config CHIPSET_INTEL_SERIES6
+	bool "6-Series chipset"
+	select CHIPSET_INTEL_NM10	# lots of shared functionality
+	default n
+	help
+	  This currently includes the QM67, UM67, HM67, HM65, and QS67 SKUs

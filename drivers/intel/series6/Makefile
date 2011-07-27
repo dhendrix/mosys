@@ -1,4 +1,4 @@
-# 2010, Google Inc.
+# 2011, Google Inc.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -27,5 +27,5 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-obj-$(CONFIG_CHIPSET_INTEL_NM10)	+= nm10/
-obj-$(CONFIG_CHIPSET_INTEL_SERIES6)	+= series6/
+obj-$(CONFIG_CHIPSET_INTEL_SERIES6)	+= series6.o
+#obj-$(CONFIG_CHIPSET_INTEL_SERIES6)	+= gpio.o

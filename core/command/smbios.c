@@ -86,8 +86,6 @@ static int smbios_info_bios_cmd(struct platform_intf *intf,
 		    table.string[table.data.bios.release_date]);
 	kv_pair_fmt(kv, "size", "%u KB",
 		    (table.data.bios.rom_size_64k_blocks + 1) * 64);
-	kv_pair_fmt(kv, "ec_version", "%u.%u", table.data.bios.ec_major_ver,
-	                                       table.data.bios.ec_minor_ver);
 
 	kv_pair_print(kv);
 	kv_pair_free(kv);

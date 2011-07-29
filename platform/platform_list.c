@@ -28,6 +28,7 @@ extern struct platform_intf platform_default_x86;
 /* experimental */
 extern struct platform_intf platform_aebl_tegra2;
 extern struct platform_intf platform_kaen_tegra2;
+extern struct platform_intf platform_lumpy;
 extern struct platform_intf platform_seaboard_tegra2;
 
 /* production platforms */
@@ -56,6 +57,9 @@ struct platform_intf *platform_intf_list[] = {
 #endif
 #ifdef CONFIG_EXPERIMENTAL_KAEN
 	&platform_kaen_tegra2,
+#endif
+#ifdef CONFIG_EXPERIMENTAL_LUMPY
+	&platform_lumpy,
 #endif
 #ifdef CONFIG_EXPERIMENTAL_SEABOARD
 	&platform_seaboard_tegra2,

@@ -23,6 +23,13 @@
 #include "drivers/intel/ich_generic.h"
 
 /*
+ * The 6-Series has one SMBus interface, so for the purpose of matching with
+ * sysfs entries we don't need to worry about the exact IO address which appears
+ * at the end of the string (e.g. "SMBus I801 adapter at 2000").
+ */
+#define SERIES6_SMBUS_ADAPTER	"SMBus I801 adapter"
+
+/*
  * series6_get_bbs - get bios boot straps (bbs) value
  *
  * @intf:	platform interface

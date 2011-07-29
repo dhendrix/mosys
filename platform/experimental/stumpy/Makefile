@@ -1,4 +1,4 @@
-# 2010, Google Inc.
+# 2011, Google Inc.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -27,8 +27,11 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-obj-$(CONFIG_EXPERIMENTAL_AEBL)		+= aebl/
-obj-$(CONFIG_EXPERIMENTAL_KAEN)		+= kaen/
-obj-$(CONFIG_EXPERIMENTAL_LUMPY)	+= lumpy/
-obj-$(CONFIG_EXPERIMENTAL_SEABOARD)	+= seaboard/
-obj-$(CONFIG_EXPERIMENTAL_STUMPY)	+= stumpy/
+#obj-$(CONFIG_EXPERIMENTAL_STUMPY)	+= ec.o
+obj-$(CONFIG_EXPERIMENTAL_STUMPY)	+= eeprom.o
+#obj-$(CONFIG_EXPERIMENTAL_STUMPY)	+= gpio.o
+obj-$(CONFIG_EXPERIMENTAL_STUMPY)	+= memory.o
+#obj-$(CONFIG_EXPERIMENTAL_STUMPY)	+= nvram.o
+obj-$(CONFIG_EXPERIMENTAL_STUMPY)	+= stumpy.o
+obj-$(CONFIG_EXPERIMENTAL_STUMPY)	+= sysinfo.o
+obj-$(CONFIG_EXPERIMENTAL_STUMPY)	+= vpd.o

@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Mosys version: 1.1.01.357
-# Wed Jul 27 16:22:40 2011
+# Mosys version: 1.1.01.359
+# Fri Jul 29 15:16:31 2011
 #
 
 #
@@ -55,6 +55,7 @@ CONFIG_SAMSUNG_SERIES5=y
 #
 CONFIG_PLATFORM_EXPERIMENTAL=y
 CONFIG_EXPERIMENTAL_LUMPY=y
+CONFIG_EXPERIMENTAL_STUMPY=y
 
 #
 # Device Drivers

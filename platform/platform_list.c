@@ -30,6 +30,7 @@ extern struct platform_intf platform_aebl_tegra2;
 extern struct platform_intf platform_kaen_tegra2;
 extern struct platform_intf platform_lumpy;
 extern struct platform_intf platform_seaboard_tegra2;
+extern struct platform_intf platform_stumpy;
 
 /* production platforms */
 extern struct platform_intf platform_acer_chromia700;
@@ -63,6 +64,9 @@ struct platform_intf *platform_intf_list[] = {
 #endif
 #ifdef CONFIG_EXPERIMENTAL_SEABOARD
 	&platform_seaboard_tegra2,
+#endif
+#ifdef CONFIG_EXPERIMENTAL_STUMPY
+	&platform_stumpy,
 #endif
 
 /* place default platform last */

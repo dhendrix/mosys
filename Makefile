@@ -56,7 +56,7 @@ TESTPROGRAM=$(PROGRAM)_test
 # revision:	Patch number from version control system
 CORE	=  1
 MAJOR	=  1
-MINOR	= 01
+MINOR	= 02
 SVNVERSION := $(shell LC_ALL=C svnversion -cn . 2>/dev/null | sed -e "s/.*://" -e "s/\([0-9]*\).*/\1/" | grep "[0-9]" || LC_ALL=C svn info . 2>/dev/null | awk '/^Revision:/ {print $$2 }' | grep "[0-9]" || LC_ALL=C git svn info . 2>/dev/null | awk '/^Revision:/ {print $$2 }' | grep "[0-9]" || echo unknown)
 REVISION=$(SVNVERSION)
 

@@ -37,6 +37,7 @@ const char *kaen_tegra2_id_list[] = {
 };
 
 struct platform_cmd *kaen_tegra2_sub[] = {
+	&cmd_ec,
 	&cmd_eeprom,
 //	&cmd_gpio,
 //	&cmd_i2c,
@@ -106,6 +107,7 @@ static int kaen_tegra2_destroy(struct platform_intf *intf)
 }
 
 struct platform_cb kaen_tegra2_cb = {
+	.ec		= &kaen_ec_cb,
 //	.eeprom		= &kaen_tegra2_eeprom_cb,
 //	.gpio		= &kaen_tegra2_gpio_cb,
 //	.memory		= &kaen_tegra2_memory_cb,

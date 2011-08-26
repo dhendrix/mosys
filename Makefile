@@ -1034,6 +1034,7 @@ int main(void)
 	return 0;
 }
 endef
+export LIBUUID_TEST
 
 test_libuuid:
 	@printf "Testing libuuid..."

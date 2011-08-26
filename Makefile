@@ -472,7 +472,7 @@ endif # $(dot-config)
 # The all: target is the default when no target is given on the
 # command line.
 # This allow a user to issue only 'make' to build the primary program
-all: include/config/auto.conf $(PROGRAM)
+all: libcheck include/config/auto.conf $(PROGRAM)
 
 # warn about C99 declaration after statement
 KBUILD_CFLAGS += $(call cc-option,-Wdeclaration-after-statement,)
@@ -1024,6 +1024,27 @@ test: $(vmlinux-all) libcmockery.a
 	--output-file $(TESTPROGRAM).info --test-name $(TESTPROGRAM)
 	genhtml -o $(GENHTML_OUTPUT_DIR)/ $(TESTPROGRAM).info
 	@echo "Check results in $(GENHTML_OUTPUT_DIR)/index.html"
+
+define LIBUUID_TEST
+#include <uuid/uuid.h>
+int main(void)
+{
+	uuid_t uuid;
+	uuid_parse("88888888-4444-4444-4444-121212121212", uuid);
+	return 0;
+}
+endef
+
+test_libuuid:
+	@printf "Testing libuuid..."
+	@echo "$$LIBUUID_TEST" > .test.c
+	@$(CC) -c $(CFLAGS) .test.c -o .test.o >/dev/null 2>&1 &&	\
+		echo " passed." || ( echo " failed."; echo;		\
+		echo "Please install libuuid"; exit 1)
+	@rm -f .test.c .test.o
+
+libcheck: test_libuuid
+	@echo ""
 
 # Declare the contents of the .PHONY variable as phony.  We keep that
 # information in a variable so we can use it in if_changed and friends.

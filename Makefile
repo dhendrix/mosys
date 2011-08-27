@@ -1039,8 +1039,8 @@ export LIBUUID_TEST
 test_libuuid:
 	@printf "Testing libuuid..."
 	@echo "$$LIBUUID_TEST" > .test.c
-	@$(CC) -c $(CFLAGS) .test.c -o .test.o >/dev/null 2>&1 &&	\
-		echo " passed." || ( echo " failed."; echo;		\
+	@$(CC) $(CFLAGS) -luuid -o .test .test.c >/dev/null 2>&1 &&	\
+		./.test && echo " passed." || ( echo " failed."; echo;	\
 		echo "Please install libuuid"; exit 1)
 	@rm -f .test.c .test.o
 

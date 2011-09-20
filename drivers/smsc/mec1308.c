@@ -85,21 +85,16 @@ int mec1308_get_sioport(struct platform_intf *intf, uint16_t *port)
 	for (i = 0; i < ARRAY_SIZE(ports); i++) {
 		uint8_t tmp8;
 
-		mec1308_sio_enter(intf, ports[i]);
-
 		/*
-		 * If entry is successful, the data port will read back 0x00
-		 * and the index port will read back the last value written to
-		 * it (the key itself).
+		 * Only after config mode has been successfully entered, the
+		 * index port will read back the last value written to it.
+		 * So we will attempt to enter config mode, set the index
+		 * register, and see if the index register retains the value.
 		 */
+		mec1308_sio_enter(intf, ports[i]);
+		io_write8(intf, ports[i], SIO_LDNSEL);
 		io_read8(intf, ports[i], &tmp8);
-		if (tmp8 != MEC1308_SIO_ENTRY_KEY) {
-			in_sio_cfgmode = 0;
-			continue;
-		}
-
-		io_read8(intf, ports[i] + 1, &tmp8);
-		if (tmp8 != 0x00) {
+		if ((tmp8 != SIO_LDNSEL)) {
 			in_sio_cfgmode = 0;
 			continue;
 		}

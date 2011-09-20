@@ -37,6 +37,7 @@ static struct sio_id superio_ids[] = {
 	{ "nuvoton", "npce781", 1, { 0xfc, 0x00 } },
 	{ "smsc", "mec1308", 2, { 0x2d, 0x00 } },
 	{ "smsc", "mec1308", 2, { 0x4d, 0x01 } },
+	{ "smsc", "mec1310", 2, { 0x04, 0x02 } },
 };
 
 uint8_t sio_read(struct platform_intf *intf, uint16_t port, uint8_t reg)

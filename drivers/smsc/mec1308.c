@@ -142,8 +142,11 @@ int mec1308_detect(struct platform_intf *intf)
 	case 0x4d01:
 		lprintf(LOG_DEBUG, "%s: found mec1308\n", __func__);
 		break;
+	case 0x0402:
+		lprintf(LOG_DEBUG, "%s: found mec1310\n", __func__);
+		break;
 	default:
-		lprintf(LOG_DEBUG, "%s: failed to detect mec1308\n", __func__);
+		lprintf(LOG_DEBUG, "%s: failed to detect mec13xx\n", __func__);
 		return 0;
 	}
 

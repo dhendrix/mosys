@@ -254,7 +254,9 @@ int spd_print_field_ddr3(struct platform_intf *intf, struct kv_pair *kv,
 		memset(speeds, 0, sizeof(speeds));
 		one_added = 0;
 		for (i = 0; possible_mhz[i].val != 0; i++) {
-			if (possible_mhz[i].val <= mhz) {
+			double min = possible_mhz[i].val * 0.99;
+
+			if (min <= mhz) {
 				if (one_added) {
 					strcat(speeds, ", ");
 				}

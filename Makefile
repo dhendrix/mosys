@@ -1025,27 +1025,28 @@ test: $(vmlinux-all) libcmockery.a
 	genhtml -o $(GENHTML_OUTPUT_DIR)/ $(TESTPROGRAM).info
 	@echo "Check results in $(GENHTML_OUTPUT_DIR)/index.html"
 
-define LIBUUID_TEST
-#include <uuid/uuid.h>
-int main(void)
-{
-	uuid_t uuid;
-	uuid_parse("88888888-4444-4444-4444-121212121212", uuid);
-	return 0;
-}
-endef
-export LIBUUID_TEST
-
-test_libuuid:
-	@printf "Testing libuuid..."
-	@echo "$$LIBUUID_TEST" > .test.c
-	@$(CC) $(CFLAGS) -luuid -o .test .test.c >/dev/null 2>&1 &&	\
-		./.test && echo " passed." || ( echo " failed."; echo;	\
-		echo "Please install libuuid"; exit 1)
-	@rm -f .test.c .test.o
-
-libcheck: test_libuuid
-	@echo ""
+#define LIBUUID_TEST
+##include <uuid/uuid.h>
+#int main(void)
+#{
+#	uuid_t uuid;
+#	uuid_parse("88888888-4444-4444-4444-121212121212", uuid);
+#	return 0;
+#}
+#endef
+#export LIBUUID_TEST
+#
+#test_libuuid:
+#	@printf "Testing libuuid..."
+#	@echo "$$LIBUUID_TEST" > .test.c
+#	@$(CC) $(CFLAGS) -luuid -o .test .test.c >/dev/null 2>&1 &&	\
+#		./.test && echo " passed." || ( echo " failed."; echo;	\
+#		echo "Please install libuuid"; exit 1)
+#	@rm -f .test.c .test.o
+#
+#libcheck: test_libuuid
+#	@echo ""
+libcheck:
 
 # Declare the contents of the .PHONY variable as phony.  We keep that
 # information in a variable so we can use it in if_changed and friends.

@@ -51,6 +51,7 @@ struct platform_cmd *lumpy_sub[] = {
 };
 
 static const char *hwids[] = {
+	"X86 LUMPY",
 };
 
 int lumpy_probe(struct platform_intf *intf)
@@ -60,12 +61,10 @@ int lumpy_probe(struct platform_intf *intf)
 	if (probed)
 		return status;
 
-#if 0
 	if (probe_hwid(hwids)) {
 		status = 1;
 		goto lumpy_probe_exit;
 	}
-#endif
 
 	if (probe_smbios(intf, lumpy_id_list)) {
 		status = 1;

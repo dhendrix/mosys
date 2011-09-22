@@ -99,7 +99,7 @@ int mec1308_get_sioport(struct platform_intf *intf, uint16_t *port)
 		io_write8(intf, ports[i], SIO_CHIPID1);
 		io_read8(intf, ports[i] + 1, &tmp8);
 		io_read8(intf, ports[i], &tmp8);
-		if ((tmp8 != SIO_LDNSEL)) {
+		if ((tmp8 != SIO_CHIPID1)) {
 			in_sio_cfgmode = 0;
 			continue;
 		}

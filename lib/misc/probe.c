@@ -67,15 +67,17 @@ int probe_hwid(const char *hwids[])
 
 int probe_smbios(struct platform_intf *intf, const char *ids[])
 {
-	char *id;
+	static char *id = NULL;
 	int ret = 0;
 
-	/* Attempt to obtain platform ID string using sysinfo callback */
-	if (intf && intf->cb && intf->cb->sysinfo && intf->cb->sysinfo->name)
-		id = intf->cb->sysinfo->name(intf);
+	if (id)
+		goto probe_smbios_cmp;
 
-	/* Attempt to obtain platform ID string using raw SMBIOS */
-	if (!id) {
+	/* Attempt platform-specific SMBIOS handler if one exists, else use the
+	 * default approach. */
+	if (intf->cb->smbios && intf->cb->smbios->system_name) {
+		id = intf->cb->smbios->system_name(intf);
+	} else {
 		id = smbios_find_string(intf,
 		                       SMBIOS_TYPE_SYSTEM,
 		                       1,
@@ -83,8 +85,10 @@ int probe_smbios(struct platform_intf *intf, const char *ids[])
 		                       SMBIOS_LEGACY_ENTRY_LEN);
 	}
 
+probe_smbios_cmp:
 	if (!id) {
 		ret = 0;
+		lprintf(LOG_SPEW, "%s: cannot find product name\n", __func__);
 	} else if (strlfind(id, ids, 0)) {
 		ret = 1;
 		lprintf(LOG_DEBUG, "%s: matched id \"%s\"\n", __func__, id);

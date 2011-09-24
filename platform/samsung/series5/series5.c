@@ -123,7 +123,7 @@ struct platform_cb samsung_series5_cb = {
 
 struct platform_intf platform_samsung_series5 = {
 	.type		= PLATFORM_X86_64,
-	.name		= "alex",
+	.name		= "Alex",
 	.id_list	= samsung_series5_id_list,
 	.sub		= samsung_series5_sub,
 	.cb		= &samsung_series5_cb,

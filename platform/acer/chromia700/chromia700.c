@@ -121,7 +121,7 @@ struct platform_cb acer_chromia700_cb = {
 
 struct platform_intf platform_acer_chromia700 = {
 	.type		= PLATFORM_X86_64,
-	.name		= "AGZ",
+	.name		= "ZGB",
 	.id_list	= acer_chromia700_id_list,
 	.sub		= acer_chromia700_sub,
 	.cb		= &acer_chromia700_cb,

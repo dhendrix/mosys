@@ -16,6 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
+#include "mosys/alloc.h"
 #include "mosys/platform.h"
 
 #include "lib/smbios.h"
@@ -32,10 +33,7 @@ static const char *google_cr48_get_vendor(struct platform_intf *intf)
 
 static const char *google_cr48_get_name(struct platform_intf *intf)
 {
-	if (intf->cb && intf->cb->smbios)
-		return intf->cb->smbios->system_name(intf);
-	else
-		return NULL;
+	return (const char *)mosys_strdup(intf->name);
 }
 
 static const char *google_cr48_get_family(struct platform_intf *intf)

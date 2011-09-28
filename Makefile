@@ -655,8 +655,8 @@ $(vmlinux-dirs): prepare scripts
 	$(Q)$(MAKE) $(build)=$@
 
 $(PROGRAM): $(vmlinux-all)
-	$(Q)$(CC) $(CFLAGS) $(EXTRA_CFLAGS) $(MOSYS_MACROS) $(LINUXINCLUDE) \
-	-o $@ $@.c $?
+	$(Q)$(CC) $(CFLAGS) $(EXTRA_CFLAGS) $(LDFLAGS) $(MOSYS_MACROS) \
+	$(LINUXINCLUDE) -o $@ $@.c $?
 
 VPD_ENCODE_DEFCONFIG	:= "vpd_encode.config"
 VPD_ENCODE_MACROS	:= -DPROGRAM=\"vpd_encode\" \
@@ -666,7 +666,7 @@ VPD_ENCODE_MACROS	:= -DPROGRAM=\"vpd_encode\" \
 # FIXME: should only depend on libs/ being a prerequisite
 vpd_encode: $(core-y) $(libs-y)
 	$(Q)$(CC) $(CFLAGS) $(VPD_ENCODE_MACROS) \
-	$(EXTRA_CFLAGS) -Itools/vpd_encode $(LINUXINCLUDE) \
+	$(EXTRA_CFLAGS) $(LDFLAGS) -Itools/vpd_encode $(LINUXINCLUDE) \
 	-o $@ tools/vpd_encode/$@.c $?
 	$(Q)cp .config $(VPD_ENCODE_DEFCONFIG)
 	$(Q)echo vpd_encode config file saved as "$(VPD_ENCODE_DEFCONFIG)"
@@ -1016,8 +1016,8 @@ test: LINUXINCLUDE += $(CMOCKERY_INCLUDE)
 test: MOSYS_MACROS += -DUNITTEST_DATA=\"$(UNITTEST_DATA)\"
 test: $(vmlinux-all) libcmockery.a
 	lcov --directory . --zerocounters
-	$(Q)$(CC) $(CFLAGS) $(EXTRA_CFLAGS) $(CFLAGS_GCOV) $(MOSYS_MACROS) \
-	$(LINUXINCLUDE) -o $(TESTPROGRAM) $(TESTPROGRAM).c $?
+	$(Q)$(CC) $(CFLAGS) $(EXTRA_CFLAGS) $(LDFLAGS) $(CFLAGS_GCOV) \
+	$(MOSYS_MACROS) $(LINUXINCLUDE) -o $(TESTPROGRAM) $(TESTPROGRAM).c $?
 	@echo "Running $(TESTPROGRAM)"
 	./$(TESTPROGRAM)
 	lcov -b $(shell pwd) --directory . --capture \
@@ -1058,7 +1058,7 @@ test: $(vmlinux-all) libcmockery.a
 #test_libfmap:
 #	@printf "Testing libfmap..."
 #	@echo "$$LIBFMAP_TEST" > .test.c
-#	@$(CC) $(CFLAGS) -lfmap -o .test .test.c >/dev/null 2>&1 &&	\
+#	@$(CC) $(CFLAGS) $(LDFLAGS) -lfmap -o .test .test.c >/dev/null 2>&1 &&	\
 #		./.test && echo " passed." || ( echo " failed."; echo;	\
 #		echo "Please install libfmap (http://flashmap.googlecode.com) "; exit 1)
 #	@rm -f .test.c .test.o

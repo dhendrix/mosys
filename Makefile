@@ -55,8 +55,8 @@ TESTPROGRAM=$(PROGRAM)_test
 # minor:	Minor release number; incremented for important changes
 # revision:	Patch number from version control system
 CORE	=  1
-MAJOR	=  1
-MINOR	= 02
+MAJOR	=  2
+MINOR	= 00
 SVNVERSION := $(shell ./scripts/getversion.sh -r)
 REVISION=$(SVNVERSION)
 
@@ -320,7 +320,7 @@ LINUXINCLUDE    := -Iinclude \
 
 KERNELVERSION	= $(RELEASENAME)
 
-EXTRA_CFLAGS	:= -luuid
+EXTRA_CFLAGS	:= -luuid -lfmap
 
 #EXTRA_CFLAGS	:= $(patsubst %,-l%, $(LIBRARIES))
 
@@ -1044,7 +1044,26 @@ test: $(vmlinux-all) libcmockery.a
 #		echo "Please install libuuid"; exit 1)
 #	@rm -f .test.c .test.o
 #
-#libcheck: test_libuuid
+#define LIBFMAP_TEST
+##include <inttypes.h>
+##include <fmap.h>
+#int main(void)
+#{
+#	struct fmap *fmap = fmap_create(0, 0, (uint8_t *)"test");
+#	return 0;
+#}
+#endef
+#export LIBFMAP_TEST
+#
+#test_libfmap:
+#	@printf "Testing libfmap..."
+#	@echo "$$LIBFMAP_TEST" > .test.c
+#	@$(CC) $(CFLAGS) -lfmap -o .test .test.c >/dev/null 2>&1 &&	\
+#		./.test && echo " passed." || ( echo " failed."; echo;	\
+#		echo "Please install libfmap (http://flashmap.googlecode.com) "; exit 1)
+#	@rm -f .test.c .test.o
+#
+#libcheck: test_libuuid test_libfmap
 #	@echo ""
 libcheck:
 

@@ -19,12 +19,13 @@
 #include <stdio.h>
 #include <unistd.h>
 
+#include <fmap.h>
+
 #include "mosys/alloc.h"
 #include "mosys/platform.h"
 #include "mosys/log.h"
 
 #include "lib/eeprom.h"
-#include "lib/fmap.h"
 #include "lib/smbios.h"
 
 #include "drivers/intel/series6.h"

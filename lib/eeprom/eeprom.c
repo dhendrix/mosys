@@ -16,6 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
+#include <fmap.h>
+
 #include "mosys/alloc.h"
 #include "mosys/log.h"
 #include "mosys/platform.h"
@@ -23,7 +25,6 @@
 #include "intf/mmio.h"
 
 #include "lib/eeprom.h"
-#include "lib/fmap.h"
 
 int eeprom_mmio_read(struct platform_intf *intf, struct eeprom *eeprom,
                      unsigned int offset, unsigned int len, void *data)

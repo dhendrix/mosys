@@ -23,13 +23,14 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <valstr.h>
+
 #include "mosys/alloc.h"
 #include "mosys/kv_pair.h"
 #include "mosys/platform.h"
 
 #include "lib/math.h"
 #include "lib/string.h"
-#include "lib/valstr.h"
 
 #include "lib/ddr2.h"
 #include "lib/spd.h"

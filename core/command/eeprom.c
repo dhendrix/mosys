@@ -25,6 +25,9 @@
 #include <limits.h>
 #include <sys/mman.h>
 
+#include <fmap.h>
+#include <valstr.h>
+
 #include "mosys/platform.h"
 #include "mosys/alloc.h"
 #include "mosys/log.h"
@@ -34,10 +37,8 @@
 #include "lib/crypto.h"
 #include "lib/eeprom.h"
 #include "lib/file.h"
-#include "lib/fmap.h"
 #include "lib/string.h"
 #include "lib/string_builder.h"
-#include "lib/valstr.h"
 
 static int eeprom_enet_info_cmd(struct platform_intf *intf,
                                 struct platform_cmd *cmd, int argc, char **argv)
@@ -251,7 +252,7 @@ static int eeprom_csum_cmd(struct platform_intf *intf,
 	struct crypto_algo *crypto = &sha1_algo;
 	uint8_t *digest = NULL;
 	char *name;
-	int fd = 0;
+	int fd = 0, digest_len = 0;
 	int rc = 0;
 
 	if (!intf->cb->eeprom || !intf->cb->eeprom->eeprom_list)
@@ -280,17 +281,18 @@ static int eeprom_csum_cmd(struct platform_intf *intf,
 			goto eeprom_csum_cmd_exit;
 		}
 
-		if (fmap_get_csum(blob, s.st_size, &digest, crypto) < 0) {
+		if ((digest_len = fmap_get_csum(blob, s.st_size, &digest)) < 0){
 			lprintf(LOG_DEBUG, "fmap_get_csum failed, checksumming "
 			                   "entire image\n");
 
 			crypto->init(crypto->ctx);
 			crypto->update(crypto->ctx, blob, s.st_size);
 			crypto->final(crypto->ctx);
-			digest = crypto->get_digest(crypto);
+			digest = (uint8_t *)crypto->get_digest(crypto);
+			digest_len = crypto->digest_len;
 		}
 
-		digest_str = buf2str(digest, crypto->digest_len);
+		digest_str = buf2str(digest, digest_len);
 
 		kv = kv_pair_new();
 		kv_pair_fmt(kv, "name", name);
@@ -328,17 +330,18 @@ static int eeprom_csum_cmd(struct platform_intf *intf,
 			continue;
 		}
 
-		if (fmap_get_csum(image, len, &digest, crypto) < 0) {
+		if ((digest_len = fmap_get_csum(image, len, &digest)) < 0) {
 			lprintf(LOG_DEBUG, "fmap_get_csum failed, checksumming "
 			                   "entire image\n");
 			                   
 			crypto->init(crypto->ctx);
 			crypto->update(crypto->ctx, image, len);
 			crypto->final(crypto->ctx);
-			digest = crypto->get_digest(crypto);
+			digest = (uint8_t *)crypto->get_digest(crypto);
+			digest_len = crypto->digest_len;
 		}
 
-		digest_str = buf2str(digest, crypto->digest_len);
+		digest_str = buf2str(digest, digest_len);
 
 		kv = kv_pair_new();
 		kv_pair_fmt(kv, "name", eeprom->name);

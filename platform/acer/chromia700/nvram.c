@@ -20,6 +20,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <valstr.h>
+
 #include "mosys/kv_pair.h"
 #include "mosys/log.h"
 #include "mosys/platform.h"
@@ -28,7 +30,6 @@
 #include "intf/io.h"
 
 #include "lib/math.h"
-#include "lib/valstr.h"
 
 enum cmos_device {
 	CMOS_DEVICE_NM10,

@@ -23,6 +23,8 @@
 
 #include <inttypes.h>
 
+#include <valstr.h>
+
 #include "mosys/alloc.h"
 #include "mosys/globals.h"
 #include "mosys/platform.h"
@@ -32,7 +34,6 @@
 
 #include "lib/common.h"
 #include "lib/smbios.h"
-#include "lib/valstr.h"
 
 struct smbios_eventlog_iterator {
 	int verbose;

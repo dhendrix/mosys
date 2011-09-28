@@ -20,6 +20,8 @@
 #include <stdlib.h>
 #include <inttypes.h>
 
+#include <valstr.h>
+
 #include "mosys/globals.h"
 #include "mosys/log.h"
 #include "mosys/kv_pair.h"
@@ -27,7 +29,6 @@
 
 #include "lib/smbios.h"
 #include "lib/smbios_tables.h"
-#include "lib/valstr.h"
 
 static int smbios_get_cmd(struct platform_intf *intf,
 			  struct platform_cmd *cmd, int argc, char **argv)

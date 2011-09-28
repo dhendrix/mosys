@@ -31,7 +31,6 @@ obj-y		+= acpi/
 obj-y		+= crypto/	# TODO: Make this a build option
 obj-y		+= eeprom/
 obj-y		+= file/
-obj-y		+= fmap/
 obj-y		+= math/
 obj-y		+= misc/
 obj-y		+= smbios/

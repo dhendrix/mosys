@@ -24,11 +24,12 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <valstr.h>
+
 #include "mosys/platform.h"
 #include "mosys/kv_pair.h"
 
 #include "lib/string.h"
-#include "lib/valstr.h"
 
 #include "lib/ddr3.h"
 #include "lib/spd.h"

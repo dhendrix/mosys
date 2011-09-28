@@ -1025,47 +1025,45 @@ test: $(vmlinux-all) libcmockery.a
 	genhtml -o $(GENHTML_OUTPUT_DIR)/ $(TESTPROGRAM).info
 	@echo "Check results in $(GENHTML_OUTPUT_DIR)/index.html"
 
-#define LIBUUID_TEST
-##include <uuid/uuid.h>
-#int main(void)
-#{
-#	uuid_t uuid;
-#	uuid_parse("88888888-4444-4444-4444-121212121212", uuid);
-#	return 0;
-#}
-#endef
-#export LIBUUID_TEST
-#
-#test_libuuid:
-#	@printf "Testing libuuid..."
-#	@echo "$$LIBUUID_TEST" > .test.c
-#	@$(CC) $(CFLAGS) -luuid -o .test .test.c >/dev/null 2>&1 &&	\
-#		./.test && echo " passed." || ( echo " failed."; echo;	\
-#		echo "Please install libuuid"; exit 1)
-#	@rm -f .test.c .test.o
-#
-#define LIBFMAP_TEST
-##include <inttypes.h>
-##include <fmap.h>
-#int main(void)
-#{
-#	struct fmap *fmap = fmap_create(0, 0, (uint8_t *)"test");
-#	return 0;
-#}
-#endef
-#export LIBFMAP_TEST
-#
-#test_libfmap:
-#	@printf "Testing libfmap..."
-#	@echo "$$LIBFMAP_TEST" > .test.c
-#	@$(CC) $(CFLAGS) $(LDFLAGS) -lfmap -o .test .test.c >/dev/null 2>&1 &&	\
-#		./.test && echo " passed." || ( echo " failed."; echo;	\
-#		echo "Please install libfmap (http://flashmap.googlecode.com) "; exit 1)
-#	@rm -f .test.c .test.o
-#
-#libcheck: test_libuuid test_libfmap
-#	@echo ""
-libcheck:
+define LIBUUID_TEST
+#include <uuid/uuid.h>
+int main(void)
+{
+	uuid_t uuid;
+	uuid_parse("88888888-4444-4444-4444-121212121212", uuid);
+	return 0;
+}
+endef
+export LIBUUID_TEST
+
+test_libuuid:
+	@echo "Testing libuuid..."
+	@echo "$$LIBUUID_TEST" > .uuid_test.c
+	@$(CC) $(CFLAGS) $(LDFLAGS) -luuid -o .uuid_test .uuid_test.c >/dev/null 2>&1 && \
+	echo "libuuid test passed." || \
+	( echo "libuuid test failed. Please install libuuid" ; exit 1)
+	@rm -f .test.c .test.o
+
+define LIBFMAP_TEST
+#include <inttypes.h>
+#include <fmap.h>
+int main(void)
+{
+	struct fmap *fmap = fmap_create(0, 0, (uint8_t *)"test");
+	return 0;
+}
+endef
+export LIBFMAP_TEST
+
+test_libfmap:
+	@echo "Testing libfmap..."
+	@echo "$$LIBFMAP_TEST" > .fmap_test.c
+	@$(CC) $(CFLAGS) $(LDFLAGS) -lfmap -o .fmap_test .fmap_test.c >/dev/null 2>&1 && \
+	echo "libfmap test passed." || \
+	( echo "libfmap test failed. Please install libfmap (http://flashmap.googlecode.com)"; exit 1 )
+	@rm -f .test.c .test.o
+
+libcheck: test_libuuid test_libfmap
 
 # Declare the contents of the .PHONY variable as phony.  We keep that
 # information in a variable so we can use it in if_changed and friends.

@@ -54,6 +54,7 @@ struct platform_cmd *samsung_series5_sub[] = {
 static const char *hwids[] = {
 	"{97A1FBD6-FDE1-4FC5-BB81-286608B90FCE}",
 	"SAMS ALEX",
+	"X86 ALEX TEST",
 	NULL
 };
 

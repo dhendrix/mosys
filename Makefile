@@ -1042,7 +1042,7 @@ test_libuuid:
 	@$(CC) $(CFLAGS) $(LDFLAGS) -luuid -o .uuid_test .uuid_test.c >/dev/null 2>&1 && \
 	echo "libuuid test passed." || \
 	( echo "libuuid test failed. Please install libuuid" ; exit 1)
-	@rm -f .test.c .test.o
+	@rm -f .uuid_test.c .uuid_test.o
 
 define LIBFMAP_TEST
 #include <inttypes.h>
@@ -1061,7 +1061,7 @@ test_libfmap:
 	@$(CC) $(CFLAGS) $(LDFLAGS) -lfmap -o .fmap_test .fmap_test.c >/dev/null 2>&1 && \
 	echo "libfmap test passed." || \
 	( echo "libfmap test failed. Please install libfmap (http://flashmap.googlecode.com)"; exit 1 )
-	@rm -f .test.c .test.o
+	@rm -f .fmap_test.c .fmap_test.o
 
 libcheck: test_libuuid test_libfmap
 

@@ -99,18 +99,26 @@ struct platform_op {
 struct sensor;
 struct sensor_array;
 struct sensor_cb {
-	int (*list_thermal)(struct platform_intf *intf);
-	int (*list_voltage)(struct platform_intf *intf);
-	int (*list_fantach)(struct platform_intf *intf);
-	int (*list_current)(struct platform_intf *intf);
-	int (*list_power)(struct platform_intf *intf);
-	int (*set_fantach)(struct platform_intf *intf,
-			   const char *name, const char *spec);
-	int (*set_voltage)(struct platform_intf *intf, const char *name, 
-			   const char *param, double val);
-	int (*set_thermal)(struct platform_intf *intf, const char *name,
-			   const char *param, double val);
 	struct sensor_array *(*get_sensors)(struct platform_intf *intf);
+	void (*add_sensors)(struct platform_intf *intf,
+	                    struct sensor_array *array);
+
+	/* methods for reading data and setting thresholds */
+	int (*read_fantach)(struct platform_intf *intf, const char *name);
+	int (*set_fantach)(struct platform_intf *intf, const char *sensor_name,
+	                   const char *param, double val);
+
+	int (*read_thermal)(struct platform_intf *intf, const char *name);
+	int (*set_thermal)(struct platform_intf *intf, const char *sensor_name,
+	                   const char *param, double val);
+
+	int (*read_voltage)(struct platform_intf *intf, const char *name);
+	int (*set_voltage)(struct platform_intf *intf, const char *sensor_name,
+	                   const char *param, double val);
+
+	/* current and power are typically not set explicitly */
+	int (*read_current)(struct platform_intf *intf, const char *name);
+	int (*read_power)(struct platform_intf *intf, const char *name);
 };
 
 /*

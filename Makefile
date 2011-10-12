@@ -327,7 +327,7 @@ EXTRA_CFLAGS	:= -luuid -lfmap
 MOSYS_MACROS	:= -DPROGRAM=\"$(PROGRAM)\" \
 		   -DVERSION=\"$(KERNELVERSION)\"
 
-KBUILD_CPPFLAGS := -D__KERNEL__
+KBUILD_CPPFLAGS := 
 
 KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -fno-strict-aliasing -fno-common \

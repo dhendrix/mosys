@@ -45,6 +45,7 @@ struct platform_cmd *stumpy_sub[] = {
 	&cmd_memory,
 //	&cmd_nvram,
 	&cmd_platform,
+	&cmd_sensor,
 	&cmd_smbios,
 	&cmd_vpd,
 	NULL
@@ -86,6 +87,7 @@ static int stumpy_setup_post(struct platform_intf *intf)
 		lprintf(LOG_INFO, "VPD not found\n");
 
 	rc |= stumpy_eeprom_setup(intf);
+	rc |= stumpy_superio_setup(intf);
 
 	if (rc)
 		lprintf(LOG_DEBUG, "%s: failed\n", __func__);
@@ -94,6 +96,8 @@ static int stumpy_setup_post(struct platform_intf *intf)
 
 static int stumpy_destroy(struct platform_intf *intf)
 {
+	stumpy_superio_destroy(intf);
+
 	if (probed_platform_id)
 		free((char *)probed_platform_id);
 
@@ -107,6 +111,7 @@ struct platform_cb stumpy_cb = {
 	.memory		= &stumpy_memory_cb,
 //	.nvram		= &stumpy_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,
+	.sensor		= &stumpy_sensor_cb,
 	.sysinfo 	= &stumpy_sysinfo_cb,
 	.vpd		= &stumpy_vpd_cb,
 };

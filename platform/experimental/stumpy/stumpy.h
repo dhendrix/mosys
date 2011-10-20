@@ -29,10 +29,13 @@ extern struct eeprom_cb stumpy_eeprom_cb;	/* eeprom.c */
 //extern struct gpio_cb stumpy_gpio_cb;		/* gpio.c */
 extern struct memory_cb stumpy_memory_cb;	/* memory.c */
 extern struct nvram_cb stumpy_nvram_cb;		/* nvram.c */
+extern struct sensor_cb stumpy_sensor_cb;	/* sensors.c */
 extern struct sysinfo_cb stumpy_sysinfo_cb;	/* sysinfo.c */
 extern struct vpd_cb stumpy_vpd_cb;		/* vpd.c */
 
 /* functions called by setup routines */
+extern int stumpy_superio_setup(struct platform_intf *intf);
+extern void stumpy_superio_destroy(struct platform_intf *intf);
 extern int stumpy_vpd_setup(struct platform_intf *intf);
 extern int stumpy_eeprom_setup(struct platform_intf *intf);
 

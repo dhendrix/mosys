@@ -56,9 +56,17 @@ static const char *hwids[] = {
 int aebl_tegra2_probe(struct platform_intf *intf)
 {
 	static int status = 0, probed = 0;
+	const char **id;
 
 	if (probed)
 		return status;
+
+	for (id = aebl_tegra2_id_list; id && *id; id++) {
+		if (probe_cpuinfo(intf, "Hardware", *id)) {
+			status = 1;
+			goto aebl_tegra2_probe_exit;
+		}
+	}
 
 #if 0
 	if (probe_hwid(hwids)) {
@@ -66,11 +74,6 @@ int aebl_tegra2_probe(struct platform_intf *intf)
 		goto aebl_tegra2_probe_exit;
 	}
 #endif
-
-	if (probe_cpuinfo(intf, "Hardware", "aebl")) {
-		status = 1;
-		goto aebl_tegra2_probe_exit;
-	}
 
 aebl_tegra2_probe_exit:
 	probed = 1;

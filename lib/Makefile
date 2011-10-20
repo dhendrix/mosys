@@ -34,6 +34,7 @@ obj-y		+= eeprom/
 obj-y		+= file/
 obj-y		+= math/
 obj-y		+= misc/
+obj-y		+= sensors/
 obj-y		+= smbios/
 obj-y		+= spd/
 obj-y		+= string/

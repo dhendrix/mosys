@@ -106,7 +106,11 @@ struct sensor_cb {
 	/* methods for reading data and setting thresholds */
 	int (*read_fantach)(struct platform_intf *intf, const char *name);
 	int (*set_fantach)(struct platform_intf *intf, const char *sensor_name,
-	                   const char *param, double val);
+	                   unsigned int percent);
+	int (*set_fantach_auto)(struct platform_intf *intf,
+	                        const char *sensor_name);
+	int (*set_fantach_off)(struct platform_intf *intf,
+	                       const char *sensor_name);
 
 	int (*read_thermal)(struct platform_intf *intf, const char *name);
 	int (*set_thermal)(struct platform_intf *intf, const char *sensor_name,

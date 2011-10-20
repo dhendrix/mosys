@@ -3,3 +3,7 @@
 config EC_ITE_IT8500
 	bool "IT8500"
 	default n
+
+config SUPERIO_ITE_IT8772
+	bool "IT8772"
+	default n

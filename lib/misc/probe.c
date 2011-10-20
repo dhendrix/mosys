@@ -102,6 +102,8 @@ int probe_cpuinfo(struct platform_intf *intf,
 	FILE *cpuinfo;
 	int ret = 0;
 	char path[PATH_MAX];
+	int key_found = 0;
+	char line[LINE_MAX], *ptr;
 
 	sprintf(path, "%s/proc/cpuinfo", mosys_get_root_prefix());
 	cpuinfo = fopen(path, "rb");
@@ -109,22 +111,36 @@ int probe_cpuinfo(struct platform_intf *intf,
 		return 0;
 
 	while (!feof(cpuinfo)) {
-		char line[LINE_MAX], *ptr;
-
 		if (fgets(line, sizeof(line), cpuinfo) == NULL)
 			break;
 		ptr = line;
 
-		if (strncmp(ptr, key, strlen(key)))
-			continue;
+		if (!strncmp(ptr, key, strlen(key))) {
+			key_found = 1;
+			break;
+		}
+	}
+
+	if (key_found) {
+		int i;
+		char tmp[LINE_MAX];
 
 		ptr += strlen(key);
 		while (isspace((unsigned char)*ptr) || (*ptr == ':'))
 			ptr++;
 
-		if (!strncmp(ptr, value, strlen(value))) {
+		memset(tmp, 0, sizeof(tmp));
+		for (i = 0; !isspace((unsigned char)*ptr); i++) {
+			tmp[i] = *ptr;
+			ptr++;
+		}
+
+		lprintf(LOG_DEBUG, "\"%s\" == \"%s\" ? ", tmp, value);
+		if (strncmp(tmp, value, strlen(value))) {
+			lprintf(LOG_DEBUG, "no\n");
+		} else {
+			lprintf(LOG_DEBUG, "yes\n");
 			ret = 1;
-			break;
 		}
 	}
 

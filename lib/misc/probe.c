@@ -136,7 +136,7 @@ int probe_cpuinfo(struct platform_intf *intf,
 		}
 
 		lprintf(LOG_DEBUG, "\"%s\" == \"%s\" ? ", tmp, value);
-		if (strncmp(tmp, value, strlen(value))) {
+		if (strncasecmp(tmp, value, strlen(value))) {
 			lprintf(LOG_DEBUG, "no\n");
 		} else {
 			lprintf(LOG_DEBUG, "yes\n");

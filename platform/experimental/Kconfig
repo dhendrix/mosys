@@ -14,6 +14,12 @@ config EXPERIMENTAL_AEBL
 	bool "aebl tegra2 reference board"
 	default n
 
+config EXPERIMENTAL_ASYMPTOTE
+	depends on PLATFORM_ARCH_ARMEL && PLATFORM_EXPERIMENTAL
+	select SOC_NVIDIA_TEGRA2
+	bool "asymptote tegra2"
+	default n
+
 config EXPERIMENTAL_KAEN
 	depends on PLATFORM_ARCH_ARMEL && PLATFORM_EXPERIMENTAL
 	select SOC_NVIDIA_TEGRA2

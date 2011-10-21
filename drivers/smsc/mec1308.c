@@ -30,6 +30,8 @@
  * EVEN IF SUN HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
  *
  * Note: This file shares some code with the Flashrom project.
+ *
+ * mec1308: common routines for mec1308
  */
 
 #include <inttypes.h>
@@ -171,4 +173,38 @@ uint16_t mec1308_get_iobad(struct platform_intf *intf,
 	if (!in_sio_cfgmode_before)
 		mec1308_sio_exit(intf, port);
 	return iobad;
+}
+
+const char *mec1308_sio_name(struct platform_intf *intf)
+{
+	const struct sio_id *id = NULL;
+	uint16_t ec_port;
+
+	if (mec1308_get_sioport(intf, &ec_port) <= 0)
+		return NULL;
+
+	mec1308_sio_enter(intf, ec_port);
+	id = get_sio_id(intf, ec_port);
+	if (!id)
+		return "Unknown";
+
+	mec1308_sio_exit(intf, ec_port);
+	return id->name;
+}
+
+const char *mec1308_sio_vendor(struct platform_intf *intf)
+{
+	const struct sio_id *id = NULL;
+	uint16_t ec_port;
+
+	if (mec1308_get_sioport(intf, &ec_port) <= 0)
+		return NULL;
+
+	mec1308_sio_enter(intf, ec_port);
+	id = get_sio_id(intf, ec_port);
+	if (!id)
+		return "Unknown";
+
+	mec1308_sio_exit(intf, ec_port);
+	return id->vendor;
 }

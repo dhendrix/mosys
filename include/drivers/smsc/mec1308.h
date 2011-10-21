@@ -38,7 +38,31 @@
 #define MEC1308_SIO_ENTRY_KEY	0x55
 #define MEC1308_SIO_EXIT_KEY	0xaa
 
-#define MEC1308_LDN_MBX		0x09	/* Mailbox interface */
+#define MEC1308_DEFAULT_SIO_PORT		0x2e
+#define MEC1308_LDN_MBX				0x09	/* Mailbox interface */
+#define MEC1308_DEFAULT_MBX_IOBAD		0xa00
+
+/* For shared mailbox interface spec */
+
+#define MEC1308_MBX_REG_CMD			0x82
+#define MEC1308_MBX_REG_EXTCMD			0x83
+#define MEC1308_MBX_REG_DATA_START		0x84
+#define MEC1308_MBX_REG_DATA_END		0x91
+#define MEC1308_MBX_DATA_LEN			(MEC1308_MBX_REG_DATA_END - \
+                                                 MEC1308_MBX_REG_DATA_START)
+
+#define MEC1308_MBX_CMD_FW_VERSION		0x83
+#define MEC1308_MBX_CMD_FAN_RPM			0xBB
+
+#define MEC1308_MAX_TIMEOUT_US			2000000	/* arbitrarily picked */
+#define MEC1308_DELAY_US			5000
+
+#define MEC1308_MBX_CMD_PASSTHRU		0x55	/* start command */
+#define MEC1308_MBX_CMD_PASSTHRU_SUCCESS	0xaa	/* success code */
+#define MEC1308_MBX_CMD_PASSTHRU_FAIL		0xfe	/* failure code */
+#define MEC1308_MBX_CMD_PASSTHRU_ENTER		"PathThruMode"	/* not a typo */
+#define MEC1308_MBX_CMD_PASSTHRU_START		"Start"
+#define MEC1308_MBX_CMD_PASSTHRU_EXIT		"End_Mode"
 
 struct platform_intf;	/* forward declare */
 
@@ -81,5 +105,74 @@ extern int mec1308_detect(struct platform_intf *intf);
  */
 extern uint16_t mec1308_get_iobad(struct platform_intf *intf,
                                   uint16_t port, uint8_t ldn);
+
+/*
+ * mec1308_sio_name - return EC name string via SuperIO chip ID lookup
+ *
+ * @intf:	platform interface
+ *
+ * Note: this function uses the common "mec1308" name, but it can also work
+ * with other chips in this family, e.g. mec1310.
+ *
+ * returns pointer to name string if successful
+ * returns NULL to indicate error
+ */
+extern const char *mec1308_sio_name(struct platform_intf *intf);
+
+/*
+ * mec1308_sio_vendor - return EC vendor string via SuperIO vendor ID lookup
+ *
+ * @intf:	platform interface
+ *
+ * Note: this function uses the common "mec1308" name, but it can also work
+ * with other chips in this family, e.g. mec1310.
+ *
+ * returns pointer to vendor string if successful
+ * returns NULL to indicate error
+ */
+extern const char *mec1308_sio_vendor(struct platform_intf *intf);
+
+/*
+ * mec1308_mbx_fw_version - obtain EC firmware version via mailbox
+ *
+ * @intf:	platform interface
+ * @buf:	buffer to store version string in
+ * @len:	bytes in version string
+ *
+ * This function issues a command to the EC via the mailbox interface
+ * and copies the version info from the mailbox data registers into buf.
+ *
+ * returns 0 if successful
+ * returns <0 to indicate error
+ */
+extern int mec1308_mbx_fw_version(struct platform_intf *intf,
+                                  uint8_t *buf, int len);
+
+/*
+ * mec1308_mbx_setup - setup internal variables (e.g. mailbox address)
+ *
+ * @intf:	platform interface
+ *
+ * returns 0 if successful
+ * returns <0 to indicate error
+ */
+extern int mec1308_mbx_setup(struct platform_intf *intf);
+
+/*
+ * mec1308_mbx_teardown - release any resources used
+ *
+ * @intf:	platform interface
+ */
+extern void mec1308_mbx_teardown(struct platform_intf *intf);
+
+/*
+ * mec1308_mbx_exit_passthru_mode - exit passthru mode
+ *
+ * @intf:	platform interface
+ *
+ * returns 0 if successful
+ * returns <0 to indicate failure
+ */
+extern int mec1308_mbx_exit_passthru_mode(struct platform_intf *intf);
 
 #endif	/* MOSYS_DRIVERS_EC_SMSC_MEC1308_H__ */

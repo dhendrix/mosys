@@ -39,6 +39,7 @@ const char *lumpy_id_list[] = {
 };
 
 struct platform_cmd *lumpy_sub[] = {
+	&cmd_ec,
 	&cmd_eeprom,
 //	&cmd_gpio,
 //	&cmd_i2c,
@@ -86,6 +87,7 @@ static int lumpy_setup_post(struct platform_intf *intf)
 		lprintf(LOG_INFO, "VPD not found\n");
 
 	rc |= lumpy_eeprom_setup(intf);
+	rc |= lumpy_ec_setup(intf);
 
 	if (rc)
 		lprintf(LOG_DEBUG, "%s: failed\n", __func__);
@@ -97,11 +99,12 @@ static int lumpy_destroy(struct platform_intf *intf)
 	if (probed_platform_id)
 		free((char *)probed_platform_id);
 
-	/* FIXME: unmap vpd stuff */
+	lumpy_ec_destroy(intf);
 	return 0;
 }
 
 struct platform_cb lumpy_cb = {
+	.ec		= &lumpy_ec_cb,
 	.eeprom		= &lumpy_eeprom_cb,
 //	.gpio		= &lumpy_gpio_cb,
 	.memory		= &lumpy_memory_cb,

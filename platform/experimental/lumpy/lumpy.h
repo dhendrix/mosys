@@ -25,6 +25,7 @@
 #define LUMPY_HOST_FIRMWARE_ROM_SIZE		(8192 * 1024)
 
 /* platform callbacks */
+extern struct ec_cb lumpy_ec_cb;		/* ec.c */
 extern struct eeprom_cb lumpy_eeprom_cb;	/* eeprom.c */
 //extern struct gpio_cb lumpy_gpio_cb;		/* gpio.c */
 extern struct memory_cb lumpy_memory_cb;	/* memory.c */
@@ -34,6 +35,8 @@ extern struct vpd_cb lumpy_vpd_cb;		/* vpd.c */
 
 /* functions called by setup routines */
 extern int lumpy_vpd_setup(struct platform_intf *intf);
+extern int lumpy_ec_setup(struct platform_intf *intf);
+extern int lumpy_ec_destroy(struct platform_intf *intf);
 extern int lumpy_eeprom_setup(struct platform_intf *intf);
 
 #endif /* EXPERIMENTAL_LUMPY_H_ */

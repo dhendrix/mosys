@@ -53,6 +53,7 @@ struct platform_cmd *lumpy_sub[] = {
 
 static const char *hwids[] = {
 	"X86 LUMPY",
+	NULL
 };
 
 static const char *frids[] = {

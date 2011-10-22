@@ -37,6 +37,7 @@
 #include <limits.h>
 
 #include "mosys/alloc.h"
+#include "mosys/callbacks.h"
 #include "mosys/globals.h"
 #include "mosys/log.h"
 #include "mosys/platform.h"
@@ -62,6 +63,45 @@ int probe_hwid(const char *hwids[])
 		lprintf(LOG_DEBUG, "%s: matched id \"%s\"\n", __func__, id);
 	}
 	free(id);
+	return ret;
+}
+
+int probe_frid(const char *hwids[])
+{
+	int ret = 0;
+	off_t len;
+	static char *id = NULL;
+
+	if (!id) {
+		char *raw_frid = NULL, *tmp;
+
+		if (acpi_get_frid(&raw_frid) < 0)
+			goto probe_frid_done;
+
+		/* FRID begins with platform name, followed by a dot, followed
+		 * by revision ID */
+		tmp = strchr(raw_frid, '.');
+		if (!tmp) {
+			lprintf(LOG_DEBUG, "%s: Invalid FRID: \"%s\"\n",
+			                   __func__, raw_frid);
+			free(raw_frid);
+			goto probe_frid_done;
+		}
+
+		len = tmp - raw_frid + 1;
+		id = mosys_malloc(len + 1);
+		snprintf(id, len, "%s", raw_frid);
+		lprintf(LOG_DEBUG, "%s: Platform name: \"%s\"\n", __func__, id);
+		free(raw_frid);
+		add_destroy_callback(free, id);
+	}
+
+	if (strlfind(id, hwids, 0)) {
+		lprintf(LOG_DEBUG, "%s: matched id \"%s\"\n", __func__, id);
+		ret = 1;
+	}
+
+probe_frid_done:
 	return ret;
 }
 

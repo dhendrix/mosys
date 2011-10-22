@@ -33,6 +33,17 @@ struct platform_intf;
 extern int probe_hwid(const char *hwids[]);
 
 /*
+ * probe_frid - attempt to match platform to chromeos firmware revision id
+ *
+ * @hwids:	null-terminated list of hardware IDs
+ *
+ * returns 1 to indicate match
+ * returns 0 to indicate no match
+ * returns <0 to indicate error
+ */
+extern int probe_frid(const char *hwids[]);
+
+/*
  * probe_smbios - probe smbios for system info
  *
  * @ids:	null-terminated list of ids

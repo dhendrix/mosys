@@ -58,6 +58,11 @@ static const char *hwids[] = {
 	NULL
 };
 
+static const char *frids[] = {
+	"ZGB",
+	NULL
+};
+
 int acer_chromia700_probe(struct platform_intf *intf)
 {
 	static int status = 0, probed = 0;
@@ -66,6 +71,11 @@ int acer_chromia700_probe(struct platform_intf *intf)
 		return status;
 
 	if (probe_hwid(hwids)) {
+		status = 1;
+		goto acer_chromia700_probe_exit;
+	}
+
+	if (probe_frid(frids)) {
 		status = 1;
 		goto acer_chromia700_probe_exit;
 	}

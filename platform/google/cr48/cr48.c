@@ -55,6 +55,11 @@ static const char *hwids[] = {
 	NULL
 };
 
+static const char *frids[] = {
+	"Mario",
+	NULL
+};
+
 int google_cr48_probe(struct platform_intf *intf)
 {
 	static int status = 0, probed = 0;
@@ -63,6 +68,11 @@ int google_cr48_probe(struct platform_intf *intf)
 		return status;
 
 	if (probe_hwid(hwids)) {
+		status = 1;
+		goto google_cr48_probe_exit;
+	}
+
+	if (probe_frid(frids)) {
 		status = 1;
 		goto google_cr48_probe_exit;
 	}

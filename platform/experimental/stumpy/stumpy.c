@@ -55,6 +55,11 @@ static const char *hwids[] = {
 	"X86 STUMPY",
 };
 
+static const char *frids[] = {
+	"Stumpy",
+	NULL
+};
+
 int stumpy_probe(struct platform_intf *intf)
 {
 	static int status = 0, probed = 0;
@@ -63,6 +68,11 @@ int stumpy_probe(struct platform_intf *intf)
 		return status;
 
 	if (probe_hwid(hwids)) {
+		status = 1;
+		goto stumpy_probe_exit;
+	}
+
+	if (probe_frid(frids)) {
 		status = 1;
 		goto stumpy_probe_exit;
 	}

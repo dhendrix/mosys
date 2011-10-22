@@ -58,6 +58,12 @@ static const char *hwids[] = {
 	NULL
 };
 
+static const char *frids[] = {
+	"Alex",
+	"Google_Alex",
+	NULL
+};
+
 int samsung_series5_probe(struct platform_intf *intf)
 {
 	static int status = 0, probed = 0;
@@ -66,6 +72,11 @@ int samsung_series5_probe(struct platform_intf *intf)
 		return status;
 
 	if (probe_hwid(hwids)) {
+		status = 1;
+		goto samsung_series5_probe_exit;
+	}
+
+	if (probe_frid(frids)) {
 		status = 1;
 		goto samsung_series5_probe_exit;
 	}

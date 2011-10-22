@@ -56,7 +56,7 @@ TESTPROGRAM=$(PROGRAM)_test
 # revision:	Patch number from version control system
 CORE	=  1
 MAJOR	=  2
-MINOR	= 00
+MINOR	= 01
 SVNVERSION := $(shell ./scripts/getversion.sh -r)
 REVISION=$(SVNVERSION)
 

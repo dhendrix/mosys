@@ -22,6 +22,7 @@
 /* Chrome OS ACPI stuff */
 #define CHROMEOS_ACPI_PATH	"/sys/devices/platform/chromeos_acpi/"
 #define CHROMEOS_HWID_MAXLEN	256
+#define CHROMEOS_FRID_MAXLEN	256
 
 /*
  * acpi_get_hwid - retrieve hardware ID and store in a newly allocated buffer
@@ -32,5 +33,15 @@
  * returns <0 to indicate error
  */
 extern int acpi_get_hwid(char **buf);
+
+/*
+ * acpi_get_frid - retrieve FRID and store in a newly allocated buffer
+ *
+ * @buf:	buffer to store hardware ID in
+ *
+ * returns length of hardware id to indicate success
+ * returns <0 to indicate error
+ */
+extern int acpi_get_frid(char **buf);
 
 #endif /* MOSYS_LIB_ACPI_H__ */

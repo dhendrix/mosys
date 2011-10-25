@@ -320,7 +320,8 @@ LINUXINCLUDE    := -Iinclude \
 
 KERNELVERSION	= $(RELEASENAME)
 
-EXTRA_CFLAGS	:= -luuid -lfmap
+FMAP_LINKOPT	?= -lfmap-0.3
+EXTRA_CFLAGS	:= -luuid $(FMAP_LINKOPT)
 
 #EXTRA_CFLAGS	:= $(patsubst %,-l%, $(LIBRARIES))
 
@@ -1058,7 +1059,7 @@ export LIBFMAP_TEST
 test_libfmap:
 	@echo "Testing libfmap..."
 	@echo "$$LIBFMAP_TEST" > .fmap_test.c
-	@$(CC) $(CFLAGS) $(LDFLAGS) -lfmap -o .fmap_test .fmap_test.c >/dev/null 2>&1 && \
+	@$(CC) $(CFLAGS) $(LDFLAGS) $(FMAP_LINKOPT) -o .fmap_test .fmap_test.c >/dev/null 2>&1 && \
 	echo "libfmap test passed." || \
 	( echo "libfmap test failed. Please install libfmap (http://flashmap.googlecode.com)"; exit 1 )
 	@rm -f .fmap_test.c .fmap_test

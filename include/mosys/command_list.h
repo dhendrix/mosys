@@ -25,6 +25,7 @@ struct platform_cmd;
 extern struct platform_cmd cmd_platform;
 extern struct platform_cmd cmd_i2c;
 extern struct platform_cmd cmd_gpio;
+extern struct platform_cmd cmd_hid;
 extern struct platform_cmd cmd_smbios;
 extern struct platform_cmd cmd_memory;
 extern struct platform_cmd cmd_cpu;

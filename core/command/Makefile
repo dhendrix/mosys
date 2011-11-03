@@ -30,6 +30,7 @@
 obj-y		+= ec.o
 obj-y		+= eeprom.o
 obj-y		+= gpio.o
+obj-y		+= hid.o
 obj-y		+= i2c.o
 obj-y		+= memory.o
 obj-y		+= memory_spd.o

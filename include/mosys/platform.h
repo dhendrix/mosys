@@ -355,6 +355,19 @@ struct ec_cb {
 	const char *(*fw_version)(struct platform_intf *intf);
 };
 
+/* hid touchpad callbacks */
+struct hid_tp_cb {
+	const char *(*vendor)(struct platform_intf *intf);
+	const char *(*name)(struct platform_intf *intf);
+	const char *(*fw_version)(struct platform_intf *intf);
+	const char *(*hw_version)(struct platform_intf *intf);
+};
+
+/* hid callbacks */
+struct hid_cb {
+	struct hid_tp_cb *tp;
+};
+
 /* pci callbacks */
 struct pci_function_info;
 struct pci_cb {
@@ -378,6 +391,7 @@ struct platform_cb {
 	struct pci_cb *pci;		/* pci callbacks */
 	struct vpd_cb *vpd;		/* vpd callbacks */
 	struct ec_cb *ec;		/* ec callbacks */
+	struct hid_cb *hid;		/* hid callbacks */
 };
 
 /*

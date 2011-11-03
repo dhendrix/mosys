@@ -1,0 +1,5 @@
+# cypress config variables
+
+config TRACKPAD_CYPRESS_APA
+	bool "Cypress APA trackpad with I2C interface"
+	default n

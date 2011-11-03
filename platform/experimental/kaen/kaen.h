@@ -24,6 +24,7 @@
 
 /* platform callbacks */
 extern struct ec_cb kaen_ec_cb;				/* ec.c */
+extern struct hid_tp_cb kaen_hid_cb;			/* hid.c */
 //extern struct eeprom_cb kaen_tegra2_eeprom_cb;	/* eeprom.c */
 extern struct sysinfo_cb kaen_tegra2_sysinfo_cb;	/* sysinfo.c */
 //extern struct vpd_cb kaen_tegra2_vpd_cb;		/* vpd.c */

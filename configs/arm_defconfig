@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Mosys version: 1.2.00.389
-# Mon Oct 17 14:01:41 2011
+# Mosys version: 1.2.01.406
+# Wed Nov  2 20:09:23 2011
 #
 
 #
@@ -57,9 +57,11 @@ CONFIG_EXPERIMENTAL_SEABOARD=y
 #
 # Device Drivers
 #
+CONFIG_TRACKPAD_CYPRESS_APA=y
 # CONFIG_CHIPSET_INTEL_NM10 is not set
 # CONFIG_CHIPSET_INTEL_SERIES6 is not set
 # CONFIG_EC_ITE_IT8500 is not set
+# CONFIG_SUPERIO_ITE_IT8772 is not set
 # CONFIG_EC_NUVOTON_NPCE781 is not set
 # CONFIG_EC_SMSC_MEC1308 is not set
 

@@ -23,6 +23,7 @@ config EXPERIMENTAL_ASYMPTOTE
 config EXPERIMENTAL_KAEN
 	depends on PLATFORM_ARCH_ARMEL && PLATFORM_EXPERIMENTAL
 	select SOC_NVIDIA_TEGRA2
+	select TRACKPAD_CYPRESS_APA
 	bool "kaen tegra2 reference board"
 	default n
 

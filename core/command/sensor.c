@@ -278,7 +278,7 @@ static int sensor_print_exec(struct platform_intf *intf,
 {
 	struct sensor_array *sensors;
 	struct sensor *sensor;
-	int i;
+	int i, count = 0;
 
 	sensors = get_platform_sensors(intf);
 
@@ -305,36 +305,41 @@ static int sensor_print_exec(struct platform_intf *intf,
 		/* print it */
 		kv_pair_print_sensor(sensor->type,
 		                     sensor->name, reading);
+
+		count++;
 	}
 
+	if (!count)
+		return -ENOSYS;
 	return 0;
 }
 
-static int sensor_print_cmd(struct platform_intf *intf,
-                           struct platform_cmd *cmd, int argc, char **argv)
+static int sensor_print_fantach_cmd(struct platform_intf *intf,
+                                    struct platform_cmd *cmd,
+                                    int argc, char **argv)
 {
-	unsigned int type_mask = SENSOR_TYPE_ALL;
+	return sensor_print_exec(intf, SENSOR_TYPE_FANTACH);
+}
 
-	if (argc > 0) {
-		if (strncmp(argv[0], "thermal", 7) == 0)
-			type_mask = SENSOR_TYPE_THERMAL;
-		else if (strncmp(argv[0], "voltage", 7) == 0)
-			type_mask = SENSOR_TYPE_VOLTAGE;
-		else if (strncmp(argv[0], "fantach", 7) == 0)
-			type_mask = SENSOR_TYPE_FANTACH;
-		else if (strncmp(argv[0], "current", 7) == 0)
-			type_mask = SENSOR_TYPE_CURRENT;
-		else if (strncmp(argv[0], "power", 5) == 0)
-			type_mask = SENSOR_TYPE_POWER;
-		else if (strncmp(argv[0], "all", 3) == 0)
-			type_mask = SENSOR_TYPE_ALL;
-		else {
-			lprintf(LOG_ERR, "Unknown sensor type: %s\n", argv[0]);
-			return -1;
-		}
-	}
+static int sensor_print_thermal_cmd(struct platform_intf *intf,
+                                    struct platform_cmd *cmd,
+                                    int argc, char **argv)
+{
+	return sensor_print_exec(intf, SENSOR_TYPE_THERMAL);
+}
 
-	return sensor_print_exec(intf, type_mask);
+static int sensor_print_voltage_cmd(struct platform_intf *intf,
+                                    struct platform_cmd *cmd,
+                                    int argc, char **argv)
+{
+	return sensor_print_exec(intf, SENSOR_TYPE_VOLTAGE);
+}
+
+static int sensor_print_all_cmd(struct platform_intf *intf,
+                                struct platform_cmd *cmd,
+                                int argc, char **argv)
+{
+	return sensor_print_exec(intf, SENSOR_TYPE_ALL);
 }
 
 /*
@@ -394,27 +399,27 @@ struct platform_cmd sensor_print_cmds[] = {
 		.desc	= "Print Fan Information",
 		.usage	= "<name>",
 		.type	= ARG_TYPE_GETTER,
-		.arg	= { .func = sensor_print_cmd }
+		.arg	= { .func = sensor_print_fantach_cmd }
 	},
 	{
 		.name	= "thermal",
 		.desc	= "Print Thermal Information",
 		.usage	= "<name>",
 		.type	= ARG_TYPE_GETTER,
-		.arg	= { .func = sensor_print_cmd }
+		.arg	= { .func = sensor_print_thermal_cmd }
 	},
 	{
 		.name	= "voltage",
 		.desc	= "Print Voltage Information",
 		.usage	= "<name>",
 		.type	= ARG_TYPE_GETTER,
-		.arg	= { .func = sensor_print_cmd }
+		.arg	= { .func = sensor_print_voltage_cmd }
 	},
 	{
 		.name	= "all",
 		.desc	= "Print All Sensors",
 		.type	= ARG_TYPE_GETTER,
-		.arg	= { .func = sensor_print_cmd }
+		.arg	= { .func = sensor_print_all_cmd }
 	},
 	{ NULL }
 };

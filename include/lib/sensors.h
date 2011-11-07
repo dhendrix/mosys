@@ -34,6 +34,7 @@
 
 #include <inttypes.h>
 #include <unistd.h>
+#include <valstr.h>
 
 /*
  * Identify the various types of sensors that we know about.  These values
@@ -68,6 +69,17 @@ typedef uint8_t sensor_flag_mask;
 struct sensor;
 struct platform_intf;
 
+/* info that gets passed between read functions and callers */
+#define SENSOR_MODE_MANUAL	(1 << 0)
+#define SENSOR_MODE_AUTO	(1 << 1)
+
+extern const struct valstr sensor_modes[];
+
+struct sensor_reading {
+	double value;		/* assume all readings are doubles for now... */
+	unsigned int mode;
+};
+
 /* A I2C sensor address. */
 struct sensor_addr_i2c {
 	int bus;
@@ -96,7 +108,7 @@ union sensor_addr {
  */
 typedef int (*sensor_read_function)(struct platform_intf *intf,
                                     struct sensor *sensor,
-                                    double *reading);
+                                    struct sensor_reading *reading);
 
 /* A mosys sensor descriptor. */
 struct sensor {

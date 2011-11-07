@@ -32,6 +32,8 @@
 #ifndef MOSYS_DRIVERS_SUPERIO_ITE_IT8772_H__
 #define MOSYS_DRIVERS_SUPERIO_ITE_IT8772_H__
 
+#include "lib/sensors.h"
+
 #define IT8772_CFG_CTL			0x02	/* Global Configure Control */
 
 #define IT8772_LDN_UART1		0x01	/* UART1 */
@@ -142,7 +144,8 @@ extern int it8772_detect(struct platform_intf *intf);
  * returns <0 to indicate error
  */
 extern int it8772_read_fantach(struct platform_intf *intf,
-                               struct sensor *sensor, double *reading);
+                               struct sensor *sensor,
+                               struct sensor_reading *reading);
 
 /*
  * it8772_read_voltage - read voltage value
@@ -155,7 +158,8 @@ extern int it8772_read_fantach(struct platform_intf *intf,
  * returns <0 to indicate error
  */
 extern int it8772_read_voltage(struct platform_intf *intf,
-                               struct sensor *sensor, double *reading);
+                               struct sensor *sensor,
+                               struct sensor_reading *reading);
 
 /*
  * it8772_set_fan_pwm - set PWM for a given fan

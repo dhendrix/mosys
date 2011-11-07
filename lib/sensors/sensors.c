@@ -33,12 +33,20 @@
  * Software Foundation.
  */
 
+#include <valstr.h>
+
 #include "mosys/alloc.h"
 #include "mosys/callbacks.h"
 #include "mosys/platform.h"
 
 #include "lib/dynamic_array.h"
 #include "lib/sensors.h"
+
+const struct valstr sensor_modes[] = {
+	{ SENSOR_MODE_MANUAL, "manual" },
+	{ SENSOR_MODE_AUTO, "auto" },
+	{ 0, NULL },
+};
 
 static struct sensor_array *platform_sensors;
 

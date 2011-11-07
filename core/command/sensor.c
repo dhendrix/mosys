@@ -49,63 +49,67 @@ static const char *sensor_type_names[] = {
  * @name:	sensor name
  * @reading:	sensor reading
  */
-static void kv_pair_print_sensor(int type, const char *name, double reading)
+static void kv_pair_print_sensor(struct sensor *sensor,
+                                 struct sensor_reading *reading)
 {
 	struct kv_pair *kv;
 
+	if (!sensor || !reading)
+		return;
+
 	kv = kv_pair_new();
 
-	switch (type) {
+	switch (sensor->type) {
 	case SENSOR_TYPE_THERMAL_DEGREES: {
-		int int_reading = (int)reading;  /* for output compatibility */
+		int int_reading = (int)reading->value;
 		kv_pair_add(kv, "type", "thermal");
-		kv_pair_add(kv, "name", name);
+		kv_pair_add(kv, "name", sensor->name);
 		kv_pair_fmt(kv, "reading", "%d", int_reading);
 		kv_pair_add(kv, "units", "degrees C");
 		break;
 	}
 	case SENSOR_TYPE_THERMAL_MARGIN: {
-		int int_reading = (int)reading;  /* for output compatibility */
+		int int_reading = (int)reading->value;
 		kv_pair_add(kv, "type", "thermal");
-		kv_pair_add(kv, "name", name);
+		kv_pair_add(kv, "name", sensor->name);
 		kv_pair_fmt(kv, "reading", "%d", int_reading);
 		kv_pair_add(kv, "units", "margin C");
 		break;
 	}
 	case SENSOR_TYPE_THERMAL_TCONTROL: {
-		int int_reading = (int)reading;  /* for output compatibility */
+		int int_reading = (int)reading->value;
 		kv_pair_add(kv, "type", "thermal");
-		kv_pair_add(kv, "name", name);
+		kv_pair_add(kv, "name", sensor->name);
 		kv_pair_fmt(kv, "reading", "%d", int_reading);
 		kv_pair_add(kv, "units", "Tcontrol");
 		break;
 	}
 	case SENSOR_TYPE_VOLTAGE: {
 		kv_pair_add(kv, "type", "voltage");
-		kv_pair_add(kv, "name", name);
-		kv_pair_fmt(kv, "reading", "%.2f", reading);
+		kv_pair_add(kv, "name", sensor->name);
+		kv_pair_fmt(kv, "reading", "%.2f", reading->value);
 		kv_pair_add(kv, "units", "volts");
 		break;
 	}
 	case SENSOR_TYPE_FANTACH: {
-		int int_reading = (int)reading;  /* for output compatibility */
+		int int_reading = (int)reading->value;
 		kv_pair_add(kv, "type", "fantach");
-		kv_pair_add(kv, "name", name);
+		kv_pair_add(kv, "name", sensor->name);
 		kv_pair_fmt(kv, "reading", "%d", int_reading);
 		kv_pair_add(kv, "units", "RPM");
 		break;
 	}
 	case SENSOR_TYPE_CURRENT: {
 		kv_pair_add(kv, "type", "current");
-		kv_pair_add(kv, "name", name);
-		kv_pair_fmt(kv, "reading", "%.2f", reading);
+		kv_pair_add(kv, "name", sensor->name);
+		kv_pair_fmt(kv, "reading", "%.2f", reading->value);
 		kv_pair_add(kv, "units", "amps");
 		break;
 	}
 	case SENSOR_TYPE_POWER: {
 		kv_pair_add(kv, "type", "power");
-		kv_pair_add(kv, "name", name);
-		kv_pair_fmt(kv, "reading", "%.2f", reading);
+		kv_pair_add(kv, "name", sensor->name);
+		kv_pair_fmt(kv, "reading", "%.2f", reading->value);
 		kv_pair_add(kv, "units", "watts");
 		break;
 	}
@@ -143,7 +147,9 @@ static int sensor_monitor_exec(struct platform_intf *intf,
 		int j = 0;
 		for (; (sensor = get_sensor(sensors, j)) != NULL;
 		     j++) {
-			double reading;
+			struct sensor_reading reading;
+
+			memset(&reading, 0, sizeof(reading));
 
 			/* don't do sensors that are not requested */
 			if (!(type_mask & sensor->type))
@@ -189,12 +195,12 @@ static int sensor_monitor_exec(struct platform_intf *intf,
 			case SENSOR_TYPE_THERMAL_MARGIN:
 			case SENSOR_TYPE_THERMAL_TCONTROL:
 			case SENSOR_TYPE_FANTACH:
-				mosys_printf("%d ", (int)reading);
+				mosys_printf("%d ", (int)reading.value);
 				break;
 			case SENSOR_TYPE_VOLTAGE:
 			case SENSOR_TYPE_CURRENT:
 			case SENSOR_TYPE_POWER:
-				mosys_printf("%.2f ", reading);
+				mosys_printf("%.2f ", reading.value);
 				break;
 			default:
 				continue;
@@ -283,7 +289,7 @@ static int sensor_print_exec(struct platform_intf *intf,
 	sensors = get_platform_sensors(intf);
 
 	for (i = 0; (sensor = get_sensor(sensors, i)) != NULL; i++) {
-		double reading;
+		struct sensor_reading reading;
 
 		/* don't do sensors that are not requested */
 		if (!(type_mask & sensor->type))
@@ -303,8 +309,7 @@ static int sensor_print_exec(struct platform_intf *intf,
 			continue;
 
 		/* print it */
-		kv_pair_print_sensor(sensor->type,
-		                     sensor->name, reading);
+		kv_pair_print_sensor(sensor, &reading);
 
 		count++;
 	}

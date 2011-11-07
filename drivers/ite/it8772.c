@@ -198,7 +198,8 @@ static int it8772_setup_iobars(struct platform_intf *intf)
 }
 
 int it8772_read_voltage(struct platform_intf *intf,
-                        struct sensor *sensor, double *reading)
+                        struct sensor *sensor,
+			struct sensor_reading *reading)
 {
 	uint8_t tmp8;
 	struct it8772_priv *priv = sensor->priv;
@@ -214,12 +215,12 @@ int it8772_read_voltage(struct platform_intf *intf,
 		return -1;
 
 	if (priv)
-		*reading = (double)tmp8 * priv->voltage_scaler;
+		reading->value = (double)tmp8 * priv->voltage_scaler;
 	else
-		*reading = (double)tmp8;
+		reading->value = (double)tmp8;
 
 	lprintf(LOG_DEBUG, "%s: reg: 0x%02x, raw: 0x%02x, reading: %f\n",
-	                   __func__, sensor->addr.reg, tmp8, *reading);
+	                   __func__, sensor->addr.reg, tmp8, reading->value);
 	return 0;
 }
 
@@ -293,7 +294,8 @@ static int it8772_read_fantach_auto(struct platform_intf *intf,
 }
 
 int it8772_read_fantach(struct platform_intf *intf,
-                        struct sensor *sensor, double *rpm)
+                        struct sensor *sensor,
+                        struct sensor_reading *reading)
 {
 	uint8_t tmp8;
 	int rc = 0;
@@ -334,15 +336,19 @@ int it8772_read_fantach(struct platform_intf *intf,
 	switch(sensor->addr.reg) {
 	case IT8772_EC_FANTACH2_READING:
 		if (tmp8 & (1 << 1))
-			rc = it8772_read_fantach_auto(intf, sensor, rpm);
+			rc = it8772_read_fantach_auto(intf, sensor,
+			                              &reading->value);
 		else
-			rc = it8772_read_fantach_manual(intf, sensor, rpm);
+			rc = it8772_read_fantach_manual(intf, sensor,
+			                                &reading->value);
 		break;
 	case IT8772_EC_FANTACH3_READING:
 		if (tmp8 & (1 << 2))
-			rc = it8772_read_fantach_auto(intf, sensor, rpm);
+			rc = it8772_read_fantach_auto(intf, sensor,
+			                              &reading->value);
 		else
-			rc = it8772_read_fantach_manual(intf, sensor, rpm);
+			rc = it8772_read_fantach_manual(intf, sensor,
+			                                &reading->value);
 		break;
 	default:
 		return -1;

@@ -20,6 +20,8 @@
 #include <errno.h>
 #include <time.h>
 
+#include <valstr.h>
+
 #include "mosys/globals.h"
 #include "mosys/kv_pair.h"
 #include "mosys/log.h"
@@ -53,9 +55,13 @@ static void kv_pair_print_sensor(struct sensor *sensor,
                                  struct sensor_reading *reading)
 {
 	struct kv_pair *kv;
+	const char *mode = NULL;
 
 	if (!sensor || !reading)
 		return;
+
+	if (reading->mode)
+		mode = val2str(reading->mode, sensor_modes);
 
 	kv = kv_pair_new();
 
@@ -97,6 +103,8 @@ static void kv_pair_print_sensor(struct sensor *sensor,
 		kv_pair_add(kv, "name", sensor->name);
 		kv_pair_fmt(kv, "reading", "%d", int_reading);
 		kv_pair_add(kv, "units", "RPM");
+		if (mode)
+			kv_pair_add(kv, "mode", mode);
 		break;
 	}
 	case SENSOR_TYPE_CURRENT: {

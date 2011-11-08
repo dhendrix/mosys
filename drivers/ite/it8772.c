@@ -354,6 +354,14 @@ int it8772_read_fantach(struct platform_intf *intf,
 		return -1;
 	}
 
+	io_write8(intf, ec_idx, IT8772_EC_INTERFACE);
+	io_read8(intf, ec_data, &tmp8);
+	lprintf(LOG_DEBUG, "Fan interface: 0x%02x\n", tmp8);
+	if (tmp8 & 0x30)
+		reading->mode = SENSOR_MODE_AUTO;
+	else
+		reading->mode = SENSOR_MODE_MANUAL;
+
 	return rc;
 }
 

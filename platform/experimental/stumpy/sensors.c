@@ -24,6 +24,7 @@
 
 #include "drivers/ite/it8772.h"
 
+#include "lib/acpi.h"
 #include "lib/math.h"
 #include "lib/sensors.h"
 
@@ -101,6 +102,12 @@ static struct sensor stumpy_onboard_sensors[] = {
 		.addr.reg	= IT8772_EC_FANTACH3_READING,
 		.read		= it8772_read_fantach,
 		.priv		= &system_fan_priv,
+	},
+	{
+		.name		= "temp0",
+		.type		= SENSOR_TYPE_THERMAL_DEGREES,
+		.addr.sysfs_num	= 0,
+		.read		= acpi_read_temp,
 	},
 #if 0
 	{

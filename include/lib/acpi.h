@@ -24,6 +24,11 @@
 #define CHROMEOS_HWID_MAXLEN	256
 #define CHROMEOS_FRID_MAXLEN	256
 
+/* forward declarations */
+struct platform_intf;
+struct sensor;
+struct sensor_reading;
+
 /*
  * acpi_get_hwid - retrieve hardware ID and store in a newly allocated buffer
  *
@@ -43,5 +48,18 @@ extern int acpi_get_hwid(char **buf);
  * returns <0 to indicate error
  */
 extern int acpi_get_frid(char **buf);
+
+/*
+ * acpi_read_temp - read ACPI thermal_zone temperature
+ *
+ * @intf:	platform interface
+ * @sensor:	sensor struct
+ * @reading:	location to store reading
+ *
+ * returns 0 to indicate success
+ * returns <0 to indicate failure
+ */
+extern int acpi_read_temp(struct platform_intf *intf, struct sensor *sensor,
+                          struct sensor_reading *reading);
 
 #endif /* MOSYS_LIB_ACPI_H__ */

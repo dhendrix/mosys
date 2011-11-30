@@ -28,3 +28,4 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 obj-y		+= chromeos_acpi.o
+obj-y		+= sensors.o

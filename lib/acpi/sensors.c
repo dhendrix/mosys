@@ -47,7 +47,7 @@ int acpi_read_temp(struct platform_intf *intf,
 	}
 
 	/* thermal_zone value is multiplied by 1000 */
-	reading->value = strtod(&buf, NULL) / 1000;
+	reading->value = strtod(buf, NULL) / 1000;
 	close(fd);
 	return 0;
 }

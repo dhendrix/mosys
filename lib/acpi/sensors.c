@@ -30,7 +30,7 @@ int acpi_read_temp(struct platform_intf *intf,
                    struct sensor *sensor, struct sensor_reading *reading)
 {
 	char path[512];
-	char buf[8];		/* allow up to 7-digits + newline */
+	char buf[8];		/* allow up to 7-digits + terminator */
 	int fd, len = -1;
 
 	sprintf(path, "%s/sys/class/thermal/thermal_zone%d/temp",
@@ -49,5 +49,5 @@ int acpi_read_temp(struct platform_intf *intf,
 	/* thermal_zone value is multiplied by 1000 */
 	reading->value = strtod(&buf, NULL) / 1000;
 	close(fd);
-	return len;
+	return 0;
 }

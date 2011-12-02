@@ -53,6 +53,9 @@
 #define MEC1308_MBX_CMD_FW_VERSION		0x83
 #define MEC1308_MBX_CMD_FAN_RPM			0xBB
 
+#define MEC1308_MBX_ALT_CMD_FW_VERSION		0x73
+#define MEC1308_MBX_ALT_CMD_FAN_RPM		0x4B
+
 #define MEC1308_MAX_TIMEOUT_US			2000000	/* arbitrarily picked */
 #define MEC1308_DELAY_US			5000
 
@@ -145,13 +148,20 @@ void mec1308_mbx_teardown(struct platform_intf *intf)
 int mec1308_mbx_fw_version(struct platform_intf *intf, uint8_t *buf, int len)
 {
 	int i;
+	uint8_t cmd;
+	char *bios;
+
+	bios = intf->cb->smbios->bios_vendor(intf);
+	if (!strcasecmp(bios, "coreboot"))
+		cmd = MEC1308_MBX_ALT_CMD_FW_VERSION;
+	else
+		cmd = MEC1308_MBX_CMD_FW_VERSION;
+	free(bios);
 
 	memset(buf, 0, len);
 	mbx_clear(intf);
 
-	if (mbx_write(intf,
-		      MEC1308_MBX_REG_CMD,
-		      MEC1308_MBX_CMD_FW_VERSION) < 0)
+	if (mbx_write(intf, MEC1308_MBX_REG_CMD, cmd) < 0)
 		return -1;
 
 	for (i = 0; i < len; i++)

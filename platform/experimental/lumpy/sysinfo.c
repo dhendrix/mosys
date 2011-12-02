@@ -42,8 +42,17 @@ static const char *lumpy_get_family(struct platform_intf *intf)
 		return NULL;
 }
 
+static const char *lumpy_get_firmware_vendor(struct platform_intf *intf)
+{
+	if (intf->cb && intf->cb->smbios)
+		return intf->cb->smbios->bios_vendor(intf);
+	else
+		return NULL;
+}
+
 struct sysinfo_cb lumpy_sysinfo_cb = {
-	.vendor		= &lumpy_get_vendor,
-	.name		= &lumpy_get_name,
-	.family		= &lumpy_get_family,
+	.vendor			= &lumpy_get_vendor,
+	.name			= &lumpy_get_name,
+	.family			= &lumpy_get_family,
+	.firmware_vendor	= &lumpy_get_firmware_vendor,
 };

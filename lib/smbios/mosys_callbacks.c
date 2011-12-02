@@ -109,10 +109,6 @@ static char *smbios_bios_get_vendor(struct platform_intf *intf)
 }
 
 /*
- * smbios_sysinfo_get_name  -  return platform product name
- *
- * @intf:       platform interface
-/*
  * smbios_sysinfo_get_vendor  -  return platform vendor
  *
  * @intf:       platform interface

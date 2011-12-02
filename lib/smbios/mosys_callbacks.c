@@ -83,6 +83,36 @@ smbios_scan_sysfs_exit:
 }
 
 /*
+ * smbios_bios_get_vendor  -  return bios vendor
+ *
+ * @intf:       platform interface
+ *
+ * returns pointer to allocated bios vendor string
+ * returns NULL if not found
+ */
+static char *smbios_bios_get_vendor(struct platform_intf *intf)
+{
+	char *str = NULL;
+
+	/* try normal SMBIOS approach first */
+	str = smbios_find_string(intf, SMBIOS_TYPE_BIOS, 0,
+	                         SMBIOS_LEGACY_ENTRY_BASE,
+	                         SMBIOS_LEGACY_ENTRY_LEN);
+
+	if (!str) {
+		lprintf(LOG_DEBUG, "%s: normal method failed, "
+		                   "trying sysfs\n", __func__);
+		str = smbios_scan_sysfs("bios_vendor");
+	}
+
+	return str;
+}
+
+/*
+ * smbios_sysinfo_get_name  -  return platform product name
+ *
+ * @intf:       platform interface
+/*
  * smbios_sysinfo_get_vendor  -  return platform vendor
  *
  * @intf:       platform interface
@@ -188,6 +218,7 @@ static char *smbios_sysinfo_get_sku(struct platform_intf *intf)
 }
 
 struct smbios_cb smbios_sysinfo_cb = {
+	.bios_vendor		= smbios_bios_get_vendor,
 	.system_vendor		= smbios_sysinfo_get_vendor,
 	.system_name		= smbios_sysinfo_get_name,
 	.system_version		= smbios_sysinfo_get_version,

@@ -254,6 +254,7 @@ enum led_state {
 
 /* smbios callbacks */
 struct smbios_cb {
+	char *(*bios_vendor)(struct platform_intf *intf);
 	char *(*system_vendor)(struct platform_intf *intf);
 	char *(*system_name)(struct platform_intf *intf);
 	char *(*system_version)(struct platform_intf *intf);

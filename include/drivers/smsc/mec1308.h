@@ -35,34 +35,12 @@
 #ifndef MOSYS_DRIVERS_EC_SMSC_MEC1308_H__
 #define MOSYS_DRIVERS_EC_SMSC_MEC1308_H__
 
-#define MEC1308_SIO_ENTRY_KEY	0x55
-#define MEC1308_SIO_EXIT_KEY	0xaa
-
-#define MEC1308_DEFAULT_SIO_PORT		0x2e
+/* For shared mailbox interface */
 #define MEC1308_LDN_MBX				0x09	/* Mailbox interface */
-#define MEC1308_DEFAULT_MBX_IOBAD		0xa00
-
-/* For shared mailbox interface spec */
-
-#define MEC1308_MBX_REG_CMD			0x82
-#define MEC1308_MBX_REG_EXTCMD			0x83
 #define MEC1308_MBX_REG_DATA_START		0x84
 #define MEC1308_MBX_REG_DATA_END		0x91
 #define MEC1308_MBX_DATA_LEN			(MEC1308_MBX_REG_DATA_END - \
                                                  MEC1308_MBX_REG_DATA_START)
-
-#define MEC1308_MBX_CMD_FW_VERSION		0x83
-#define MEC1308_MBX_CMD_FAN_RPM			0xBB
-
-#define MEC1308_MAX_TIMEOUT_US			2000000	/* arbitrarily picked */
-#define MEC1308_DELAY_US			5000
-
-#define MEC1308_MBX_CMD_PASSTHRU		0x55	/* start command */
-#define MEC1308_MBX_CMD_PASSTHRU_SUCCESS	0xaa	/* success code */
-#define MEC1308_MBX_CMD_PASSTHRU_FAIL		0xfe	/* failure code */
-#define MEC1308_MBX_CMD_PASSTHRU_ENTER		"PathThruMode"	/* not a typo */
-#define MEC1308_MBX_CMD_PASSTHRU_START		"Start"
-#define MEC1308_MBX_CMD_PASSTHRU_EXIT		"End_Mode"
 
 struct platform_intf;	/* forward declare */
 

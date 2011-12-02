@@ -47,6 +47,22 @@
 
 #include "intf/io.h"
 
+#define MEC1308_MBX_REG_CMD			0x82
+#define MEC1308_MBX_REG_EXTCMD			0x83
+
+#define MEC1308_MBX_CMD_FW_VERSION		0x83
+#define MEC1308_MBX_CMD_FAN_RPM			0xBB
+
+#define MEC1308_MAX_TIMEOUT_US			2000000	/* arbitrarily picked */
+#define MEC1308_DELAY_US			5000
+
+#define MEC1308_MBX_CMD_PASSTHRU		0x55	/* start command */
+#define MEC1308_MBX_CMD_PASSTHRU_SUCCESS	0xaa	/* success code */
+#define MEC1308_MBX_CMD_PASSTHRU_FAIL		0xfe	/* failure code */
+#define MEC1308_MBX_CMD_PASSTHRU_ENTER		"PathThruMode"	/* not a typo */
+#define MEC1308_MBX_CMD_PASSTHRU_START		"Start"
+#define MEC1308_MBX_CMD_PASSTHRU_EXIT		"End_Mode"
+
 static uint16_t ec_port;
 static uint16_t mbx_idx;
 static uint16_t mbx_data;

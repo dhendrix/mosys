@@ -46,6 +46,12 @@
 #include "drivers/superio.h"
 #include "drivers/smsc/mec1308.h"
 
+#define MEC1308_SIO_ENTRY_KEY		0x55
+#define MEC1308_SIO_EXIT_KEY		0xaa
+
+#define MEC1308_DEFAULT_SIO_PORT	0x2e
+#define MEC1308_DEFAULT_MBX_IOBAD	0xa00
+
 static unsigned int in_sio_cfgmode;
 
 /* returns 0 to indicate success, <0 otherwise */

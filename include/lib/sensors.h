@@ -87,6 +87,12 @@ struct sensor_addr_i2c {
 	int reg;
 };
 
+/* Digital thermal sensor (Integrated in CPU package) */
+struct sensor_addr_dts {
+	int package;
+	int sensor_num;			/* e.g. core or overall package temp */
+};
+
 union sensor_addr {
 	int sp;				/* Sensorpath location */
 	int cpu;			/* CPU number */
@@ -94,6 +100,7 @@ union sensor_addr {
 	int sysfs_num;			/* Sysfs number (e.g. 0 for temp0) */
 	int reg;			/* Register offset (e.g. SIO index) */
 	struct sensor_addr_i2c i2c;	/* I2C address tuple */
+	struct sensor_addr_dts dts;	/* Digital thermal sensor info */
 };
 
 /*

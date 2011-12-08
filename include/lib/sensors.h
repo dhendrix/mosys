@@ -88,12 +88,12 @@ struct sensor_addr_i2c {
 };
 
 union sensor_addr {
-	struct sensor_addr_i2c i2c;
-	int sp;		/* Sensorpath location */
-	int cpu;	/* CPU number */
-	int dimm;	/* DIMM number */
-	int sysfs_num;	/* Sysfs location */
-	int reg;	/* Register offset (e.g. SuperIO index) */
+	int sp;				/* Sensorpath location */
+	int cpu;			/* CPU number */
+	int dimm;			/* DIMM number */
+	int sysfs_num;			/* Sysfs number (e.g. 0 for temp0) */
+	int reg;			/* Register offset (e.g. SIO index) */
+	struct sensor_addr_i2c i2c;	/* I2C address tuple */
 };
 
 /*

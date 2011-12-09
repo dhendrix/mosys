@@ -109,6 +109,26 @@ static struct sensor stumpy_onboard_sensors[] = {
 		.addr.sysfs_num	= 0,
 		.read		= acpi_read_temp,
 	},
+
+	/* Digital Thermal Sensor readings from CPU package 0 */
+	{
+		.name		= "Physical id 0",
+		.type		= SENSOR_TYPE_THERMAL_DEGREES,
+		.addr.dts	= { 0, 1 },
+		.read		= dts_read,
+	},
+	{
+		.name		= "Core 0",
+		.type		= SENSOR_TYPE_THERMAL_DEGREES,
+		.addr.dts	= { 0, 2 },
+		.read		= dts_read,
+	},
+	{
+		.name		= "Core 1",
+		.type		= SENSOR_TYPE_THERMAL_DEGREES,
+		.addr.dts	= { 0, 3 },
+		.read		= dts_read,
+	},
 #if 0
 	{
 		.name		= "VCORE_1_1V",

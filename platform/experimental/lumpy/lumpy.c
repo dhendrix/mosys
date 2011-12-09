@@ -46,6 +46,7 @@ struct platform_cmd *lumpy_sub[] = {
 	&cmd_memory,
 //	&cmd_nvram,
 	&cmd_platform,
+	&cmd_sensor,
 	&cmd_smbios,
 	&cmd_vpd,
 	NULL
@@ -120,6 +121,7 @@ struct platform_cb lumpy_cb = {
 //	.gpio		= &lumpy_gpio_cb,
 	.memory		= &lumpy_memory_cb,
 //	.nvram		= &lumpy_nvram_cb,
+	.sensor		= &lumpy_sensor_cb,
 	.smbios		= &smbios_sysinfo_cb,
 	.sysinfo 	= &lumpy_sysinfo_cb,
 	.vpd		= &lumpy_vpd_cb,

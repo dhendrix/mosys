@@ -30,6 +30,7 @@ extern struct eeprom_cb lumpy_eeprom_cb;	/* eeprom.c */
 //extern struct gpio_cb lumpy_gpio_cb;		/* gpio.c */
 extern struct memory_cb lumpy_memory_cb;	/* memory.c */
 extern struct nvram_cb lumpy_nvram_cb;		/* nvram.c */
+extern struct sensor_cb lumpy_sensor_cb;	/* sensors.c */
 extern struct sysinfo_cb lumpy_sysinfo_cb;	/* sysinfo.c */
 extern struct vpd_cb lumpy_vpd_cb;		/* vpd.c */
 

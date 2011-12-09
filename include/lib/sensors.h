@@ -238,4 +238,17 @@ extern struct sensor *get_sensor_by_name_and_type(struct sensor_array *array,
  */
 extern struct sensor_array *get_platform_sensors(struct platform_intf *intf);
 
+/*
+ * dts_read - read digital thermal sensor
+ *
+ * @intf:	platform interface
+ * @sensor:	sensor struct
+ * @reading:	location to store reading
+ *
+ * returns 0 to indicate success
+ * returns <0 to indicate failure
+ */
+extern int dts_read(struct platform_intf *intf,
+                    struct sensor *sensor, struct sensor_reading *reading);
+
 #endif  /* MOSYS_LIB_SENSORS_H__ */

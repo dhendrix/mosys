@@ -37,6 +37,7 @@
  * mec1308_mbx.c: Shared EC mailbox interface code.
  */
  
+#include <ctype.h>
 #include <unistd.h>
 
 #include "mosys/log.h"
@@ -163,8 +164,13 @@ int mec1308_mbx_fw_version(struct platform_intf *intf, uint8_t *buf, int len)
 	if (mbx_write(intf, MEC1308_MBX_REG_CMD, cmd) < 0)
 		return -1;
 
-	for (i = 0; i < len; i++)
-		buf[i] = mbx_read(intf, MEC1308_MBX_REG_DATA_START + i);
+	for (i = 0; i < len; i++) {
+		uint8_t tmp = mbx_read(intf, MEC1308_MBX_REG_DATA_START + i);
+		if (isalnum(tmp))
+			buf[i] = tmp;
+		else
+			buf[i] = '\0';
+	}
 
 	return 0;
 }

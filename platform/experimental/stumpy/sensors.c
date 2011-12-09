@@ -112,19 +112,19 @@ static struct sensor stumpy_onboard_sensors[] = {
 
 	/* Digital Thermal Sensor readings from CPU package 0 */
 	{
-		.name		= "Physical id 0",
+		.name		= "package0",
 		.type		= SENSOR_TYPE_THERMAL_DEGREES,
 		.addr.dts	= { 0, 1 },
 		.read		= dts_read,
 	},
 	{
-		.name		= "Core 0",
+		.name		= "core0",
 		.type		= SENSOR_TYPE_THERMAL_DEGREES,
 		.addr.dts	= { 0, 2 },
 		.read		= dts_read,
 	},
 	{
-		.name		= "Core 1",
+		.name		= "core1",
 		.type		= SENSOR_TYPE_THERMAL_DEGREES,
 		.addr.dts	= { 0, 3 },
 		.read		= dts_read,

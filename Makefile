@@ -321,7 +321,7 @@ LINUXINCLUDE    := -Iinclude \
 KERNELVERSION	= $(RELEASENAME)
 
 FMAP_LINKOPT	?= -lfmap-0.3
-EXTRA_CFLAGS	:= -luuid $(FMAP_LINKOPT)
+LDLIBS		:= -luuid $(FMAP_LINKOPT)
 
 #EXTRA_CFLAGS	:= $(patsubst %,-l%, $(LIBRARIES))
 
@@ -657,7 +657,7 @@ $(vmlinux-dirs): prepare scripts
 
 $(PROGRAM): $(vmlinux-all)
 	$(Q)$(CC) $(CFLAGS) $(EXTRA_CFLAGS) $(LDFLAGS) $(MOSYS_MACROS) \
-	$(LINUXINCLUDE) -o $@ $@.c $?
+	$(LINUXINCLUDE) -o $@ $@.c $? $(LDLIBS) 
 
 VPD_ENCODE_DEFCONFIG	:= "vpd_encode.config"
 VPD_ENCODE_MACROS	:= -DPROGRAM=\"vpd_encode\" \
@@ -668,7 +668,7 @@ VPD_ENCODE_MACROS	:= -DPROGRAM=\"vpd_encode\" \
 vpd_encode: $(core-y) $(libs-y)
 	$(Q)$(CC) $(CFLAGS) $(VPD_ENCODE_MACROS) \
 	$(EXTRA_CFLAGS) $(LDFLAGS) -Itools/vpd_encode $(LINUXINCLUDE) \
-	-o $@ tools/vpd_encode/$@.c $?
+	-o $@ tools/vpd_encode/$@.c $? $(LDLIBS)
 	$(Q)cp .config $(VPD_ENCODE_DEFCONFIG)
 	$(Q)echo vpd_encode config file saved as "$(VPD_ENCODE_DEFCONFIG)"
 

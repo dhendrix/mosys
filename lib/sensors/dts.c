@@ -35,6 +35,7 @@
  * dts.c: Functions for handling integrated digital thermal sensors
  */
 
+#include <ctype.h>
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
@@ -50,9 +51,7 @@ static int sysfs_read_coretemp(struct platform_intf *intf,
                                struct sensor *sensor,
                                struct sensor_reading *reading)
 {
-	char coretemp_dir[512];
 	char path[512];
-	char label[32];
 	char input[8];	/* allow up to 7-digits + terminator */
 	int fd, len = -1, rc = -1;
 	int sensor_num;
@@ -62,44 +61,25 @@ static int sysfs_read_coretemp(struct platform_intf *intf,
 
 	sensor_num = sensor->addr.dts.sensor_num;
 
-	sprintf(coretemp_dir, "%s/sys/bus/platform/devices/coretemp.%d",
-	        mosys_get_root_prefix(), sensor->addr.dts.package);
+	snprintf(path, sizeof(path),
+	        "%s/sys/bus/platform/devices/coretemp.%d/temp%d_input",
+	        mosys_get_root_prefix(), sensor->addr.dts.package, sensor_num);
 
-	sprintf(path, "%s/temp%d_label", coretemp_dir, sensor_num);
 	fd = file_open(path, FILE_READ);
 	if (fd < 0) {
 		lperror(LOG_DEBUG, "Cannot open %s", path);
 		goto coretemp_read_exit_1;
 	}
 
-	len = read(fd, label, sizeof(label));
-	if (len < 0) {
-		lperror(LOG_DEBUG, "Cannot read sensor %d label", sensor_num);
-		goto coretemp_read_exit_2;
-	}
-	label[len - 1] = '\0';
-
-	close(fd);
-
-	if (strncmp(label, sensor->name, strlen(sensor->name))) {
-		lprintf(LOG_DEBUG, "%s: \"%s\" != \"%s\"\n",
-		        __func__, label, sensor->name);
-		goto coretemp_read_exit_1;
-	}
-
-	sprintf(path, "%s/temp%d_input", coretemp_dir, sensor_num);
-	fd = file_open(path, FILE_READ);
-	if (fd < 0) {
-		lperror(LOG_DEBUG, "Cannot open %s", path);
-		goto coretemp_read_exit_1;
-	}
-
-	label[len - 1] = '\0';
+	memset(input, 0, sizeof(input));
+	len = read(fd, input, sizeof(input));
 	if (len < 0) {
 		lperror(LOG_DEBUG, "Cannot read sensor %d temp", sensor_num);
 		goto coretemp_read_exit_2;
 	}
-	len = read(fd, input, sizeof(input));
+
+	if (isspace(input[len - 1]) || input[len - 1] == EOF)
+		input[len - 1] = '\0';
 
 	/* value is presented in millidegrees Celsius */
 	errno = 0;

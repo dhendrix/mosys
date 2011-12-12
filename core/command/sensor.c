@@ -294,7 +294,6 @@ static int sensor_print_exec(struct platform_intf *intf,
 	struct sensor_array *sensors;
 	struct sensor *sensor;
 	int i, count = 0;
-	const char *name;
 
 	sensors = get_platform_sensors(intf);
 

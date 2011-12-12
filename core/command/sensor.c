@@ -288,11 +288,13 @@ static int sensor_monitor_cmd(struct platform_intf *intf,
 }
 
 static int sensor_print_exec(struct platform_intf *intf,
-                             unsigned int type_mask)
+                             unsigned int type_mask,
+                             int argc, char **argv)
 {
 	struct sensor_array *sensors;
 	struct sensor *sensor;
 	int i, count = 0;
+	const char *name;
 
 	sensors = get_platform_sensors(intf);
 
@@ -306,6 +308,19 @@ static int sensor_print_exec(struct platform_intf *intf,
 		/* make sure we can read from this device */
 		if (!sensor->read)
 			continue;
+
+		/* print sensors requested on command-line (all by default) */
+		if (argc) {
+			int j, found;
+			
+			for (j = 0, found = 0; j < argc; j++) {
+				if (!strcasecmp(sensor->name, argv[j]))
+					found = 1;
+			}
+
+			if (!found)
+				continue;
+		}
 
 		/* make sure we are ok to read this sensor */
 		if (sensor->flags & SENSOR_FLAG_VERBOSE_ONLY &&
@@ -324,6 +339,12 @@ static int sensor_print_exec(struct platform_intf *intf,
 
 	if (!count)
 		return -ENOSYS;
+
+	if (argc && (count != argc)) {
+		lprintf(LOG_ERR, "Could not print all requested sensors\n");
+		return -1;
+	}
+
 	return 0;
 }
 
@@ -331,28 +352,28 @@ static int sensor_print_fantach_cmd(struct platform_intf *intf,
                                     struct platform_cmd *cmd,
                                     int argc, char **argv)
 {
-	return sensor_print_exec(intf, SENSOR_TYPE_FANTACH);
+	return sensor_print_exec(intf, SENSOR_TYPE_FANTACH, argc, argv);
 }
 
 static int sensor_print_thermal_cmd(struct platform_intf *intf,
                                     struct platform_cmd *cmd,
                                     int argc, char **argv)
 {
-	return sensor_print_exec(intf, SENSOR_TYPE_THERMAL);
+	return sensor_print_exec(intf, SENSOR_TYPE_THERMAL, argc, argv);
 }
 
 static int sensor_print_voltage_cmd(struct platform_intf *intf,
                                     struct platform_cmd *cmd,
                                     int argc, char **argv)
 {
-	return sensor_print_exec(intf, SENSOR_TYPE_VOLTAGE);
+	return sensor_print_exec(intf, SENSOR_TYPE_VOLTAGE, argc, argv);
 }
 
 static int sensor_print_all_cmd(struct platform_intf *intf,
                                 struct platform_cmd *cmd,
                                 int argc, char **argv)
 {
-	return sensor_print_exec(intf, SENSOR_TYPE_ALL);
+	return sensor_print_exec(intf, SENSOR_TYPE_ALL, 0, NULL);
 }
 
 /*

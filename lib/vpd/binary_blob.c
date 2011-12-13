@@ -48,10 +48,14 @@ enum google_blob_v2_0_field_type {
 
 int print_agz_blob_v3(uint8_t *data, uint32_t size, struct kv_pair *kv)
 {
-	struct agz_blob_0_3 *agz_blob = data;
+	struct agz_blob_0_3 *agz_blob;
 	char s[37];
 	char *s2;
 
+	if (!data)
+		return -1;
+	agz_blob = (struct agz_blob_0_3 *)data;
+	
 	if (size != sizeof(*agz_blob)) {
 		lprintf(LOG_DEBUG, "AGZ binary blob expected size: %lu, "
 		                   "got: %lu\n", sizeof(*agz_blob), size);
@@ -96,9 +100,13 @@ int print_agz_blob_v3(uint8_t *data, uint32_t size, struct kv_pair *kv)
 
 int print_agz_blob_v5(uint8_t *data, uint32_t size, struct kv_pair *kv)
 {
-	struct agz_blob_0_5 *agz_blob = data;
+	struct agz_blob_0_5 *agz_blob;
 	char s[37];
 	char *s2;
+
+	if (!data)
+		return -1;
+	agz_blob = (struct agz_blob_0_5 *)data;
 
 	if (size != sizeof(*agz_blob)) {
 		lprintf(LOG_DEBUG, "AGZ binary blob expected size: %lu, "
@@ -142,9 +150,13 @@ int print_agz_blob_v5(uint8_t *data, uint32_t size, struct kv_pair *kv)
 
 int print_google_blob_v1_1(uint8_t *data, uint32_t size, struct kv_pair *kv)
 {
-	struct google_blob_1_1 *google_blob = data;
+	struct google_blob_1_1 *google_blob;
 	char s[37];
 	char *s2;
+
+	if (!data)
+		return -1;
+	google_blob = (struct google_blob_1_1 *)data;
 
 	if (size != sizeof(*google_blob)) {
 		lprintf(LOG_DEBUG, "Google binary blob expected size: %lu, "

@@ -159,12 +159,14 @@ int vpd_append_type127(uint16_t handle, uint8_t **buf, size_t len)
 {
 	struct vpd_table_eot *data;
 	size_t total_len, struct_len;
+	uint8_t *p;
 
 	struct_len = sizeof(struct vpd_table_eot) + 2;	/* double terminator */
 	total_len = len + struct_len;
 	*buf = realloc(*buf, total_len);
 
-	data = *buf + len;
+	p = *buf + len;
+	data = (struct vpd_table_eot *)p;
 	data->header.type = 127;
 	data->header.length = sizeof(*data);
 	data->header.handle = handle;
@@ -194,7 +196,7 @@ int vpd_append_type241(uint16_t handle, uint8_t **buf,
 {
 	struct vpd_header *header;
 	struct vpd_table_binary_blob_pointer *data;
-	uint8_t *string_ptr;
+	uint8_t *string_ptr, *p;
 	size_t struct_len, total_len;
 	int string_index = 1;
 
@@ -213,9 +215,12 @@ int vpd_append_type241(uint16_t handle, uint8_t **buf,
 	*buf = realloc(*buf, total_len);
 	memset(*buf + len, 0, struct_len);
 
-	header = *buf + len;
-	data = (uint8_t *)header + sizeof(*header);
-	string_ptr = (uint8_t *)data + sizeof(*data);
+	p = *buf + len;
+	header = (struct vpd_header *)p;
+	p += sizeof(*header);
+	data = (struct vpd_table_binary_blob_pointer *)p;
+	p += sizeof(*data);
+	string_ptr = p;
 
 	/* fill in structure header details */
 	header->type = VPD_TYPE_BINARY_BLOB_POINTER;

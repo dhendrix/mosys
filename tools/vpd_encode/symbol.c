@@ -36,6 +36,7 @@
 static struct ll_node *symbols;
 
 /* for debugging */
+#if 0
 static void print_symbol(struct ll_node *node)
 {
 	struct vpd_symbol *symbol;
@@ -48,6 +49,7 @@ static void print_symbol(struct ll_node *node)
 	lprintf(LOG_DEBUG, "symbol->name: \"%s\", symbol->value: "
 	       "\"%s\"\n", symbol->name, symbol->value);
 }
+#endif
 
 void free_vpd_symbol(struct vpd_symbol *symbol)
 {

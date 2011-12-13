@@ -60,7 +60,7 @@ int vpd_append_type1(uint16_t handle, uint8_t **buf, size_t len,
 {
 	struct vpd_header *header;
 	struct vpd_table_system *data;
-	uint8_t *strings;
+	uint8_t *strings, *p;
 	size_t struct_len, total_len;
 
 	/* FIXME: Add sanity checking */
@@ -78,9 +78,12 @@ int vpd_append_type1(uint16_t handle, uint8_t **buf, size_t len,
 	*buf = realloc(*buf, total_len);
 	memset(*buf + len, 0, struct_len);
 
-	header = *buf + len;
-	data = (uint8_t *)header + sizeof(*header);
-	strings = (uint8_t *)data + sizeof(*data);
+	p = *buf + len;
+	header = (struct vpd_header *)p;
+	p += sizeof(*header);
+	data = (struct  vpd_table_system *)p;
+	p += sizeof(*data);
+	strings = p;
 
 	/* fill in structure header details */
 	header->type = VPD_TYPE_SYSTEM;

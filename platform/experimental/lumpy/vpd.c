@@ -26,7 +26,6 @@
 
 int lumpy_vpd_setup(struct platform_intf *intf)
 {
-	struct smbios_table table;
 	unsigned int rom_base, rom_size;
 
 	/* FIXME: SMBIOS might not be useful for ROM size detection here since

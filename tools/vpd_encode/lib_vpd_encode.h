@@ -38,4 +38,6 @@ extern int vpd_append_type127(uint16_t handle, uint8_t **buf, size_t len);
 /* FIXME: this should go elsewhere */
 void print_buf(enum log_levels threshold, void *buf, size_t len);
 
+extern int build_google_vpd_blob(double version, char outfile[]);
+
 #endif	/* VPD_ENCODE_VENDOR_BLOBS_H__ */

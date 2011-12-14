@@ -21,6 +21,8 @@
 #ifndef VPD_ENCODE_SYMBOL_H__
 #define VPD_ENCODE_SYMBOL_H__
 
+#include <inttypes.h>
+
 #include "mosys/list.h"
 
 struct vpd_symbol {
@@ -66,5 +68,35 @@ extern int sym2bool(const char *symbol);
  * returns NULL to indicate failure
  */
 extern struct vpd_symbol *update_symbol(const char *str);
+
+/*
+ * sym2type0 - extract symbols and append firmware info table to buffer
+ *
+ * @handle:	handle for this structure
+ * @buf:	buffer to append to
+ * @len:	length of buffer
+ *
+ * This function is intended to hide tedious symbol extraction steps from
+ * higher-level logic.
+ *
+ * returns total size of newly re-sized buffer if successful
+ * returns <0 to indicate failure
+ */
+extern int sym2type0(uint16_t handle, uint8_t **buf, size_t len);
+
+/*
+ * sym2type1 - extract symbols and append system info table to buffer
+ *
+ * @handle:	handle for this structure
+ * @buf:	buffer to append to
+ * @len:	length of buffer
+ *
+ * This function is intended to hide tedious symbol extraction steps from
+ * higher-level logic.
+ *
+ * returns total size of newly re-sized buffer if successful
+ * returns <0 to indicate failure
+ */
+extern int sym2type1(uint16_t handle, uint8_t **buf, size_t len);
 
 #endif	/* VPD_ENCODE_SYMBOL_H__ */

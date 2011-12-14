@@ -39,6 +39,21 @@
 
 static SHA_CTX sha1_ctx_internal;
 
+static void mincrypt_sha_init(void *ctx)
+{
+	SHA_init(ctx);
+}
+
+static void mincrypt_sha_update(void *ctx, const void *data, unsigned long len)
+{
+	SHA_update(ctx, data, len);
+}
+
+static const uint8_t *mincrypt_sha_final(void *ctx)
+{
+	return SHA_final(ctx);
+}
+
 static const uint8_t *sha1_get_digest(struct crypto_algo *crypto)
 {
 	SHA_CTX *tmp = crypto->ctx;
@@ -49,9 +64,9 @@ struct crypto_algo sha1_algo = {
 	.ctx		= &sha1_ctx_internal,
 	.digest_len	= SHA_DIGEST_SIZE,
 
-	.init		= SHA_init,
-	.update		= SHA_update,
-	.final		= SHA_final,
+	.init		= mincrypt_sha_init,
+	.update		= mincrypt_sha_update,
+	.final		= mincrypt_sha_final,
 
 	.get_digest	= sha1_get_digest,
 };

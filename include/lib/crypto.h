@@ -46,7 +46,7 @@ struct crypto_algo {
 	/* Methods to initialize and manipulate context. */
 	void (*init) (void *ctx);
 	void (*update) (void *ctx, const void *data, unsigned long len);
-	uint8_t (*final) (void *ctx);
+	const uint8_t *(*final) (void *ctx);
 
 	const uint8_t *(*get_digest)(struct crypto_algo *crypto);
 };

@@ -1017,7 +1017,7 @@ test: LINUXINCLUDE += $(CMOCKERY_INCLUDE)
 test: MOSYS_MACROS += -DUNITTEST_DATA=\"$(UNITTEST_DATA)\"
 test: $(vmlinux-all) libcmockery.a
 	lcov --directory . --zerocounters
-	$(Q)$(CC) $(CFLAGS) $(EXTRA_CFLAGS) $(LDFLAGS) $(CFLAGS_GCOV) \
+	$(Q)$(CC) $(CFLAGS) $(EXTRA_CFLAGS) $(LDFLAGS) $(LDLIBS) $(CFLAGS_GCOV) \
 	$(MOSYS_MACROS) $(LINUXINCLUDE) -o $(TESTPROGRAM) $(TESTPROGRAM).c $?
 	@echo "Running $(TESTPROGRAM)"
 	./$(TESTPROGRAM)

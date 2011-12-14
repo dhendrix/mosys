@@ -1051,6 +1051,7 @@ define LIBFMAP_TEST
 int main(void)
 {
 	struct fmap *fmap = fmap_create(0, 0, (uint8_t *)"test");
+	fmap_destroy(fmap);
 	return 0;
 }
 endef

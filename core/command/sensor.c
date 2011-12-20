@@ -121,6 +121,8 @@ static void kv_pair_print_sensor(struct sensor *sensor,
 		kv_pair_add(kv, "units", "watts");
 		break;
 	}
+	default:
+		break;
 	}
 
 	kv_pair_print(kv);

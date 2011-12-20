@@ -52,9 +52,9 @@ struct platform_cb default_x86_cb = {
 	.sysinfo = &default_x86_sysinfo_cb,
 };
 
-const char *default_x86_probe(struct platform_intf *intf)
+int default_x86_probe(struct platform_intf *intf)
 {
-	return intf->id_list[0];
+	return 1;
 }
 
 static int default_x86_setup_post(struct platform_intf *intf)

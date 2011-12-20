@@ -137,7 +137,7 @@ static int alex_spd_read_i2c(struct platform_intf *intf,
 static int alex_spd_read_vpd(struct platform_intf *intf,
                              int dimm, int reg, int len, uint8_t *buf)
 {
-	uint8_t *spd;
+	off_t spd;
 	struct gpio_map *gpio = NULL;
 	int level;
 	int ret = -1;
@@ -153,9 +153,9 @@ static int alex_spd_read_vpd(struct platform_intf *intf,
 	level = intf->cb->gpio->read(intf, gpio);
 	lprintf(LOG_DEBUG, "%s: %s level: %d\n", __func__, gpio->name, level);
 	if (level == 0)
-		spd = (uint8_t *)(vpd_rom_base + 0x220400);
+		spd = vpd_rom_base + 0x220400;
 	else if (level == 1)
-		spd = (uint8_t *)(vpd_rom_base + 0x220500);
+		spd = vpd_rom_base + 0x220500;
 	else
 		return -1;
 

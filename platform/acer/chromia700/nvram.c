@@ -168,6 +168,13 @@ static int acer_chromia700_nvram_dump(struct platform_intf *intf)
 	return 0;
 }
 
+#if 0
+/*
+ * FIXME: The "nvram clear" function was removed because this particular
+ * version is unsafe. We can re-add it once we are certain that the command
+ * will not interfere with the factory flow if invoked.
+ * Details @ chrome-os-partner:7343
+ */
 static int acer_chromia700_nvram_clear(struct platform_intf *intf)
 {
 	struct cmos_map *map;
@@ -193,9 +200,10 @@ static int acer_chromia700_nvram_clear(struct platform_intf *intf)
 
 	return 0;
 }
+#endif
 
 struct nvram_cb acer_chromia700_nvram_cb = {
 	.list	= acer_chromia700_nvram_list,
 	.dump	= acer_chromia700_nvram_dump,
-	.clear	= acer_chromia700_nvram_clear,
+//	.clear	= acer_chromia700_nvram_clear,
 };

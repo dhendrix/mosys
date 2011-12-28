@@ -26,7 +26,7 @@
 extern struct eeprom_cb google_cr48_eeprom_cb;		/* eeprom.c */
 extern struct gpio_cb google_cr48_gpio_cb;		/* gpio.c */
 extern struct memory_cb google_cr48_memory_cb;		/* memory.c */
-extern struct sysinfo_cb google_cr48_sysinfo_cb;	/* sysinfo.c */
+extern struct sys_cb google_cr48_sys_cb;		/* sys.c */
 extern struct vpd_cb google_cr48_vpd_cb;		/* vpd.c */
 extern struct nvram_cb google_cr48_nvram_cb;		/* nvram.c */
 extern struct ec_cb google_cr48_ec_cb;			/* ec.c */

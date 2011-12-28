@@ -129,7 +129,7 @@ struct platform_cb samsung_series5_cb = {
 	.memory		= &samsung_series5_memory_cb,
 //	.nvram		= &samsung_series5_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,
-	.sysinfo 	= &samsung_series5_sysinfo_cb,
+	.sys 		= &samsung_series5_sys_cb,
 	.vpd		= &samsung_series5_vpd_cb,
 };
 

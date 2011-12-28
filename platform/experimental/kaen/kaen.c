@@ -117,7 +117,7 @@ struct platform_cb kaen_tegra2_cb = {
 	.hid		= &kaen_hid_cb,
 //	.memory		= &kaen_tegra2_memory_cb,
 //	.nvram		= &kaen_tegra2_nvram_cb,
-	.sysinfo 	= &kaen_tegra2_sysinfo_cb,
+	.sys 		= &kaen_tegra2_sys_cb,
 //	.vpd		= &kaen_tegra2_vpd_cb,
 };
 

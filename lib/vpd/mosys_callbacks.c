@@ -28,14 +28,14 @@
 
 #if 0
 /*
- * vpd_sysinfo_get_vendor  -  return platform vendor
+ * vpd.sys_get_vendor  -  return platform vendor
  *
  * @intf:       platform interface
  *
  * returns pointer to allocated platform vendor string
  * returns NULL if not found
  */
-static char *vpd_sysinfo_vendor(struct platform_intf *intf)
+static char *vpd.sys_vendor(struct platform_intf *intf)
 {
 	return vpds_find_string(intf, VPD_TYPE_SYSTEM, 0,
 	                        SMBIOS_LEGACY_ENTRY_BASE,
@@ -45,6 +45,6 @@ static char *vpd_sysinfo_vendor(struct platform_intf *intf)
 }
 
 struct smbios_cb smbios_sysinfo_cb = {
-	.vendor		= vpd_sysinfo_vendor,
+	.vendor		= vpd.sys_vendor,
 };
 #endif

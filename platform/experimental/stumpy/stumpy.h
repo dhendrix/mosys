@@ -30,7 +30,7 @@ extern struct eeprom_cb stumpy_eeprom_cb;	/* eeprom.c */
 extern struct memory_cb stumpy_memory_cb;	/* memory.c */
 extern struct nvram_cb stumpy_nvram_cb;		/* nvram.c */
 extern struct sensor_cb stumpy_sensor_cb;	/* sensors.c */
-extern struct sysinfo_cb stumpy_sysinfo_cb;	/* sysinfo.c */
+extern struct sys_cb stumpy_sys_cb;		/* sys.c */
 extern struct vpd_cb stumpy_vpd_cb;		/* vpd.c */
 
 /* functions called by setup routines */

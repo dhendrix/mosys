@@ -49,7 +49,7 @@ static const char *google_cr48_get_variant(struct platform_intf *intf)
 	return google_cr48_ec_mbid(intf);
 }
 
-struct sysinfo_cb google_cr48_sysinfo_cb = {
+struct sys_cb google_cr48_sys_cb = {
 	.vendor		= &google_cr48_get_vendor,
 	.name		= &google_cr48_get_name,
 	.family		= &google_cr48_get_family,

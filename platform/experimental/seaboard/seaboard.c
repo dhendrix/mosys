@@ -108,7 +108,7 @@ struct platform_cb seaboard_tegra2_cb = {
 //	.gpio		= &seaboard_tegra2_gpio_cb,
 //	.memory		= &seaboard_tegra2_memory_cb,
 //	.nvram		= &seaboard_tegra2_nvram_cb,
-	.sysinfo 	= &seaboard_tegra2_sysinfo_cb,
+	.sys 		= &seaboard_tegra2_sys_cb,
 //	.vpd		= &seaboard_tegra2_vpd_cb,
 };
 

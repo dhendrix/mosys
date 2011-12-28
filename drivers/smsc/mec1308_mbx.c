@@ -151,8 +151,8 @@ int mec1308_mbx_fw_version(struct platform_intf *intf, uint8_t *buf, int len)
 	int i;
 	uint8_t cmd = MEC1308_MBX_CMD_FW_VERSION;
 
-	if (intf->cb->sysinfo && intf->cb->sysinfo->firmware_vendor) {
-		const char *bios = intf->cb->sysinfo->firmware_vendor(intf);
+	if (intf->cb->sys && intf->cb->sys->firmware_vendor) {
+		const char *bios = intf->cb->sys->firmware_vendor(intf);
 		if (bios && !strcasecmp(bios, "coreboot"))
 			cmd = MEC1308_MBX_ALT_CMD_FW_VERSION;
 		free((void *)bios);

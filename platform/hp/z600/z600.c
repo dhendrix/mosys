@@ -70,7 +70,7 @@ static int hp_z600_destroy(struct platform_intf *intf)
 struct platform_cb hp_z600_cb = {
 	.eeprom		= &hp_z600_eeprom_cb,
 	.smbios		= &smbios_sysinfo_cb,
-	.sysinfo 	= &hp_z600_sysinfo_cb,
+	.sys 		= &hp_z600_sys_cb,
 };
 
 struct platform_intf platform_hp_z600 = {

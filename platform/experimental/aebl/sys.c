@@ -49,7 +49,7 @@ static const char *aebl_tegra2_get_version(struct platform_intf *intf)
 	return extract_cpuinfo("Revision");
 }
 
-struct sysinfo_cb aebl_tegra2_sysinfo_cb = {
+struct sys_cb aebl_tegra2_sys_cb = {
 //	.vendor		= &aebl_tegra2_get_vendor,
 	.name		= &aebl_tegra2_get_name,
 //	.family		= &aebl_tegra2_get_family,

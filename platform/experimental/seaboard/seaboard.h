@@ -24,7 +24,7 @@
 
 /* platform callbacks */
 //extern struct eeprom_cb seaboard_tegra2_eeprom_cb;	/* eeprom.c */
-extern struct sysinfo_cb seaboard_tegra2_sysinfo_cb;	/* sysinfo.c */
+extern struct sys_cb seaboard_tegra2_sys_cb;		/* sys.c */
 //extern struct vpd_cb seaboard_tegra2_vpd_cb;		/* vpd.c */
 //extern struct gpio_cb seaboard_tegra2_gpio_cb;		/* gpio.c */
 //extern struct nvram_cb seaboard_tegra2_nvram_cb;		/* nvram.c */

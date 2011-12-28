@@ -32,7 +32,7 @@ struct dimm_count_db {
 
 /* platform callbacks */
 extern struct eeprom_cb hp_z600_eeprom_cb;	/* eeprom.c */
-extern struct sysinfo_cb hp_z600_sysinfo_cb;	/* sysinfo.c */
+extern struct sys_cb hp_z600_sys_cb;		/* sys.c */
 //extern struct memory_cb hp_z600_memory_cb;	/* memory.c */
 //extern struct flash_cb hp_z600_flash_cb;	/* flash.c */
 //extern struct nvram_cb hp_z600_nvram_cb;	/* nvram.c */

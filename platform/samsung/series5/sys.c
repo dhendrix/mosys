@@ -42,7 +42,7 @@ static const char *samsung_series5_get_family(struct platform_intf *intf)
 		return NULL;
 }
 
-struct sysinfo_cb samsung_series5_sysinfo_cb = {
+struct sys_cb samsung_series5_sys_cb = {
 	.vendor		= &samsung_series5_get_vendor,
 	.name		= &samsung_series5_get_name,
 	.family		= &samsung_series5_get_family,

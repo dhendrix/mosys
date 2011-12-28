@@ -125,7 +125,7 @@ struct platform_cb acer_chromia700_cb = {
 	.memory		= &acer_chromia700_memory_cb,
 	.nvram		= &acer_chromia700_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,
-	.sysinfo 	= &acer_chromia700_sysinfo_cb,
+	.sys 		= &acer_chromia700_sys_cb,
 	.vpd		= &acer_chromia700_vpd_cb,
 };
 

@@ -123,7 +123,7 @@ struct platform_cb lumpy_cb = {
 	.nvram		= &lumpy_nvram_cb,
 	.sensor		= &lumpy_sensor_cb,
 	.smbios		= &smbios_sysinfo_cb,
-	.sysinfo 	= &lumpy_sysinfo_cb,
+	.sys 		= &lumpy_sys_cb,
 	.vpd		= &lumpy_vpd_cb,
 };
 

@@ -117,7 +117,7 @@ struct platform_cb google_cr48_cb = {
 	.memory		= &google_cr48_memory_cb,
 //	.nvram		= &google_cr48_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,
-	.sysinfo 	= &google_cr48_sysinfo_cb,
+	.sys 		= &google_cr48_sys_cb,
 	.vpd		= &google_cr48_vpd_cb,
 };
 

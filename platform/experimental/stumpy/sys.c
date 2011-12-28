@@ -42,7 +42,7 @@ static const char *stumpy_get_family(struct platform_intf *intf)
 		return NULL;
 }
 
-struct sysinfo_cb stumpy_sysinfo_cb = {
+struct sys_cb stumpy_sys_cb = {
 	.vendor		= &stumpy_get_vendor,
 	.name		= &stumpy_get_name,
 	.family		= &stumpy_get_family,

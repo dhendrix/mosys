@@ -113,7 +113,7 @@ struct platform_cb aebl_tegra2_cb = {
 //	.gpio		= &aebl_tegra2_gpio_cb,
 //	.memory		= &aebl_tegra2_memory_cb,
 //	.nvram		= &aebl_tegra2_nvram_cb,
-	.sysinfo 	= &aebl_tegra2_sysinfo_cb,
+	.sys 		= &aebl_tegra2_sys_cb,
 //	.vpd		= &aebl_tegra2_vpd_cb,
 };
 

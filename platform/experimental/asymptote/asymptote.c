@@ -69,7 +69,7 @@ static int asymptote_tegra2_destroy(struct platform_intf *intf)
 }
 
 struct platform_cb asymptote_tegra2_cb = {
-	.sysinfo 	= &asymptote_tegra2_sysinfo_cb,
+	.sys 		= &asymptote_tegra2_sys_cb,
 };
 
 struct platform_intf platform_asymptote_tegra2 = {

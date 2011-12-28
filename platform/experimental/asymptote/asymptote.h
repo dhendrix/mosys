@@ -24,6 +24,6 @@
 
 /* platform callbacks */
 //extern struct ec_cb asymptote_ec_cb;			/* ec.c */
-extern struct sysinfo_cb asymptote_tegra2_sysinfo_cb;	/* sysinfo.c */
+extern struct sys_cb asymptote_tegra2_sys_cb;		/* sys.c */
 
 #endif /* ASYMPTOTE_TEGRA2_H_ */

@@ -274,7 +274,7 @@ struct vpd_cb {
 struct mce;
 struct edac_event;
 struct gtune_var;
-struct sysinfo_cb {
+struct sys_cb {
 	/* methods useful for probing */
 	const char *(*vendor)(struct platform_intf *intf);
 	const char *(*name)(struct platform_intf *intf);
@@ -387,7 +387,7 @@ struct platform_cb {
 	struct eventlog_cb *eventlog; 	/* eventlog callbacks */
 	struct bootnum_cb *bootnum; 	/* boot number callbacks */
 	struct smbios_cb *smbios;	/* smbios related callbacks */
-	struct sysinfo_cb *sysinfo; 	/* system info callbacks */
+	struct sys_cb *sys;	 	/* system callbacks */
 	struct flash_cb *flash; 	/* flash related callbacks */
 	struct nvram_cb *nvram; 	/* nvram related callbacks */
 	struct gpio_cb *gpio;		/* gpio callbacks */

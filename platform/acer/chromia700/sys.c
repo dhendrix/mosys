@@ -42,7 +42,7 @@ static const char *acer_chromia700_get_family(struct platform_intf *intf)
 		return NULL;
 }
 
-struct sysinfo_cb acer_chromia700_sysinfo_cb = {
+struct sys_cb acer_chromia700_sys_cb = {
 	.vendor		= &acer_chromia700_get_vendor,
 	.name		= &acer_chromia700_get_name,
 	.family		= &acer_chromia700_get_family,

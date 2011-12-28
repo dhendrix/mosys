@@ -50,7 +50,7 @@ static const char *lumpy_get_firmware_vendor(struct platform_intf *intf)
 		return NULL;
 }
 
-struct sysinfo_cb lumpy_sysinfo_cb = {
+struct sys_cb lumpy_sys_cb = {
 	.vendor			= &lumpy_get_vendor,
 	.name			= &lumpy_get_name,
 	.family			= &lumpy_get_family,

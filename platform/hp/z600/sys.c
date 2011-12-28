@@ -44,7 +44,7 @@ static const char *hp_z600_get_family(struct platform_intf *intf)
 		return NULL;
 }
 
-struct sysinfo_cb hp_z600_sysinfo_cb = {
+struct sys_cb hp_z600_sys_cb = {
 	.vendor		= &hp_z600_get_vendor,
 	.name		= &hp_z600_get_name,
 	.family		= &hp_z600_get_family,

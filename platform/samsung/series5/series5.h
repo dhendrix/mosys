@@ -28,7 +28,7 @@ extern struct eeprom_cb samsung_series5_eeprom_cb;	/* eeprom.c */
 extern struct gpio_cb samsung_series5_gpio_cb;		/* gpio.c */
 extern struct memory_cb samsung_series5_memory_cb;	/* memory.c */
 extern struct nvram_cb samsung_series5_nvram_cb;	/* nvram.c */
-extern struct sysinfo_cb samsung_series5_sysinfo_cb;	/* sysinfo.c */
+extern struct sys_cb samsung_series5_sys_cb;		/* sys.c */
 extern struct vpd_cb samsung_series5_vpd_cb;		/* vpd.c */
 
 /* functions called by setup routines */

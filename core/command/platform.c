@@ -33,50 +33,50 @@ static int platform_vendor_cmd(struct platform_intf *intf,
                                struct platform_cmd *cmd,
                                int argc, char **argv)
 {
-	if (!intf->cb || !intf->cb->sysinfo || !intf->cb->sysinfo->vendor)
+	if (!intf->cb || !intf->cb->sys || !intf->cb->sys->vendor)
 		return -ENOSYS;
 
-	return print_platforminfo("vendor", intf->cb->sysinfo->vendor(intf));
+	return print_platforminfo("vendor", intf->cb->sys->vendor(intf));
 }
 
 static int platform_name_cmd(struct platform_intf *intf,
                              struct platform_cmd *cmd,
                              int argc, char **argv)
 {
-	if (!intf->cb || !intf->cb->sysinfo || !intf->cb->sysinfo->name)
+	if (!intf->cb || !intf->cb->sys || !intf->cb->sys->name)
 		return -ENOSYS;
 
-	return print_platforminfo("name", intf->cb->sysinfo->name(intf));
+	return print_platforminfo("name", intf->cb->sys->name(intf));
 }
 
 static int platform_version_cmd(struct platform_intf *intf,
 			      struct platform_cmd *cmd,
 			      int argc, char **argv)
 {
-	if (!intf->cb || !intf->cb->sysinfo || !intf->cb->sysinfo->version)
+	if (!intf->cb || !intf->cb->sys || !intf->cb->sys->version)
 		return -ENOSYS;
 
-	return print_platforminfo("version", intf->cb->sysinfo->version(intf));
+	return print_platforminfo("version", intf->cb->sys->version(intf));
 }
 
 static int platform_family_cmd(struct platform_intf *intf,
                                struct platform_cmd *cmd,
                                int argc, char **argv)
 {
-	if (!intf->cb || !intf->cb->sysinfo || !intf->cb->sysinfo->family)
+	if (!intf->cb || !intf->cb->sys || !intf->cb->sys->family)
 		return -ENOSYS;
 
-	return print_platforminfo("family", intf->cb->sysinfo->family(intf));
+	return print_platforminfo("family", intf->cb->sys->family(intf));
 }
 
 static int platform_variant_cmd(struct platform_intf *intf,
                                struct platform_cmd *cmd,
                                int argc, char **argv)
 {
-	if (!intf->cb || !intf->cb->sysinfo || !intf->cb->sysinfo->variant)
+	if (!intf->cb || !intf->cb->sys || !intf->cb->sys->variant)
 		return -ENOSYS;
 
-	return print_platforminfo("variant", intf->cb->sysinfo->variant(intf));
+	return print_platforminfo("variant", intf->cb->sys->variant(intf));
 }
 
 static int print_platforminfo(const char *key, const char *value)

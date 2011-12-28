@@ -25,7 +25,7 @@
 /* platform callbacks */
 extern struct ec_cb acer_chromia700_ec_cb;		/* ec.c */
 extern struct eeprom_cb acer_chromia700_eeprom_cb;	/* eeprom.c */
-extern struct sysinfo_cb acer_chromia700_sysinfo_cb;	/* sysinfo.c */
+extern struct sys_cb acer_chromia700_sys_cb;		/* sys.c */
 extern struct vpd_cb acer_chromia700_vpd_cb;		/* vpd.c */
 extern struct gpio_cb acer_chromia700_gpio_cb;		/* gpio.c */
 extern struct nvram_cb acer_chromia700_nvram_cb;	/* nvram.c */

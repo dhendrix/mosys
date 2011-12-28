@@ -44,12 +44,12 @@ struct platform_cmd *platform_default_x86_sub[] = {
 	NULL
 };
 
-struct sysinfo_cb default_x86_sysinfo_cb;
+struct sys_cb default_x86_sys_cb;
 
 struct platform_cb default_x86_cb = {
 	.eeprom = &default_x86_eeprom_cb,
 	.smbios = &smbios_sysinfo_cb,
-	.sysinfo = &default_x86_sysinfo_cb,
+	.sys	= &default_x86_sys_cb,
 };
 
 int default_x86_probe(struct platform_intf *intf)

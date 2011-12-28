@@ -49,7 +49,7 @@ static const char *kaen_tegra2_get_version(struct platform_intf *intf)
 	return extract_cpuinfo("Revision");
 }
 
-struct sysinfo_cb kaen_tegra2_sysinfo_cb = {
+struct sys_cb kaen_tegra2_sys_cb = {
 //	.vendor		= &kaen_tegra2_get_vendor,
 	.name		= &kaen_tegra2_get_name,
 //	.family		= &kaen_tegra2_get_family,

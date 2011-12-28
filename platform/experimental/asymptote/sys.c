@@ -49,7 +49,7 @@ static const char *asymptote_tegra2_get_version(struct platform_intf *intf)
 	return extract_cpuinfo("Revision");
 }
 
-struct sysinfo_cb asymptote_tegra2_sysinfo_cb = {
+struct sys_cb asymptote_tegra2_sys_cb = {
 //	.vendor		= &asymptote_tegra2_get_vendor,
 	.name		= &asymptote_tegra2_get_name,
 //	.family		= &asymptote_tegra2_get_family,

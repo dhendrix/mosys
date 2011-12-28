@@ -46,7 +46,7 @@ static const char *seaboard_tegra2_get_version(struct platform_intf *intf)
 	return extract_cpuinfo("Revision");
 }
 
-struct sysinfo_cb seaboard_tegra2_sysinfo_cb = {
+struct sys_cb seaboard_tegra2_sys_cb = {
 	.vendor		= &seaboard_tegra2_get_vendor,
 	.name		= &seaboard_tegra2_get_name,
 //	.family		= &seaboard_tegra2_get_family,

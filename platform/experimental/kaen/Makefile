@@ -29,5 +29,5 @@
 
 obj-$(CONFIG_EXPERIMENTAL_KAEN)	+= ec.o
 obj-$(CONFIG_EXPERIMENTAL_KAEN)	+= hid.o
-obj-$(CONFIG_EXPERIMENTAL_KAEN)	+= sysinfo.o
+obj-$(CONFIG_EXPERIMENTAL_KAEN)	+= sys.o
 obj-$(CONFIG_EXPERIMENTAL_KAEN)	+= kaen.o

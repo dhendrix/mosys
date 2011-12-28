@@ -33,5 +33,5 @@ obj-$(CONFIG_ACER_CHROMIA700)	+= eeprom.o
 obj-$(CONFIG_ACER_CHROMIA700)	+= gpio.o
 obj-$(CONFIG_ACER_CHROMIA700)	+= memory.o
 obj-$(CONFIG_ACER_CHROMIA700)	+= nvram.o
-obj-$(CONFIG_ACER_CHROMIA700)	+= sysinfo.o
+obj-$(CONFIG_ACER_CHROMIA700)	+= sys.o
 obj-$(CONFIG_ACER_CHROMIA700)	+= vpd.o

@@ -27,4 +27,25 @@ enum ich_bbs {
        ICH_BBS_LPC     = 0x3,
 };
 
+/*
+ * ich_get_bbs - get bios boot straps (bbs) value
+ *
+ * @intf:	platform interface
+ *
+ * returns BBS value to indicate success
+ * returns <0 to indicate failure
+ */
+extern int ich_get_bbs(struct platform_intf *intf);
+
+/*
+ * ich_set_bbs - set bios boot straps (bbs) value
+ *
+ * @intf:	platform interface
+ * @bbs:	bbs value
+ *
+ * returns 0 to indicate success
+ * returns <0 to indicate failure
+ */
+int ich_set_bbs(struct platform_intf *intf, int bbs);
+
 #endif /* MOSYS_DRIVERS_INTEL_ICH_H__ */

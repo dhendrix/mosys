@@ -25,64 +25,22 @@
 #include "intf/mmio.h"
 #include "intf/pci.h"
 
-#include "lib/math.h"
-
+#include "drivers/intel/ich_generic.h"
 #include "drivers/intel/nm10.h"
-
-#define NM10_GCS_OFFSET		0x3410
-
-static int nm10_get_rcba_addr(struct platform_intf *intf, uint32_t *val)
-{
-	if (pci_read32(intf, 0x00, 0x1f, 0x00, 0xf0, val) < 0)
-		return -1;
-
-	*val &= ~__mask(13, 0);
-
-	return 0;
-}
-
-static int nm10_get_gcs_addr(struct platform_intf *intf, uint32_t *val)
-{
-	uint32_t rcba_addr = 0;
-
-	if (nm10_get_rcba_addr(intf, &rcba_addr) < 0)
-		return -1;
-
-	*val = rcba_addr + NM10_GCS_OFFSET;
-
-	return 0;
-}
 
 enum ich_bbs nm10_get_bbs(struct platform_intf *intf)
 {
-	uint32_t gcs_addr = 0, gcs_val = 0;
+	enum ich_bbs val;
+	if ((val = ich_get_bbs(intf)) < 0)
+		return ICH_BBS_UNKNOWN;
 
-	if (nm10_get_gcs_addr(intf, &gcs_addr) < 0)
-		return -1;
-
-	if (mmio_read32(intf, gcs_addr, &gcs_val) < 0)
-		return -1;
-
-	return (gcs_val >> 10) & 0xff;
+	return val;
 }
 
 int nm10_set_bbs(struct platform_intf *intf, enum ich_bbs bbs)
 {
-	uint32_t gcs_addr = 0, gcs_val = 0;
-
 	if (bbs == ICH_BBS_UNKNOWN)
 		return -1;
 
-	if (nm10_get_gcs_addr(intf, &gcs_addr) < 0)
-		return -1;
-
-	if (mmio_read32(intf, gcs_addr, &gcs_val) < 0)
-		return -1;
-
-	gcs_val = (gcs_val & ~__mask(11, 10)) | (bbs << 10);
-
-	if (mmio_write32(intf, gcs_addr, gcs_val) < 0)
-		return -1;
-
-	return 0;
+	return ich_set_bbs(intf, bbs);
 }

@@ -19,12 +19,22 @@
 #ifndef MOSYS_DRIVERS_INTEL_ICH_H__
 #define MOSYS_DRIVERS_INTEL_ICH_H__
 
-enum ich_bbs {
-       ICH_BBS_UNKNOWN = -1,
-       ICH_BBS_RSVD    = 0x0,
-       ICH_BBS_SPI     = 0x1,
-       ICH_BBS_PCI     = 0x2,
-       ICH_BBS_LPC     = 0x3,
+/* Boot BIOS Straps for ICH7-ICH10 chipsets */
+enum ich_bbs_ich7 {
+	ICH7_BBS_UNKNOWN	= -1,
+	ICH7_BBS_RSVD		= 0x0,	/* note: this is also SPI on ICH10 */
+	ICH7_BBS_SPI		= 0x1,
+	ICH7_BBS_PCI		= 0x2,
+	ICH7_BBS_LPC		= 0x3,
+};
+
+/* Boot BIOS Straps for Sandy Bridge and newer chipsets */
+enum ich_snb_bbs {
+	ICH_SNB_BBS_UNKNOWN	= -1,
+	ICH_SNB_BBS_LPC		= 0x0,
+	ICH_SNB_BBS_RSVD	= 0x1,
+	ICH_SNB_BBS_PCI		= 0x2,
+	ICH_SNB_BBS_SPI		= 0x3,
 };
 
 /*

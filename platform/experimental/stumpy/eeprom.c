@@ -56,10 +56,10 @@ static int stumpy_firmware_read(struct platform_intf *intf,
                              unsigned int offset,
                              unsigned int len,
                              void *data,
-                             enum ich_bbs bbs)
+                             enum ich_snb_bbs bbs)
 {
 	uint8_t *buf = data;
-	enum ich_bbs bbs_orig;
+	enum ich_snb_bbs bbs_orig;
 
 	bbs_orig = series6_get_bbs(intf);
 
@@ -97,7 +97,8 @@ static int stumpy_host_firmware_read(struct platform_intf *intf,
                                   unsigned int len,
                                   void *data)
 {
-	return stumpy_firmware_read(intf, eeprom, offset, len, data, ICH_BBS_SPI);
+	return stumpy_firmware_read(intf, eeprom, offset,
+	                            len, data, ICH_SNB_BBS_SPI);
 }
 
 static struct eeprom_dev stumpy_host_firmware = {

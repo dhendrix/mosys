@@ -28,18 +28,19 @@
 #include "drivers/intel/ich_generic.h"
 #include "drivers/intel/nm10.h"
 
-enum ich_bbs nm10_get_bbs(struct platform_intf *intf)
+enum ich_bbs_ich7 nm10_get_bbs(struct platform_intf *intf)
 {
-	enum ich_bbs val;
+	enum ich_bbs_ich7 val;
+
 	if ((val = ich_get_bbs(intf)) < 0)
-		return ICH_BBS_UNKNOWN;
+		return ICH7_BBS_UNKNOWN;
 
 	return val;
 }
 
-int nm10_set_bbs(struct platform_intf *intf, enum ich_bbs bbs)
+int nm10_set_bbs(struct platform_intf *intf, enum ich_bbs_ich7 bbs)
 {
-	if (bbs == ICH_BBS_UNKNOWN)
+	if (bbs == ICH7_BBS_UNKNOWN)
 		return -1;
 
 	return ich_set_bbs(intf, bbs);

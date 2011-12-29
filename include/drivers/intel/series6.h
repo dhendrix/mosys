@@ -37,7 +37,7 @@
  * returns BBS value to indicate success
  * returns <0 to indicate failure
  */
-enum ich_bbs series6_get_bbs(struct platform_intf *intf);
+enum ich_snb_bbs series6_get_bbs(struct platform_intf *intf);
 
 /*
   * series6_set_bbs - set bios boot straps (bbs) value
@@ -48,7 +48,7 @@ enum ich_bbs series6_get_bbs(struct platform_intf *intf);
   * returns 0 to indicate success
   * returns <0 to indicate failure
   */
-int series6_set_bbs(struct platform_intf *intf, enum ich_bbs bbs);
+int series6_set_bbs(struct platform_intf *intf, enum ich_snb_bbs bbs);
 
 /*
  * series6_read_gpio  - read GPIO status

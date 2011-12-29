@@ -54,10 +54,10 @@ static int mario_firmware_read(struct platform_intf *intf,
                              unsigned int offset,
                              unsigned int len,
                              void *data,
-                             enum ich_bbs bbs)
+                             enum ich_bbs_ich7 bbs)
 {
 	uint8_t *buf = data;
-	enum ich_bbs bbs_orig;
+	enum ich_bbs_ich7 bbs_orig;
 
 	bbs_orig = nm10_get_bbs(intf);
 
@@ -110,7 +110,7 @@ static int mario_host_firmware_read(struct platform_intf *intf,
                                   unsigned int len,
                                   void *data)
 {
-	return mario_firmware_read(intf, eeprom, offset, len, data, ICH_BBS_SPI);
+	return mario_firmware_read(intf, eeprom, offset, len, data, ICH7_BBS_SPI);
 }
 
 static struct eeprom_dev mario_host_firmware = {
@@ -133,7 +133,7 @@ static int mario_ec_firmware_read(struct platform_intf *intf,
                                 unsigned int len,
                                 void *data)
 {
-	return mario_firmware_read(intf, eeprom, offset, len, data, ICH_BBS_LPC);
+	return mario_firmware_read(intf, eeprom, offset, len, data, ICH7_BBS_LPC);
 }
 
 static struct eeprom_dev mario_ec_firmware = {

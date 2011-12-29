@@ -64,7 +64,7 @@ int ich_get_bbs(struct platform_intf *intf)
 	return (gcs_val >> 10) & 0xff;
 }
 
-int ich_set_bbs(struct platform_intf *intf, enum ich_bbs bbs)
+int ich_set_bbs(struct platform_intf *intf, int bbs)
 {
 	uint32_t gcs_addr = 0, gcs_val = 0;
 

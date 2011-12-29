@@ -37,7 +37,7 @@
   * returns BBS value to indicate success
   * returns <0 to indicate failure
   */
-enum ich_bbs nm10_get_bbs(struct platform_intf *intf);
+enum ich_bbs_ich7 nm10_get_bbs(struct platform_intf *intf);
 
 /*
   * nm10_set_bbs - set bios boot straps (bbs) value
@@ -48,7 +48,7 @@ enum ich_bbs nm10_get_bbs(struct platform_intf *intf);
   * returns 0 to indicate success
   * returns <0 to indicate failure
   */
-int nm10_set_bbs(struct platform_intf *intf, enum ich_bbs bbs);
+int nm10_set_bbs(struct platform_intf *intf, enum ich_bbs_ich7 bbs);
 
 /*
  * nm10_read_gpio  - read GPIO status

@@ -26,19 +26,19 @@
 #include "drivers/intel/ich_generic.h"
 #include "drivers/intel/series6.h"
 
-enum ich_bbs series6_get_bbs(struct platform_intf *intf)
+enum ich_snb_bbs series6_get_bbs(struct platform_intf *intf)
 {
-	enum ich_bbs val;
+	enum ich_snb_bbs val;
 
 	if ((val = ich_get_bbs(intf)) < 0)
-		return ICH_BBS_UNKNOWN;
+		return ICH_SNB_BBS_UNKNOWN;
 
 	return val;
 }
 
-int series6_set_bbs(struct platform_intf *intf, enum ich_bbs bbs)
+int series6_set_bbs(struct platform_intf *intf, enum ich_snb_bbs bbs)
 {
-	if (bbs == ICH_BBS_UNKNOWN)
+	if (bbs == ICH_SNB_BBS_UNKNOWN)
 		return -1;
 
 	return ich_set_bbs(intf, bbs);

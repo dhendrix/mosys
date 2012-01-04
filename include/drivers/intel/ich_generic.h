@@ -1,10 +1,10 @@
-/*                                                                                                           
- * Copyright (C) 2010 Google Inc.                                                                            
- *                                                                                                           
- * This program is free software; you can redistribute it and/or                                             
- * modify it under the terms of the GNU General Public License                                               
- * as published by the Free Software Foundation; either version 2                                            
- * of the License, or (at your option) any later version.                                                    
+/*
+ * Copyright (C) 2010 Google Inc.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -18,6 +18,23 @@
 
 #ifndef MOSYS_DRIVERS_INTEL_ICH_H__
 #define MOSYS_DRIVERS_INTEL_ICH_H__
+
+/* convert GPIO# to pin# */
+#define ICH_GPIO_PORT1_TO_PIN(x)	(32 - (x))
+#define ICH_GPIO_PORT2_TO_PIN(x)	(64 - (x))
+
+/* forward declarations */
+struct platform_intf;
+struct gpio_map;
+
+enum ich_generation {
+	ICH7,		/* ICH7 and NM10 */
+	ICH8,
+	ICH9,
+	ICH10,
+	ICH_6_SERIES,	/* Cougar Point */
+	ICH_7_SERIES,	/* Panther Point */
+};
 
 /* Boot BIOS Straps for ICH7-ICH10 chipsets */
 enum ich_bbs_ich7 {
@@ -57,5 +74,49 @@ extern int ich_get_bbs(struct platform_intf *intf);
  * returns <0 to indicate failure
  */
 int ich_set_bbs(struct platform_intf *intf, int bbs);
+
+/*
+ * ich_read_gpio  - read GPIO status
+ *
+ * @intf:	platform interface
+ * @gen:	chipset generation
+ * @gpio:	gpio map
+ *
+ * returns GPIO state as 0 or 1
+ * returns <0 on read failure
+ */
+int ich_read_gpio(struct platform_intf *intf,
+                  enum ich_generation gen, struct gpio_map *gpio);
+
+/*
+ * ich_set_gpio  - set GPIO status
+ *
+ * @intf:	platform interface
+ * @gen:	chipset generation
+ * @gpio:	gpio map
+ * @status:	0/1
+ *
+ * returns 0 if successful
+ * returns <0 on read failure
+ */
+int ich_set_gpio(struct platform_intf *intf, enum ich_generation gen,
+                 struct gpio_map *gpio, int state);
+
+/*
+ * ich_gpio_list  -  list GPIOs in a given bank
+ *
+ * @intf:	platform interface
+ * @port:	GPIO port
+ * @gpio_pins:	set of GPIO pins to list
+ * @num_gpios:	number of GPIOs in set
+ *
+ * Note: Some chipsets do not implement certain GPIOs. Use the gpios
+ * array to specify which GPIOs should be listed by default.
+ *
+ * returns 0 if successful
+ * returns <0 if failure
+ */
+extern int ich_gpio_list(struct platform_intf *intf, enum ich_generation gen,
+                         int port, int gpio_pins[], int num_gpios);
 
 #endif /* MOSYS_DRIVERS_INTEL_ICH_H__ */

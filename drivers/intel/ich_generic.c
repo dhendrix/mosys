@@ -23,8 +23,10 @@
 #include "mosys/platform.h"
 
 #include "drivers/intel/ich_generic.h"
+
 #include "intf/pci.h"
 #include "intf/mmio.h"
+
 #include "lib/math.h"
 
 #define ICH_GCS_OFFSET		0x3410

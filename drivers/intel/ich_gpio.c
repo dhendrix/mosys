@@ -80,7 +80,7 @@ static int ich_gpio_valid(enum ich_generation gen, struct gpio_map *gpio)
 	return 1;
 }
 
-static int ich_get_gpio_base(struct platform_intf *intf, uint32_t *val)
+int ich_get_gpio_base(struct platform_intf *intf, uint32_t *val)
 {
 	static uint32_t ich_gpio_base = 0;
 

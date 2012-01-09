@@ -75,6 +75,22 @@ extern int ich_get_bbs(struct platform_intf *intf);
  */
 int ich_set_bbs(struct platform_intf *intf, int bbs);
 
+
+/*
+ * ich_get_gpio_base  - get GPIO base address.
+ *
+ * @intf:	platform interface
+ * @val:	location to store value
+ *
+ * This function is primarily useful when setting values that are related to
+ * GPIOs. For reading and writing GPIOs themselves, use the ich_read_gpio and
+ * ich_set_gpio wrapper functions for added safety.
+ * 
+ * returns 0 to indicate success
+ * returns <0 on read failure
+ */
+extern int ich_get_gpio_base(struct platform_intf *intf, uint32_t *val);
+
 /*
  * ich_read_gpio  - read GPIO status
  *

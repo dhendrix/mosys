@@ -80,16 +80,16 @@ static int ich_gpio_valid(enum ich_generation gen, struct gpio_map *gpio)
 	return 1;
 }
 
-int ich_get_gpio_base(struct platform_intf *intf, uint32_t *val)
+int ich_get_gpio_base(struct platform_intf *intf, uint16_t *val)
 {
-	static uint32_t ich_gpio_base = 0;
+	static uint16_t ich_gpio_base = 0;
 
 	if (ich_gpio_base) {
 		*val = ich_gpio_base;
 		return 0;
 	}
 
-	if (pci_read32(intf, 0, 31, 0, 0x48, &ich_gpio_base) < 0) {
+	if (pci_read16(intf, 0, 31, 0, 0x48, &ich_gpio_base) < 0) {
 		lprintf(LOG_DEBUG, "ICH GPIO: unable to find base\n");
 		return -1;
 	}

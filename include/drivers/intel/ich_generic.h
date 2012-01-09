@@ -89,7 +89,7 @@ int ich_set_bbs(struct platform_intf *intf, int bbs);
  * returns 0 to indicate success
  * returns <0 on read failure
  */
-extern int ich_get_gpio_base(struct platform_intf *intf, uint32_t *val);
+extern int ich_get_gpio_base(struct platform_intf *intf, uint16_t *val);
 
 /*
  * ich_read_gpio  - read GPIO status

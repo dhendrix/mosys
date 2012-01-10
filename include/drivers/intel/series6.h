@@ -19,8 +19,8 @@
 #ifndef MOSYS_DRIVERS_INTEL_SERIES6_H__
 #define MOSYS_DRIVERS_INTEL_SERIES6_H__
 
-#include "drivers/gpio.h"
-#include "drivers/intel/ich_generic.h"
+struct platform_intf;
+struct gpio_map;
 
 /*
  * The 6-Series has one SMBus interface, so for the purpose of matching with

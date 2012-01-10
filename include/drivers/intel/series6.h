@@ -84,4 +84,17 @@ int series6_set_gpio(struct platform_intf *intf, struct gpio_map *gpio, int stat
  */
 extern int series6_gpio_list(struct platform_intf *intf);
 
+/*
+ * series6_global_reset - force global reset
+ *
+ * @intf:	platform interface
+ *
+ * Obviously this function should force the platform to die before
+ * returning, but we have a return code anyway...
+ *
+ * returns 0 if successful
+ * returns <0 if failure
+ */
+extern int series6_global_reset(struct platform_intf *intf);
+
 #endif /* MOSYS_DRIVERS_INTEL_SERIES6_H__ */

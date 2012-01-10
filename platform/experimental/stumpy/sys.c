@@ -16,6 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
+#include "drivers/intel/series6.h"
+
 #include "mosys/alloc.h"
 #include "mosys/platform.h"
 
@@ -42,8 +44,14 @@ static const char *stumpy_get_family(struct platform_intf *intf)
 		return NULL;
 }
 
+static int stumpy_reset(struct platform_intf *intf)
+{
+	return series6_global_reset(intf);
+}
+
 struct sys_cb stumpy_sys_cb = {
 	.vendor		= &stumpy_get_vendor,
 	.name		= &stumpy_get_name,
 	.family		= &stumpy_get_family,
+	.reset		= &stumpy_reset,
 };

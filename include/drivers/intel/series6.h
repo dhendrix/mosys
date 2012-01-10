@@ -60,7 +60,6 @@ int series6_set_bbs(struct platform_intf *intf, enum ich_snb_bbs bbs);
  * returns <0 on read failure
  */
 
-#if 0
 int series6_read_gpio(struct platform_intf *intf, struct gpio_map *gpio);
 
 /*
@@ -84,6 +83,5 @@ int series6_set_gpio(struct platform_intf *intf, struct gpio_map *gpio, int stat
  * returns <0 if failure
  */
 extern int series6_gpio_list(struct platform_intf *intf);
-#endif
 
 #endif /* MOSYS_DRIVERS_INTEL_SERIES6_H__ */

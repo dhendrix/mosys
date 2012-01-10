@@ -140,40 +140,55 @@ int ich_set_gpio(struct platform_intf *intf, enum ich_generation gen,
 	uint32_t addr, val;
 
 	if (gpio->type != GPIO_OUT) {
-		lprintf(LOG_DEBUG, "ICH GPIO: pin %d of port %d is not"
-			"an output\n", gpio->pin, gpio->port);
+		lprintf(LOG_DEBUG, "Must set \"%s\" to output mode to change "
+		        "its value\n", gpio->name ? gpio->name : "Unknown");
 		return -1;
 	}
 
 	if (ich_get_regs(intf, gen, gpio) < 0)
 		return -1;
 
+	addr = ich_gpio_offsets.gpio_base + ich_gpio_offsets.use_sel;
+	if (io_read32(intf, addr, &val) < 0)
+		return -1;
+	if (!(val & (1 << gpio->pin))) {
+		lprintf(LOG_DEBUG, "Changing port %d, pin %d from native to "
+		        "GPIO mode\n", gpio->port, gpio->pin);
+		val |= (1 << gpio->pin);
+		if (io_write32(intf, addr, val) < 0)
+			return -1;
+	}
+
+	addr = ich_gpio_offsets.gpio_base + ich_gpio_offsets.io_sel;
+	if (io_read32(intf, addr, &val) < 0)
+		return -1;
+	if (val & (1 << gpio->pin)) {
+		lprintf(LOG_DEBUG, "Changing port %d, pin %d from input to "
+		        "output\n", gpio->port, gpio->pin);
+		val &= ~(1 << gpio->pin);
+		if (io_write32(intf, addr, val) < 0)
+			return -1;
+	}
+
 	addr = ich_gpio_offsets.gpio_base + ich_gpio_offsets.lvl;
 	if (io_read32(intf, addr, &val) < 0)
 		return -1;
-
 	switch (state) {
 	case 0:
 		if (!(val & (1 << gpio->pin))) {
 			lprintf(LOG_DEBUG, "GPIO '%s' already 0\n", gpio->name);
-			return 0;
+		} else {
+			if (io_write32(intf, addr, val & ~(1 << gpio->pin)) < 0)
+				return -1;
 		}
-		lprintf(LOG_DEBUG, "ICH GPIO: mask 0x%08x -> 0x%08x\n",
-			val, val & ~(1 << gpio->pin));
-
-		if (io_write32(intf, addr, val & ~(1 << gpio->pin)) < 0)
-			return -1;
 		break;
 	case 1:
 		if (val & (1 << gpio->pin)) {
 			lprintf(LOG_DEBUG, "GPIO '%s' already 1\n", gpio->name);
-			return 0;
+		} else {
+			if (io_write32(intf, addr, val | (1 << gpio->pin)) < 0)
+				return -1;
 		}
-		lprintf(LOG_DEBUG, "ICH GPIO: mask 0x%08x -> 0x%08x\n",
-			val, val | (1 << gpio->pin));
-
-		if (io_write32(intf, addr, val | (1 << gpio->pin)) < 0)
-			return -1;
 		break;
 	default:
 		lprintf(LOG_ERR, "Invaild state %d\n", state);

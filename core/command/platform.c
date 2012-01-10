@@ -95,6 +95,17 @@ static int print_platforminfo(const char *key, const char *value)
 	return 0;
 }
 
+static int platform_reset_cmd(struct platform_intf *intf,
+                              struct platform_cmd *cmd,
+                              int argc, char **argv)
+{
+	if (!intf->cb || !intf->cb->sys || !intf->cb->sys->reset)
+		return -ENOSYS;
+
+	/* return in case reset function fails somehow */
+	return intf->cb->sys->reset(intf);
+}
+
 struct platform_cmd platform_cmds[] = {
 	{
 		.name	= "vendor",
@@ -125,6 +136,12 @@ struct platform_cmd platform_cmds[] = {
 		.desc	= "Display Platform Variant",
 		.type	= ARG_TYPE_GETTER,
 		.arg	= { .func = platform_variant_cmd }
+	},
+	{
+		.name	= "reset",
+		.desc	= "(Hard-)Reset Platform",
+		.type	= ARG_TYPE_SETTER,
+		.arg	= { .func = platform_reset_cmd }
 	},
 	{NULL}
 };

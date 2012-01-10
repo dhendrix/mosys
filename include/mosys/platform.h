@@ -292,6 +292,10 @@ struct sys_cb {
 
 	/* read and write platform-specific settings */
 	int (*print_settings)(struct platform_intf *intf);
+
+	/* custom reset function */
+	int (*reset)(struct platform_intf *intf);
+
 #if 0
 	int (*tune_settings)(struct platform_intf *intf, int argc, char **argv);
 	/* Machine Check Exceptions */

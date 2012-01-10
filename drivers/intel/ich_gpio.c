@@ -37,7 +37,7 @@ static uint8_t ich_lvl_offsets[] = { 0x0c, 0x38, 0x48 };
 static uint8_t ich_gpio_inv_offset = 0x2c;	/* for port 1 only */
 
 struct {
-	uint32_t gpio_base;
+	uint16_t gpio_base;
 	uint8_t use_sel;
 	uint8_t io_sel;
 	uint8_t lvl;

@@ -135,4 +135,13 @@ int ich_set_gpio(struct platform_intf *intf, enum ich_generation gen,
 extern int ich_gpio_list(struct platform_intf *intf, enum ich_generation gen,
                          int port, int gpio_pins[], int num_gpios);
 
+/*
+ * ich_global_reset - initiate reset via reset control register (0xcf9)
+ *
+ * @intf:	platform interface
+ *
+ * returns <0 to indicate failure
+ */
+extern int ich_global_reset(struct platform_intf *intf);
+
 #endif /* MOSYS_DRIVERS_INTEL_ICH_H__ */

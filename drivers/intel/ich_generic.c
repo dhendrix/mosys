@@ -19,11 +19,13 @@
  */
 
 #include <inttypes.h>
+#include <unistd.h>
 
 #include "mosys/platform.h"
 
 #include "drivers/intel/ich_generic.h"
 
+#include "intf/io.h"
 #include "intf/pci.h"
 #include "intf/mmio.h"
 
@@ -85,4 +87,20 @@ int ich_set_bbs(struct platform_intf *intf, int bbs)
 		return -1;
 
 	return 0;
+}
+
+int ich_global_reset(struct platform_intf *intf)
+{
+	uint32_t val;
+
+	if (pci_read32(intf, 0, 31, 0, 0xac, &val) < 0)
+		return -1;
+	val |= 1 << 20;
+	if (pci_write32(intf, 0, 31, 0, 0xac, val) < 0)
+		return -1;
+	sync();
+	if (io_write8(intf, 0xcf9, 0xe) < 0)
+		return -1;
+
+	return -1;
 }

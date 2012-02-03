@@ -106,8 +106,9 @@ static int do_flashrom(const char *cmd)
 	return rc;
 }
 
-/* TODO: add range support */
-int flashrom_read(uint8_t *buf, size_t size, enum target_bus target)
+/* TODO: add arbitrary range support */
+int flashrom_read(uint8_t *buf, size_t size,
+                  enum target_bus target, const char *region)
 {
 	int fd, rc = -1;
 	struct string_builder *sb = new_string_builder();
@@ -136,6 +137,11 @@ int flashrom_read(uint8_t *buf, size_t size, enum target_bus target)
 	if (!mkstemp(filename)) {
 		lperror(LOG_DEBUG, "Unable to make temporary file for flashrom");
 		goto flashrom_read_exit_1;
+	}
+
+	if (region) {
+		string_builder_strcat(sb, " -i ");
+		string_builder_strcat(sb, region);
 	}
 
 	string_builder_strcat(sb, " -r ");

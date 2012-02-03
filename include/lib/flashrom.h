@@ -43,11 +43,13 @@ enum target_bus {
  * @buf:	output buffer
  * @size:	(expected) size of ROM
  * @target:	target ROM
+ * @region:	region to include with -i (NULL to read entire ROM)
  *
  * This function reads the target ROM by calling Flashrom with appropriate
  * parameters. It will save the ROM to a temporary file and then copy the
  * file into the provided buffer.
  */
-extern int flashrom_read(uint8_t *buf, size_t size, enum target_bus target);
+extern int flashrom_read(uint8_t *buf, size_t size,
+                         enum target_bus target, const char *region);
 
 #endif /* MOSYS_LIB_FLASHROM_H__ */

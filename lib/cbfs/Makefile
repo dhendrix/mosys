@@ -1,4 +1,4 @@
-# 2010, Google Inc.
+# 2012, Google Inc.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -27,16 +27,4 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-obj-y		+= acpi/
-obj-y		+= cbfs/
-obj-y		+= crypto/	# TODO: Make this a build option
-obj-y		+= dynamic_array/
-obj-y		+= eeprom/
-obj-y		+= file/
-obj-y		+= math/
-obj-y		+= misc/
-obj-y		+= sensors/
-obj-y		+= smbios/
-obj-y		+= spd/
-obj-y		+= string/
-obj-y		+= vpd/
+obj-y		+= cbfs_core.o

@@ -23,11 +23,12 @@
 #include "mosys/platform.h"
 
 #define LUMPY_HOST_FIRMWARE_ROM_SIZE		(8192 * 1024)
+#define LUMPY_GPIO_PCH				0
 
 /* platform callbacks */
 extern struct ec_cb lumpy_ec_cb;		/* ec.c */
 extern struct eeprom_cb lumpy_eeprom_cb;	/* eeprom.c */
-//extern struct gpio_cb lumpy_gpio_cb;		/* gpio.c */
+extern struct gpio_cb lumpy_gpio_cb;		/* gpio.c */
 extern struct memory_cb lumpy_memory_cb;	/* memory.c */
 extern struct nvram_cb lumpy_nvram_cb;		/* nvram.c */
 extern struct sensor_cb lumpy_sensor_cb;	/* sensors.c */

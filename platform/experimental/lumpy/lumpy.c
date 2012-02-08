@@ -41,7 +41,7 @@ const char *lumpy_id_list[] = {
 struct platform_cmd *lumpy_sub[] = {
 	&cmd_ec,
 	&cmd_eeprom,
-//	&cmd_gpio,
+	&cmd_gpio,
 //	&cmd_i2c,
 	&cmd_memory,
 	&cmd_nvram,
@@ -118,7 +118,7 @@ static int lumpy_destroy(struct platform_intf *intf)
 struct platform_cb lumpy_cb = {
 	.ec		= &lumpy_ec_cb,
 	.eeprom		= &lumpy_eeprom_cb,
-//	.gpio		= &lumpy_gpio_cb,
+	.gpio		= &lumpy_gpio_cb,
 	.memory		= &lumpy_memory_cb,
 	.nvram		= &lumpy_nvram_cb,
 	.sensor		= &lumpy_sensor_cb,

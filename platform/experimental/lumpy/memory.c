@@ -27,6 +27,7 @@
 #include "mosys/log.h"
 #include "mosys/platform.h"
 
+#include "drivers/gpio.h"
 #include "drivers/intel/series6.h"
 
 #include "lib/cbfs_core.h"
@@ -136,6 +137,8 @@ static int lumpy_spd_read_cbfs(struct platform_intf *intf,
 	static uint8_t *bootblock = NULL;
 	size_t size = LUMPY_HOST_FIRMWARE_ROM_SIZE;
 	struct cbfs_file *file;
+	uint8_t spd_index = 0, straps = 0;
+	uint32_t spd_offset;
 
 	if (first_run == 1) {
 		bootblock = mosys_malloc(size);	/* FIXME: overkill */
@@ -151,7 +154,62 @@ static int lumpy_spd_read_cbfs(struct platform_intf *intf,
 	if ((file = cbfs_find("spd.bin", bootblock, size)) == NULL)
 		goto lumpy_spd_read_cbfs_exit;
 
-	memcpy(buf, (void *)file + ntohl(file->offset) + reg, len);
+	/*
+	 * SPD blob contains up to six entries which are selected by
+	 * board strappings.
+	 *
+	 * GPIO33: Capacity
+	 * GPIO41: Die revision
+	 * GPIO49: Board revision
+	 */
+	{
+		int val;
+		struct gpio_map gpio33 = { 33, GPIO_IN, LUMPY_GPIO_PCH, 1,  1 };
+		struct gpio_map gpio41 = { 41, GPIO_IN, LUMPY_GPIO_PCH, 1,  9 };
+		struct gpio_map gpio49 = { 49, GPIO_IN, LUMPY_GPIO_PCH, 1, 17 };
+
+		if ((val = intf->cb->gpio->read(intf, &gpio33)) < 0)
+			goto lumpy_spd_read_cbfs_exit;
+		straps |= val;
+
+		if ((val = intf->cb->gpio->read(intf, &gpio41)) < 0)
+			goto lumpy_spd_read_cbfs_exit;
+		straps |= val << 1;
+
+		if ((val = intf->cb->gpio->read(intf, &gpio49)) < 0)
+			goto lumpy_spd_read_cbfs_exit;
+		straps |= val << 2;
+	}
+
+	switch (straps) {
+	case 0:
+		spd_index = 0;
+		break;
+	case 2:
+		spd_index = 1;
+		break;
+	case 1:
+	case 3:
+		spd_index = 2;
+		break;
+	case 4:
+		spd_index = 3;
+		break;
+	case 6:
+		spd_index = 4;
+		break;
+	case 5:
+	case 7:
+		spd_index = 5;
+		break;
+	default:
+		lprintf(LOG_DEBUG, "Unknown memory config\n");
+		goto lumpy_spd_read_cbfs_exit;
+	}
+
+	spd_offset = ntohl(file->offset) + (spd_index * 256);
+	lprintf(LOG_DEBUG, "Using memory config %u\n", straps);
+	memcpy(buf, (void *)file + spd_offset + reg, len);
 	rc = len;
 lumpy_spd_read_cbfs_exit:
 	return rc;

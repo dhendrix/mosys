@@ -29,7 +29,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 /* strings used in sysfs */
 #define CYAPA_SYSFS_FIRMWARE_VERSION	"firmware_version"
 #define CYAPA_SYSFS_HARDWARE_VERSION	"hardware_version"

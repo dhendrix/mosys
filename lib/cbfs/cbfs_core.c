@@ -2,8 +2,8 @@
  * This file was originally part of the libpayload project, which is part
  * of coreboot.
  *
- * Portions Copyright (C) 2012 Google Inc.
  * Copyright (C) 2011 secunet Security Networks AG
+ * Portions Copyright (C) 2012 Google Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions

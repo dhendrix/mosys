@@ -104,7 +104,7 @@ struct cbfs_file *cbfs_find(const char *name, const uint8_t *buf, size_t size)
 	 * alignment. Thus, we'll increment by the aligned physical ROM offset
 	 * on each iteration rather than working with addresses directly.
 	 */
-	while ((data < dataend - 1)) {
+	while ((data + offset < dataend - 1)) {
 		struct cbfs_file *file = data + offset;
 
 		if (memcmp(CBFS_FILE_MAGIC, file->magic, strlen(CBFS_FILE_MAGIC)) != 0) {

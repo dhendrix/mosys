@@ -29,68 +29,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <stdlib.h>
+#ifndef EXPERIMENTAL_LINK_H__
+#define EXPERIMENTAL_LINK_H__
 
+#include <inttypes.h>
 #include "mosys/platform.h"
 
-/* default */
-extern struct platform_intf platform_default_x86;
+#define LINK_HOST_FIRMWARE_ROM_SIZE		(8192 * 1024)
+#define LINK_GPIO_PCH				0
 
-/* experimental */
-extern struct platform_intf platform_aebl_tegra2;
-extern struct platform_intf platform_asymptote_tegra2;
-extern struct platform_intf platform_kaen_tegra2;
-extern struct platform_intf platform_link;
-extern struct platform_intf platform_lumpy;
-extern struct platform_intf platform_seaboard_tegra2;
-extern struct platform_intf platform_stumpy;
+/* platform callbacks */
+extern struct gpio_cb link_gpio_cb;		/* gpio.c */
+extern struct memory_cb link_memory_cb;		/* memory.c */
+extern struct nvram_cb link_nvram_cb;		/* nvram.c */
+extern struct sys_cb link_sys_cb;		/* sys.c */
 
-/* production platforms */
-extern struct platform_intf platform_acer_chromia700;
-extern struct platform_intf platform_google_cr48;
-extern struct platform_intf platform_hp_z600;
-extern struct platform_intf platform_samsung_series5;
+/* functions called by setup routines */
+extern int link_vpd_setup(struct platform_intf *intf);
+extern int link_ec_setup(struct platform_intf *intf);
+extern int link_ec_destroy(struct platform_intf *intf);
 
-struct platform_intf *platform_intf_list[] = {
-#ifdef CONFIG_ACER_CHROMIA700
-	&platform_acer_chromia700,
-#endif
-#ifdef CONFIG_GOOGLE_CR48
-	&platform_google_cr48,
-#endif
-#ifdef CONFIG_HP_Z600
-	&platform_hp_z600,
-#endif
-#ifdef CONFIG_SAMSUNG_SERIES5
-	&platform_samsung_series5,
-#endif
-
-/* experimental platforms */
-#ifdef CONFIG_EXPERIMENTAL_AEBL
-	&platform_aebl_tegra2,
-#endif
-#ifdef CONFIG_EXPERIMENTAL_ASYMPTOTE
-	&platform_asymptote_tegra2,
-#endif
-#ifdef CONFIG_EXPERIMENTAL_KAEN
-	&platform_kaen_tegra2,
-#endif
-#ifdef CONFIG_EXPERIMENTAL_LINK
-	&platform_link,
-#endif
-#ifdef CONFIG_EXPERIMENTAL_LUMPY
-	&platform_lumpy,
-#endif
-#ifdef CONFIG_EXPERIMENTAL_SEABOARD
-	&platform_seaboard_tegra2,
-#endif
-#ifdef CONFIG_EXPERIMENTAL_STUMPY
-	&platform_stumpy,
-#endif
-
-/* place default platform last */
-#ifdef CONFIG_DEFAULT_X86
-	&platform_default_x86,
-#endif
-	NULL
-};
+#endif /* EXPERIMENTAL_LINK_H_ */

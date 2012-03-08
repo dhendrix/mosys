@@ -30,67 +30,101 @@
  */
 
 #include <stdlib.h>
+#include <unistd.h>
 
+#include "mosys/alloc.h"
+#include "mosys/command_list.h"
 #include "mosys/platform.h"
+#include "mosys/intf_list.h"
+#include "mosys/log.h"
 
-/* default */
-extern struct platform_intf platform_default_x86;
+#include "lib/probe.h"
+#include "lib/smbios.h"
 
-/* experimental */
-extern struct platform_intf platform_aebl_tegra2;
-extern struct platform_intf platform_asymptote_tegra2;
-extern struct platform_intf platform_kaen_tegra2;
-extern struct platform_intf platform_link;
-extern struct platform_intf platform_lumpy;
-extern struct platform_intf platform_seaboard_tegra2;
-extern struct platform_intf platform_stumpy;
+#include "link.h"
 
-/* production platforms */
-extern struct platform_intf platform_acer_chromia700;
-extern struct platform_intf platform_google_cr48;
-extern struct platform_intf platform_hp_z600;
-extern struct platform_intf platform_samsung_series5;
+static const char *probed_platform_id;
 
-struct platform_intf *platform_intf_list[] = {
-#ifdef CONFIG_ACER_CHROMIA700
-	&platform_acer_chromia700,
-#endif
-#ifdef CONFIG_GOOGLE_CR48
-	&platform_google_cr48,
-#endif
-#ifdef CONFIG_HP_Z600
-	&platform_hp_z600,
-#endif
-#ifdef CONFIG_SAMSUNG_SERIES5
-	&platform_samsung_series5,
-#endif
-
-/* experimental platforms */
-#ifdef CONFIG_EXPERIMENTAL_AEBL
-	&platform_aebl_tegra2,
-#endif
-#ifdef CONFIG_EXPERIMENTAL_ASYMPTOTE
-	&platform_asymptote_tegra2,
-#endif
-#ifdef CONFIG_EXPERIMENTAL_KAEN
-	&platform_kaen_tegra2,
-#endif
-#ifdef CONFIG_EXPERIMENTAL_LINK
-	&platform_link,
-#endif
-#ifdef CONFIG_EXPERIMENTAL_LUMPY
-	&platform_lumpy,
-#endif
-#ifdef CONFIG_EXPERIMENTAL_SEABOARD
-	&platform_seaboard_tegra2,
-#endif
-#ifdef CONFIG_EXPERIMENTAL_STUMPY
-	&platform_stumpy,
-#endif
-
-/* place default platform last */
-#ifdef CONFIG_DEFAULT_X86
-	&platform_default_x86,
-#endif
+const char *link_id_list[] = {
+	"Link",
 	NULL
+};
+
+struct platform_cmd *link_sub[] = {
+	&cmd_nvram,
+	&cmd_platform,
+	&cmd_smbios,
+	NULL
+};
+
+static const char *hwids[] = {
+	"X86 LINK",
+	NULL
+};
+
+static const char *frids[] = {
+	"Google_Link",
+	NULL
+};
+
+int link_probe(struct platform_intf *intf)
+{
+	static int status = 0, probed = 0;
+
+	if (probed)
+		return status;
+
+	if (probe_hwid(hwids)) {
+		status = 1;
+		goto link_probe_exit;
+	}
+
+	if (probe_frid(frids)) {
+		status = 1;
+		goto link_probe_exit;
+	}
+
+	if (probe_smbios(intf, link_id_list)) {
+		status = 1;
+		goto link_probe_exit;
+	}
+
+link_probe_exit:
+	probed = 1;
+	return status;
+}
+
+/* late setup routine; not critical to core functionality */
+static int link_setup_post(struct platform_intf *intf)
+{
+	int rc = 0;
+
+	if (rc)
+		lprintf(LOG_DEBUG, "%s: failed\n", __func__);
+	return rc;
+}
+
+static int link_destroy(struct platform_intf *intf)
+{
+	if (probed_platform_id)
+		free((char *)probed_platform_id);
+
+	return 0;
+}
+
+struct platform_cb link_cb = {
+	.nvram		= &link_nvram_cb,
+	.smbios		= &smbios_sysinfo_cb,
+	.sys 		= &link_sys_cb,
+};
+
+struct platform_intf platform_link = {
+	.type		= PLATFORM_X86_64,
+	.name		= "Link",
+	.id_list	= link_id_list,
+	.sub		= link_sub,
+	.cb		= &link_cb,
+	.probe		= &link_probe,
+	.setup_post	= &link_setup_post,
+	.destroy	= &link_destroy,
 };

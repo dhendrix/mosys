@@ -29,68 +29,43 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <stdlib.h>
-
+#include "mosys/alloc.h"
 #include "mosys/platform.h"
 
-/* default */
-extern struct platform_intf platform_default_x86;
+#include "lib/smbios.h"
 
-/* experimental */
-extern struct platform_intf platform_aebl_tegra2;
-extern struct platform_intf platform_asymptote_tegra2;
-extern struct platform_intf platform_kaen_tegra2;
-extern struct platform_intf platform_link;
-extern struct platform_intf platform_lumpy;
-extern struct platform_intf platform_seaboard_tegra2;
-extern struct platform_intf platform_stumpy;
+static const char *link_get_vendor(struct platform_intf *intf)
+{
+	if (intf->cb && intf->cb->smbios)
+		return intf->cb->smbios->system_vendor(intf);
+	else
+		return NULL;
+}
 
-/* production platforms */
-extern struct platform_intf platform_acer_chromia700;
-extern struct platform_intf platform_google_cr48;
-extern struct platform_intf platform_hp_z600;
-extern struct platform_intf platform_samsung_series5;
+static const char *link_get_name(struct platform_intf *intf)
+{
+	return mosys_strdup(intf->name);
+}
 
-struct platform_intf *platform_intf_list[] = {
-#ifdef CONFIG_ACER_CHROMIA700
-	&platform_acer_chromia700,
-#endif
-#ifdef CONFIG_GOOGLE_CR48
-	&platform_google_cr48,
-#endif
-#ifdef CONFIG_HP_Z600
-	&platform_hp_z600,
-#endif
-#ifdef CONFIG_SAMSUNG_SERIES5
-	&platform_samsung_series5,
-#endif
+static const char *link_get_family(struct platform_intf *intf)
+{
+	if (intf->cb && intf->cb->smbios)
+		return intf->cb->smbios->system_family(intf);
+	else
+		return NULL;
+}
 
-/* experimental platforms */
-#ifdef CONFIG_EXPERIMENTAL_AEBL
-	&platform_aebl_tegra2,
-#endif
-#ifdef CONFIG_EXPERIMENTAL_ASYMPTOTE
-	&platform_asymptote_tegra2,
-#endif
-#ifdef CONFIG_EXPERIMENTAL_KAEN
-	&platform_kaen_tegra2,
-#endif
-#ifdef CONFIG_EXPERIMENTAL_LINK
-	&platform_link,
-#endif
-#ifdef CONFIG_EXPERIMENTAL_LUMPY
-	&platform_lumpy,
-#endif
-#ifdef CONFIG_EXPERIMENTAL_SEABOARD
-	&platform_seaboard_tegra2,
-#endif
-#ifdef CONFIG_EXPERIMENTAL_STUMPY
-	&platform_stumpy,
-#endif
+static const char *link_get_firmware_vendor(struct platform_intf *intf)
+{
+	if (intf->cb && intf->cb->smbios)
+		return intf->cb->smbios->bios_vendor(intf);
+	else
+		return NULL;
+}
 
-/* place default platform last */
-#ifdef CONFIG_DEFAULT_X86
-	&platform_default_x86,
-#endif
-	NULL
+struct sys_cb link_sys_cb = {
+	.vendor			= &link_get_vendor,
+	.name			= &link_get_name,
+	.family			= &link_get_family,
+	.firmware_vendor	= &link_get_firmware_vendor,
 };

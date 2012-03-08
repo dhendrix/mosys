@@ -1,0 +1,3 @@
+obj-$(CONFIG_EXPERIMENTAL_LINK)	+= link.o
+obj-$(CONFIG_EXPERIMENTAL_LINK)	+= nvram.o
+obj-$(CONFIG_EXPERIMENTAL_LINK)	+= sys.o

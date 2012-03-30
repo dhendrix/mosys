@@ -51,6 +51,7 @@ const char *link_id_list[] = {
 };
 
 struct platform_cmd *link_sub[] = {
+	&cmd_ec,
 	&cmd_nvram,
 	&cmd_platform,
 	&cmd_smbios,
@@ -99,6 +100,7 @@ static int link_setup_post(struct platform_intf *intf)
 {
 	int rc = 0;
 
+	rc |= link_ec_setup(intf);
 	if (rc)
 		lprintf(LOG_DEBUG, "%s: failed\n", __func__);
 	return rc;
@@ -113,6 +115,7 @@ static int link_destroy(struct platform_intf *intf)
 }
 
 struct platform_cb link_cb = {
+	.ec		= &link_ec_cb,
 	.nvram		= &link_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,
 	.sys 		= &link_sys_cb,

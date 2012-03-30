@@ -1,5 +1,5 @@
 /*
- * Copyright 2012, Google Inc.
+ * Copyright 2011, Google Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,26 +27,54 @@
  * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Alternatively, this software may be distributed under the terms of the
+ * GNU General Public License ("GPL") version 2 as published by the Free
+ * Software Foundation.
  */
 
-#ifndef EXPERIMENTAL_LINK_H__
-#define EXPERIMENTAL_LINK_H__
-
+#include <ctype.h>
 #include <inttypes.h>
+
+#include "drivers/google/gec.h"
+
+#include "mosys/callbacks.h"
+#include "mosys/log.h"
 #include "mosys/platform.h"
 
-#define LINK_HOST_FIRMWARE_ROM_SIZE		(8192 * 1024)
-#define LINK_GPIO_PCH				0
+static const char *link_ec_name(struct platform_intf *intf)
+{
+	return "lm4fs1gh5bb";
+}
 
-/* platform callbacks */
-extern struct ec_cb link_ec_cb;			/* ec.c */
-extern struct gpio_cb link_gpio_cb;		/* gpio.c */
-extern struct memory_cb link_memory_cb;		/* memory.c */
-extern struct nvram_cb link_nvram_cb;		/* nvram.c */
-extern struct sys_cb link_sys_cb;		/* sys.c */
+static const char *link_ec_vendor(struct platform_intf *intf)
+{
+	return "ti";
+}
 
-/* functions called by setup routines */
-extern int link_vpd_setup(struct platform_intf *intf);
-extern int link_ec_setup(struct platform_intf *intf);
+static const char *link_ec_fw_version(struct platform_intf *intf)
+{
+	const char *version = NULL;
 
-#endif /* EXPERIMENTAL_LINK_H_ */
+	version = gec_version(intf);
+	if (version)
+		add_destroy_callback(free, (void *)version);
+	else
+		version = "unknown";
+
+	return version;
+}
+
+struct ec_cb link_ec_cb = {
+	.vendor		= link_ec_vendor,
+	.name		= link_ec_name,
+	.fw_version	= link_ec_fw_version,
+};
+
+int link_ec_setup(struct platform_intf *intf)
+{
+	if (gec_hello(intf))
+		return -1;
+
+	return 0;
+}

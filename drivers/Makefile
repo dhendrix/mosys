@@ -1,5 +1,6 @@
 # always decend into the subdirectories
 obj-y	+= cypress/
+obj-y	+= google/
 obj-y	+= intel/
 obj-y	+= ite/
 obj-y	+= nuvoton/

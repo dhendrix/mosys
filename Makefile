@@ -626,8 +626,10 @@ PHONY += $(vmlinux-dirs)
 $(vmlinux-dirs): prepare scripts
 	$(Q)$(MAKE) $(build)=$@
 
+CC_LDFLAGS = $(patsubst %,-Wl$(comma)%,$(LDFLAGS))
+
 $(PROGRAM): $(vmlinux-all)
-	$(Q)$(CC) $(CFLAGS) $(EXTRA_CFLAGS) $(LDFLAGS) $(MOSYS_MACROS) \
+	$(Q)$(CC) $(CFLAGS) $(EXTRA_CFLAGS) $(CC_LDFLAGS) $(MOSYS_MACROS) \
 	$(LINUXINCLUDE) -o $@ $@.c $? $(LDLIBS) 
 
 VPD_ENCODE_DEFCONFIG	:= "vpd_encode.config"
@@ -1011,7 +1013,7 @@ export LIBUUID_TEST
 test_libuuid:
 	@echo "Testing libuuid..."
 	@echo "$$LIBUUID_TEST" > .uuid_test.c
-	@$(CC) $(CFLAGS) $(LDFLAGS) -luuid -o .uuid_test .uuid_test.c >/dev/null 2>&1 && \
+	@$(CC) $(CFLAGS) $(CC_LDFLAGS) -o .uuid_test .uuid_test.c -luuid >/dev/null 2>&1 && \
 	echo "libuuid test passed." || \
 	( echo "libuuid test failed. Please install libuuid" ; exit 1)
 	@rm -f .uuid_test.c .uuid_test
@@ -1031,7 +1033,7 @@ export LIBFMAP_TEST
 test_libfmap:
 	@echo "Testing libfmap..."
 	@echo "$$LIBFMAP_TEST" > .fmap_test.c
-	@$(CC) $(CFLAGS) $(LDFLAGS) $(FMAP_LINKOPT) -o .fmap_test .fmap_test.c >/dev/null 2>&1 && \
+	@$(CC) $(CFLAGS) $(CC_LDFLAGS) -o .fmap_test .fmap_test.c $(FMAP_LINKOPT) >/dev/null 2>&1 && \
 	echo "libfmap test passed." || \
 	( echo "libfmap test failed. Please install libfmap (http://flashmap.googlecode.com)"; exit 1 )
 	@rm -f .fmap_test.c .fmap_test

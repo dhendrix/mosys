@@ -1,4 +1,5 @@
 obj-$(CONFIG_EXPERIMENTAL_LINK)	+= ec.o
+obj-$(CONFIG_EXPERIMENTAL_LINK)	+= eeprom.o
 obj-$(CONFIG_EXPERIMENTAL_LINK)	+= link.o
 obj-$(CONFIG_EXPERIMENTAL_LINK)	+= nvram.o
 obj-$(CONFIG_EXPERIMENTAL_LINK)	+= sys.o

@@ -52,6 +52,7 @@ const char *link_id_list[] = {
 
 struct platform_cmd *link_sub[] = {
 	&cmd_ec,
+	&cmd_eeprom,
 	&cmd_nvram,
 	&cmd_platform,
 	&cmd_smbios,
@@ -116,6 +117,7 @@ static int link_destroy(struct platform_intf *intf)
 
 struct platform_cb link_cb = {
 	.ec		= &link_ec_cb,
+	.eeprom		= &link_eeprom_cb,
 	.nvram		= &link_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,
 	.sys 		= &link_sys_cb,

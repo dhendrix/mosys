@@ -33,6 +33,13 @@ config EXPERIMENTAL_SEABOARD
 	bool "seaboard tegra2 reference board"
 	default n
 
+config EXPERIMENTAL_KIEV
+	depends on PLATFORM_ARCH_X86 && PLATFORM_EXPERIMENTAL
+	select CHIPSET_INTEL_SERIES6
+	select SUPERIO_ITE_IT8772
+	bool "kiev"
+	default n
+
 config EXPERIMENTAL_LINK
 	depends on PLATFORM_ARCH_X86 && PLATFORM_EXPERIMENTAL
 	select CHIPSET_INTEL_SERIES6

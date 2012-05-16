@@ -20,6 +20,11 @@ config EXPERIMENTAL_ASYMPTOTE
 	bool "asymptote tegra2"
 	default n
 
+config EXPERIMENTAL_DAISY
+	depends on PLATFORM_ARCH_ARMEL && PLATFORM_EXPERIMENTAL
+	bool "daisy"
+	default n
+
 config EXPERIMENTAL_KAEN
 	depends on PLATFORM_ARCH_ARMEL && PLATFORM_EXPERIMENTAL
 	select SOC_NVIDIA_TEGRA2

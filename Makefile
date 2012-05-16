@@ -25,13 +25,13 @@ TESTPROGRAM=$(PROGRAM)_test
 # major:	Major release number; incremented at major milestones
 # minor:	Minor release number; incremented for important changes
 # revision:	Patch number from version control system
-CORE	=  1
-MAJOR	=  2
-MINOR	= 03
-SVNVERSION := $(shell ./scripts/getversion.sh -r)
-REVISION=$(SVNVERSION)
+CORE		=  1
+MAJOR		=  2
+MINOR		= 03
+GITVERSION	:= $(shell ./scripts/getversion.sh -r)
+TIMESTAMP 	:= $(shell ./scripts/getversion.sh -t)
 
-RELEASENAME=$(CORE).$(MAJOR).$(MINOR).$(REVISION)
+RELEASENAME := "$(CORE).$(MAJOR).$(MINOR) : $(GITVERSION) : $(TIMESTAMP)"
 
 # location to use when releasing new packages
 export EXPORTDIR	?= .
@@ -289,7 +289,7 @@ LINUXINCLUDE    := -Iinclude \
                    -include include/generated/autoconf.h \
                    -Itools/vpd_encode
 
-KERNELVERSION	= $(RELEASENAME)
+KERNELVERSION	= $(CORE).$(MAJOR).$(MINOR)
 
 FMAP_LINKOPT	?= -lfmap-0.3
 LDLIBS		:= -luuid $(FMAP_LINKOPT)
@@ -297,7 +297,7 @@ LDLIBS		:= -luuid $(FMAP_LINKOPT)
 #EXTRA_CFLAGS	:= $(patsubst %,-l%, $(LIBRARIES))
 
 MOSYS_MACROS	:= -DPROGRAM=\"$(PROGRAM)\" \
-		   -DVERSION=\"$(KERNELVERSION)\"
+		   -DVERSION=\"$(RELEASENAME)\"
 
 KBUILD_CPPFLAGS := 
 
@@ -634,7 +634,7 @@ $(PROGRAM): $(vmlinux-all)
 
 VPD_ENCODE_DEFCONFIG	:= "vpd_encode.config"
 VPD_ENCODE_MACROS	:= -DPROGRAM=\"vpd_encode\" \
-			   -DVERSION=\"$(KERNELVERSION)\" \
+			   -DVERSION=\"$(RELEASENAME)\" \
 			   -DVPD_ENCODE_CONFIG=\"$(VPD_ENCODE_DEFCONFIG)\"
 
 # FIXME: should only depend on libs/ being a prerequisite

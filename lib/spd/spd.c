@@ -74,11 +74,11 @@ static int spd_raw_i2c(struct platform_intf *intf, int bus,
 
 	switch (rw) {
 	case SPD_READ:
-		return intf->op->i2c->read_reg(intf, bus, address,
-					       reg, length, data);
+		return intf->op->i2c->smbus_read_reg(intf, bus, address,
+					             reg, length, data);
 	case SPD_WRITE:
-		return intf->op->i2c->write_reg(intf, bus, address,
-						reg, length, data);
+		return intf->op->i2c->smbus_write_reg(intf, bus, address,
+						      reg, length, data);
 	}
 
 	return -1;

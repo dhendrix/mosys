@@ -49,7 +49,7 @@ struct i2c_intf {
 	const char *dev_root;
 
 	/*
-	 * setup  -  prepare interface
+	 * setup - prepare interface
 	 *
 	 * @intf:       platform interface
 	 *
@@ -59,97 +59,97 @@ struct i2c_intf {
 	int (*setup)(struct platform_intf *intf);
 
 	/*
-	 * destroy  -  teardown interface
+	 * destroy - teardown interface
 	 *
 	 * @intf:       platform interface
 	 */
 	void (*destroy)(struct platform_intf *intf);
 
+
 	/*
-	 * read  -  Read bytes from I2C device
+	 * smbus_read_reg - Read from a register addressable SMBus device
 	 *
 	 * @intf:       platform interface
 	 * @bus:        I2C bus/adapter
 	 * @address:    I2C slave address
 	 * @reg:        I2C register offset
 	 * @length:     number of bytes to read (1-255)
-	 * @data:       data buffer
-	 *
-	 * returns number of bytes read
-	 * returns <0 to indicate error
-	 */
-	int (*read_reg)(struct platform_intf *intf,
-			int bus, int address, int reg,
-			int length, void *data);
-
-	/*
-	 * write  -  Write bytes to I2C device
-	 *
-	 * @intf:       platform interface
-	 * @bus:        I2C bus/adapter
-	 * @address:    I2C slave address
-	 * @reg:        I2C register offset
-	 * @length:     number of bytes to read (1-255)
-	 * @data:       data buffer
-	 *
-	 * returns number of bytes written
-	 * returns <0 to indicate error
-	 */
-	int (*write_reg)(struct platform_intf *intf,
-			 int bus, int address, int reg,
-			 int length, const void *data);
-
-	/*
-	 * read16 -  Read bytes from I2C device using 16-bit address
-	 *
-	 * @intf:       platform interface
-	 * @bus:        I2C bus/adapter
-	 * @address:    I2C slave address
-	 * @reg:        I2C register offset (16-bit)
-	 * @length:     number of bytes to read (1-255)
-	 * @data:       data buffer
-	 *
-	 * returns number of bytes read
-	 * returns <0 to indicate error
-	 */
-	int (*read16)(struct platform_intf *intf,
-		      int bus, int address, int reg,
-		      int length, void *data);
-
-	/*
-	 * write16 -  Write bytes to I2C device using 16-bit address
-	 *
-	 * @intf:       platform interface
-	 * @bus:        I2C bus/adapter
-	 * @address:    I2C slave address
-	 * @reg:        I2C register offset (16-bit)
-	 * @length:     number of bytes to read (1-255)
-	 * @data:       data buffer
-	 *
-	 * returns number of bytes written
-	 * returns <0 to indicate error
-	 */
-	int (*write16)(struct platform_intf *intf,
-		       int bus, int address, int reg,
-		       int length, const void *data);
-
-	/*
-	 * read_raw  -  read byte(s) from device without register addressing
-	 *
-	 * @intf:       platform interface
-	 * @bus:        I2C bus/adapter
-	 * @address:    I2C slave address
-	 * @length:	number of bytes to read (1-256)
 	 * @data:       data buffer
 	 *
 	 * returns number of bytes read
 	 * returns <0 to indicate failure
 	 */
-	int (*read_raw)(struct platform_intf *intf,
-			int bus, int address, int length, void *data);
+	int (*smbus_read_reg)(struct platform_intf *intf,
+			      int bus, int address, int reg,
+			      int length, void *data);
 
 	/*
-	 * write_raw  -  write byte(s) to device without register addressing
+	 * smbus_write_reg - Write bytes to SMBus slave address
+	 *
+	 * @intf:       platform interface
+	 * @bus:        I2C bus/adapter
+	 * @address:    I2C slave address
+	 * @reg:        I2C register offset
+	 * @length:     number of bytes to read (1-255)
+	 * @data:       data buffer
+	 *
+	 * returns number of bytes written
+	 * returns <0 to indicate error
+	 */
+	int (*smbus_write_reg)(struct platform_intf *intf,
+			      int bus, int address, int reg,
+			      int length, const void *data);
+
+	/*
+	 * smbus_read16_dev - Read SMBus device using 16-bit register offset
+	 *
+	 * @intf:       platform interface
+	 * @bus:        I2C bus/adapter
+	 * @address:    I2C slave address
+	 * @reg:        I2C register offset (16-bit)
+	 * @length:     number of bytes to read (1-255)
+	 * @data:       data buffer
+	 *
+	 * returns number of bytes read
+	 * returns <0 to indicate failure
+	 */
+	int (*smbus_read16)(struct platform_intf *intf,
+			    int bus, int address, int reg,
+			    int length, void *data);
+
+
+	/*
+	 * smbus_write16_buf - Write to SMBus device using 16-bit offset
+	 *
+	 * @handle:     I2C device handle
+	 * @reg:        I2C register offset (16-bit)
+	 * @dp:         data buffer
+	 * @len:        number of bytes to write (1-32)
+	 *
+	 * returns number of bytes written
+	 * returns <0 to indicate error
+	 */
+	int (*smbus_write16)(struct platform_intf *intf,
+			     int bus, int address, int reg,
+			     int length, const void *data);
+
+	/*
+	 * smbus_read_raw  -  bytewise SMBus read without register addressing
+	 *
+	 * @intf:       platform interface
+	 * @bus:        I2C bus/adapter
+	 * @address:    I2C slave address
+	 * @length:	number of bytes to read
+	 * @data:       data buffer
+	 *
+	 * returns number of bytes read
+	 * returns <0 to indicate failure
+	 */
+	int (*smbus_read_raw)(struct platform_intf *intf,
+			      int bus, int address, int length, void *data);
+
+	/*
+	 * smbus_write_raw  -  write to device without register addressing
 	 *
 	 * @intf:       platform interface
 	 * @bus:        I2C bus/adapter
@@ -160,35 +160,35 @@ struct i2c_intf {
 	 * returns number of bytes written
 	 * returns <0 to indicate failure
 	 */
-	int (*write_raw)(struct platform_intf *intf,
-			 int bus, int address, int length, void *data);
+	int (*smbus_write_raw)(struct platform_intf *intf,
+			       int bus, int address, int length, void *data);
 
 	/*
-	 * find_driver  -  Find I2C driver
+	 * find_driver - Determine if driver is loaded
 	 *
-	 * @intf:	platform interface
-	 * @name:	i2c driver name
+	 * @intf:	Platform interface
+	 * @module: 	The name of the module to search for
 	 *
-	 * returns 0 if the module is not found
-	 * returns 1 if the module is found
+	 * returns 0 if the module is not found or if /proc/modules does not exist
+	 * returns > 0 if the module is found
 	 */
 	int (*find_driver)(struct platform_intf *intf,
 			   const char *name);
 
 	/*
-	 * find_dir  -  Find I2C directory for device
+	 * find_sysfs_dir  -  Find sysfs directory for device
 	 *
 	 * @intf:	platform interface
 	 * @name:	i2c driver name
 	 *
 	 * returns the head of a linked list of matching devices
-	 * returns NULL if no device found
+	 * returns NULL if no device found or error
 	 */
-	struct ll_node *(*find_dir)(struct platform_intf *intf,
-				    const char *name);
+	struct ll_node *(*find_sysfs_dir)(struct platform_intf *intf,
+					  const char *name);
 
 	/*
-	 * match_bus  -  Look for bus name
+	 * i2c_match_bus_name  -  Look for bus name
 	 *
 	 * @intf:	platform interface
 	 * @name:	bus name

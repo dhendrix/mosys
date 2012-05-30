@@ -133,12 +133,14 @@ static int cyapa_get_firmware_version_i2c(struct platform_intf *intf,
 	uint8_t major, minor;
 	size_t max_len = 8;
 
-	if (intf->op->i2c->read_reg(intf, bus, addr,
-	                            CYAPA_REG_FIRMWARE_MAJOR, 1, &major) != 1)
+	if (intf->op->i2c->smbus_read_reg(intf, bus, addr,
+					  CYAPA_REG_FIRMWARE_MAJOR,
+					  1, &major) != 1)
 		return -1;
 
-	if (intf->op->i2c->read_reg(intf, bus, addr,
-	                            CYAPA_REG_FIRMWARE_MINOR, 1, &minor) != 1)
+	if (intf->op->i2c->smbus_read_reg(intf, bus, addr,
+					  CYAPA_REG_FIRMWARE_MINOR,
+					  1, &minor) != 1)
 		return -1;
 
 	*buf = mosys_zalloc(max_len);
@@ -152,12 +154,14 @@ static int cyapa_get_hardware_version_i2c(struct platform_intf *intf,
 	uint8_t major, minor;
 	size_t max_len = 8;
 
-	if (intf->op->i2c->read_reg(intf, bus, addr,
-	                            CYAPA_REG_HARDWARE_MAJOR, 1, &major) != 1)
+	if (intf->op->i2c->smbus_read_reg(intf, bus, addr,
+					  CYAPA_REG_HARDWARE_MAJOR,
+					  1, &major) != 1)
 		return -1;
 
-	if (intf->op->i2c->read_reg(intf, bus, addr,
-	                            CYAPA_REG_HARDWARE_MINOR, 1, &minor) != 1)
+	if (intf->op->i2c->smbus_read_reg(intf, bus, addr,
+					  CYAPA_REG_HARDWARE_MINOR,
+					  1, &minor) != 1)
 		return -1;
 
 	*buf = mosys_zalloc(max_len);
@@ -172,9 +176,9 @@ static int cyapa_get_product_id_i2c(struct platform_intf *intf,
 
 	*buf = mosys_zalloc(CYAPA_REG_PRODUCT_ID_LEN + 1);
 	for (i = 0; i < CYAPA_REG_PRODUCT_ID_LEN; i++) {
-		if (intf->op->i2c->read_reg(intf, bus, addr,
-		                            CYAPA_REG_PRODUCT_ID + i,
-					    1, *buf + i) != 1)
+		if (intf->op->i2c->smbus_read_reg(intf, bus, addr,
+						  CYAPA_REG_PRODUCT_ID + i,
+						  1, *buf + i) != 1)
 		return -1;
 	}
 

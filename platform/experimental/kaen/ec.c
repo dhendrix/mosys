@@ -56,7 +56,7 @@ static const char *kaen_ec_fw_version(struct platform_intf *intf)
 	if (version)
 		return version;
 
-	if (intf->op->i2c->read_reg(intf, 2, 0x1b, 0xf1, 2, buf) != 2) {
+	if (intf->op->i2c->smbus_read_reg(intf, 2, 0x1b, 0xf1, 2, buf) != 2) {
 		lprintf(LOG_ERR, "%s: failed to read EC firmware "
 		        "version\n", __func__);
 		return NULL;

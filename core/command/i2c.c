@@ -69,8 +69,10 @@ static int i2c_dump_cmd(struct platform_intf *intf,
 
 	/* read in block of 256 bytes */
 	memset(i2c_data, 0, sizeof(i2c_data));
-	length = intf->op->i2c->read_reg(intf, bus, address,
-					 start, length, i2c_data);
+	/* FIXME: historically we have only worried about SMBus devices here
+	   (e.g. SPDs), but this does not seem like a great general solution */
+	length = intf->op->i2c->smbus_read_reg(intf, bus, address,
+					       start, length, i2c_data);
 
 	if (length < 0) {
 		lprintf(LOG_ERR, "Failed to read from I2C (not present?)\n");

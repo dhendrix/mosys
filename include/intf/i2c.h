@@ -67,6 +67,24 @@ struct i2c_intf {
 
 
 	/*
+	 * i2c_transfer - Single or combined transfer using I2C_RDWR ioctl
+	 *
+	 * @intf:	platform interface
+	 * @bus:        I2C bus/adapter
+	 * @address:    I2C slave address
+	 * @outdata:	buffer containing output data
+	 * @outsize:	number of bytes to send
+	 * @indata:	buffer to store input data
+	 * @insize:	number of bytes expected to be received
+	 *
+	 * returns 0 to indicate success
+	 * returns <0 to indicate failure
+	 */
+	 int (*i2c_transfer)(struct platform_intf *intf, int bus, int address,
+			     const void *outdata, int outsize,
+			     const void *indata, int insize);
+
+	/*
 	 * smbus_read_reg - Read from a register addressable SMBus device
 	 *
 	 * @intf:       platform interface

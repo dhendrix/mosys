@@ -38,6 +38,7 @@
 #include <inttypes.h>
 #include <string.h>
 #include <dirent.h>
+#include <sys/ioctl.h>
 
 #include "mosys/alloc.h"
 #include "mosys/globals.h"
@@ -153,6 +154,64 @@ static void i2c_close_dev(struct platform_intf *intf)
 	/* we store these as const in the structure */
 	free((char *)intf->op->i2c->sys_root);
 	free((char *)intf->op->i2c->dev_root);
+}
+
+static int i2c_transfer(struct platform_intf *intf, int bus, int address,
+			const void *outdata, int outsize,
+			const void *indata, int insize)
+{
+	int ret = -1;
+	struct i2c_rdwr_ioctl_data data;
+	struct i2c_msg *msg = NULL;
+	int handle, fd;
+
+	/* open connection to i2c slave */
+	handle = i2c_open_dev(intf, bus, address);
+	if (handle < 0)
+		return -1;
+	fd = i2c_handles[handle].fd;
+
+	data.nmsgs = 0;
+
+	if (outsize) {
+		msg = mosys_realloc(msg, sizeof(*msg) * (data.nmsgs + 1));
+		msg[data.nmsgs].addr = address;
+		msg[data.nmsgs].flags = 0;
+		msg[data.nmsgs].len = outsize;
+		msg[data.nmsgs].buf = (char *)outdata;
+		data.nmsgs++;
+	}
+
+	if (insize) {
+		msg = mosys_realloc(msg, sizeof(*msg) * (data.nmsgs + 1));
+		msg[data.nmsgs].addr = address;
+		msg[data.nmsgs].flags = I2C_M_RD;
+		msg[data.nmsgs].len = insize;
+		msg[data.nmsgs].buf = (char *)indata;
+		data.nmsgs++;
+	}
+
+	data.msgs = msg;
+	/* send command to EC and read answer */
+#if defined (__linux__)
+	/* ioctl returns negative errno, else the number of messages executed */
+	ret = ioctl(fd, I2C_RDWR, &data);
+#else
+	ret = -ENOSYS;
+#endif
+
+	if (ret < 0) {
+		lperror(LOG_ERR, "i2c transfer failed");
+		ret = -1;
+	} else if (ret != data.nmsgs) {
+		lprintf(LOG_ERR, "ioctl executed wrong number of messages\n");
+		ret = -1;
+	} else {
+		ret = 0;
+	}
+
+	free(msg);
+	return ret;
 }
 
 static int smbus_read_reg(struct platform_intf *intf, int bus,
@@ -589,6 +648,7 @@ static int i2c_setup_dev(struct platform_intf *intf)
 struct i2c_intf i2c_dev_intf = {
 	.setup  		= i2c_setup_dev,
 	.destroy		= i2c_close_dev,
+	.i2c_transfer		= i2c_transfer,
 	.smbus_read_reg		= smbus_read_reg,
 	.smbus_write_reg	= smbus_write_reg,
 	.smbus_read16		= smbus_read16_dev,

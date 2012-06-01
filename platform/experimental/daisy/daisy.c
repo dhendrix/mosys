@@ -74,6 +74,11 @@ int daisy_probe(struct platform_intf *intf)
 			status = 1;
 			goto daisy_probe_exit;
 		}
+
+		if (probe_cmdline(*id, 0) == 1) {
+			status = 1;
+			goto daisy_probe_exit;
+		}
 	}
 
 #if 0

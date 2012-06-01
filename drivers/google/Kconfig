@@ -1,5 +1,10 @@
 # google config variables
 
+config GOOGLE_EC
+	bool
+	default n
+
 config GOOGLE_EC_LPC
         bool "Google interface for LPC ECs"
+	select GOOGLE_EC
         default n

@@ -69,7 +69,7 @@ struct ec_cb link_ec_cb = {
 
 int link_ec_setup(struct platform_intf *intf)
 {
-	if (gec_hello(intf))
+	if (gec_probe_lpc(intf))
 		return -1;
 
 	return 0;

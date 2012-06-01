@@ -98,4 +98,16 @@ extern int probe_cpuinfo(struct platform_intf *intf,
  */
 extern const char *extract_cpuinfo(const char *key);
 
+/*
+ * probe_cmdline - probe /proc/cmdline for key
+ *
+ * @key:	key to search for
+ * @cs:		case-sensitivity
+ *
+ * returns 1 to indicate matching key found
+ * returns 0 to indicate no matching key pair found (clean exit)
+ * returns <0 to indicate error
+ */
+extern int probe_cmdline(const char *key, int cs);
+
 #endif /* MOSYS_LIB_PROBE_H__ */

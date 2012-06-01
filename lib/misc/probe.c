@@ -28,6 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE 1	/* for strcasestr() */
+#endif
+
 #include <ctype.h>
 #include <string.h>
 #include <limits.h>
@@ -221,4 +225,37 @@ const char *extract_cpuinfo(const char *key)
 
 	fclose(cpuinfo);
 	return (const char *)ret;
+}
+
+int probe_cmdline(const char *key, int cs)
+{
+	FILE *cmdline;
+	char path[PATH_MAX];
+	char line[LINE_MAX];
+	int ret = 0;
+
+	if ((cs < 0) || (cs > 1))
+		return -1;
+
+	sprintf(path, "%s/proc/cmdline", mosys_get_root_prefix());
+	cmdline = fopen(path, "rb");
+	if (!cmdline)
+		goto probe_cmdline_done;
+
+	if (fgets(line, sizeof(line), cmdline) == NULL)
+		goto probe_cmdline_done;
+
+	if (cs) {
+		if (strstr(line, key))
+			ret = 1;
+	} else {
+		if (strcasestr(line, key))
+			ret = 1;
+	}
+
+	if (ret)
+		lprintf(LOG_DEBUG, "Found match on kernel command-line\n", key);
+probe_cmdline_done:
+	fclose(cmdline);
+	return ret;
 }

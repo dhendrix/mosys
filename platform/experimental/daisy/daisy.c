@@ -46,6 +46,7 @@ static const char *probed_platform_id;
 const char *daisy_id_list[] = {
 	"Daisy",
 	"SMDK5250",
+	"Snow",
 	NULL
 };
 

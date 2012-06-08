@@ -141,7 +141,7 @@ struct platform_cb kiev_cb = {
 
 struct platform_intf platform_kiev = {
 	.type		= PLATFORM_X86_64,
-	.name		= "Google Kiev",
+	.name		= "Kiev",
 	.id_list	= kiev_id_list,
 	.sub		= kiev_sub,
 	.cb		= &kiev_cb,

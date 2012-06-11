@@ -22,6 +22,7 @@ config EXPERIMENTAL_ASYMPTOTE
 
 config EXPERIMENTAL_DAISY
 	depends on PLATFORM_ARCH_ARMEL && PLATFORM_EXPERIMENTAL
+	select GOOGLE_EC_I2C
 	bool "daisy"
 	default n
 

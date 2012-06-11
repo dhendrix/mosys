@@ -29,99 +29,88 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <stdlib.h>
-#include <unistd.h>
+#include <inttypes.h>
 
-#include "mosys/command_list.h"
-#include "mosys/platform.h"
-#include "mosys/intf_list.h"
+#include "mosys/alloc.h"
+#include "mosys/callbacks.h"
 #include "mosys/log.h"
+#include "mosys/platform.h"
 
-#include "lib/probe.h"
+#include "drivers/google/gec.h"
 
-#include "daisy.h"
+#include "lib/string.h"
 
-static const char *probed_platform_id;
+#include "intf/i2c.h"
 
-const char *daisy_id_list[] = {
-	"Daisy",
-	"SMDK5250",
-	"Snow",
-	NULL
-};
+#define	DAISY_EC_ADDRESS 0x1e
 
-struct platform_cmd *daisy_sub[] = {
-	&cmd_ec,
-	&cmd_platform,
-	NULL
-};
-
-#if 0
-static const char *hwids[] = {
-	NULL
-};
-#endif
-
-int daisy_probe(struct platform_intf *intf)
+static const char *daisy_ec_name(struct platform_intf *intf)
 {
-	static int status = 0, probed = 0;
-	const char **id;
+	static const char *name = NULL;
+	struct gec_response_get_chip_info chip_info;
 
-	if (probed)
-		return status;
+	if (name)
+		return name;
 
-	for (id = daisy_id_list; id && *id; id++) {
-		if (probe_cpuinfo(intf, "Hardware", *id)) {
-			status = 1;
-			goto daisy_probe_exit;
-		}
+	if (gec_chip_info(intf, &chip_info))
+		return NULL;
 
-		if (probe_cmdline(*id, 0) == 1) {
-			status = 1;
-			goto daisy_probe_exit;
-		}
-	}
-
-#if 0
-	if (probe_hwid(hwids)) {
-		status = 1;
-		goto daisy_probe_exit;
-	}
-#endif
-
-daisy_probe_exit:
-	probed = 1;
-	return status;
+	name = mosys_strdup(chip_info.name);
+	add_destroy_callback(free, (void *)name);
+	return name;
 }
 
-static int daisy_setup_post(struct platform_intf *intf)
+static const char *daisy_ec_vendor(struct platform_intf *intf)
 {
-	if (daisy_ec_setup(intf) <= 0)
-		return -1;
+	static const char *vendor = NULL;
+	struct gec_response_get_chip_info chip_info;
 
-	return 0;
+	if (vendor)
+		return vendor;
+
+	if (gec_chip_info(intf, &chip_info))
+		return NULL;
+
+	vendor = mosys_strdup(chip_info.vendor);
+	add_destroy_callback(free, (void *)vendor);
+	return vendor;
 }
 
-static int daisy_destroy(struct platform_intf *intf)
+static const char *daisy_ec_fw_version(struct platform_intf *intf)
 {
-	if (probed_platform_id)
-		free((char *)probed_platform_id);
+	static const char *version = NULL;
 
-	return 0;
+	if (version)
+		return version;
+
+	version = gec_version(intf);
+	if (version)
+		add_destroy_callback(free, (void *)version);
+	return version;
 }
 
-struct platform_cb daisy_cb = {
-	.ec 		= &daisy_ec_cb,
-	.sys 		= &daisy_sys_cb,
+struct gec_priv daisy_ec_priv = {
+	.addr.i2c.addr	= DAISY_EC_ADDRESS,
 };
 
-struct platform_intf platform_daisy = {
-	.type		= PLATFORM_ARMV7,
-	.name		= "Daisy",
-	.id_list	= daisy_id_list,
-	.sub		= daisy_sub,
-	.cb		= &daisy_cb,
-	.probe		= &daisy_probe,
-	.setup_post	= &daisy_setup_post,
-	.destroy	= &daisy_destroy,
+struct ec_cb daisy_ec_cb = {
+	.vendor		= daisy_ec_vendor,
+	.name		= daisy_ec_name,
+	.fw_version	= daisy_ec_fw_version,
+	.priv		= &daisy_ec_priv,
 };
+
+int daisy_ec_setup(struct platform_intf *intf)
+{
+	int ret;
+
+	ret = gec_probe_i2c(intf);
+	if (ret == 1)
+		lprintf(LOG_DEBUG, "GEC found on I2C bus\n");
+	else if (ret == 0)
+		lprintf(LOG_DEBUG, "GEC not found on I2C bus\n");
+	else
+		lprintf(LOG_ERR, "Error when probing GEC on I2C bus\n");
+
+	return ret;
+}

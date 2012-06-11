@@ -1,2 +1,3 @@
+obj-$(CONFIG_EXPERIMENTAL_DAISY)	+= ec.o
 obj-$(CONFIG_EXPERIMENTAL_DAISY)	+= sys.o
 obj-$(CONFIG_EXPERIMENTAL_DAISY)	+= daisy.o

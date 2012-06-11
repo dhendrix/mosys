@@ -35,8 +35,10 @@
 #include <inttypes.h>
 #include "mosys/platform.h"
 
+extern int daisy_ec_setup(struct platform_intf *intf);
+
 /* platform callbacks */
-//extern struct ec_cb kaen_ec_cb;		/* ec.c */
+extern struct ec_cb daisy_ec_cb;		/* ec.c */
 extern struct sys_cb daisy_sys_cb;		/* sys.c */
 //extern struct gpio_cb daisy_gpio_cb;		/* gpio.c */
 //extern struct memory_cb daisy_memory_cb;	/* memory.c */

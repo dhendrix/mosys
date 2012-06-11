@@ -108,6 +108,7 @@ srctree		:= $(if $(KBUILD_SRC),$(KBUILD_SRC),$(CURDIR))
 objtree		:= $(CURDIR)
 src		:= $(srctree)
 obj		:= $(objtree)
+comma		:= ,
 
 VPATH		:= $(srctree)
 

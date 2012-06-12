@@ -34,6 +34,8 @@
 #ifndef MOSYS_DRIVERS_EC_GOOGLE_H__
 #define MOSYS_DRIVERS_EC_GOOGLE_H__
 
+#include "intf/i2c.h"
+
 struct platform_intf;
 
 #define GEC_PARAM_SIZE          128  /* Size of each param area in bytes */
@@ -88,6 +90,7 @@ struct gec_priv {
 		   const void *outdata, int outsize);
 
 	union {
+		struct i2c_addr i2c;
 		uint16_t io;
 	} addr;
 };
@@ -95,6 +98,7 @@ struct gec_priv {
 extern int gec_hello(struct platform_intf *intf);
 const char *gec_version(struct platform_intf *intf);
 extern int gec_detect(struct platform_intf *intf);
+extern int gec_probe_i2c(struct platform_intf *intf);
 extern int gec_probe_lpc(struct platform_intf *intf);
 
 #endif	/* MOSYS_DRIVERS_EC_GOOGLE__ */

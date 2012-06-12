@@ -4,6 +4,11 @@ config GOOGLE_EC
 	bool
 	default n
 
+config GOOGLE_EC_I2C
+        bool "Google interface for I2C ECs"
+	select GOOGLE_EC
+        default n
+
 config GOOGLE_EC_LPC
         bool "Google interface for LPC ECs"
 	select GOOGLE_EC

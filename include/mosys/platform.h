@@ -375,6 +375,8 @@ struct ec_cb {
 	const char *(*vendor)(struct platform_intf *intf);
 	const char *(*name)(struct platform_intf *intf);
 	const char *(*fw_version)(struct platform_intf *intf);
+
+	void *priv;	/* private data for EC */
 };
 
 /* hid touchpad callbacks */

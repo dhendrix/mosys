@@ -99,6 +99,18 @@ static int daisy_setup_post(struct platform_intf *intf)
 	if (daisy_ec_setup(intf) <= 0)
 		return -1;
 
+	/*
+	 * FIXME: This is a hack that overrides the "Daisy"
+	 * canonical platform name with "Snow" depending on
+	 * the family of EC which is detected. Daisy is expected
+	 * to use stm32l, and Snow is expected to use stm32f.
+	 */
+	if (!strncmp(intf->cb->ec->name(intf), "stm32f", 6)) {
+		lprintf(LOG_DEBUG, "Overriding platform name %s with %s\n",
+			intf->name, "Snow");
+		intf->name = "Snow";
+	}
+
 	return 0;
 }
 

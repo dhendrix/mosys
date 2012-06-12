@@ -113,6 +113,24 @@ const char *gec_version(struct platform_intf *intf)
 	return ret;
 }
 
+int gec_chip_info(struct platform_intf *intf,
+		  struct gec_response_get_chip_info *info)
+{
+	int rc = 0;
+	struct gec_priv *priv = intf->cb->ec->priv;
+
+	rc = priv->cmd(intf, GEC_CMD_GET_CHIP_INFO,
+		       info, sizeof(*info), NULL, 0);
+	if (rc)
+		return rc;
+
+	lprintf(LOG_DEBUG, "GEC vendor: %s\n", info->vendor);
+	lprintf(LOG_DEBUG, "GEC name: %s\n", info->name);
+	lprintf(LOG_DEBUG, "GEC revision: %s\n", info->revision);
+
+	return rc;
+}
+
 /* returns 1 if EC detected, 0 if not, <0 to indicate failure */
 int gec_detect(struct platform_intf *intf)
 {

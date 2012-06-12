@@ -83,6 +83,15 @@ struct gec_response_get_build_info {
 	char build_string[GEC_PARAM_SIZE];
 } __attribute__ ((packed));
 
+/* Get chip info */
+#define GEC_CMD_GET_CHIP_INFO 0x05
+struct gec_response_get_chip_info {
+	/* Null-terminated strings */
+	char vendor[32];
+	char name[32];
+	char revision[32];  /* Mask version */
+} __attribute__ ((packed));
+
 struct gec_priv {
 	/* the low-level command function depends on bus */
 	int (*cmd)(struct platform_intf *intf, int command,
@@ -97,6 +106,8 @@ struct gec_priv {
 
 extern int gec_hello(struct platform_intf *intf);
 const char *gec_version(struct platform_intf *intf);
+extern int gec_chip_info(struct platform_intf *intf,
+		         struct gec_response_get_chip_info *info);
 extern int gec_detect(struct platform_intf *intf);
 extern int gec_probe_i2c(struct platform_intf *intf);
 extern int gec_probe_lpc(struct platform_intf *intf);

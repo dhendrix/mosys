@@ -537,7 +537,7 @@ static int i2c_find_driver(struct platform_intf *intf, const char *module)
 		return 0;
 	len = __min(len, 80);
 	while (fgets(s, 80, fp) != NULL) {
-		if (!strncmp(s, module, len)) {
+		if (!strncmp(s, module, len) && (len == strcspn(s, " "))) {
 			ret = 1;
 			break;
 		}

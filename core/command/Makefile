@@ -1,5 +1,6 @@
 obj-y		+= ec.o
 obj-y		+= eeprom.o
+obj-y		+= eventlog.o
 obj-y		+= gpio.o
 obj-y		+= hid.o
 obj-y		+= i2c.o

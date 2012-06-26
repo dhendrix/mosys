@@ -43,7 +43,7 @@ extern struct platform_cmd cmd_smbios;
 extern struct platform_cmd cmd_memory;
 extern struct platform_cmd cmd_cpu;
 extern struct platform_cmd cmd_sensor;
-extern struct platform_cmd cmd_eventlog_smbios;
+extern struct platform_cmd cmd_eventlog;
 extern struct platform_cmd cmd_bootnum;
 extern struct platform_cmd cmd_flash;
 extern struct platform_cmd cmd_nvram;

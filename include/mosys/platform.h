@@ -218,9 +218,8 @@ enum eventlog_clear_type {
 
 /* eventlog related callbacks */
 struct smbios_log_entry;
+struct smbios_table_log;
 struct eventlog_cb {
-	int (*print_multi)(struct platform_intf *intf,
-	                   struct smbios_log_entry *entry, int start_id);
 	int (*print_type)(struct platform_intf *intf,
 	                  struct smbios_log_entry *entry,
 	                  struct kv_pair *kv);
@@ -229,6 +228,8 @@ struct eventlog_cb {
 	                  struct kv_pair *kv);
 	int (*verify)(struct platform_intf *intf,
 	              struct smbios_log_entry *entry);
+	int (*verify_metadata)(struct smbios_table_log *table,
+			       void *eventlog_header);
 	int (*add)(struct platform_intf *intf, int argc, char **argv);
 	int (*clear)(struct platform_intf *intf,
 	             enum eventlog_clear_type type);

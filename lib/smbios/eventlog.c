@@ -33,12 +33,20 @@
  * eventlog.c: SMBIOS event log access.
  */
 
+#define _XOPEN_SOURCE 600 /* for strptime + snprintf */
+#include <stdlib.h>
 #include <inttypes.h>
-
+#include <unistd.h>
+#include <stdarg.h>
+#include <string.h>
+#include <stdio.h>
+#include <time.h>
 #include <valstr.h>
 
 #include "mosys/alloc.h"
 #include "mosys/globals.h"
+#include "mosys/log.h"
+#include "mosys/kv_pair.h"
 #include "mosys/platform.h"
 #include "mosys/output.h"
 
@@ -182,7 +190,7 @@ struct smbios_log_entry *smbios_eventlog_get_next_entry(
 	/* Advance the offset. */
 	elog_iter->current_offset = next_offset;
 
-	if (elog_iter->verbose)
+	if (elog_iter->verbose > 5)
 		print_buffer(entry, entry->length);
 
 	return entry;
@@ -269,4 +277,139 @@ static const struct valstr smbios_eventlog_types[] = {
 const char *smbios_get_event_type_string(struct smbios_log_entry *entry)
 {
 	return val2str_default(entry->type, smbios_eventlog_types, NULL);
+}
+/*
+ * smbios_eventlog_print_timestamp - forms the key-value pair for event
+ * timestamp
+ *
+ * @intf:   platform interface
+ * @entry:  the smbios log entry to get the data information
+ * @kv:     kv_pair structure to add data to
+ *
+ * Forms the key-value description pair for the event timestamp.
+ */
+void smbios_eventlog_print_timestamp(struct platform_intf *intf,
+				     struct smbios_log_entry *entry,
+				     struct kv_pair *kv)
+{
+	char tm_string[40];
+	time_t time;
+
+	if (!intf || !entry || !kv)
+		return;
+
+	if (smbios_eventlog_event_time(entry, &time) < 0) {
+		/* backup in case string could not be parsed */
+		kv_pair_fmt(kv, "timestamp",
+			    "%02d%02x-%02x-%02x %02x:%02x:%02x",
+			    (entry->year > 0x80
+			     && entry->year < 0x99) ? 19 : 20, entry->year,
+			    entry->month, entry->day, entry->hour,
+			    entry->minute, entry->second);
+		return;
+	}
+
+	strftime(tm_string, sizeof(tm_string),
+		 "%Y-%m-%d %H:%M:%S", localtime(&time));
+
+	/* print the timestamp */
+	kv_pair_add(kv, "timestamp", tm_string);
+}
+
+
+/*
+ * smbios_eventlog_event_time - obtain time of smbios event entry in
+ *                              time_t form.
+ *
+ * @entry - smbios event
+ * @time - time_t variable to fill in
+ *
+ * returns 0 on succes, < 0 on failure
+ */
+int smbios_eventlog_event_time(struct smbios_log_entry *entry, time_t *time)
+{
+	int ret;
+	struct tm tm;
+	char tm_string[20];
+	const char *tm_format = "%y-%m-%d%t%H:%M:%S";
+
+	MOSYS_DCHECK(time);
+
+	ret = 0;
+	/* make certain _all_ members of tm get initialized */
+	memset(&tm, 0, sizeof(tm));
+	snprintf(tm_string, sizeof(tm_string), "%02x-%02x-%02x %02x:%02x:%02x",
+		 entry->year, entry->month, entry->day,
+		 entry->hour, entry->minute, entry->second);
+
+	if (strptime(tm_string, tm_format, &tm) == NULL) {
+		ret = -1;
+	} else {
+		/* Set DST flag to -1 to indicate "not available" and let
+		 * system determine if DST is on based on date */
+		tm.tm_isdst = -1;
+
+		*time = mktime(&tm);
+		*time += tm.__tm_gmtoff; /* force adjust for timezone */
+	}
+
+	return ret;
+}
+
+/*
+ * smbios_eventlog_foreach_event - call callback for each event in the SMBIOS
+ *                                 eventlog.
+ *
+ * @intf - platform interface
+ * @verify - optional function to call to verify the eventlog metadata
+ * @callback - function to call for each log entry
+ * @arg - optional argument to pass to callback
+ *
+ * returns the aggregation (OR) of return codes for each call to callback.
+ */
+int smbios_eventlog_foreach_event(struct platform_intf *intf,
+                                  smbios_eventlog_verify_metadata verify,
+                                  smbios_eventlog_callback callback, void *arg)
+{
+	struct smbios_table table;
+	struct smbios_eventlog_iterator *elog_iter;
+	struct smbios_log_entry *entry;
+	int complete;
+	int ret;
+
+	MOSYS_DCHECK(intf);
+	MOSYS_DCHECK(callback);
+
+	if (smbios_find_table(intf, SMBIOS_TYPE_LOG, 0, &table,
+			      SMBIOS_LEGACY_ENTRY_BASE,
+			      SMBIOS_LEGACY_ENTRY_LEN) < 0) {
+		lprintf(LOG_WARNING, "Unable to find SMBIOS eventlog table.\n");
+		return -1;
+	}
+
+	/* Obtain handle to eventlog. */
+	elog_iter = smbios_new_eventlog_iterator(intf, &table.data.log);
+
+	if (verify != NULL) {
+		void *eventlog_header = smbios_eventlog_get_header(elog_iter);
+
+		if (verify(&table.data.log, eventlog_header) < 0) {
+			ret = -1;
+			goto smbios_eventlog_foreach_event_out;
+		}
+	}
+
+	/* Cycle through each event. */
+	complete = 0;
+	ret = 0;
+	while ((entry = smbios_eventlog_get_next_entry(elog_iter)) != NULL) {
+		ret |= callback(intf, entry, arg, &complete);
+		if (complete) {
+			break;
+		}
+	}
+
+smbios_eventlog_foreach_event_out:
+	smbios_free_eventlog_iterator(elog_iter);
+	return ret;
 }

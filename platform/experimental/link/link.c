@@ -40,6 +40,7 @@
 
 #include "lib/probe.h"
 #include "lib/smbios.h"
+#include "lib/elog.h"
 
 #include "link.h"
 
@@ -56,6 +57,7 @@ struct platform_cmd *link_sub[] = {
 	&cmd_nvram,
 	&cmd_platform,
 	&cmd_smbios,
+	&cmd_eventlog,
 	NULL
 };
 
@@ -115,12 +117,20 @@ static int link_destroy(struct platform_intf *intf)
 	return 0;
 }
 
+struct eventlog_cb link_eventlog_cb = {
+	.print_type	= &elog_print_type,
+	.print_data	= &elog_print_data,
+	.verify		= &elog_verify,
+	.verify_metadata= &elog_verify_metadata,
+};
+
 struct platform_cb link_cb = {
 	.ec		= &link_ec_cb,
 	.eeprom		= &link_eeprom_cb,
 	.nvram		= &link_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,
 	.sys 		= &link_sys_cb,
+	.eventlog	= &link_eventlog_cb,
 };
 
 struct platform_intf platform_link = {

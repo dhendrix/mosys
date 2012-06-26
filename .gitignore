@@ -1,0 +1,11 @@
+*.o
+*.cmd
+.config
+.config.old
+scripts/basic/docproc
+scripts/basic/fixdep
+scripts/basic/hash
+scripts/kconfig/conf
+include/config
+include/generated
+mosys

@@ -37,6 +37,8 @@
 #include "mosys/intf_list.h"
 #include "mosys/log.h"
 
+#include "drivers/google/gec.h"
+
 #include "lib/probe.h"
 
 #include "daisy.h"
@@ -123,7 +125,7 @@ static int daisy_destroy(struct platform_intf *intf)
 }
 
 struct platform_cb daisy_cb = {
-	.ec 		= &daisy_ec_cb,
+	.ec 		= &gec_cb,
 	.sys 		= &daisy_sys_cb,
 };
 

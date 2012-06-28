@@ -29,80 +29,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <inttypes.h>
-
-#include "mosys/alloc.h"
-#include "mosys/callbacks.h"
 #include "mosys/log.h"
 #include "mosys/platform.h"
 
 #include "drivers/google/gec.h"
 
-#include "lib/string.h"
-
-#include "intf/i2c.h"
-
 #define	DAISY_EC_ADDRESS 0x1e
-
-static const char *daisy_ec_name(struct platform_intf *intf)
-{
-	static const char *name = NULL;
-	struct gec_response_get_chip_info chip_info;
-
-	if (name)
-		return name;
-
-	if (gec_chip_info(intf, &chip_info))
-		return NULL;
-
-	name = mosys_strdup(chip_info.name);
-	add_destroy_callback(free, (void *)name);
-	return name;
-}
-
-static const char *daisy_ec_vendor(struct platform_intf *intf)
-{
-	static const char *vendor = NULL;
-	struct gec_response_get_chip_info chip_info;
-
-	if (vendor)
-		return vendor;
-
-	if (gec_chip_info(intf, &chip_info))
-		return NULL;
-
-	vendor = mosys_strdup(chip_info.vendor);
-	add_destroy_callback(free, (void *)vendor);
-	return vendor;
-}
-
-static const char *daisy_ec_fw_version(struct platform_intf *intf)
-{
-	static const char *version = NULL;
-
-	if (version)
-		return version;
-
-	version = gec_version(intf);
-	if (version)
-		add_destroy_callback(free, (void *)version);
-	return version;
-}
 
 struct gec_priv daisy_ec_priv = {
 	.addr.i2c.addr	= DAISY_EC_ADDRESS,
 };
 
-struct ec_cb daisy_ec_cb = {
-	.vendor		= daisy_ec_vendor,
-	.name		= daisy_ec_name,
-	.fw_version	= daisy_ec_fw_version,
-	.priv		= &daisy_ec_priv,
-};
-
 int daisy_ec_setup(struct platform_intf *intf)
 {
 	int ret;
+
+	MOSYS_CHECK(intf->cb && intf->cb->ec);
+	intf->cb->ec->priv = &daisy_ec_priv;
 
 	ret = gec_probe_i2c(intf);
 	if (ret == 1)

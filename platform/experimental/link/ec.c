@@ -29,48 +29,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <ctype.h>
-#include <inttypes.h>
-
-#include "drivers/google/gec.h"
-
-#include "mosys/callbacks.h"
 #include "mosys/log.h"
 #include "mosys/platform.h"
 
-static const char *link_ec_name(struct platform_intf *intf)
-{
-	return "lm4fs1gh5bb";
-}
-
-static const char *link_ec_vendor(struct platform_intf *intf)
-{
-	return "ti";
-}
-
-static const char *link_ec_fw_version(struct platform_intf *intf)
-{
-	const char *version = NULL;
-
-	version = gec_version(intf);
-	if (version)
-		add_destroy_callback(free, (void *)version);
-	else
-		version = "unknown";
-
-	return version;
-}
-
-struct ec_cb link_ec_cb = {
-	.vendor		= link_ec_vendor,
-	.name		= link_ec_name,
-	.fw_version	= link_ec_fw_version,
-};
+#include "drivers/google/gec.h"
 
 int link_ec_setup(struct platform_intf *intf)
 {
-	if (gec_probe_lpc(intf))
-		return -1;
+	int ret;
 
-	return 0;
+	MOSYS_CHECK(intf->cb && intf->cb->ec);
+
+	ret = gec_probe_lpc(intf);
+	if (ret == 1)
+		lprintf(LOG_DEBUG, "GEC found on LPC bus\n");
+	else if (ret == 0)
+		lprintf(LOG_DEBUG, "GEC not found on LPC bus\n");
+	else
+		lprintf(LOG_ERR, "Error when probing GEC on LPC bus\n");
+
+	return ret;
 }

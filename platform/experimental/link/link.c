@@ -38,6 +38,8 @@
 #include "mosys/intf_list.h"
 #include "mosys/log.h"
 
+#include "drivers/google/gec.h"
+
 #include "lib/probe.h"
 #include "lib/smbios.h"
 #include "lib/elog.h"
@@ -127,7 +129,7 @@ struct eventlog_cb link_eventlog_cb = {
 };
 
 struct platform_cb link_cb = {
-	.ec		= &link_ec_cb,
+	.ec		= &gec_cb,
 	.eeprom		= &link_eeprom_cb,
 	.gpio		= &link_gpio_cb,
 	.memory		= &link_memory_cb,

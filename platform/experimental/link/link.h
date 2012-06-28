@@ -39,7 +39,6 @@
 #define LINK_GPIO_PCH				0
 
 /* platform callbacks */
-extern struct ec_cb link_ec_cb;			/* ec.c */
 extern struct eeprom_cb link_eeprom_cb;		/* eeprom.c */
 extern struct gpio_cb link_gpio_cb;		/* gpio.c */
 extern struct memory_cb link_memory_cb;		/* memory.c */

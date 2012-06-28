@@ -119,7 +119,7 @@ static int gec_command_lpc(struct platform_intf *intf, int command,
 	}
 
 	/* Write data, if any */
-	for (i = 0, d = (uint8_t *)indata; i < insize; i++, d++) {
+	for (i = 0, d = (uint8_t *)outdata; i < outsize; i++, d++) {
 		if (io_write8(intf, GEC_ADDR_USER_PARAM + i, *d))
 			return -1;
 	}
@@ -144,7 +144,7 @@ static int gec_command_lpc(struct platform_intf *intf, int command,
 	}
 
 	/* Read data, if any */
-	for (i = 0, d = (uint8_t *)outdata; i < outsize; i++, d++) {
+	for (i = 0, d = (uint8_t *)indata; i < insize; i++, d++) {
 		if (io_read8(intf, GEC_ADDR_USER_PARAM + i, d))
 			return -1;
 	}

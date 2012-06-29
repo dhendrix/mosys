@@ -104,6 +104,7 @@ struct gec_priv {
 	} addr;
 };
 
+extern struct ec_cb gec_cb;
 extern int gec_hello(struct platform_intf *intf);
 const char *gec_version(struct platform_intf *intf);
 extern int gec_chip_info(struct platform_intf *intf,

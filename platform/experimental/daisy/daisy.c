@@ -57,6 +57,7 @@ const char *daisy_id_list[] = {
 
 struct platform_cmd *daisy_sub[] = {
 	&cmd_ec,
+	&cmd_eeprom,
 	&cmd_platform,
 	NULL
 };
@@ -167,6 +168,7 @@ static int daisy_destroy(struct platform_intf *intf)
 
 struct platform_cb daisy_cb = {
 	.ec 		= &gec_cb,
+	.eeprom 	= &daisy_eeprom_cb,
 	.sys 		= &daisy_sys_cb,
 };
 

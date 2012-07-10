@@ -126,6 +126,9 @@ int flashrom_read(uint8_t *buf, size_t size,
 	case INTERNAL_BUS_SPI:
 		string_builder_strcat(sb, " -p internal:bus=spi");
 		break;
+	case INTERNAL_BUS_I2C:
+		string_builder_strcat(sb, " -p internal:bus=i2c");
+		break;
 	case INTERNAL_BUS_LPC:
 		string_builder_strcat(sb, " -p internal:bus=lpc");
 		break;

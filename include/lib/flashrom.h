@@ -33,8 +33,9 @@
 #define MOSYS_LIB_FLASHROM_H__
 
 enum target_bus {
-	INTERNAL_BUS_SPI,
+	INTERNAL_BUS_I2C,
 	INTERNAL_BUS_LPC,
+	INTERNAL_BUS_SPI,
 };
 
 /*

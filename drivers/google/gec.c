@@ -131,6 +131,28 @@ int gec_chip_info(struct platform_intf *intf,
 	return rc;
 }
 
+int gec_flash_info(struct platform_intf *intf,
+		   struct gec_response_flash_info *info)
+{
+	int rc = 0;
+	struct gec_priv *priv = intf->cb->ec->priv;
+
+	rc = priv->cmd(intf, GEC_CMD_FLASH_INFO,
+		       info, sizeof(*info), NULL, 0);
+	if (rc)
+		return rc;
+
+	lprintf(LOG_DEBUG, "GEC flash size: 0x%06x\n", info->flash_size);
+	lprintf(LOG_DEBUG, "GEC write block size: 0x%06x\n",
+			info->write_block_size);
+	lprintf(LOG_DEBUG, "GEC erase block size: 0x%06x\n",
+			info->erase_block_size);
+	lprintf(LOG_DEBUG, "GEC protection block size: 0x%06x\n",
+			info->protect_block_size);
+
+	return rc;
+}
+
 /* returns 1 if EC detected, 0 if not, <0 to indicate failure */
 int gec_detect(struct platform_intf *intf)
 {

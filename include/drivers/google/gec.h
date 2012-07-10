@@ -92,6 +92,22 @@ struct gec_response_get_chip_info {
 	char revision[32];  /* Mask version */
 } __attribute__ ((packed));
 
+/* Get flash info */
+#define GEC_CMD_FLASH_INFO 0x10
+struct gec_response_flash_info {
+	/* Usable flash size, in bytes */
+	uint32_t flash_size;
+	/* Write block size.  Write offset and size must be a multiple
+	 * of this. */
+	uint32_t write_block_size;
+	/* Erase block size.  Erase offset and size must be a multiple
+	 * of this. */
+	uint32_t erase_block_size;
+	/* Protection block size.  Protection offset and size must be a
+	 * multiple of this. */
+	uint32_t protect_block_size;
+} __attribute__ ((packed));
+
 struct gec_priv {
 	/* the low-level command function depends on bus */
 	int (*cmd)(struct platform_intf *intf, int command,
@@ -109,6 +125,8 @@ extern int gec_hello(struct platform_intf *intf);
 const char *gec_version(struct platform_intf *intf);
 extern int gec_chip_info(struct platform_intf *intf,
 		         struct gec_response_get_chip_info *info);
+extern int gec_flash_info(struct platform_intf *intf,
+		         struct gec_response_flash_info *info);
 extern int gec_detect(struct platform_intf *intf);
 extern int gec_probe_i2c(struct platform_intf *intf);
 extern int gec_probe_lpc(struct platform_intf *intf);

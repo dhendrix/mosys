@@ -58,6 +58,7 @@ struct platform_cmd *parrot_sub[] = {
 	&cmd_platform,
 	&cmd_smbios,
 	&cmd_vpd,
+	&cmd_ec,
 	NULL
 };
 
@@ -129,6 +130,7 @@ struct platform_cb parrot_cb = {
 	.smbios		= &smbios_sysinfo_cb,
 	.sys 		= &parrot_sys_cb,
 	.vpd		= &parrot_vpd_cb,
+	.ec		= &parrot_ec_cb,
 };
 
 struct platform_intf platform_parrot = {

@@ -29,24 +29,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef EXPERIMENTAL_PARROT_H__
-#define EXPERIMENTAL_PARROT_H__
+#ifndef MOSYS_DRIVERS_EC_ENE_KB832_H__
+#define MOSYS_DRIVERS_EC_ENE_KB832_H__
 
-#include <inttypes.h>
-#include "mosys/platform.h"
+/**
+ * Read ene internal sram
+ *
+ * @param address       16bit sram address
+ * @return              8bit sram data
+ */
+uint8_t ene_read(struct platform_intf *intf, uint16_t port,
+			uint16_t address);
 
-#define PARROT_HOST_FIRMWARE_ROM_SIZE		(8192 * 1024)
+/**
+ * Write ene internal sram
+ *
+ * @param address       16bit sram address
+ * @param data          8bit data
+ */
+void ene_write(struct platform_intf *intf, uint16_t port,
+			uint16_t address, uint8_t data);
 
-/* platform callbacks */
-extern struct eeprom_cb parrot_eeprom_cb;	/* eeprom.c */
-extern struct memory_cb parrot_memory_cb;	/* memory.c */
-extern struct nvram_cb parrot_nvram_cb;		/* nvram.c */
-extern struct sys_cb parrot_sys_cb;		/* sys.c */
-extern struct vpd_cb parrot_vpd_cb;		/* vpd.c */
-extern struct ec_cb parrot_ec_cb;		/* ec.c */
+/**
+ * Detect kb932 on specific port
+ *
+ * returns 1 to indicate success
+ * returns 0 if no ene kb932 determined, but no error occurred
+ */
+int ene_kb932_detect(struct platform_intf *intf, uint16_t port);
 
-/* functions called by setup routines */
-extern int parrot_vpd_setup(struct platform_intf *intf);
-extern int parrot_eeprom_setup(struct platform_intf *intf);
-
-#endif /* EXPERIMENTAL_PARROT_H_ */
+#endif /* MOSYS_DRIVERS_EC_ENE_KB832_H__ */

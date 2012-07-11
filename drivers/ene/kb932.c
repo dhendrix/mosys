@@ -29,24 +29,73 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef EXPERIMENTAL_PARROT_H__
-#define EXPERIMENTAL_PARROT_H__
-
 #include <inttypes.h>
+
+#include "mosys/log.h"
 #include "mosys/platform.h"
 
-#define PARROT_HOST_FIRMWARE_ROM_SIZE		(8192 * 1024)
+#include "intf/io.h"
 
-/* platform callbacks */
-extern struct eeprom_cb parrot_eeprom_cb;	/* eeprom.c */
-extern struct memory_cb parrot_memory_cb;	/* memory.c */
-extern struct nvram_cb parrot_nvram_cb;		/* nvram.c */
-extern struct sys_cb parrot_sys_cb;		/* sys.c */
-extern struct vpd_cb parrot_vpd_cb;		/* vpd.c */
-extern struct ec_cb parrot_ec_cb;		/* ec.c */
+#include "drivers/superio.h"
+#include "drivers/ene/kb932.h"
 
-/* functions called by setup routines */
-extern int parrot_vpd_setup(struct platform_intf *intf);
-extern int parrot_eeprom_setup(struct platform_intf *intf);
+#define ENE_HWVER 0xa2
+#define ENE_EDIID 0x02
 
-#endif /* EXPERIMENTAL_PARROT_H_ */
+static const int port_ene_bank   = 1;
+static const int port_ene_offset = 2;
+static const int port_ene_data   = 3;
+
+static const uint16_t ene_hwver_addr = 0xff00;
+static const uint16_t ene_ediid_addr = 0xff24;
+
+/**
+ * Read ene internal sram
+ *
+ * @param address       16bit sram address
+ * @return              8bit sram data
+ */
+uint8_t ene_read(struct platform_intf *intf, uint16_t port,
+			uint16_t address)
+{
+	uint8_t bank   = address >> 8;
+	uint8_t offset = address & 0xff;
+	uint8_t data = 0xff;
+
+	io_write8(intf, port + port_ene_bank, bank);
+	io_write8(intf, port + port_ene_offset, offset);
+	io_read8(intf, port + port_ene_data, &data);
+	return data;
+}
+
+/**
+ * Write ene internal sram
+ *
+ * @param address       16bit sram address
+ * @param data          8bit data
+ */
+void ene_write(struct platform_intf *intf, uint16_t port,
+			uint16_t address, uint8_t data)
+{
+	uint8_t bank   = address >> 8;
+	uint8_t offset = address & 0xff;
+
+	io_write8(intf, port + port_ene_bank, bank);
+	io_write8(intf, port + port_ene_offset, offset);
+	io_write8(intf, port + port_ene_data, data);
+}
+
+/*
+ * returns 1 to indicate success
+ * returns 0 if no ene kb932 determined, but no error occurred
+ */
+int ene_kb932_detect(struct platform_intf *intf, uint16_t port)
+{
+	if (ene_read(intf, port, ene_hwver_addr) != ENE_HWVER)
+		return 0;
+	if (ene_read(intf, port, ene_ediid_addr) != ENE_EDIID)
+		return 0;
+
+	return 1;
+}
+

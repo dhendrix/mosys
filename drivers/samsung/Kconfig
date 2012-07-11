@@ -1,0 +1,10 @@
+# samsung config variables
+
+config SOC_SAMSUNG
+	bool
+	default n
+
+config SOC_SAMSUNG_EXYNOS5
+	bool "Exynos 5"
+	select SOC_SAMSUNG
+	default n

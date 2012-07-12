@@ -57,6 +57,9 @@ void kv_pair_print_gpio(struct gpio_map *gpio, int state)
 	case GPIO_OUT:
 		kv_pair_add(kv, "type", "OUT");
 		break;
+	case GPIO_ALT:
+		kv_pair_add(kv, "type", "ALT");
+		break;
 	default:
 		lprintf(LOG_DEBUG, "Invalid GPIO type %d\n", gpio->type);
 		kv_pair_free(kv);

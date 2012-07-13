@@ -152,6 +152,15 @@ struct elog_cros_recovery_mode {
 	uint8_t checksum;
 } __attribute__ ((packed));
 
+/* Management Engine Events */
+#define ELOG_TYPE_MANAGEMENT_ENGINE      0xa2
+#define  ELOG_ME_PATH_NORMAL              0x00
+#define  ELOG_ME_PATH_S3WAKE              0x01
+#define  ELOG_ME_PATH_ERROR               0x02
+#define  ELOG_ME_PATH_RECOVERY            0x03
+#define  ELOG_ME_PATH_DISABLED            0x04
+#define  ELOG_ME_PATH_FW_UPDATE           0x05
+
 /* Recovery reason codes for EVENT_TYPE_CROS_RECOVERY_MODE */
 /* Recovery not requested. */
 #define VBNV_RECOVERY_NOT_REQUESTED   0x00

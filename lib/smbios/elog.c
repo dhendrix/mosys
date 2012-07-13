@@ -112,6 +112,7 @@ int elog_print_type(struct platform_intf *intf, struct smbios_log_entry *entry,
 		{ ELOG_TYPE_WAKE_SOURCE, "Wake Source" },
 		{ ELOG_TYPE_CROS_DEVELOPER_MODE, "Chrome OS Developer Mode" },
 		{ ELOG_TYPE_CROS_RECOVERY_MODE, "Chrome OS Recovery Mode" },
+		{ ELOG_TYPE_MANAGEMENT_ENGINE, "Management Engine" },
 		{ 0x0, NULL },
 	};
 
@@ -233,6 +234,15 @@ int elog_print_data(struct platform_intf *intf, struct smbios_log_entry *entry,
 		{ VBNV_RECOVERY_US_UNSPECIFIED, "Unknown Error in User Mode" },
 		{ 0, NULL },
 	};
+	static struct valstr me_path_types[] = {
+		{ ELOG_ME_PATH_NORMAL, "Normal" },
+		{ ELOG_ME_PATH_NORMAL, "S3 Wake" },
+		{ ELOG_ME_PATH_ERROR, "Error" },
+		{ ELOG_ME_PATH_RECOVERY, "Recovery" },
+		{ ELOG_ME_PATH_DISABLED, "Disabled" },
+		{ ELOG_ME_PATH_FW_UPDATE, "Firmware Update" },
+		{ 0, NULL },
+	};
 
 	switch (entry->type) {
 	case SMBIOS_EVENT_TYPE_LOGCLEAR:
@@ -282,6 +292,11 @@ int elog_print_data(struct platform_intf *intf, struct smbios_log_entry *entry,
 		kv_pair_add(kv, "reason",
 			    val2str(*reason, cros_recovery_reasons));
 		break;
+	}
+	case ELOG_TYPE_MANAGEMENT_ENGINE:
+	{
+		uint8_t *path = (void *)&entry->data[0];
+		kv_pair_add(kv, "path", val2str(*path, me_path_types));
 	}
 	default:
 		return 0;

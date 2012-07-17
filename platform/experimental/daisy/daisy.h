@@ -35,6 +35,25 @@
 #include <inttypes.h>
 #include "mosys/platform.h"
 
+#define SNOW_BOARD_ID0	"ID_Bit0"
+#define SNOW_BOARD_ID1	"ID_Bit1"
+
+/* board config is used for determining DRAM vendor and platform revision */
+enum daisy_board_config {
+	/* TODO: add Daisy configurations here as well */
+	SNOW_CONFIG_UNKNOWN = -1,
+	SNOW_CONFIG_SAMSUNG_EVT,
+	SNOW_CONFIG_ELPIDA_EVT,
+	SNOW_CONFIG_SAMSUNG_DVT,
+	SNOW_CONFIG_ELPIDA_DVT,
+	SNOW_CONFIG_SAMSUNG_PVT,
+	SNOW_CONFIG_ELPIDA_PVT,
+	SNOW_CONFIG_SAMSUNG_MP,
+	SNOW_CONFIG_ELPIDA_MP,
+	SNOW_CONFIG_RSVD,
+};
+
+extern enum daisy_board_config board_config;
 extern int daisy_ec_setup(struct platform_intf *intf);
 
 /* platform callbacks */

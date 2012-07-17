@@ -37,7 +37,9 @@
 #include "mosys/intf_list.h"
 #include "mosys/log.h"
 
+#include "drivers/gpio.h"
 #include "drivers/google/gec.h"
+#include "drivers/samsung/exynos5.h"
 
 #include "lib/file.h"
 #include "lib/probe.h"
@@ -45,6 +47,7 @@
 #include "daisy.h"
 
 static const char *probed_platform_id;
+enum daisy_board_config board_config;
 
 const char *daisy_id_list[] = {
 	"Daisy",
@@ -139,6 +142,46 @@ daisy_probe_exit:
 	return status;
 }
 
+static int snow_get_board_config(struct platform_intf *intf)
+{
+	struct gpio_map *id0, *id1;
+	enum mvl3 v0, v1;
+	enum daisy_board_config config;
+
+	id0 = intf->cb->gpio->map(intf, SNOW_BOARD_ID0);
+	id1 = intf->cb->gpio->map(intf, SNOW_BOARD_ID1);
+	if (!id0 || !id1) {
+		lprintf(LOG_DEBUG, "%s: Unable to determine id0/1\n", __func__);
+		return SNOW_CONFIG_UNKNOWN;
+	}
+
+	v0 = exynos5_read_gpio_mvl(intf, id0);
+	v1 = exynos5_read_gpio_mvl(intf, id1);
+
+	lprintf(LOG_DEBUG, "%s: v0: %u, v1: %u\n", __func__, v0, v1);
+	/* FIXME: http://crosbug.com/p/11413 */
+	if ((v0 == LOGIC_0) && (v1 == LOGIC_0))
+		config = SNOW_CONFIG_SAMSUNG_EVT;
+	else if ((v0 == LOGIC_0) && (v1 == LOGIC_1))
+		config = SNOW_CONFIG_ELPIDA_EVT;
+	else if ((v0 == LOGIC_1) && (v1 == LOGIC_0))
+		config = SNOW_CONFIG_SAMSUNG_DVT;
+	else if ((v0 == LOGIC_1) && (v1 == LOGIC_1))
+		config = SNOW_CONFIG_ELPIDA_DVT;
+	else if ((v0 == LOGIC_0) && (v1 == LOGIC_Z))
+		config = SNOW_CONFIG_SAMSUNG_PVT;
+	else if ((v0 == LOGIC_1) && (v1 == LOGIC_Z))
+		config = SNOW_CONFIG_ELPIDA_DVT;
+	else if ((v0 == LOGIC_Z) && (v1 == LOGIC_0))
+		config = SNOW_CONFIG_SAMSUNG_MP;
+	else if ((v0 == LOGIC_Z) && (v1 == LOGIC_Z))
+		config = SNOW_CONFIG_ELPIDA_MP;
+	else if ((v0 == LOGIC_Z) && (v1 == LOGIC_1))
+		config = SNOW_CONFIG_RSVD;
+
+	return config;
+}
+
 static int daisy_setup_post(struct platform_intf *intf)
 {
 	if (daisy_ec_setup(intf) <= 0)
@@ -154,6 +197,8 @@ static int daisy_setup_post(struct platform_intf *intf)
 		lprintf(LOG_DEBUG, "Overriding platform name %s with %s\n",
 			intf->name, "Snow");
 		intf->name = "Snow";
+
+		board_config = snow_get_board_config(intf);
 	}
 
 	return 0;

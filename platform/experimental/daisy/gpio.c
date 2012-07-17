@@ -43,13 +43,13 @@
 
 #define GPIO_SOC	0
 
-#define BOARD_ID0	"ID_Bit0"
-#define BOARD_ID1	"ID_Bit1"
+#define ID0	SNOW_BOARD_ID0
+#define ID1	SNOW_BOARD_ID1
 
 /* gpio number, in/out, device, port, pin, negate, devname, name */
 static struct gpio_map snow_gpio_map[] = {
-	{   4, GPIO_IN,  GPIO_SOC, EXYNOS5_GPA0,  4, 0, "SOC", BOARD_ID0 },
-	{   5, GPIO_IN,  GPIO_SOC, EXYNOS5_GPA0,  5, 0, "SOC", BOARD_ID1 },
+	{   4, GPIO_IN,  GPIO_SOC, EXYNOS5_GPA0,  4, 0, "SOC", ID0 },
+	{   5, GPIO_IN,  GPIO_SOC, EXYNOS5_GPA0,  5, 0, "SOC", ID1 },
 	{   0,       0,         0,       0,  0,   0, NULL, NULL   }
 };
 

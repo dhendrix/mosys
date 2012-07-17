@@ -34,6 +34,8 @@
 
 #include "lib/probe.h"
 
+#include "daisy.h"
+
 #if 0
 static const char *daisy_get_vendor(struct platform_intf *intf)
 {
@@ -59,7 +61,34 @@ static const char *daisy_get_family(struct platform_intf *intf)
 
 static const char *daisy_get_version(struct platform_intf *intf)
 {
-	return extract_cpuinfo("Revision");
+	char *ret = NULL;
+
+	switch (board_config) {
+	case SNOW_CONFIG_ELPIDA_EVT:
+	case SNOW_CONFIG_SAMSUNG_EVT:
+		ret = mosys_strdup("EVT");
+		break;
+	case SNOW_CONFIG_ELPIDA_DVT:
+	case SNOW_CONFIG_SAMSUNG_DVT:
+		ret = mosys_strdup("DVT");
+		break;
+	case SNOW_CONFIG_ELPIDA_PVT:
+	case SNOW_CONFIG_SAMSUNG_PVT:
+		ret = mosys_strdup("DVT");
+		break;
+	case SNOW_CONFIG_ELPIDA_MP:
+	case SNOW_CONFIG_SAMSUNG_MP:
+		ret = mosys_strdup("MP");
+		break;
+	case SNOW_CONFIG_RSVD:
+		ret = mosys_strdup("RSVD");
+		break;
+	default:
+		ret = mosys_strdup("Unknown");
+		break;
+	}
+
+	return ret;
 }
 
 struct sys_cb daisy_sys_cb = {

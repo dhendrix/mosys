@@ -38,6 +38,28 @@ enum gpio_types {
 	GPIO_ALT,		/* catch-all for alternate functions */
 };
 
+/*
+ * Many-value logic (3 states). This can be used for inputs whereby presence
+ * of external pull-up or pull-down resistors can be added to overcome internal
+ * pull-ups/pull-downs and force a single value.
+ *
+ * Thus, external pull resistors can force a 0 or 1 and if the value changes
+ * along with internal pull-up/down enable then the input is floating.
+ *
+ *     Vpd | Vpu | MVL
+ *    -----------------
+ *      0  |  0  | 0
+ *    -----------------
+ *      0  |  1  | Z    <-- floating input will follow internal pull up/down
+ *    -----------------
+ *      1  |  1  | 1
+ */
+enum mvl3 {
+	LOGIC_0,
+	LOGIC_1,
+	LOGIC_Z,		/* high impedence / tri-stated / floating */
+};
+
 struct gpio_map {
 	int id;			/* gpio number */
 	enum gpio_types type;	/* input/output */

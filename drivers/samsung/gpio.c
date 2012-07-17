@@ -32,6 +32,7 @@
  */
 
 #include <inttypes.h>
+#include <time.h>
 
 #include "mosys/log.h"
 #include "mosys/platform.h"
@@ -43,6 +44,9 @@
 #include "intf/mmio.h"
 
 #include "lib/math.h"
+
+/* "safe" value for allowing a GPIO settle after changing configuration */
+#define GPIO_DELAY_NS 5000	/* nanoseconds */
 
 static const struct exynos_gpio_bank *get_banks(enum exynos_generation gen)
 {
@@ -73,6 +77,78 @@ int exynos_read_gpio(struct platform_intf *intf,
 		return -1;
 
 	return dat & (1 << gpio->pin) ? 1 : 0;
+}
+
+/* TODO: this could be made more generic with better GPIO config methods */
+int exynos_read_gpio_mvl(struct platform_intf *intf,
+			 enum exynos_generation gen,
+			 struct gpio_map *gpio)
+{
+	const struct exynos_gpio_bank *bank, *banks;
+	struct exynos_gpio_regs *regs;
+	int vpu, vpd, ret;
+	uint32_t dat, con, pud, pud_orig;
+	struct timespec rem, req = { .tv_sec = 0, .tv_nsec = GPIO_DELAY_NS };
+
+	banks = get_banks(gen);
+	bank = &banks[gpio->port];
+	regs = (struct exynos_gpio_regs *)bank->baseaddr;
+
+	/* check that GPIO is configured as an input (con[n] == 0) */
+	if (mmio_read32(intf, (off_t)&regs->con, &con) < 0)
+		return -1;
+	con &= 0xf << (gpio->pin * 4);
+	if (con) {
+		lprintf(LOG_DEBUG, "%s: GPIO pin %d is not an input\n",
+			__func__, gpio->pin);
+		return -1;
+	}
+
+	if (mmio_read32(intf, (off_t)&regs->pud, &pud_orig) < 0)
+		return -1;
+	pud = pud_orig;
+
+	/* get value when internal pull-up is enabled */
+	pud |= 0x3 << (gpio->pin * 2);
+	if (mmio_write32(intf, (off_t)&regs->pud, pud) < 0)
+		return -1;
+	if (nanosleep(&req, &rem) < 0)
+		return -1;
+
+	if (mmio_read32(intf, (off_t)&regs->dat, &dat) < 0)
+		return -1;
+	vpu = dat & (1 << gpio->pin) ? 1 : 0;
+
+	/* get value when internal pull-down is enabled */
+	pud &= ~(0x3 << (gpio->pin * 2));
+	pud |= 0x1 << (gpio->pin * 2);
+	if (mmio_write32(intf, (off_t)&regs->pud, pud) < 0)
+		return -1;
+	if (nanosleep(&req, &rem) < 0)
+		return -1;
+
+	if (mmio_read32(intf, (off_t)&regs->dat, &dat) < 0)
+		return -1;
+	vpd = dat & (1 << gpio->pin) ? 1 : 0;
+
+	lprintf(LOG_DEBUG, "Pin %d, Vpu: %d, Vpd: %d\n", gpio->pin, vpu, vpd);
+	if (!vpu && !vpd) {
+		ret = LOGIC_0;
+	} else if (vpu && vpd) {
+		ret = LOGIC_1;
+	} else if (vpu && !vpd) {
+		ret = LOGIC_Z;
+	} else {
+		lprintf(LOG_DEBUG, "%s: detected unvalid logic state\n");
+		return -1;
+	}
+
+	/* restore original pull-up/down value */
+	if (mmio_write32(intf, (off_t)&regs->pud, pud_orig) < 0)
+		return -1;
+	if (nanosleep(&req, &rem) < 0)
+		return -1;
+	return ret;
 }
 
 int exynos_set_gpio(struct platform_intf *intf, enum exynos_generation gen,

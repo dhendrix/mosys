@@ -85,6 +85,20 @@ extern int exynos_read_gpio(struct platform_intf *intf,
 			    enum exynos_generation gen, struct gpio_map *gpio);
 
 /*
+ * exynos_read_gpio_mvl  - read many-value logic GPIO status
+ *
+ * @intf:	platform interface
+ * @gen:	chipset generation
+ * @gpio:	gpio map
+ *
+ * returns GPIO state as 0, 1, or Z
+ * returns <0 on read failure
+ */
+extern int exynos_read_gpio_mvl(struct platform_intf *intf,
+				enum exynos_generation gen,
+				struct gpio_map *gpio);
+
+/*
  * exynos_set_gpio  - set GPIO status
  *
  * @intf:	platform interface

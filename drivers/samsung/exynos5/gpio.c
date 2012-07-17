@@ -117,6 +117,11 @@ int exynos5_read_gpio(struct platform_intf *intf, struct gpio_map *gpio)
 	return exynos_read_gpio(intf, EXYNOS5, gpio);
 }
 
+int exynos5_read_gpio_mvl(struct platform_intf *intf, struct gpio_map *gpio)
+{
+	return exynos_read_gpio_mvl(intf, EXYNOS5, gpio);
+}
+
 int exynos5_set_gpio(struct platform_intf *intf,
 		     struct gpio_map *gpio, int state)
 {

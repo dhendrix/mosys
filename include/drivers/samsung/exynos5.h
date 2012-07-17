@@ -90,6 +90,8 @@ enum exynos5_gpio_port {
 
 extern const struct exynos_gpio_bank exynos5_gpio_banks[];
 extern int exynos5_read_gpio(struct platform_intf *intf, struct gpio_map *gpio);
+extern int exynos5_read_gpio_mvl(struct platform_intf *intf,
+				 struct gpio_map *gpio);
 extern int exynos5_set_gpio(struct platform_intf *intf,
 			    struct gpio_map *gpio, int state);
 extern int exynos5_gpio_list(struct platform_intf *intf);

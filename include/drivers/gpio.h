@@ -35,6 +35,7 @@
 enum gpio_types {
 	GPIO_IN,
 	GPIO_OUT,
+	GPIO_ALT,		/* catch-all for alternate functions */
 };
 
 struct gpio_map {

@@ -87,6 +87,7 @@ struct elog_os_event {
 # define ELOG_OS_EVENT_SOFTWDT            6  /* Software Watchdog */
 # define ELOG_OS_EVENT_MBE                7  /* MBE */
 # define ELOG_OS_EVENT_TRIPLE             8  /* Triple Fault */
+# define ELOG_OS_EVENT_THERMAL            9  /* Critical Thermal Threshold */
 
 #define ELOG_TYPE_OS_BOOT                 0x90
 struct elog_os_boot {

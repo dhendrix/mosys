@@ -154,6 +154,7 @@ int elog_print_data(struct platform_intf *intf, struct smbios_log_entry *entry,
 		{ ELOG_OS_EVENT_SOFTWDT, "Software Watchdog" },
 		{ ELOG_OS_EVENT_MBE, "Multi-bit Error" },
 		{ ELOG_OS_EVENT_TRIPLE, "Triple Fault" },
+		{ ELOG_OS_EVENT_THERMAL, "Critical Thermal Threshold" },
 		{ 0, NULL },
 	};
 	static struct valstr wake_source_types[] = {

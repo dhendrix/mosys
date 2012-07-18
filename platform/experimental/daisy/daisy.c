@@ -62,6 +62,7 @@ struct platform_cmd *daisy_sub[] = {
 	&cmd_ec,
 	&cmd_eeprom,
 	&cmd_gpio,
+	&cmd_memory,
 	&cmd_platform,
 	NULL
 };
@@ -216,6 +217,7 @@ struct platform_cb daisy_cb = {
 	.ec 		= &gec_cb,
 	.eeprom 	= &daisy_eeprom_cb,
 	.gpio		= &daisy_gpio_cb,
+	.memory		= &daisy_memory_cb,
 	.sys 		= &daisy_sys_cb,
 };
 

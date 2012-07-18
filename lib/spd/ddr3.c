@@ -194,7 +194,7 @@ int spd_print_field_ddr3(struct platform_intf *intf, struct kv_pair *kv,
 	{
 		/* See "Calculating Module Capacity" section in DDR3 SPD
 		 * specification for details. */
-		long size;
+		unsigned int size;
 
 		/* calculate the total size in MB */
 		size = 256 << (byte[DDR3_SPD_REG_DENSITY_BANKS] & 0xf);
@@ -203,7 +203,7 @@ int spd_print_field_ddr3(struct platform_intf *intf, struct kv_pair *kv,
 		size /= 4 << (byte[DDR3_SPD_REG_MODULE_ORG] & 0x7);
 		size *= 1 + ((byte[DDR3_SPD_REG_MODULE_ORG] >> 3) & 0x7);
 
-		kv_pair_fmt(kv, "size_mb", "%llu", size);
+		kv_pair_fmt(kv, "size_mb", "%u", size);
 		ret = 1;
 		break;
 	}

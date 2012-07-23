@@ -77,8 +77,11 @@ const char *gec_version(struct platform_intf *intf)
 		return NULL;
 
 	if (priv->cmd(intf, GEC_COMMAND_GET_BUILD_INFO,
-		      &r2, sizeof(r2), NULL, 0))
-		return NULL;
+		      &r2, sizeof(r2), NULL, 0)) {
+		/* FIXME: this is a temporary hack */
+		//return NULL;
+		lprintf(LOG_DEBUG, "GEC_COMMAND_GET_BUILD_INFO is broken\n");
+	}
 
 	/* Ensure versions are null-terminated before we print them */
 	r.version_string_ro[sizeof(r.version_string_ro) - 1] = '\0';

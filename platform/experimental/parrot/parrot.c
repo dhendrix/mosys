@@ -41,6 +41,7 @@
 #include "lib/probe.h"
 #include "lib/smbios.h"
 #include "lib/vpd.h"
+#include "lib/elog.h"
 
 #include "parrot.h"
 
@@ -59,6 +60,7 @@ struct platform_cmd *parrot_sub[] = {
 	&cmd_smbios,
 	&cmd_vpd,
 	&cmd_ec,
+	&cmd_eventlog,
 	NULL
 };
 
@@ -123,6 +125,13 @@ static int parrot_destroy(struct platform_intf *intf)
 	return 0;
 }
 
+struct eventlog_cb parrot_eventlog_cb = {
+	.print_type	= &elog_print_type,
+	.print_data	= &elog_print_data,
+	.verify		= &elog_verify,
+	.verify_metadata= &elog_verify_metadata,
+};
+
 struct platform_cb parrot_cb = {
 	.eeprom		= &parrot_eeprom_cb,
 	.memory		= &parrot_memory_cb,
@@ -131,6 +140,7 @@ struct platform_cb parrot_cb = {
 	.sys 		= &parrot_sys_cb,
 	.vpd		= &parrot_vpd_cb,
 	.ec		= &parrot_ec_cb,
+	.eventlog	= &parrot_eventlog_cb,
 };
 
 struct platform_intf platform_parrot = {

@@ -135,14 +135,28 @@ static const char *parrot_ec_name(struct platform_intf *intf)
 		"KB932" : "Unknown";
 }
 
+static void bcd_to_ascii(uint8_t bcd, char *ascii)
+{
+	uint8_t digit;
+
+	/* high nibble first */
+	digit = bcd >> 4;
+	if (digit <= 9)
+		ascii[0] = digit + '0';
+
+	digit = bcd & 0xf;
+	if (digit <= 9)
+		ascii[1] = digit + '0';
+}
+
 /**
  * Get parrot vendor specific fw version string
  *
  * Parrot ec firmware version format: '00BEmnnArr'
  *   '00BE' - hardware type, parrot
  *   'mnnA' - m : major, 0 ~ 9
- *            nn: minor, 00~99
- *   'rr'   - rev, 00~99
+ *            nn: minor, 00~99 binary coded dicimal
+ *   'rr'   - rev, 00~99 binary coded dicimal
  */
 static const char *parrot_ec_fw_version(struct platform_intf *intf)
 {
@@ -150,7 +164,7 @@ static const char *parrot_ec_fw_version(struct platform_intf *intf)
 	static char version[11];
 
 	if (ene_kb932_detect(intf, parrot_ec_port))
-		memcpy(version, "00BE000A00", 11);
+		memcpy(version, "00BExxxAxx", 11);
 	else
 		return "Unknown";
 
@@ -163,19 +177,11 @@ static const char *parrot_ec_fw_version(struct platform_intf *intf)
 			version[4] = major + '0';
 	}
 	/* minor range: 00 ~ 99 */
-	if (!ec_read(intf, parrot_ec_data, &minor)) {
-		if (minor < 100) {
-			version[5] = (minor / 10) + '0';
-			version[6] = (minor % 10) + '0';
-		}
-	}
+	if (!ec_read(intf, parrot_ec_data, &minor))
+		bcd_to_ascii(minor, version + 5);
 	/* rev range: 00 ~ 99 */
-	if (!ec_read(intf, parrot_ec_data, &rev)) {
-		if (rev < 100) {
-			version[5] = (minor / 10) + '0';
-			version[6] = (minor % 10) + '0';
-		}
-	}
+	if (!ec_read(intf, parrot_ec_data, &rev))
+		bcd_to_ascii(rev, version + 8);
 
 	return version;
 }

@@ -180,6 +180,12 @@ int elog_print_data(struct platform_intf *intf, struct smbios_log_entry *entry,
 		{ EC_EVENT_THERMAL, "Thermal" },
 		{ EC_EVENT_USB_CHARGER, "USB Charger" },
 		{ EC_EVENT_KEY_PRESSED, "Key Pressed" },
+		{ EC_EVENT_INTERFACE_READY, "Host Interface Ready" },
+		{ EC_EVENT_KEYBOARD_RECOVERY, "Keyboard Recovery" },
+		{ EC_EVENT_THERMAL_SHUTDOWN,
+		  "Thermal Shutdown in previous boot" },
+		{ EC_EVENT_BATTERY_SHUTDOWN,
+		  "Battery Shutdown in previous boot" },
 		{ 0, NULL },
 	};
 	static struct valstr cros_recovery_reasons[] = {

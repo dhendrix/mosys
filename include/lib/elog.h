@@ -109,6 +109,10 @@ struct elog_os_boot {
 #define EC_EVENT_THERMAL                   0x0b
 #define EC_EVENT_USB_CHARGER               0x0c
 #define EC_EVENT_KEY_PRESSED               0x0d
+#define EC_EVENT_INTERFACE_READY           0x0e
+#define EC_EVENT_KEYBOARD_RECOVERY         0x0f
+#define EC_EVENT_THERMAL_SHUTDOWN          0x10
+#define EC_EVENT_BATTERY_SHUTDOWN          0x11
 struct elog_ec_event {
 	uint8_t event;
 	uint8_t checksum;

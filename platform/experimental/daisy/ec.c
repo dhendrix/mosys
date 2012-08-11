@@ -34,9 +34,11 @@
 
 #include "drivers/google/gec.h"
 
-#define	DAISY_EC_ADDRESS 0x1e
+#define DAISY_EC_BUS		4
+#define	DAISY_EC_ADDRESS	0x1e
 
 struct gec_priv daisy_ec_priv = {
+	.addr.i2c.bus	= DAISY_EC_BUS,		/* may be overridden */
 	.addr.i2c.addr	= DAISY_EC_ADDRESS,
 };
 

@@ -147,13 +147,12 @@ done:
 	return 0;
 }
 
-/* returns 1 if EC detected, 0 if not, <0 to indicate failure */
-int gec_probe_i2c(struct platform_intf *intf)
+/* returns bus number if found, <0 otherwise */
+static int gec_probe_i2c_sysfs(struct platform_intf *intf)
 {
 	const char *path, *s;
-	int ret = -1;
+	int ret = -1, bus;
 	struct ll_node *list = NULL, *head;
-	int bus;
 
 	lprintf(LOG_DEBUG, "%s: probing for GEC on I2C...\n", __func__);
 
@@ -170,7 +169,7 @@ int gec_probe_i2c(struct platform_intf *intf)
 		      "name", GEC_I2C_ADAPTER_NAME, 1);
 	if (!list_count(list)) {
 		lprintf(LOG_DEBUG, "GEC I2C adapter not found\n");
-		goto gec_probe_i2c_done;
+		goto gec_probe_sysfs_exit;
 	}
 
 	head = list_head(list);
@@ -188,25 +187,37 @@ int gec_probe_i2c(struct platform_intf *intf)
 
 	if ((s == path) || (sscanf(s, "i2c-%u", &bus) != 1)) {
 		lprintf(LOG_ERR, "Unable to parse I2C bus number\n");
-		goto gec_probe_i2c_done;
+		goto gec_probe_sysfs_exit;
 	}
 
-	if (intf->cb->ec->priv) {
-		struct gec_priv *priv = intf->cb->ec->priv;
+	if ((bus >= 0) && (bus <= 255))
+		ret = bus;
 
+gec_probe_sysfs_exit:
+	list_cleanup(&list);
+	return ret;
+}
+
+/* returns 1 if EC detected, 0 if not, <0 to indicate failure */
+int gec_probe_i2c(struct platform_intf *intf)
+{
+	int ret = -1, bus;
+	struct gec_priv *priv;
+
+	MOSYS_DCHECK(intf->cb->ec && intf->cb->ec->priv);
+	priv = intf->cb->ec->priv;
+
+	bus = gec_probe_i2c_sysfs(intf);
+	if (bus >= 0) {
+		lprintf(LOG_DEBUG, "%s: Overriding bus %d with %d\n",
+			__func__, priv->addr.i2c.bus, bus);
 		priv->addr.i2c.bus = bus;
-		priv->cmd = gec_command_i2c;
-	} else {
-		lprintf(LOG_ERR, "%s: No private data available?\n", __func__);
-		ret = -1;
-		goto gec_probe_i2c_done;
 	}
 
+	priv->cmd = gec_command_i2c;
 	ret = gec_detect(intf);
 	if (ret == 1)
 		lprintf(LOG_DEBUG, "GEC detected on I2C bus\n");
 
-gec_probe_i2c_done:
-	list_cleanup(&list);
 	return ret;
 }

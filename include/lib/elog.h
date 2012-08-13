@@ -166,6 +166,10 @@ struct elog_cros_recovery_mode {
 #define  ELOG_ME_PATH_DISABLED            0x04
 #define  ELOG_ME_PATH_FW_UPDATE           0x05
 
+/* Last post code from previous boot */
+#define ELOG_TYPE_LAST_POST_CODE         0xa3
+
+
 /* Recovery reason codes for EVENT_TYPE_CROS_RECOVERY_MODE */
 /* Recovery not requested. */
 #define VBNV_RECOVERY_NOT_REQUESTED   0x00

@@ -113,6 +113,7 @@ int elog_print_type(struct platform_intf *intf, struct smbios_log_entry *entry,
 		{ ELOG_TYPE_CROS_DEVELOPER_MODE, "Chrome OS Developer Mode" },
 		{ ELOG_TYPE_CROS_RECOVERY_MODE, "Chrome OS Recovery Mode" },
 		{ ELOG_TYPE_MANAGEMENT_ENGINE, "Management Engine" },
+		{ ELOG_TYPE_LAST_POST_CODE, "Last post code in previous boot" },
 		{ 0x0, NULL },
 	};
 
@@ -267,6 +268,12 @@ int elog_print_data(struct platform_intf *intf, struct smbios_log_entry *entry,
 	{
 		uint32_t *count = (void *)&entry->data[0];
 		kv_pair_fmt(kv, "count", "%u", *count);
+		break;
+	}
+	case ELOG_TYPE_LAST_POST_CODE:
+	{
+		uint16_t *code = (void *)&entry->data[0];
+		kv_pair_fmt(kv, "code", "0x%02x", *code);
 		break;
 	}
 	case ELOG_TYPE_OS_EVENT:

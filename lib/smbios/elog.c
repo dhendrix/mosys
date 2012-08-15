@@ -128,9 +128,10 @@ int elog_print_type(struct platform_intf *intf, struct smbios_log_entry *entry,
 		return 1;
 	}
 
-	lprintf(LOG_DEBUG, "elog: event type 0x%x unknown.\n", entry->type);
-
-	return 0;
+	/* Indicate unknown type in value pair */
+	kv_pair_add(kv, "type", "Unknown");
+	kv_pair_fmt(kv, "value", "0x%02x", entry->type);
+	return 1;
 }
 
 /*

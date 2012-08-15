@@ -29,9 +29,8 @@
  */
 
 #include "mosys/big_lock.h"
+#include "mosys/ipc_lock.h"
 #include "mosys/locks.h"
-
-#include "ipc_lock.h"
 
 static struct ipc_lock mosys_big_lock = IPC_LOCK_INIT(MOSYS_LOCK_BIGLOCK);
 

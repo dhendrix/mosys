@@ -31,10 +31,10 @@
 #include <inttypes.h>
 #include <time.h>
 
+#include "mosys/ipc_lock.h"
 #include "mosys/log.h"
 
 #include "csem.h"
-#include "ipc_lock.h"
 
 /*
  * this function is exposed (non-static) for testing

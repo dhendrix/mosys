@@ -1,5 +1,4 @@
-/*
- * Copyright 2012, Google Inc.
+/* Copyright 2012, Google Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,31 +26,21 @@
  * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * locks.h: locks are used to preserve atomicity of operations in mosys.
- * This is useful if multiple instances of mosys might be used at once,
- * such as if a monitoring daemon links to it and a userspace app is present.
  */
 
-#ifndef MOSYS_LOCKS_H__
-#define MOSYS_LOCKS_H__
+#include "mosys/ipc_lock.h"
+#include "mosys/locks.h"
 
-/* this is the base key, since we have to pick something global */
-#define MOSYS_IPC_LOCK_KEY	(0x67736c00 & 0xfffffc00) /* 22 bits "gsl" */
+#include "drivers/google/gec_lock.h"
 
-/* The ordering of the following keys matters a lot. We don't want to reorder
- * keys and have a new mosys or binary dependent on deployed/used
- * because it will break the atomicity of existing mosys users and binaries. In
- * other words, DO NOT REORDER. */
+static struct ipc_lock gec_lock = IPC_LOCK_INIT(GEC_LOCK);
 
-/* this is the mosys "big lock". */
-#define MOSYS_LOCK_BIGLOCK	(MOSYS_IPC_LOCK_KEY + 0)
+int acquire_gec_lock(int timeout_secs)
+{
+	return mosys_lock(&gec_lock, timeout_secs*1000);
+}
 
-/* for Google EC */
-#define GEC_LOCK		(MOSYS_IPC_LOCK_KEY + 1)
-
-/* key for testing, should never be used in production */
-#define MOSYS_TEST_KEY		0xffffffff
-
-#endif /* MOSYS_LOCKS_H__ */
-
+int release_gec_lock(void)
+{
+	return mosys_unlock(&gec_lock);
+}

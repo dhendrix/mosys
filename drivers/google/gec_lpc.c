@@ -39,6 +39,7 @@
 #include "mosys/platform.h"
 
 #include "drivers/google/gec.h"
+#include "drivers/google/gec_lock.h"
 
 #include "intf/io.h"
 
@@ -106,50 +107,61 @@ static int gec_command_lpc(struct platform_intf *intf, int command,
 	uint8_t *d;
 	int i;
 	uint8_t ec_response;
+	int rc = -1;
 
 	if (insize > GEC_PARAM_SIZE || outsize > GEC_PARAM_SIZE) {
 		lprintf(LOG_DEBUG, "%s: data size too big\n", __func__);
 		return -1;
 	}
 
+	lprintf(LOG_DEBUG, "Acquiring GEC lock (timeout=%d sec)...\n",
+		GEC_LOCK_TIMEOUT_SECS);
+	if (acquire_gec_lock(GEC_LOCK_TIMEOUT_SECS) < 0) {
+		lprintf(LOG_ERR, "Could not acquire GEC lock.\n");
+		goto gec_command_lpc_exit;
+	}
+
 	if (wait_for_ec(intf, GEC_ADDR_USER_CMD, 1000000)) {
 		lprintf(LOG_DEBUG, "%s: timeout waiting for EC ready\n",
 		                   __func__);
-		return -1;
+		goto gec_command_lpc_exit;
 	}
 
 	/* Write data, if any */
 	for (i = 0, d = (uint8_t *)outdata; i < outsize; i++, d++) {
 		if (io_write8(intf, GEC_ADDR_USER_PARAM + i, *d))
-			return -1;
+			goto gec_command_lpc_exit;
 	}
 
 	if (io_write8(intf, GEC_ADDR_USER_CMD, command))
-		return -1;
+		goto gec_command_lpc_exit;
 
 	if (wait_for_ec(intf, GEC_ADDR_USER_CMD, 1000000)) {
 		lprintf(LOG_DEBUG, "%s: timeout waiting for EC response\n",
 		                   __func__);
-		return -1;
+		goto gec_command_lpc_exit;
 	}
 
 	/* Check result */
 	if (io_read8(intf, GEC_ADDR_USER_DATA, &ec_response))
-		return -1;
+		goto gec_command_lpc_exit;
+	rc = ec_response;
 
 	if (ec_response) {
 		lprintf(LOG_DEBUG, "%s: EC returned error result code %d\n",
 		                   __func__, ec_response);
-		return ec_response;
+		goto gec_command_lpc_exit;
 	}
 
 	/* Read data, if any */
 	for (i = 0, d = (uint8_t *)indata; i < insize; i++, d++) {
 		if (io_read8(intf, GEC_ADDR_USER_PARAM + i, d))
-			return -1;
+			goto gec_command_lpc_exit;
 	}
 
-	return 0;
+gec_command_lpc_exit:
+	release_gec_lock();
+	return rc;
 }
 
 struct gec_priv gec_priv_lpc = {

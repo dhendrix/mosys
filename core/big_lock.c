@@ -66,5 +66,5 @@ int mosys_release_big_lock(void)
  */
 void mosys_big_lock_prepare_test(void)
 {
-	mosys_big_lock.key = MOSYS_LOCK_TEST_BIGLOCK;
+	mosys_big_lock.key = MOSYS_TEST_KEY;
 }

@@ -47,8 +47,8 @@
 /* this is the mosys "big lock". */
 #define MOSYS_LOCK_BIGLOCK	(MOSYS_IPC_LOCK_KEY + 0)
 
-/* this is the mosys *TEST* "big lock" */
-#define MOSYS_LOCK_TEST_BIGLOCK	(MOSYS_IPC_LOCK_KEY + 1)
+/* key for testing, should never be used in production */
+#define MOSYS_TEST_KEY		0xffffffff
 
 #endif /* MOSYS_LOCKS_H__ */
 

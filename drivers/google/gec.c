@@ -68,7 +68,6 @@ const char *gec_version(struct platform_intf *intf)
 {
 	static const char *const fw_copies[] = {"unknown", "RO", "A", "B"};
 	struct gec_response_get_version r;
-	struct gec_response_get_build_info r2;
 	const char *ret = NULL;
 	struct gec_priv *priv = intf->cb->ec->priv;
 
@@ -76,18 +75,10 @@ const char *gec_version(struct platform_intf *intf)
 		      &r, sizeof(r), NULL, 0))
 		return NULL;
 
-	if (priv->cmd(intf, GEC_COMMAND_GET_BUILD_INFO,
-		      &r2, sizeof(r2), NULL, 0)) {
-		/* FIXME: this is a temporary hack */
-		//return NULL;
-		lprintf(LOG_DEBUG, "GEC_COMMAND_GET_BUILD_INFO is broken\n");
-	}
-
 	/* Ensure versions are null-terminated before we print them */
 	r.version_string_ro[sizeof(r.version_string_ro) - 1] = '\0';
 	r.version_string_rw_a[sizeof(r.version_string_rw_a) - 1] = '\0';
 	r.version_string_rw_b[sizeof(r.version_string_rw_b) - 1] = '\0';
-	r2.build_string[sizeof(r2.build_string) - 1] = '\0';
 
 	/* Print versions */
 	lprintf(LOG_DEBUG, "RO version:    %s\n", r.version_string_ro);
@@ -96,7 +87,6 @@ const char *gec_version(struct platform_intf *intf)
 	lprintf(LOG_DEBUG, "Firmware copy: %s\n",
 	       (r.current_image < ARRAY_SIZE(fw_copies) ?
 		fw_copies[r.current_image] : "?"));
-	lprintf(LOG_DEBUG, "Build info:    %s\n", r2.build_string);
 
 	switch (r.current_image) {
 	case GEC_IMAGE_RO:

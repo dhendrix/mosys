@@ -41,6 +41,7 @@
 #include "mosys/platform.h"
 
 #include "drivers/google/gec.h"
+#include "drivers/google/gec_ec_commands.h"
 
 #include "lib/file.h"
 #include "lib/math.h"
@@ -65,7 +66,7 @@ static int gec_command_i2c(struct platform_intf *intf, int command,
 	struct gec_priv *priv = intf->cb->ec->priv;
 	struct i2c_addr *addr = &(priv->addr.i2c);
 
-	if (insize > GEC_PARAM_SIZE || outsize > GEC_PARAM_SIZE) {
+	if (insize > EC_HOST_PARAM_SIZE || outsize > EC_HOST_PARAM_SIZE) {
 		lprintf(LOG_DEBUG, "%s: data size too big\n", __func__);
 		goto done;
 	}

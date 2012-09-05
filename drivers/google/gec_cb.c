@@ -36,11 +36,12 @@
 #include "mosys/platform.h"
 
 #include "drivers/google/gec.h"
+#include "drivers/google/gec_ec_commands.h"
 
 static const char *gec_name(struct platform_intf *intf)
 {
 	static const char *name = NULL;
-	struct gec_response_get_chip_info chip_info;
+	struct ec_response_get_chip_info chip_info;
 
 	if (name)
 		return name;
@@ -56,7 +57,7 @@ static const char *gec_name(struct platform_intf *intf)
 static const char *gec_vendor(struct platform_intf *intf)
 {
 	static const char *vendor = NULL;
-	struct gec_response_get_chip_info chip_info;
+	struct ec_response_get_chip_info chip_info;
 
 	if (vendor)
 		return vendor;

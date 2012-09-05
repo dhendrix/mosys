@@ -37,19 +37,20 @@
 #include "mosys/platform.h"
 
 #include "drivers/google/gec.h"
+#include "drivers/google/gec_ec_commands.h"
 
 #include "lib/math.h"
 
 int gec_hello(struct platform_intf *intf)
 {
-	struct gec_params_hello p;
-	struct gec_response_hello r;
+	struct ec_params_hello p;
+	struct ec_response_hello r;
 	int rv;
 	struct gec_priv *priv = intf->cb->ec->priv;
 
 	p.in_data = 0xa0b0c0d0;
 
-	rv = priv->cmd(intf, GEC_COMMAND_HELLO, &p,
+	rv = priv->cmd(intf, EC_CMD_HELLO, &p,
 		       sizeof(p), &r, sizeof(r));
 	if (rv)
 		return rv;
@@ -66,37 +67,31 @@ int gec_hello(struct platform_intf *intf)
 
 const char *gec_version(struct platform_intf *intf)
 {
-	static const char *const fw_copies[] = {"unknown", "RO", "A", "B"};
-	struct gec_response_get_version r;
+	static const char *const fw_copies[] = { "unknown", "RO", "RW" };
+	struct ec_response_get_version r;
 	const char *ret = NULL;
 	struct gec_priv *priv = intf->cb->ec->priv;
 
-	if (priv->cmd(intf, GEC_COMMAND_GET_VERSION,
-		      &r, sizeof(r), NULL, 0))
+	if (priv->cmd(intf, EC_CMD_GET_VERSION, &r, sizeof(r), NULL, 0))
 		return NULL;
 
 	/* Ensure versions are null-terminated before we print them */
 	r.version_string_ro[sizeof(r.version_string_ro) - 1] = '\0';
-	r.version_string_rw_a[sizeof(r.version_string_rw_a) - 1] = '\0';
-	r.version_string_rw_b[sizeof(r.version_string_rw_b) - 1] = '\0';
+	r.version_string_rw[sizeof(r.version_string_rw) - 1] = '\0';
 
 	/* Print versions */
 	lprintf(LOG_DEBUG, "RO version:    %s\n", r.version_string_ro);
-	lprintf(LOG_DEBUG, "RW-A version:  %s\n", r.version_string_rw_a);
-	lprintf(LOG_DEBUG, "RW-B version:  %s\n", r.version_string_rw_b);
+	lprintf(LOG_DEBUG, "RW version:    %s\n", r.version_string_rw);
 	lprintf(LOG_DEBUG, "Firmware copy: %s\n",
 	       (r.current_image < ARRAY_SIZE(fw_copies) ?
 		fw_copies[r.current_image] : "?"));
 
 	switch (r.current_image) {
-	case GEC_IMAGE_RO:
+	case EC_IMAGE_RO:
 		ret = mosys_strdup(r.version_string_ro);
 		break;
-	case GEC_IMAGE_RW_A:
-		ret = mosys_strdup(r.version_string_rw_a);
-		break;
-	case GEC_IMAGE_RW_B:
-		ret = mosys_strdup(r.version_string_rw_b);
+	case EC_IMAGE_RW:
+		ret = mosys_strdup(r.version_string_rw);
 		break;
 	default:
 		lprintf(LOG_DEBUG, "%s: cannot determine version\n", __func__);
@@ -107,12 +102,12 @@ const char *gec_version(struct platform_intf *intf)
 }
 
 int gec_chip_info(struct platform_intf *intf,
-		  struct gec_response_get_chip_info *info)
+		  struct ec_response_get_chip_info *info)
 {
 	int rc = 0;
 	struct gec_priv *priv = intf->cb->ec->priv;
 
-	rc = priv->cmd(intf, GEC_CMD_GET_CHIP_INFO,
+	rc = priv->cmd(intf, EC_CMD_GET_CHIP_INFO,
 		       info, sizeof(*info), NULL, 0);
 	if (rc)
 		return rc;
@@ -125,12 +120,12 @@ int gec_chip_info(struct platform_intf *intf,
 }
 
 int gec_flash_info(struct platform_intf *intf,
-		   struct gec_response_flash_info *info)
+		   struct ec_response_flash_info *info)
 {
 	int rc = 0;
 	struct gec_priv *priv = intf->cb->ec->priv;
 
-	rc = priv->cmd(intf, GEC_CMD_FLASH_INFO,
+	rc = priv->cmd(intf, EC_CMD_FLASH_INFO,
 		       info, sizeof(*info), NULL, 0);
 	if (rc)
 		return rc;
@@ -149,8 +144,8 @@ int gec_flash_info(struct platform_intf *intf,
 /* returns 1 if EC detected, 0 if not, <0 to indicate failure */
 int gec_detect(struct platform_intf *intf)
 {
-	struct gec_params_hello request;
-	struct gec_response_hello response;
+	struct ec_params_hello request;
+	struct ec_response_hello response;
 	int result = 0;
 	int ret = 0;
 	struct gec_priv *priv;
@@ -164,7 +159,7 @@ int gec_detect(struct platform_intf *intf)
 
 	lprintf(LOG_DEBUG, "%s: sending HELLO request with 0x%08x\n",
 		__func__, request.in_data);
-	result  = priv->cmd(intf, GEC_COMMAND_HELLO,
+	result  = priv->cmd(intf, EC_CMD_HELLO,
 			    &response, sizeof(response),
 			    &request, sizeof(request));
 	lprintf(LOG_DEBUG, "%s: response: 0x%08x\n",

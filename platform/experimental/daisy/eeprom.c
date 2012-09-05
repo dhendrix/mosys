@@ -39,6 +39,7 @@
 #include "mosys/log.h"
 
 #include "drivers/google/gec.h"
+#include "drivers/google/gec_ec_commands.h"
 
 #include "lib/eeprom.h"
 #include "lib/flashrom.h"
@@ -83,7 +84,7 @@ static struct eeprom_dev daisy_host_firmware = {
 static size_t daisy_ec_firmware_size(struct platform_intf *intf,
 				     struct eeprom *eeprom)
 {
-	struct gec_response_flash_info info;
+	struct ec_response_flash_info info;
 
 	if (gec_flash_info(intf, &info) < 0) {
 		lprintf(LOG_ERR, "%s: Failed to obtain flash info\n", __func__);

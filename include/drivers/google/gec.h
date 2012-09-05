@@ -37,76 +37,8 @@
 #include "intf/i2c.h"
 
 struct platform_intf;
-
-#define GEC_PARAM_SIZE          128  /* Size of each param area in bytes */
-
-/* GEC command response codes */
-/* TODO: move these so they don't overlap SCI/SMI data? */
-enum gec_status {
-	GEC_RESULT_SUCCESS = 0,
-	GEC_RESULT_INVALID_COMMAND = 1,
-	GEC_RESULT_ERROR = 2,
-	GEC_RESULT_INVALID_PARAM = 3,
-};
-
-/* Hello.  This is a simple command to test the EC is responsive to
- * commands. */
-#define GEC_COMMAND_HELLO 0x01
-struct gec_params_hello {
-	uint32_t in_data;  /* Pass anything here */
-} __attribute__ ((packed));
-struct gec_response_hello {
-	uint32_t out_data;  /* Output will be in_data + 0x01020304 */
-} __attribute__ ((packed));
-
-/* Get version number */
-#define GEC_COMMAND_GET_VERSION 0x02
-enum gec_current_image {
-	GEC_IMAGE_UNKNOWN = 0,
-	GEC_IMAGE_RO,
-	GEC_IMAGE_RW_A,
-	GEC_IMAGE_RW_B
-};
-
-#define GEC_COMMAND_GET_VERSION 0x02
-struct gec_response_get_version {
-	/* Null-terminated version strings for RO, RW-A, RW-B */
-	char version_string_ro[32];
-	char version_string_rw_a[32];
-	char version_string_rw_b[32];
-	uint32_t current_image;  /* One of gec_current_image */
-} __attribute__ ((packed));
-
-/* Get build information */
-#define GEC_COMMAND_GET_BUILD_INFO 0x04
-struct gec_response_get_build_info {
-	char build_string[GEC_PARAM_SIZE];
-} __attribute__ ((packed));
-
-/* Get chip info */
-#define GEC_CMD_GET_CHIP_INFO 0x05
-struct gec_response_get_chip_info {
-	/* Null-terminated strings */
-	char vendor[32];
-	char name[32];
-	char revision[32];  /* Mask version */
-} __attribute__ ((packed));
-
-/* Get flash info */
-#define GEC_CMD_FLASH_INFO 0x10
-struct gec_response_flash_info {
-	/* Usable flash size, in bytes */
-	uint32_t flash_size;
-	/* Write block size.  Write offset and size must be a multiple
-	 * of this. */
-	uint32_t write_block_size;
-	/* Erase block size.  Erase offset and size must be a multiple
-	 * of this. */
-	uint32_t erase_block_size;
-	/* Protection block size.  Protection offset and size must be a
-	 * multiple of this. */
-	uint32_t protect_block_size;
-} __attribute__ ((packed));
+struct ec_response_get_chip_info;
+struct ec_response_flash_info;
 
 struct gec_priv {
 	/* the low-level command function depends on bus */
@@ -124,9 +56,9 @@ extern struct ec_cb gec_cb;
 extern int gec_hello(struct platform_intf *intf);
 const char *gec_version(struct platform_intf *intf);
 extern int gec_chip_info(struct platform_intf *intf,
-		         struct gec_response_get_chip_info *info);
+		         struct ec_response_get_chip_info *info);
 extern int gec_flash_info(struct platform_intf *intf,
-		         struct gec_response_flash_info *info);
+		         struct ec_response_flash_info *info);
 extern int gec_detect(struct platform_intf *intf);
 extern int gec_probe_i2c(struct platform_intf *intf);
 extern int gec_probe_lpc(struct platform_intf *intf);

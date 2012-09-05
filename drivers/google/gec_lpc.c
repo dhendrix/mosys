@@ -39,23 +39,15 @@
 #include "mosys/platform.h"
 
 #include "drivers/google/gec.h"
+#include "drivers/google/gec_ec_commands.h"
 #include "drivers/google/gec_lock.h"
 
 #include "intf/io.h"
 
 #include "lib/math.h"
 
-/* I/O addresses for LPC commands */
-#define GEC_ADDR_KERNEL_DATA   0x62
-#define GEC_ADDR_KERNEL_CMD    0x66
-#define GEC_ADDR_KERNEL_PARAM 0x800
-#define GEC_ADDR_USER_DATA    0x200
-#define GEC_ADDR_USER_CMD     0x204
-#define GEC_ADDR_USER_PARAM   0x880
-
 /* LPC command status byte masks */
 /* EC has written a byte in the data register and host hasn't read it yet */
-#define GEC_STATUS_TO_HOST     0x01
 /* Host has written a command/data byte and the EC hasn't read it yet */
 #define GEC_STATUS_FROM_HOST   0x02
 /* EC is processing a command */
@@ -72,11 +64,6 @@
 /* (reserved) */
 #define GEC_STATUS_RESERVED    0x80
 
-/* EC is busy.  This covers both the EC processing a command, and the host has
- * written a new command but the EC hasn't picked it up yet. */
-#define GEC_STATUS_BUSY_MASK \
-	(GEC_STATUS_FROM_HOST | GEC_STATUS_PROCESSING)
-
 /* Waits for the EC to be unbusy.  Returns 0 if unbusy, non-zero if
  * timeout. */
 static int wait_for_ec(struct platform_intf *intf,
@@ -91,7 +78,7 @@ static int wait_for_ec(struct platform_intf *intf,
 		if (io_read8(intf, status_addr, &data))
 			return -1;
 
-		if (!(data & GEC_STATUS_BUSY_MASK))
+		if (!(data & EC_LPC_STATUS_BUSY_MASK))
 			return 0;
 	}
 
@@ -109,7 +96,7 @@ static int gec_command_lpc(struct platform_intf *intf, int command,
 	uint8_t ec_response;
 	int rc = -1;
 
-	if (insize > GEC_PARAM_SIZE || outsize > GEC_PARAM_SIZE) {
+	if (insize > EC_HOST_PARAM_SIZE || outsize > EC_HOST_PARAM_SIZE) {
 		lprintf(LOG_DEBUG, "%s: data size too big\n", __func__);
 		return -1;
 	}
@@ -118,55 +105,55 @@ static int gec_command_lpc(struct platform_intf *intf, int command,
 		GEC_LOCK_TIMEOUT_SECS);
 	if (acquire_gec_lock(GEC_LOCK_TIMEOUT_SECS) < 0) {
 		lprintf(LOG_ERR, "Could not acquire GEC lock.\n");
-		goto gec_command_lpc_exit;
+		goto ec_command_lpc_exit;
 	}
 
-	if (wait_for_ec(intf, GEC_ADDR_USER_CMD, 1000000)) {
+	if (wait_for_ec(intf, EC_LPC_ADDR_HOST_CMD, 1000000)) {
 		lprintf(LOG_DEBUG, "%s: timeout waiting for EC ready\n",
 		                   __func__);
-		goto gec_command_lpc_exit;
+		goto ec_command_lpc_exit;
 	}
 
 	/* Write data, if any */
 	for (i = 0, d = (uint8_t *)outdata; i < outsize; i++, d++) {
-		if (io_write8(intf, GEC_ADDR_USER_PARAM + i, *d))
-			goto gec_command_lpc_exit;
+		if (io_write8(intf, EC_LPC_ADDR_OLD_PARAM + i, *d))
+			goto ec_command_lpc_exit;
 	}
 
-	if (io_write8(intf, GEC_ADDR_USER_CMD, command))
-		goto gec_command_lpc_exit;
+	if (io_write8(intf, EC_LPC_ADDR_HOST_CMD, command))
+		goto ec_command_lpc_exit;
 
-	if (wait_for_ec(intf, GEC_ADDR_USER_CMD, 1000000)) {
+	if (wait_for_ec(intf, EC_LPC_ADDR_HOST_CMD, 1000000)) {
 		lprintf(LOG_DEBUG, "%s: timeout waiting for EC response\n",
 		                   __func__);
-		goto gec_command_lpc_exit;
+		goto ec_command_lpc_exit;
 	}
 
 	/* Check result */
-	if (io_read8(intf, GEC_ADDR_USER_DATA, &ec_response))
-		goto gec_command_lpc_exit;
+	if (io_read8(intf, EC_LPC_ADDR_HOST_DATA, &ec_response))
+		goto ec_command_lpc_exit;
 	rc = ec_response;
 
 	if (ec_response) {
 		lprintf(LOG_DEBUG, "%s: EC returned error result code %d\n",
 		                   __func__, ec_response);
-		goto gec_command_lpc_exit;
+		goto ec_command_lpc_exit;
 	}
 
 	/* Read data, if any */
 	for (i = 0, d = (uint8_t *)indata; i < insize; i++, d++) {
-		if (io_read8(intf, GEC_ADDR_USER_PARAM + i, d))
-			goto gec_command_lpc_exit;
+		if (io_read8(intf, EC_LPC_ADDR_OLD_PARAM + i, d))
+			goto ec_command_lpc_exit;
 	}
 
-gec_command_lpc_exit:
+ec_command_lpc_exit:
 	release_gec_lock();
 	return rc;
 }
 
 struct gec_priv gec_priv_lpc = {
 	.cmd		= &gec_command_lpc,
-	.addr.io	= GEC_ADDR_USER_CMD,
+	.addr.io	= EC_LPC_ADDR_HOST_CMD,
 };
 
 /* returns 1 if EC detected, 0 if not, <0 to indicate failure */

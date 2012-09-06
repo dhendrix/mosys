@@ -1,0 +1,5 @@
+obj-$(CONFIG_EXPERIMENTAL_STOUT)	+= eeprom.o
+obj-$(CONFIG_EXPERIMENTAL_STOUT)	+= memory.o
+obj-$(CONFIG_EXPERIMENTAL_STOUT)	+= nvram.o
+obj-$(CONFIG_EXPERIMENTAL_STOUT)	+= stout.o
+obj-$(CONFIG_EXPERIMENTAL_STOUT)	+= sys.o

@@ -20,6 +20,12 @@ config EXPERIMENTAL_ASYMPTOTE
 	bool "asymptote tegra2"
 	default n
 
+config EXPERIMENTAL_BUTTERFLY
+	depends on PLATFORM_ARCH_X86 && PLATFORM_EXPERIMENTAL
+	select CHIPSET_INTEL_SERIES6
+	bool "butterfly"
+	default n
+
 config EXPERIMENTAL_DAISY
 	depends on PLATFORM_ARCH_ARMEL && PLATFORM_EXPERIMENTAL
 	select GOOGLE_EC_I2C

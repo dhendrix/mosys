@@ -162,9 +162,9 @@ static int snow_get_board_config(struct platform_intf *intf)
 	lprintf(LOG_DEBUG, "%s: v0: %u, v1: %u\n", __func__, v0, v1);
 	/* FIXME: http://crosbug.com/p/11413 */
 	if ((v0 == LOGIC_0) && (v1 == LOGIC_0))
-		config = SNOW_CONFIG_SAMSUNG_EVT;
+		config = SNOW_CONFIG_SAMSUNG_MP;
 	else if ((v0 == LOGIC_0) && (v1 == LOGIC_1))
-		config = SNOW_CONFIG_ELPIDA_EVT;
+		config = SNOW_CONFIG_ELPIDA_MP;
 	else if ((v0 == LOGIC_1) && (v1 == LOGIC_0))
 		config = SNOW_CONFIG_SAMSUNG_DVT;
 	else if ((v0 == LOGIC_1) && (v1 == LOGIC_1))
@@ -172,11 +172,11 @@ static int snow_get_board_config(struct platform_intf *intf)
 	else if ((v0 == LOGIC_0) && (v1 == LOGIC_Z))
 		config = SNOW_CONFIG_SAMSUNG_PVT;
 	else if ((v0 == LOGIC_1) && (v1 == LOGIC_Z))
-		config = SNOW_CONFIG_ELPIDA_DVT;
+		config = SNOW_CONFIG_ELPIDA_PVT;
 	else if ((v0 == LOGIC_Z) && (v1 == LOGIC_0))
-		config = SNOW_CONFIG_SAMSUNG_MP;
+		config = SNOW_CONFIG_SAMSUNG_PVT2;
 	else if ((v0 == LOGIC_Z) && (v1 == LOGIC_Z))
-		config = SNOW_CONFIG_ELPIDA_MP;
+		config = SNOW_CONFIG_ELPIDA_PVT2;
 	else if ((v0 == LOGIC_Z) && (v1 == LOGIC_1))
 		config = SNOW_CONFIG_RSVD;
 

@@ -74,7 +74,11 @@ static const char *daisy_get_version(struct platform_intf *intf)
 		break;
 	case SNOW_CONFIG_ELPIDA_PVT:
 	case SNOW_CONFIG_SAMSUNG_PVT:
-		ret = mosys_strdup("DVT");
+		ret = mosys_strdup("PVT");
+		break;
+	case SNOW_CONFIG_ELPIDA_PVT2:
+	case SNOW_CONFIG_SAMSUNG_PVT2:
+		ret = mosys_strdup("PVT2");
 		break;
 	case SNOW_CONFIG_ELPIDA_MP:
 	case SNOW_CONFIG_SAMSUNG_MP:

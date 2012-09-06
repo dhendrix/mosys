@@ -173,6 +173,7 @@ static int daisy_spd_read(struct platform_intf *intf,
 	case SNOW_CONFIG_ELPIDA_EVT:
 	case SNOW_CONFIG_ELPIDA_DVT:
 	case SNOW_CONFIG_ELPIDA_PVT:
+	case SNOW_CONFIG_ELPIDA_PVT2:
 	case SNOW_CONFIG_ELPIDA_MP:
 		memcpy(buf, &elpida_ddr3_1600_spd[reg], len);
 		rc = len;
@@ -180,6 +181,7 @@ static int daisy_spd_read(struct platform_intf *intf,
 	case SNOW_CONFIG_SAMSUNG_EVT:
 	case SNOW_CONFIG_SAMSUNG_DVT:
 	case SNOW_CONFIG_SAMSUNG_PVT:
+	case SNOW_CONFIG_SAMSUNG_PVT2:
 	case SNOW_CONFIG_SAMSUNG_MP:
 		memcpy(buf, &samsung_ddr3_1600_spd[reg], len);
 		rc = len;

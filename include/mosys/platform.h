@@ -226,6 +226,9 @@ struct eventlog_cb {
 	int (*print_data)(struct platform_intf *intf,
 	                  struct smbios_log_entry *entry,
 	                  struct kv_pair *kv);
+	int (*print_multi)(struct platform_intf *intf,
+			   struct smbios_log_entry *entry,
+			   int start_id);
 	int (*verify)(struct platform_intf *intf,
 	              struct smbios_log_entry *entry);
 	int (*verify_metadata)(struct smbios_table_log *table,

@@ -113,6 +113,7 @@ int elog_print_type(struct platform_intf *intf, struct smbios_log_entry *entry,
 		{ ELOG_TYPE_CROS_DEVELOPER_MODE, "Chrome OS Developer Mode" },
 		{ ELOG_TYPE_CROS_RECOVERY_MODE, "Chrome OS Recovery Mode" },
 		{ ELOG_TYPE_MANAGEMENT_ENGINE, "Management Engine" },
+		{ ELOG_TYPE_MANAGEMENT_ENGINE_EXT, "Management Engine Extra" },
 		{ ELOG_TYPE_LAST_POST_CODE, "Last post code in previous boot" },
 		{ 0x0, NULL },
 	};
@@ -319,6 +320,238 @@ int elog_print_data(struct platform_intf *intf, struct smbios_log_entry *entry,
 	}
 	default:
 		return 0;
+	}
+
+	return 0;
+}
+
+static int elog_print_entry_me_ext(struct platform_intf *intf,
+				   struct smbios_log_entry *entry, int id,
+				   const char *desc, const char *value)
+{
+	struct kv_pair *kv;
+
+	if (!desc || !value)
+		return 0;
+
+	kv = kv_pair_new();
+	kv_pair_fmt(kv, "entry", "%d", id);
+	smbios_eventlog_print_timestamp(intf, entry, kv);
+	kv_pair_add(kv, "type", desc);
+	kv_pair_add(kv, "value", value);
+	kv_pair_print(kv);
+	kv_pair_free(kv);
+	return 1;
+}
+
+/*
+ * elog_print_multi_me_ext  -  print management engine extended events
+ *
+ * @intf:	platform interface
+ * @entry:	log entry
+ * @start_id:	starting entry id
+ *
+ * returns 0 to indicate nothing was printed
+ * returns >0 to indicate how many events were printed
+ * returns <0 to indicate error
+ */
+static int elog_print_multi_me_ext(struct platform_intf *intf,
+				   struct smbios_log_entry *entry,
+				   int start_id)
+{
+	int num_msg = 0;
+	const struct valstr *me_state_values;
+	const struct elog_event_data_me_extended *me = (void *)&entry->data[0];
+	const struct valstr me_cws_values[] = {
+		{ 0x00, "Reset" },
+		{ 0x01, "Initializing" },
+		{ 0x02, "Recovery" },
+		{ 0x05, "Normal" },
+		{ 0x06, "Platform Disable Wait" },
+		{ 0x07, "OP State Transition" },
+		{ 0x08, "Invalid CPU Plugged In" },
+		{ 0xFF, NULL }
+	};
+	const struct valstr me_opstate_values[] = {
+		{ 0x00, "Preboot" },
+		{ 0x01, "M0 with UMA" },
+		{ 0x04, "M3 without UMA" },
+		{ 0x05, "M0 without UMA" },
+		{ 0x06, "Bring up" },
+		{ 0x07, "M0 without UMA but with error" },
+		{ 0xFF, NULL }
+	};
+	const struct valstr me_opmode_values[] = {
+		{ 0x02, "Debug" },
+		{ 0x03, "Soft Temporary Disable" },
+		{ 0x04, "Security Override via Jumper" },
+		{ 0x05, "Security Override via MEI Message" },
+		{ 0xFF, NULL }
+	};
+	const struct valstr me_error_values[] = {
+		{ 0x01, "Uncategorized Failure" },
+		{ 0x03, "Image Failure" },
+		{ 0x04, "Debug Failure" },
+		{ 0xFF, NULL }
+	};
+	const struct valstr me_progress_values[] = {
+		{ 0x00, "ROM Phase" },
+		{ 0x01, "BUP Phase" },
+		{ 0x02, "uKernel Phase" },
+		{ 0x03, "Policy Module" },
+		{ 0x04, "Module Loading" },
+		{ 0x05, "Unknown" },
+		{ 0x06, "Host Communication" },
+		{ 0xFF, NULL }
+	};
+	const struct valstr me_pmevent_values[] = {
+		{ 0x00, "Clean Moff->Mx wake" },
+		{ 0x01, "Moff->Mx wake after an error" },
+		{ 0x02, "Clean global reset" },
+		{ 0x03, "Global reset after an error" },
+		{ 0x04, "Clean Intel ME reset" },
+		{ 0x05, "Intel ME reset due to exception" },
+		{ 0x06, "Pseudo-global reset" },
+		{ 0x07, "S0/M0->Sx/M3" },
+		{ 0x08, "Sx/M3->S0/M0" },
+		{ 0x09, "Non-power cycle reset" },
+		{ 0x0a, "Power cycle reset through M3" },
+		{ 0x0b, "Power cycle reset through Moff" },
+		{ 0x0c, "Sx/Mx->Sx/Moff" },
+		{ 0xFF, NULL }
+	};
+	const struct valstr me_progress_rom_values[] = {
+		{ 0x00, "BEGIN" },
+		{ 0x06, "DISABLE" },
+		{ 0xFF, NULL }
+	};
+	const struct valstr me_progress_bup_values[] = {
+		{ 0x00, "Initialization starts" },
+		{ 0x01, "Disable the host wake event" },
+		{ 0x04, "Flow determination start process" },
+		{ 0x08, "Error reading/matching VSCC table in the descriptor" },
+		{ 0x0a, "Check to see if straps say ME DISABLED" },
+		{ 0x0b, "Timeout waiting for PWROK" },
+		{ 0x0d, "Possibly handle BUP manufacturing override strap" },
+		{ 0x11, "Bringup in M3" },
+		{ 0x12, "Bringup in M0" },
+		{ 0x13, "Flow detection error" },
+		{ 0x15, "M3 clock switching error" },
+		{ 0x18, "M3 kernel load" },
+		{ 0x1c, "T34 missing - cannot program ICC" },
+		{ 0x1f, "Waiting for DID BIOS message" },
+		{ 0x20, "Waiting for DID BIOS message failure" },
+		{ 0x21, "DID reported an error" },
+		{ 0x22, "Enabling UMA" },
+		{ 0x23, "Enabling UMA error" },
+		{ 0x24, "Sending DID Ack to BIOS" },
+		{ 0x25, "Sending DID Ack to BIOS error" },
+		{ 0x26, "Switching clocks in M0" },
+		{ 0x27, "Switching clocks in M0 error" },
+		{ 0x28, "ME in temp disable" },
+		{ 0x32, "M0 kernel load" },
+		{ 0xFF, NULL }
+	};
+	const struct valstr me_progress_policy_values[] = {
+		{ 0x00, "Entery into Policy Module" },
+		{ 0x03, "Received S3 entry" },
+		{ 0x04, "Received S4 entry" },
+		{ 0x05, "Received S5 entry" },
+		{ 0x06, "Received UPD entry" },
+		{ 0x07, "Received PCR entry" },
+		{ 0x08, "Received NPCR entry" },
+		{ 0x09, "Received host wake" },
+		{ 0x0a, "Received AC<>DC switch" },
+		{ 0x0b, "Received DRAM Init Done" },
+		{ 0x0c, "VSCC Data not found for flash device" },
+		{ 0x0d, "VSCC Table is not valid" },
+		{ 0x0e, "Flash Partition Boundary is outside address space" },
+		{ 0x0f, "ME cannot access the chipset descriptor region" },
+		{ 0x10, "Required VSCC values for flash parts do not match" },
+		{ 0xFF, NULL }
+	};
+	const struct valstr me_progress_hostcomm_values[] = {
+		{ 0x00, "Host Communication Established" },
+		{ 0xFF, NULL }
+	};
+
+	/* Current Working State */
+	num_msg += elog_print_entry_me_ext(
+		intf, entry, start_id + num_msg, "ME Working State",
+		val2str_default(me->current_working_state,
+				me_cws_values, NULL));
+
+	/* Current Operation State */
+	num_msg += elog_print_entry_me_ext(
+		intf, entry, start_id + num_msg, "ME Operation State",
+		val2str_default(me->operation_state,
+				me_opstate_values, NULL));
+
+	/* Current Operation Mode */
+	num_msg += elog_print_entry_me_ext(
+		intf, entry, start_id + num_msg, "ME Operation Mode",
+		val2str_default(me->operation_mode,
+				me_opmode_values, NULL));
+
+	/* Progress Phase */
+	num_msg += elog_print_entry_me_ext(
+		intf, entry, start_id + num_msg, "ME Progress Phase",
+		val2str_default(me->progress_code,
+				me_progress_values, NULL));
+
+	/* Power Management Event */
+	num_msg += elog_print_entry_me_ext(
+		intf, entry, start_id + num_msg, "ME PM Event",
+		val2str_default(me->current_pmevent,
+				me_pmevent_values, NULL));
+
+	/* Error Code (if non-zero) */
+	num_msg += elog_print_entry_me_ext(
+		intf, entry, start_id + num_msg, "ME Error Code",
+		val2str_default(me->error_code,
+				me_error_values, NULL));
+
+	switch (me->progress_code) {
+	case ELOG_ME_PHASE_ROM:
+		me_state_values = me_progress_rom_values;
+		break;
+	case ELOG_ME_PHASE_BRINGUP:
+		me_state_values = me_progress_bup_values;
+		break;
+	case ELOG_ME_PHASE_POLICY:
+		me_state_values = me_progress_policy_values;
+		break;
+	case ELOG_ME_PHASE_HOST:
+		me_state_values = me_progress_hostcomm_values;
+		break;
+	}
+
+	num_msg += elog_print_entry_me_ext(
+		intf, entry, start_id + num_msg, "ME Phase State",
+		val2str_default(me->current_state,
+				me_state_values, NULL));
+
+	return num_msg;
+}
+
+/*
+ * elog_print_multi  -  print multiple entries for an event
+ *
+ * @intf:	platform interface
+ * @entry:	log entry
+ * @start_id:	starting entry id
+ *
+ * returns 0 to indicate nothing was printed
+ * returns >0 to indicate how many events were printed
+ * returns <0 to indicate error
+ */
+int elog_print_multi(struct platform_intf *intf,
+                     struct smbios_log_entry *entry, int start_id)
+{
+	switch (entry->type) {
+	case ELOG_TYPE_MANAGEMENT_ENGINE_EXT:
+		/* Management Engine Extended Event */
+		return elog_print_multi_me_ext(intf, entry, start_id);
 	}
 
 	return 0;

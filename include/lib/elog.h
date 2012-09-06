@@ -58,6 +58,8 @@ extern int elog_verify(struct platform_intf *intf,
                        struct smbios_log_entry *entry);
 extern int elog_verify_metadata(struct smbios_table_log *table,
                                 void *eventlog_header);
+extern int elog_print_multi(struct platform_intf *intf,
+                            struct smbios_log_entry *entry, int start_id);
 
 /*
  * Generic event log payloads modified by Google
@@ -165,6 +167,24 @@ struct elog_cros_recovery_mode {
 #define  ELOG_ME_PATH_RECOVERY            0x03
 #define  ELOG_ME_PATH_DISABLED            0x04
 #define  ELOG_ME_PATH_FW_UPDATE           0x05
+
+#define ELOG_TYPE_MANAGEMENT_ENGINE_EXT  0xa4
+#define  ELOG_ME_PHASE_ROM                0
+#define  ELOG_ME_PHASE_BRINGUP            1
+#define  ELOG_ME_PHASE_UKERNEL            2
+#define  ELOG_ME_PHASE_POLICY             3
+#define  ELOG_ME_PHASE_MODULE             4
+#define  ELOG_ME_PHASE_UNKNOWN            5
+#define  ELOG_ME_PHASE_HOST               6
+struct elog_event_data_me_extended {
+	uint8_t current_working_state;
+	uint8_t operation_state;
+	uint8_t operation_mode;
+	uint8_t error_code;
+	uint8_t progress_code;
+	uint8_t current_pmevent;
+	uint8_t current_state;
+} __attribute__ ((packed));
 
 /* Last post code from previous boot */
 #define ELOG_TYPE_LAST_POST_CODE         0xa3

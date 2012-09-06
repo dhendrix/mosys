@@ -57,6 +57,17 @@ static int eventlog_smbios_list_callback(struct platform_intf *intf,
 		return 0;
 	}
 
+	/* see if there is a multi event handler */
+	if (intf->cb->eventlog->print_multi) {
+		int count = intf->cb->eventlog->print_multi(intf, entry,
+							    *entry_count);
+		if (count > 0) {
+			/* event was handled and 'count' events were added */
+			*entry_count += count;
+			return 0;
+		}
+	}
+
 	/* start of list */
 	kv = kv_pair_new();
 

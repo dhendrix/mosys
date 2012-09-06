@@ -128,6 +128,7 @@ static int parrot_destroy(struct platform_intf *intf)
 struct eventlog_cb parrot_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
+	.print_multi	= &elog_print_multi,
 	.verify		= &elog_verify,
 	.verify_metadata= &elog_verify_metadata,
 };

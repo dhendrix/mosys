@@ -30,9 +30,12 @@
  * gec.c: Generic GEC functions and structures.
  */
 
+#include <stdio.h>
+#include <stdlib.h>
 #include <inttypes.h>
 
 #include "mosys/alloc.h"
+#include "mosys/kv_pair.h"
 #include "mosys/log.h"
 #include "mosys/platform.h"
 
@@ -175,3 +178,103 @@ int gec_detect(struct platform_intf *intf)
 
 	return ret;
 }
+
+int gec_vbnvcontext_read(struct platform_intf *intf, uint8_t *block)
+{
+	struct ec_params_vbnvcontext request;
+	struct gec_priv *priv;
+	int result;
+
+	if (!intf->cb || !intf->cb->ec || !intf->cb->ec->priv)
+		return -1;
+	priv = intf->cb->ec->priv;
+
+	lprintf(LOG_DEBUG, "%s: sending VBNV_CONTEXT read request\n",
+		__func__);
+	request.op = EC_VBNV_CONTEXT_OP_READ;
+	result = priv->cmd(intf, EC_CMD_VBNV_CONTEXT, EC_VER_VBNV_CONTEXT,
+			   block, EC_VBNV_BLOCK_SIZE,
+			   &request, sizeof(request.op));
+	if (result) {
+		lprintf(LOG_DEBUG, "%s: result=%d\n", __func__, result);
+		return -1;
+	}
+
+	return 0;
+}
+
+int gec_vbnvcontext_write(struct platform_intf *intf, const uint8_t *block)
+{
+	struct ec_params_vbnvcontext request;
+	struct gec_priv *priv;
+	int result;
+
+	if (!intf->cb || !intf->cb->ec || !intf->cb->ec->priv)
+		return -1;
+	priv = intf->cb->ec->priv;
+
+	lprintf(LOG_DEBUG, "%s: sending VBNV_CONTEXT write request\n",
+		__func__);
+	request.op = EC_VBNV_CONTEXT_OP_WRITE;
+	memcpy(request.block, block, sizeof(request.block));
+	result = priv->cmd(intf, EC_CMD_VBNV_CONTEXT, EC_VER_VBNV_CONTEXT,
+			   NULL, 0,
+			   &request, sizeof(request));
+	if (result) {
+		lprintf(LOG_DEBUG, "%s: result=%d\n", __func__, result);
+		return -1;
+	}
+
+	return 0;
+}
+
+int gec_vboot_read(struct platform_intf *intf)
+{
+	struct kv_pair *kv;
+	uint8_t block[EC_VBNV_BLOCK_SIZE];
+	char hexstring[EC_VBNV_BLOCK_SIZE * 2 + 1];
+	int i;
+
+	if (gec_vbnvcontext_read(intf, block))
+		return -1;
+
+	for (i = 0; i < EC_VBNV_BLOCK_SIZE; i++)
+		snprintf(hexstring + i * 2, 3, "%02x", block[i]);
+
+	kv = kv_pair_new();
+	kv_pair_fmt(kv, "vbnvcontext", "%s", hexstring);
+	kv_pair_print(kv);
+	kv_pair_free(kv);
+
+	return 0;
+}
+
+int gec_vboot_write(struct platform_intf *intf, const char *hexstring)
+{
+	uint8_t block[EC_VBNV_BLOCK_SIZE];
+	char hexdigit[3];
+	int i, len;
+
+	len = strlen(hexstring);
+	if (len != EC_VBNV_BLOCK_SIZE * 2) {
+		lprintf(LOG_DEBUG, "%s: hexstring's length must "
+				   "be %d (got %d)\n",
+				   __func__, EC_VBNV_BLOCK_SIZE * 2, len);
+		return -1;
+	}
+	len /= 2;
+
+	hexdigit[2] = '\0';
+	for (i = 0; i < len; i++) {
+		hexdigit[0] = hexstring[i * 2];
+		hexdigit[1] = hexstring[i * 2 + 1];
+		block[i] = strtol(hexdigit, NULL, 16);
+	}
+
+	return gec_vbnvcontext_write(intf, block);
+}
+
+struct nvram_cb gec_nvram_cb = {
+	.vboot_read	= gec_vboot_read,
+	.vboot_write	= gec_vboot_write,
+};

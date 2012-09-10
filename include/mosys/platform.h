@@ -249,6 +249,9 @@ struct nvram_cb {
 	int (*list)(struct platform_intf *intf);
 	int (*clear)(struct platform_intf *intf);
 	int (*dump)(struct platform_intf *intf);
+	int (*vboot_read)(struct platform_intf *intf);
+	int (*vboot_write)(struct platform_intf *intf,
+			   const char *hexstring);
 };
 
 /* EEPROM and EEPROM-related callbacks */

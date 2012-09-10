@@ -64,4 +64,8 @@ extern int gec_detect(struct platform_intf *intf);
 extern int gec_probe_i2c(struct platform_intf *intf);
 extern int gec_probe_lpc(struct platform_intf *intf);
 
+extern int gec_vbnvcontext_read(struct platform_intf *intf, uint8_t *block);
+extern int gec_vbnvcontext_write(struct platform_intf *intf,
+				 const uint8_t *block);
+
 #endif	/* MOSYS_DRIVERS_EC_GOOGLE__ */

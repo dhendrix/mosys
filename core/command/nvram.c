@@ -68,6 +68,45 @@ static int nvram_dump_cmd(struct platform_intf *intf,
 	return intf->cb->nvram->dump(intf);
 }
 
+static int nvram_vboot_read(struct platform_intf *intf,
+                            struct platform_cmd *cmd, int argc, char **argv)
+{
+	if (!intf->cb->nvram || !intf->cb->nvram->vboot_read)
+		return -ENOSYS;
+
+	return intf->cb->nvram->vboot_read(intf);
+}
+
+static int nvram_vboot_write(struct platform_intf *intf,
+                             struct platform_cmd *cmd, int argc, char **argv)
+{
+	if (!intf->cb->nvram || !intf->cb->nvram->vboot_write)
+		return -ENOSYS;
+
+	if (argc != 1) {
+		platform_cmd_usage(cmd);
+		return -1;
+	}
+
+	return intf->cb->nvram->vboot_write(intf, argv[0]);
+}
+
+struct platform_cmd nvram_vboot_cmds[] = {
+	{
+		.name	= "read",
+		.desc	= "Read VbNvContext from NVRAM",
+		.type	= ARG_TYPE_GETTER,
+		.arg	= { .func = nvram_vboot_read }
+	},
+	{
+		.name	= "write",
+		.desc	= "Write VbNvContext from NVRAM",
+		.type	= ARG_TYPE_SETTER,
+		.arg	= { .func = nvram_vboot_write }
+	},
+	{ NULL }
+};
+
 struct platform_cmd nvram_cmds[] = {
 	{
 		.name	= "clear",
@@ -86,6 +125,12 @@ struct platform_cmd nvram_cmds[] = {
 		.desc	= "List NVRAM Variables",
 		.type	= ARG_TYPE_SETTER,
 		.arg	= { .func = nvram_list_cmd }
+	},
+	{
+		.name	= "vboot",
+		.desc	= "Access VbNvContext on NVRAM",
+		.type	= ARG_TYPE_SUB,
+		.arg	= { .sub = nvram_vboot_cmds }
 	},
 	{ NULL }
 };

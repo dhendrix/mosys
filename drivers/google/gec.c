@@ -50,7 +50,7 @@ int gec_hello(struct platform_intf *intf)
 
 	p.in_data = 0xa0b0c0d0;
 
-	rv = priv->cmd(intf, EC_CMD_HELLO, &p,
+	rv = priv->cmd(intf, EC_CMD_HELLO, 0, &p,
 		       sizeof(p), &r, sizeof(r));
 	if (rv)
 		return rv;
@@ -72,7 +72,7 @@ const char *gec_version(struct platform_intf *intf)
 	const char *ret = NULL;
 	struct gec_priv *priv = intf->cb->ec->priv;
 
-	if (priv->cmd(intf, EC_CMD_GET_VERSION, &r, sizeof(r), NULL, 0))
+	if (priv->cmd(intf, EC_CMD_GET_VERSION, 0, &r, sizeof(r), NULL, 0))
 		return NULL;
 
 	/* Ensure versions are null-terminated before we print them */
@@ -107,7 +107,7 @@ int gec_chip_info(struct platform_intf *intf,
 	int rc = 0;
 	struct gec_priv *priv = intf->cb->ec->priv;
 
-	rc = priv->cmd(intf, EC_CMD_GET_CHIP_INFO,
+	rc = priv->cmd(intf, EC_CMD_GET_CHIP_INFO, 0,
 		       info, sizeof(*info), NULL, 0);
 	if (rc)
 		return rc;
@@ -125,7 +125,7 @@ int gec_flash_info(struct platform_intf *intf,
 	int rc = 0;
 	struct gec_priv *priv = intf->cb->ec->priv;
 
-	rc = priv->cmd(intf, EC_CMD_FLASH_INFO,
+	rc = priv->cmd(intf, EC_CMD_FLASH_INFO, 0,
 		       info, sizeof(*info), NULL, 0);
 	if (rc)
 		return rc;
@@ -159,7 +159,7 @@ int gec_detect(struct platform_intf *intf)
 
 	lprintf(LOG_DEBUG, "%s: sending HELLO request with 0x%08x\n",
 		__func__, request.in_data);
-	result  = priv->cmd(intf, EC_CMD_HELLO,
+	result  = priv->cmd(intf, EC_CMD_HELLO, 0,
 			    &response, sizeof(response),
 			    &request, sizeof(request));
 	lprintf(LOG_DEBUG, "%s: response: 0x%08x\n",

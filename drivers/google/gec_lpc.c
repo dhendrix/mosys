@@ -87,7 +87,8 @@ static int wait_for_ec(struct platform_intf *intf,
 
 /* Sends a command to the EC.  Returns the command status code, or
  * -1 if other error. */
-static int gec_command_lpc(struct platform_intf *intf, int command,
+static int gec_command_lpc(struct platform_intf *intf,
+			   int command, int command_version,
 			   const void *indata, int insize,
 			   const void *outdata, int outsize)
 {
@@ -95,6 +96,13 @@ static int gec_command_lpc(struct platform_intf *intf, int command,
 	int i;
 	uint8_t ec_response;
 	int rc = -1;
+
+	if (command_version) {
+		/* TODO(clchiou): Implement new-style command for LPC */
+		lprintf(LOG_DEBUG, "%s: Not implement new-style command yet: "
+			"version=%d\n", __func__, command_version);
+		return -1;
+	}
 
 	if (insize > EC_HOST_PARAM_SIZE || outsize > EC_HOST_PARAM_SIZE) {
 		lprintf(LOG_DEBUG, "%s: data size too big\n", __func__);

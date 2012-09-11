@@ -42,7 +42,8 @@ struct ec_response_flash_info;
 
 struct gec_priv {
 	/* the low-level command function depends on bus */
-	int (*cmd)(struct platform_intf *intf, int command,
+	int (*cmd)(struct platform_intf *intf,
+		   int command, int command_version,
 		   const void *indata, int insize,
 		   const void *outdata, int outsize);
 

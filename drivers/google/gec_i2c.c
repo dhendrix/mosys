@@ -56,13 +56,14 @@
 
 /* Sends a command to the EC.  Returns the command status code, or
  * -1 if other error. */
-static int gec_command_i2c(struct platform_intf *intf, int command,
+static int gec_command_i2c(struct platform_intf *intf,
+			   int command, int command_version,
 			   const void *indata, int insize,
 			   const void *outdata, int outsize) {
 	int ret = -1;
 	uint8_t *req_buf = NULL, *resp_buf = NULL;
 	int req_len = 0, resp_len = 0;
-	int i, csum;
+	int i, len, csum;
 	struct gec_priv *priv = intf->cb->ec->priv;
 	struct i2c_addr *addr = &(priv->addr.i2c);
 
@@ -71,36 +72,53 @@ static int gec_command_i2c(struct platform_intf *intf, int command,
 		goto done;
 	}
 
-	if (outsize) {
-		req_len = outsize + GEC_PROTO_BYTES;
+	if (command_version) {
+		/* New-style command */
+		req_len = 4 + outsize;
 		req_buf = mosys_calloc(1, req_len);
+		req_buf[0] = EC_CMD_VERSION0 + command_version;
+		req_buf[1] = command;
+		req_buf[2] = outsize;
+		memcpy(&req_buf[3], outdata, outsize);
+		req_buf[req_len - 1] = rolling8_csum(req_buf, req_len - 1);
 
-		/* copy message payload and compute checksum */
-		memcpy(&req_buf[1], outdata, outsize);
-		req_buf[req_len - 1] = rolling8_csum(outdata, outsize);
+		resp_len = 3 + insize;
+		resp_buf = mosys_calloc(1, resp_len);
+		if (!resp_buf)
+			goto done;
 	} else {
-		/* request buffer will hold command code only */
-		req_len = 1;
-		req_buf = mosys_calloc(1, req_len);
+		/* Old-style command */
+		if (outsize) {
+			req_len = outsize + GEC_PROTO_BYTES;
+			req_buf = mosys_calloc(1, req_len);
+
+			/* copy message payload and compute checksum */
+			memcpy(&req_buf[1], outdata, outsize);
+			req_buf[req_len - 1] = rolling8_csum(outdata, outsize);
+		} else {
+			/* request buffer will hold command code only */
+			req_len = 1;
+			req_buf = mosys_calloc(1, req_len);
+		}
+		req_buf[0] = command;
+
+		if (insize) {
+			resp_len = insize + GEC_PROTO_BYTES;
+			resp_buf = mosys_calloc(1, resp_len);
+			if (!resp_buf)
+				goto done;
+		} else {
+			/* response buffer will hold error code only */
+			resp_len = 1;
+			resp_buf = mosys_calloc(1, resp_len);
+			if (!resp_buf)
+				goto done;
+		}
 	}
-	req_buf[0] = command;
 
 	if (mosys_get_verbosity() == LOG_SPEW) {
 		lprintf(LOG_SPEW, "%s: dumping req_buf\n", __func__);
 		print_buffer(req_buf, req_len);
-	}
-
-	if (insize) {
-		resp_len = insize + GEC_PROTO_BYTES;
-		resp_buf = calloc(1, resp_len);
-		if (!resp_buf)
-			goto done;
-	} else {
-		/* response buffer will hold error code only */
-		resp_len = 1;
-		resp_buf = calloc(1, resp_len);
-		if (!resp_buf)
-			goto done;
 	}
 
 	ret = intf->op->i2c->i2c_transfer(intf,
@@ -115,28 +133,65 @@ static int gec_command_i2c(struct platform_intf *intf, int command,
 		print_buffer(resp_buf, resp_len);
 	}
 
-	/* check response error code */
-	ret = resp_buf[0];
-	if (ret) {
-		lprintf(LOG_DEBUG, "command 0x%02x returned an error %d\n",
-			command, resp_buf[0]);
-	}
+	if (command_version) {
+		/* New-style command */
+		ret = resp_buf[0];
+		if (ret) {
+			lprintf(LOG_DEBUG,
+				"command 0x%02x returned an error %d\n",
+				command, ret);
+			goto done;
+		}
 
-	if (insize) {
-		/* copy response packet payload and compute checksum */
-		for (i = 0, csum = 0; i < insize; i++)
-			csum += resp_buf[i + 1];
-		csum &= 0xff;
+		len = resp_buf[1];
+		if (len != insize) {
+			lprintf(LOG_DEBUG,
+				"bad response payload size (got %d from EC,"
+				"expected %d)\n",
+				len, insize);
+			ret = -1;
+			goto done;
+		}
 
+		csum = rolling8_csum(resp_buf, 2 + len);
 		if (csum != resp_buf[resp_len - 1]) {
-			lprintf(LOG_DEBUG, "bad checksum (got 0x%02x from EC,"
-			        "calculated 0x%02x\n",
+			lprintf(LOG_DEBUG,
+				"bad checksum (got 0x%02x from EC,"
+				"calculated 0x%02x)\n",
 				resp_buf[resp_len - 1], csum);
 			ret = -1;
 			goto done;
 		}
 
-		memcpy((void *)indata, &resp_buf[1], insize);
+		if (insize)
+			memcpy((void *)indata, &resp_buf[2], insize);
+	} else {
+		/* Old-style command */
+		/* check response error code */
+		ret = resp_buf[0];
+		if (ret) {
+			lprintf(LOG_DEBUG,
+				"command 0x%02x returned an error %d\n",
+				command, resp_buf[0]);
+		}
+
+		if (insize) {
+			/* copy response packet payload and compute checksum */
+			for (i = 0, csum = 0; i < insize; i++)
+				csum += resp_buf[i + 1];
+			csum &= 0xff;
+
+			if (csum != resp_buf[resp_len - 1]) {
+				lprintf(LOG_DEBUG,
+					"bad checksum (got 0x%02x from EC,"
+					"calculated 0x%02x\n",
+					resp_buf[resp_len - 1], csum);
+				ret = -1;
+				goto done;
+			}
+
+			memcpy((void *)indata, &resp_buf[1], insize);
+		}
 	}
 done:
 	if (resp_buf)
@@ -144,8 +199,6 @@ done:
 	if (req_buf)
 		free(req_buf);
 	return ret;
-
-	return 0;
 }
 
 /* returns bus number if found, <0 otherwise */

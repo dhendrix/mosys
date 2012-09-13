@@ -29,8 +29,58 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MOSYS_DRIVERS_EC_ENE_KB832_H__
-#define MOSYS_DRIVERS_EC_ENE_KB832_H__
+#ifndef MOSYS_DRIVERS_EC_ENE_KB932_H__
+#define MOSYS_DRIVERS_EC_ENE_KB932_H__
+
+#include <inttypes.h>
+
+/* command interface */
+#define ACPI_CSR		0x66	/* ACPI command/status port */
+#define ACPI_DATA		0x62	/* ACPI data port */
+#define KB932_SIDEBAND_CSR	0x6c	/* sideband command/status port */
+#define KB932_SIDEBAND_DATA	0x68	/* sideband data port */
+
+#define KB932_CMD_READ_ECRAM	0x80
+#define KB932_CMD_WRITE_ECRAM	0x81
+
+enum ene_ec {
+	ENE_UNKNOWN	= 0,
+	ENE_KB932	= 0xa2,
+	ENE_KB3940	= 0xa3,
+};
+
+struct kb932_priv {
+	/*
+	 * Command/status and data port pairs. This should be defined
+	 * on a per-platform basis. Examples: Legacy (0x64/0x60),
+	 * ACPI (0x66/0x62), sideband (0x6c, 0x68), etc.
+	 */
+	uint8_t csr;		/* command/status port */
+	uint8_t data;		/* data port */
+
+	/* programmable address for banked EC module register access */
+	uint32_t reg_base;
+
+	unsigned int cmd_timeout_ms;	/* max command timeout period (ms) */
+};
+
+/**
+ * Wait for EC firmware input buffer empty
+ *
+ * @param intf          platform_intf
+ * @return 0            success
+ * @return -1           timeout
+ */
+int kb932_wait_ibf_clear(struct platform_intf *intf);
+
+/**
+ * Wait for EC firmware output buffer full
+ *
+ * @param intf          platform_intf
+ * @return 0           success
+ * @return -1          timeout
+ */
+int kb932_wait_obf_set(struct platform_intf *intf);
 
 /**
  * Read ene internal sram
@@ -56,6 +106,13 @@ void ene_write(struct platform_intf *intf, uint16_t port,
  * returns 1 to indicate success
  * returns 0 if no ene kb932 determined, but no error occurred
  */
-int ene_kb932_detect(struct platform_intf *intf, uint16_t port);
+enum ene_ec ene_kb932_detect(struct platform_intf *intf, uint16_t port);
 
-#endif /* MOSYS_DRIVERS_EC_ENE_KB832_H__ */
+/**
+ * Determine ENE EC name
+ *
+ * returns name if known, otherwise "Unknown"
+ */
+const char *ene_name(enum ene_ec ec);
+
+#endif /* MOSYS_DRIVERS_EC_ENE_KB932_H__ */

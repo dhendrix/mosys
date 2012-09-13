@@ -38,6 +38,21 @@
 
 #include "mosys/platform.h"
 
+/*
+ * i8042 "legacy" (ps/2) keyboard controller interface
+ * For more information: http://www.computer-engineering.org/ps2keyboard/
+ */
+#define I8042_DATA	0x60		/* legacy IO data port */
+#define I8042_CSR	0x64		/* legacy command/status port */
+#define I8042_OBF	(1 << 0)	/* output buffer full */
+#define I8042_IBF	(1 << 1)	/* input buffer full */
+#define I8042_SYS	(1 << 2)	/* system flag */
+#define I8042_A2	(1 << 3)	/* A2 */
+#define I8042_INH	(1 << 4)	/* inhibit flag */
+#define I8042_MOBF	(1 << 5)	/* mouse output buffer full */
+#define I8042_TO	(1 << 6)	/* general timeout */
+#define I8042_PERR	(1 << 7)	/* parity error */
+
 /* common superio global config registers */
 #define SIO_LDNSEL	0x07
 #define SIO_CHIPID1	0x20

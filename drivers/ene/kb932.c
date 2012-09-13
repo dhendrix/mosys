@@ -30,7 +30,9 @@
  */
 
 #include <inttypes.h>
+#include <sys/time.h>
 
+#include "mosys/globals.h"
 #include "mosys/log.h"
 #include "mosys/platform.h"
 
@@ -48,6 +50,54 @@ static const int port_ene_data   = 3;
 
 static const uint16_t ene_hwver_addr = 0xff00;
 static const uint16_t ene_ediid_addr = 0xff24;
+
+/* KB932 uses i8042 OBF/IBF flag positions for all command/status interfaces */
+static const uint8_t kb932_obf	= I8042_OBF;
+static const uint8_t kb932_ibf	= I8042_IBF;
+
+int kb932_wait_ibf_clear(struct platform_intf *intf)
+{
+	struct timeval begin, now;
+	uint8_t ec_state;
+	struct kb932_priv *ec_priv;
+
+	MOSYS_DCHECK(intf->cb && intf->cb->ec && intf->cb->ec->priv);
+	ec_priv = intf->cb->ec->priv;
+
+	gettimeofday(&begin, NULL);
+	do {
+		io_read8(intf, ec_priv->csr, &ec_state);
+
+		if (!(ec_state & kb932_ibf))
+			return 0;
+
+		gettimeofday(&now, NULL);
+	} while (now.tv_sec - begin.tv_sec < ec_priv->cmd_timeout_ms * 1000);
+
+	return -1;
+}
+
+int kb932_wait_obf_set(struct platform_intf *intf)
+{
+	struct timeval begin, now;
+	uint8_t ec_state;
+	struct kb932_priv *ec_priv;
+
+	MOSYS_DCHECK(intf->cb && intf->cb->ec && intf->cb->ec->priv);
+	ec_priv = intf->cb->ec->priv;
+
+	gettimeofday(&begin, NULL);
+	do {
+		io_read8(intf, ec_priv->csr, &ec_state);
+
+		if (ec_state & kb932_obf)
+			return 0;
+
+		gettimeofday(&now, NULL);
+	} while (now.tv_sec - begin.tv_sec < ec_priv->cmd_timeout_ms * 1000);
+
+	return -1;
+}
 
 /**
  * Read ene internal sram
@@ -85,17 +135,54 @@ void ene_write(struct platform_intf *intf, uint16_t port,
 	io_write8(intf, port + port_ene_data, data);
 }
 
-/*
- * returns 1 to indicate success
- * returns 0 if no ene kb932 determined, but no error occurred
- */
-int ene_kb932_detect(struct platform_intf *intf, uint16_t port)
+const char *ene_name(enum ene_ec ec)
 {
-	if (ene_read(intf, port, ene_hwver_addr) != ENE_HWVER)
-		return 0;
-	if (ene_read(intf, port, ene_ediid_addr) != ENE_EDIID)
-		return 0;
+	const char *ret;
 
-	return 1;
+	switch (ec) {
+	case ENE_KB932:
+		ret = "KB932";
+		break;
+	case ENE_KB3940:
+		ret = "KB3940";
+		break;
+	default:
+		ret = "Unknown";
+		break;
+	}
+
+	return ret;
 }
 
+/* returns ENE enum to indicate chip detected (0 if unknown or not detected) */
+enum ene_ec ene_kb932_detect(struct platform_intf *intf, uint16_t port)
+{
+	uint8_t tmp8;
+	static enum ene_ec ec;
+	static int ec_probed = 0;
+
+	if (ec_probed)
+		return ec;
+
+	tmp8 = ene_read(intf, port, ene_hwver_addr);
+	lprintf(LOG_DEBUG, "%s: hwver: 0x%02x\n", __func__, tmp8);
+	switch (tmp8) {
+	case 0xa2:
+		ec = ENE_KB932;
+		break;
+	case 0xa3:
+		ec = ENE_KB3940;
+		break;
+	default:
+		ec = ENE_UNKNOWN;
+	}
+
+	/* read EDIID if verbosity is high */
+	if (mosys_get_verbosity() >= LOG_DEBUG) {
+		tmp8 = ene_read(intf, port, ene_ediid_addr);
+		lprintf(LOG_DEBUG, "%s: ediid: 0x%02x\n", __func__, tmp8);
+	}
+
+	ec_probed = 1;
+	return ec;
+}

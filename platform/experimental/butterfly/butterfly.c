@@ -52,6 +52,7 @@ const char *butterfly_id_list[] = {
 };
 
 struct platform_cmd *butterfly_sub[] = {
+	&cmd_ec,
 	&cmd_eeprom,
 	&cmd_memory,
 	&cmd_nvram,
@@ -103,6 +104,7 @@ static int butterfly_setup_post(struct platform_intf *intf)
 	int rc = 0;
 
 	rc |= butterfly_eeprom_setup(intf);
+	rc |= butterfly_ec_setup(intf);
 
 	if (rc)
 		lprintf(LOG_DEBUG, "%s: failed\n", __func__);
@@ -126,6 +128,7 @@ struct eventlog_cb butterfly_eventlog_cb = {
 };
 
 struct platform_cb butterfly_cb = {
+	.ec		= &butterfly_ec_cb,
 	.eeprom		= &butterfly_eeprom_cb,
 	.memory		= &butterfly_memory_cb,
 	.nvram		= &butterfly_nvram_cb,

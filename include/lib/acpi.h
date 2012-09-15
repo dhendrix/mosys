@@ -37,6 +37,24 @@
 #define CHROMEOS_HWID_MAXLEN	256
 #define CHROMEOS_FRID_MAXLEN	256
 
+/* Registers from ACPI 4.0 spec */
+#define ACPI_EC_SC	0x66		/* ACPI command/status port */
+#define ACPI_EC_DATA	0x62		/* ACPI data port */
+
+/* bits 2 and 7 are ignored in ACPI 4.0 spec */
+#define ACPI_EC_OBF	(1 << 0)	/* output buffer full */
+#define ACPI_EC_IBF   	(1 << 1)	/* input buffer full */
+#define ACPI_EC_CMD	(1 << 3)	/* byte in data reg is command byte */
+#define ACPI_EC_BURST	(1 << 4)	/* EC in burst mode */
+#define ACPI_EC_SCI_EVT	(1 << 5)	/* SCI event pending */
+#define ACPI_EC_SMI_EVT	(1 << 6)	/* SMI event pending */
+
+#define ACPI_RD_EC	0x80		/* read byte from EC address space */
+#define ACPI_WR_EC	0x81		/* write a byte to EC address space */
+#define ACPI_BE_EC	0x82		/* burst enable */
+#define ACPI_BD_EC	0x83		/* burst disable */
+#define ACPI_QR_EC	0x84		/* query EC */
+
 /* forward declarations */
 struct platform_intf;
 struct sensor;

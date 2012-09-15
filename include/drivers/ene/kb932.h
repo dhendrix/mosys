@@ -35,8 +35,6 @@
 #include <inttypes.h>
 
 /* command interface */
-#define ACPI_CSR		0x66	/* ACPI command/status port */
-#define ACPI_DATA		0x62	/* ACPI data port */
 #define KB932_SIDEBAND_CSR	0x6c	/* sideband command/status port */
 #define KB932_SIDEBAND_DATA	0x68	/* sideband data port */
 

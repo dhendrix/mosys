@@ -36,6 +36,7 @@
 
 #include "drivers/ene/kb932.h"
 #include "intf/io.h"
+#include "lib/acpi.h"
 #include "lib/math.h"
 
 #include "butterfly.h"
@@ -120,8 +121,8 @@ int butterfly_ec_setup(struct platform_intf *intf)
 }
 
 struct kb932_priv butterfly_ec_priv = {
-	.csr		= ACPI_CSR,
-	.data		= ACPI_DATA,
+	.csr		= ACPI_EC_SC,
+	.data		= ACPI_EC_DATA,
 	.reg_base	= BUTTERFLY_EC_REG_BASE,
 	.cmd_timeout_ms	= BUTTERFLY_EC_CMD_TIMEOUT,
 };

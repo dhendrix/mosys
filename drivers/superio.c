@@ -47,6 +47,7 @@
 
 static struct sio_id superio_ids[] = {
 	{ "ite", "it8500", 2, { 0x85, 0x00 } },
+	{ "ite", "it8518", 2, { 0x85, 0x18 } },
 	{ "ite", "it8772", 2, { 0x87, 0x72 } },
 	{ "nuvoton", "npce781", 1, { 0xfc, 0x00 } },
 	{ "smsc", "mec1308", 2, { 0x2d, 0x00 } },

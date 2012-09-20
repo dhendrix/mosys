@@ -98,6 +98,9 @@ int it8500_detect(struct platform_intf *intf)
 	case 0x8500:
 		lprintf(LOG_DEBUG, "%s: found it8500\n", __func__);
 		break;
+	case 0x8518:
+		lprintf(LOG_DEBUG, "%s: found it8518\n", __func__);
+		break;
 	default:
 		lprintf(LOG_DEBUG, "%s: failed to detect it8500\n", __func__);
 		return 0;

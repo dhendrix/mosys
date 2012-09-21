@@ -34,6 +34,7 @@
 
 #include "mosys/log.h"
 #include "mosys/platform.h"
+#include "drivers/superio.h"
 #include "drivers/ene/kb932.h"
 #include "intf/io.h"
 
@@ -59,20 +60,9 @@
  */
 static int ec_wait_input(struct platform_intf *intf)
 {
-	struct timeval begin, now;
-	uint8_t ec_state;
-
-	gettimeofday(&begin, NULL);
-	do {
-		io_read8(intf, parrot_ec_cmd, &ec_state);
-
-		if (!(ec_state & ec_input_buffer_full))
-			return 0;
-
-		gettimeofday(&now, NULL);
-	} while (now.tv_sec - begin.tv_sec < ec_command_timeout);
-
-	return -1;
+	if (kb932_wait_ibf_clear(intf) != 1)
+		return -1;
+	return 0;
 }
 
 /**
@@ -84,20 +74,9 @@ static int ec_wait_input(struct platform_intf *intf)
  */
 static int ec_wait_output(struct platform_intf *intf)
 {
-	struct timeval begin, now;
-	uint8_t ec_state;
-
-	gettimeofday(&begin, NULL);
-	do {
-		io_read8(intf, parrot_ec_cmd, &ec_state);
-
-		if (ec_state & ec_output_buffer_full)
-			return 0;
-
-		gettimeofday(&now, NULL);
-	} while (now.tv_sec - begin.tv_sec < ec_command_timeout);
-
-	return -1;
+	if (kb932_wait_obf_set(intf) != 1)
+		return -1;
+	return 0;
 }
 
 /* Write command to ec firmware command port */
@@ -184,10 +163,17 @@ static const char *parrot_ec_fw_version(struct platform_intf *intf)
 	return version;
 }
 
+struct kb932_priv parrot_ec_priv = {
+	.csr		= PARROT_EC_CMD,
+	.data		= PARROT_EC_DATA,
+	.reg_base	= PARROT_ECRAM_PORT,
+	.cmd_timeout_ms	= EC_CMD_TIMEOUT_MS,
+};
 
 struct ec_cb parrot_ec_cb = {
 	.vendor		= parrot_ec_vendor,
 	.name		= parrot_ec_name,
 	.fw_version	= parrot_ec_fw_version,
+	.priv		= &parrot_ec_priv,
 };
 

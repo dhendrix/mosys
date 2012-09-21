@@ -34,6 +34,7 @@
 #include "mosys/log.h"
 #include "mosys/platform.h"
 
+#include "drivers/superio.h"
 #include "drivers/ene/kb932.h"
 #include "intf/io.h"
 #include "lib/acpi.h"
@@ -64,19 +65,19 @@ static uint8_t read_ecram(struct platform_intf *intf,
 	MOSYS_DCHECK(intf->cb && intf->cb->ec && intf->cb->ec->priv);
 	ec_priv = intf->cb->ec->priv;
 
-	if (kb932_wait_ibf_clear(intf))
+	if (kb932_wait_ibf_clear(intf) != 1)
 		return -1;
 
 	if (io_write8(intf, ec_priv->csr, KB932_CMD_READ_ECRAM))
 		return -1;
 
-	if (kb932_wait_ibf_clear(intf))
+	if (kb932_wait_ibf_clear(intf) != 1)
 		return -1;
 
 	if (io_write8(intf, ec_priv->data, offset) < 0)
 		return -1;
 
-	if (kb932_wait_obf_set(intf))
+	if (kb932_wait_obf_set(intf) != 1)
 		return -1;
 
 	if (io_read8(intf, ec_priv->data, data))

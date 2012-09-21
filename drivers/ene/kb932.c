@@ -57,46 +57,28 @@ static const uint8_t kb932_ibf	= I8042_IBF;
 
 int kb932_wait_ibf_clear(struct platform_intf *intf)
 {
-	struct timeval begin, now;
-	uint8_t ec_state;
 	struct kb932_priv *ec_priv;
+	struct i8042_host_intf i8042_intf;
 
 	MOSYS_DCHECK(intf->cb && intf->cb->ec && intf->cb->ec->priv);
 	ec_priv = intf->cb->ec->priv;
 
-	gettimeofday(&begin, NULL);
-	do {
-		io_read8(intf, ec_priv->csr, &ec_state);
-
-		if (!(ec_state & kb932_ibf))
-			return 0;
-
-		gettimeofday(&now, NULL);
-	} while (now.tv_sec - begin.tv_sec < ec_priv->cmd_timeout_ms * 1000);
-
-	return -1;
+	i8042_intf.csr = ec_priv->csr;
+	i8042_intf.data = ec_priv->data;
+	return i8042_wait_ibf_clear(intf, &i8042_intf, ec_priv->cmd_timeout_ms);
 }
 
 int kb932_wait_obf_set(struct platform_intf *intf)
 {
-	struct timeval begin, now;
-	uint8_t ec_state;
 	struct kb932_priv *ec_priv;
+	struct i8042_host_intf i8042_intf;
 
 	MOSYS_DCHECK(intf->cb && intf->cb->ec && intf->cb->ec->priv);
 	ec_priv = intf->cb->ec->priv;
 
-	gettimeofday(&begin, NULL);
-	do {
-		io_read8(intf, ec_priv->csr, &ec_state);
-
-		if (ec_state & kb932_obf)
-			return 0;
-
-		gettimeofday(&now, NULL);
-	} while (now.tv_sec - begin.tv_sec < ec_priv->cmd_timeout_ms * 1000);
-
-	return -1;
+	i8042_intf.csr = ec_priv->csr;
+	i8042_intf.data = ec_priv->data;
+	return i8042_wait_obf_set(intf, &i8042_intf, ec_priv->cmd_timeout_ms);
 }
 
 /**

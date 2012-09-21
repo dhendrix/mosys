@@ -34,6 +34,7 @@
  */
 
 #include <inttypes.h>
+#include <sys/time.h>
 
 #include "drivers/superio.h"
 
@@ -54,6 +55,62 @@ static struct sio_id superio_ids[] = {
 	{ "smsc", "mec1308", 2, { 0x4d, 0x01 } },
 	{ "smsc", "mec1310", 2, { 0x04, 0x02 } },
 };
+
+static int i8042_ibf_clear(uint8_t status)
+{
+	return !(status & I8042_IBF);
+}
+
+static int i8042_obf_set(uint8_t status)
+{
+	return status & I8042_OBF;
+}
+
+static int i8042_poll_csr(struct platform_intf *intf,
+			  struct i8042_host_intf *i8042_io,
+			  unsigned int timeout_ms,
+			  int (*cmp)(uint8_t status))
+{
+	uint8_t status;
+	uint16_t csr;
+	struct timeval begin, now;
+	unsigned int timeout_s = timeout_ms / 1000;
+	unsigned long int remainder_us = (timeout_ms % 1000) * 1000;
+
+	if (i8042_io)
+		csr = i8042_io->csr;
+	else
+		csr = I8042_CSR;
+
+	gettimeofday(&begin, NULL);
+	while (1) {
+		if (io_read8(intf, csr, &status) < 0)
+			return -1;
+
+		if (cmp(status))
+			return 1;
+
+		gettimeofday(&now, NULL);
+		if (now.tv_sec - begin.tv_sec >= timeout_s) {
+			if (__abs(now.tv_usec - begin.tv_usec) >= remainder_us)
+				break;
+		}
+	}
+
+	return 0;
+}
+
+int i8042_wait_ibf_clear(struct platform_intf *intf,
+		struct i8042_host_intf *i8042_io, unsigned int timeout_ms)
+{
+	return i8042_poll_csr(intf, i8042_io, timeout_ms, i8042_ibf_clear);
+}
+
+int i8042_wait_obf_set(struct platform_intf *intf,
+		struct i8042_host_intf *i8042_io, unsigned int timeout_ms)
+{
+	return i8042_poll_csr(intf, i8042_io, timeout_ms, i8042_obf_set);
+}
 
 uint8_t sio_read(struct platform_intf *intf, uint16_t port, uint8_t reg)
 {

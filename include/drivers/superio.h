@@ -60,6 +60,12 @@
 #define SIO_CHIPVER	0x22
 #define SIO_CTL		0x23
 
+/* i8042 host interface (command/status and data port pair) */
+struct i8042_host_intf {
+	uint16_t csr;	/* command / status port */
+	uint16_t data;	/* data port */
+};
+
 struct sio_id {
 	char *vendor;
 	char *name;
@@ -67,6 +73,36 @@ struct sio_id {
 	uint8_t chipid[2];
 	uint8_t chipver;
 };
+
+/*
+ * i8042_wait_ibf_clear - wait for input buffer to become empty
+ *
+ * @intf:	platform interface
+ * @i8042_intf:	host interface information (i8042 values will be used if NULL)
+ * @timeout_ms:	timeout period in milliseconds
+ *
+ * returns 1 to indicate input buffer is empty
+ * returns 0 to indicate input buffer is not empty within timeout period
+ * returns <0 to indicate error
+ */
+int i8042_wait_ibf_clear(struct platform_intf *intf,
+			struct i8042_host_intf *i8042_intf,
+			unsigned int timeout_ms);
+
+/*
+ * i8042_wait_obf_set - wait for output buffer to become full
+ *
+ * @intf:	platform interface
+ * @i8042_intf:	host interface information (i8042 values will be used if NULL)
+ * @timeout_ms:	timeout period in milliseconds
+ *
+ * returns 1 to indicate output buffer is full
+ * returns 0 to indicate output buffer not full within timeout period
+ * returns <0 to indicate error
+ */
+int i8042_wait_obf_set(struct platform_intf *intf,
+			struct i8042_host_intf *i8042_intf,
+			unsigned int timeout_ms);
 
 /*
  * sio_read - read from SuperIO

@@ -43,14 +43,12 @@
 /**
  * Parrot EC firmware specific constants
  */
-static const uint16_t parrot_ec_port = 0xfd60;
+#define PARROT_EC_CMD		0x6c
+#define PARROT_EC_DATA		0x68
+#define PARROT_ECRAM_PORT	0xfd60
 
-static const uint16_t parrot_ec_cmd        = 0x6c;
-static const uint16_t parrot_ec_data       = 0x68;
-static const uint8_t ec_input_buffer_full  = 2;
-static const uint8_t ec_output_buffer_full = 1;
-static const uint8_t ec_command_timeout    = 4;
-static const uint8_t cmd_fw_version        = 0x51;
+#define EC_CMD_TIMEOUT_MS	4000
+#define EC_CMD_FW_VERSION	0x51
 
 /**
  * Wait for EC firmware input buffer empty
@@ -108,7 +106,7 @@ static int ec_cmd(struct platform_intf *intf, uint8_t cmd)
 	if (ec_wait_input(intf))
 		return -1;
 
-	io_write8(intf, parrot_ec_cmd, cmd);
+	io_write8(intf, PARROT_EC_CMD, cmd);
 	return 0;
 }
 
@@ -125,13 +123,13 @@ static int ec_read(struct platform_intf *intf, uint16_t port, uint8_t *data)
 
 static const char *parrot_ec_vendor(struct platform_intf *intf)
 {
-	return ene_kb932_detect(intf, parrot_ec_port) ?
+	return ene_kb932_detect(intf, PARROT_ECRAM_PORT) ?
 		"ENE" : "Unknown";
 }
 
 static const char *parrot_ec_name(struct platform_intf *intf)
 {
-	return ene_kb932_detect(intf, parrot_ec_port) ?
+	return ene_kb932_detect(intf, PARROT_ECRAM_PORT) ?
 		"KB932" : "Unknown";
 }
 
@@ -163,24 +161,24 @@ static const char *parrot_ec_fw_version(struct platform_intf *intf)
 	uint8_t major, minor, rev;
 	static char version[11];
 
-	if (ene_kb932_detect(intf, parrot_ec_port))
+	if (ene_kb932_detect(intf, PARROT_ECRAM_PORT))
 		memcpy(version, "00BExxxAxx", 11);
 	else
 		return "Unknown";
 
 	/* get 3 bytes firmware version */
-	ec_cmd(intf, cmd_fw_version);
+	ec_cmd(intf, EC_CMD_FW_VERSION);
 
 	/* major range: 0 ~ 9 */
-	if (!ec_read(intf, parrot_ec_data, &major)) {
+	if (!ec_read(intf, PARROT_EC_DATA, &major)) {
 		if (major < 10)
 			version[4] = major + '0';
 	}
 	/* minor range: 00 ~ 99 */
-	if (!ec_read(intf, parrot_ec_data, &minor))
+	if (!ec_read(intf, PARROT_EC_DATA, &minor))
 		bcd_to_ascii(minor, version + 5);
 	/* rev range: 00 ~ 99 */
-	if (!ec_read(intf, parrot_ec_data, &rev))
+	if (!ec_read(intf, PARROT_EC_DATA, &rev))
 		bcd_to_ascii(rev, version + 8);
 
 	return version;

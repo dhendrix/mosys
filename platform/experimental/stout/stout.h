@@ -38,12 +38,14 @@
 #define STOUT_HOST_FIRMWARE_ROM_SIZE	(8192 * 1024)
 
 /* platform callbacks */
+extern struct ec_cb stout_ec_cb;		/* ec.c */
 extern struct eeprom_cb stout_eeprom_cb;	/* eeprom.c */
 extern struct memory_cb stout_memory_cb;	/* memory.c */
 extern struct nvram_cb stout_nvram_cb;	/* nvram.c */
 extern struct sys_cb stout_sys_cb;		/* sys.c */
 
 /* functions called by setup routines */
+extern int stout_ec_setup(struct platform_intf *intf);
 extern int stout_eeprom_setup(struct platform_intf *intf);
 
 #endif /* EXPERIMENTAL_STOUT_H_ */

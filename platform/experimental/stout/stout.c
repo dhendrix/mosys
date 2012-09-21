@@ -52,6 +52,7 @@ const char *stout_id_list[] = {
 };
 
 struct platform_cmd *stout_sub[] = {
+	&cmd_ec,
 	&cmd_eeprom,
 	&cmd_memory,
 	&cmd_nvram,
@@ -102,6 +103,7 @@ static int stout_setup_post(struct platform_intf *intf)
 {
 	int rc = 0;
 
+	rc |= stout_ec_setup(intf);
 	rc |= stout_eeprom_setup(intf);
 
 	if (rc)
@@ -126,6 +128,7 @@ struct eventlog_cb stout_eventlog_cb = {
 };
 
 struct platform_cb stout_cb = {
+	.ec		= &stout_ec_cb,
 	.eeprom		= &stout_eeprom_cb,
 	.memory		= &stout_memory_cb,
 	.nvram		= &stout_nvram_cb,

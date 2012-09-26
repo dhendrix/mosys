@@ -48,8 +48,8 @@
 
 /* gpio number, in/out, device, port, pin, negate, devname, name */
 static struct gpio_map snow_gpio_map[] = {
-	{   4, GPIO_IN,  GPIO_SOC, EXYNOS5_GPA0,  4, 0, "SOC", ID0 },
-	{   5, GPIO_IN,  GPIO_SOC, EXYNOS5_GPA0,  5, 0, "SOC", ID1 },
+	{  88, GPIO_IN,  GPIO_SOC, EXYNOS5_GPD0,  0, 0, "SOC", ID0 },
+	{  89, GPIO_IN,  GPIO_SOC, EXYNOS5_GPD0,  1, 0, "SOC", ID1 },
 	{   0,       0,         0,       0,  0,   0, NULL, NULL   }
 };
 

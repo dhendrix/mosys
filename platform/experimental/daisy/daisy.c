@@ -42,6 +42,7 @@
 #include "drivers/samsung/exynos5.h"
 
 #include "lib/file.h"
+#include "lib/math.h"
 #include "lib/probe.h"
 
 #include "daisy.h"
@@ -144,11 +145,28 @@ daisy_probe_exit:
 	return status;
 }
 
-static int snow_get_board_config(struct platform_intf *intf)
-{
-	struct gpio_map *id0, *id1;
+struct {
 	enum mvl3 v0, v1;
 	enum daisy_board_config config;
+} snow_id_map[] = {
+	/*  ID0      ID1         config */
+	{ LOGIC_0, LOGIC_0, SNOW_CONFIG_SAMSUNG_MP },
+	{ LOGIC_0, LOGIC_1, SNOW_CONFIG_ELPIDA_MP },
+	{ LOGIC_1, LOGIC_0, SNOW_CONFIG_SAMSUNG_DVT },
+	{ LOGIC_1, LOGIC_1, SNOW_CONFIG_ELPIDA_DVT },
+	{ LOGIC_0, LOGIC_Z, SNOW_CONFIG_SAMSUNG_PVT },
+	{ LOGIC_1, LOGIC_Z, SNOW_CONFIG_ELPIDA_PVT },
+	{ LOGIC_Z, LOGIC_0, SNOW_CONFIG_SAMSUNG_MP },
+	{ LOGIC_Z, LOGIC_Z, SNOW_CONFIG_ELPIDA_MP },
+	{ LOGIC_Z, LOGIC_1, SNOW_CONFIG_RSVD },
+};
+
+static int snow_get_board_config(struct platform_intf *intf)
+{
+	int i;
+	struct gpio_map *id0, *id1;
+	enum mvl3 v0, v1;
+	enum daisy_board_config config = SNOW_CONFIG_UNKNOWN;
 
 	id0 = intf->cb->gpio->map(intf, SNOW_BOARD_ID0);
 	id1 = intf->cb->gpio->map(intf, SNOW_BOARD_ID1);
@@ -159,27 +177,12 @@ static int snow_get_board_config(struct platform_intf *intf)
 
 	v0 = exynos5_read_gpio_mvl(intf, id0);
 	v1 = exynos5_read_gpio_mvl(intf, id1);
-
 	lprintf(LOG_DEBUG, "%s: v0: %u, v1: %u\n", __func__, v0, v1);
-	/* FIXME: http://crosbug.com/p/11413 */
-	if ((v0 == LOGIC_0) && (v1 == LOGIC_0))
-		config = SNOW_CONFIG_SAMSUNG_MP;
-	else if ((v0 == LOGIC_0) && (v1 == LOGIC_1))
-		config = SNOW_CONFIG_ELPIDA_MP;
-	else if ((v0 == LOGIC_1) && (v1 == LOGIC_0))
-		config = SNOW_CONFIG_SAMSUNG_DVT;
-	else if ((v0 == LOGIC_1) && (v1 == LOGIC_1))
-		config = SNOW_CONFIG_ELPIDA_DVT;
-	else if ((v0 == LOGIC_0) && (v1 == LOGIC_Z))
-		config = SNOW_CONFIG_SAMSUNG_PVT;
-	else if ((v0 == LOGIC_1) && (v1 == LOGIC_Z))
-		config = SNOW_CONFIG_ELPIDA_PVT;
-	else if ((v0 == LOGIC_Z) && (v1 == LOGIC_0))
-		config = SNOW_CONFIG_SAMSUNG_PVT2;
-	else if ((v0 == LOGIC_Z) && (v1 == LOGIC_Z))
-		config = SNOW_CONFIG_ELPIDA_PVT2;
-	else if ((v0 == LOGIC_Z) && (v1 == LOGIC_1))
-		config = SNOW_CONFIG_RSVD;
+
+	for (i = 0; i < ARRAY_SIZE(snow_id_map); i++) {
+		if (v0 == snow_id_map[i].v0 && v1 == snow_id_map[i].v1)
+			config = snow_id_map[i].config;
+	}
 
 	return config;
 }

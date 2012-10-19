@@ -41,6 +41,8 @@
 #include "lib/acpi.h"
 
 /* These are firmware-specific and not generically useful for it8500 */
+#define STOUT_ECMEM_READ		0x08
+#define STOUT_ECMEM_WRITE		0x09
 #define STOUT_ECMEM_FW_VERSION_MSB	0xe8
 #define STOUT_ECMEM_FW_VERSION_LSB	0xe9
 
@@ -48,8 +50,9 @@
 
 /* for i8042-style wait commands */
 struct i8042_host_intf stout_acpi_intf = {
-	.csr	= ACPI_EC_SC,
-	.data	= ACPI_EC_DATA,
+	/* use sideband ports to avoid racing with kernel ACPI driver */
+	.csr	= 0x6c,
+	.data	= 0x68,
 };
 
 int stout_wait_ibf_clear(struct platform_intf *intf)
@@ -70,15 +73,15 @@ static int ecram_read(struct platform_intf *intf,
 {
 	if (stout_wait_ibf_clear(intf) != 1)
 		return -1;
-	if (io_write8(intf, ACPI_EC_SC, ACPI_RD_EC) < 0)
+	if (io_write8(intf, stout_acpi_intf.csr, STOUT_ECMEM_READ) < 0)
 		return -1;
 	if (stout_wait_ibf_clear(intf) != 1)
 		return -1;
-	if (io_write8(intf, ACPI_EC_DATA, offset) < 0)
+	if (io_write8(intf, stout_acpi_intf.data, offset) < 0)
 		return -1;
 	if (stout_wait_obf_set(intf) != 1)
 		return -1;
-	if (io_read8(intf, ACPI_EC_DATA, data) < 0)
+	if (io_read8(intf, stout_acpi_intf.data, data) < 0)
 		return -1;
 
 	return 0;

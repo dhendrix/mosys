@@ -106,7 +106,12 @@ static const char *stout_ec_fw_version(struct platform_intf *intf)
 
 	major = (msb >> 4) & 0xf;
 	minor = ((msb & 0xf) << 4) | ((lsb >> 4) & 0xf);
-	revision = 'A' + (lsb & 0xf);
+
+	/* Revision: Zero indicates no revision character */
+	if ((lsb & 0xf) == 0)
+		revision = '\0';
+	else
+		revision = 'A' + (lsb & 0xf) - 1;
 
 	memset(version, 0, sizeof(version));
 	sprintf(version, "%x.%02x%c", major, minor, revision);

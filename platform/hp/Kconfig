@@ -4,12 +4,8 @@
 
 menu "HP Platform Support"
 
-config PLATFORM_HP
-	bool "HP platform support"
-	default n
-
 config HP_Z600
-	depends on PLATFORM_ARCH_X86 && PLATFORM_HP
+	depends on PLATFORM_ARCH_X86
 	bool "z600 workstation"
 	default y
 

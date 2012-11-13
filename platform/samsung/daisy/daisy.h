@@ -29,27 +29,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef EXPERIMENTAL_STUMPY_H__
-#define EXPERIMENTAL_STUMPY_H__
+#ifndef PLATFORM_DAISY_H__
+#define PLATFORM_DAISY_H__
 
 #include <inttypes.h>
 #include "mosys/platform.h"
 
-#define STUMPY_HOST_FIRMWARE_ROM_SIZE		(8192 * 1024)
+#define SNOW_BOARD_ID0	"ID_Bit0"
+#define SNOW_BOARD_ID1	"ID_Bit1"
+
+/* board config is used for determining DRAM vendor and platform revision */
+enum daisy_board_config {
+	/* TODO: add Daisy configurations here as well */
+	SNOW_CONFIG_UNKNOWN = -1,
+	SNOW_CONFIG_SAMSUNG_EVT,
+	SNOW_CONFIG_ELPIDA_EVT,
+	SNOW_CONFIG_SAMSUNG_DVT,
+	SNOW_CONFIG_ELPIDA_DVT,
+	SNOW_CONFIG_SAMSUNG_PVT,
+	SNOW_CONFIG_SAMSUNG_PVT2,
+	SNOW_CONFIG_ELPIDA_PVT,
+	SNOW_CONFIG_ELPIDA_PVT2,
+	SNOW_CONFIG_SAMSUNG_MP,
+	SNOW_CONFIG_ELPIDA_MP,
+	SNOW_CONFIG_RSVD,
+};
+
+extern enum daisy_board_config board_config;
+extern int daisy_ec_setup(struct platform_intf *intf);
 
 /* platform callbacks */
-extern struct eeprom_cb stumpy_eeprom_cb;	/* eeprom.c */
-//extern struct gpio_cb stumpy_gpio_cb;		/* gpio.c */
-extern struct memory_cb stumpy_memory_cb;	/* memory.c */
-extern struct nvram_cb stumpy_nvram_cb;		/* nvram.c */
-extern struct sensor_cb stumpy_sensor_cb;	/* sensors.c */
-extern struct sys_cb stumpy_sys_cb;		/* sys.c */
-extern struct vpd_cb stumpy_vpd_cb;		/* vpd.c */
+extern struct eeprom_cb daisy_eeprom_cb;	/* eeprom.c */
+extern struct sys_cb daisy_sys_cb;		/* sys.c */
+extern struct gpio_cb daisy_gpio_cb;		/* gpio.c */
+extern struct memory_cb daisy_memory_cb;	/* memory.c */
+extern struct nvram_cb gec_nvram_cb;		/* drivers/google/gec.c */
 
-/* functions called by setup routines */
-extern int stumpy_superio_setup(struct platform_intf *intf);
-extern void stumpy_superio_destroy(struct platform_intf *intf);
-extern int stumpy_vpd_setup(struct platform_intf *intf);
-extern int stumpy_eeprom_setup(struct platform_intf *intf);
-
-#endif /* EXPERIMENTAL_STUMPY_H_ */
+#endif /* PLATFORM_DAISY_H_ */

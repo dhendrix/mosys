@@ -29,29 +29,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef EXPERIMENTAL_LUMPY_H__
-#define EXPERIMENTAL_LUMPY_H__
+#ifndef PLATFORM_STUMPY_H__
+#define PLATFORM_STUMPY_H__
 
 #include <inttypes.h>
 #include "mosys/platform.h"
 
-#define LUMPY_HOST_FIRMWARE_ROM_SIZE		(8192 * 1024)
-#define LUMPY_GPIO_PCH				0
+#define STUMPY_HOST_FIRMWARE_ROM_SIZE		(8192 * 1024)
 
 /* platform callbacks */
-extern struct ec_cb lumpy_ec_cb;		/* ec.c */
-extern struct eeprom_cb lumpy_eeprom_cb;	/* eeprom.c */
-extern struct gpio_cb lumpy_gpio_cb;		/* gpio.c */
-extern struct memory_cb lumpy_memory_cb;	/* memory.c */
-extern struct nvram_cb lumpy_nvram_cb;		/* nvram.c */
-extern struct sensor_cb lumpy_sensor_cb;	/* sensors.c */
-extern struct sys_cb lumpy_sys_cb;		/* sys.c */
-extern struct vpd_cb lumpy_vpd_cb;		/* vpd.c */
+extern struct eeprom_cb stumpy_eeprom_cb;	/* eeprom.c */
+//extern struct gpio_cb stumpy_gpio_cb;		/* gpio.c */
+extern struct memory_cb stumpy_memory_cb;	/* memory.c */
+extern struct nvram_cb stumpy_nvram_cb;		/* nvram.c */
+extern struct sensor_cb stumpy_sensor_cb;	/* sensors.c */
+extern struct sys_cb stumpy_sys_cb;		/* sys.c */
+extern struct vpd_cb stumpy_vpd_cb;		/* vpd.c */
 
 /* functions called by setup routines */
-extern int lumpy_vpd_setup(struct platform_intf *intf);
-extern int lumpy_ec_setup(struct platform_intf *intf);
-extern int lumpy_ec_destroy(struct platform_intf *intf);
-extern int lumpy_eeprom_setup(struct platform_intf *intf);
+extern int stumpy_superio_setup(struct platform_intf *intf);
+extern void stumpy_superio_destroy(struct platform_intf *intf);
+extern int stumpy_vpd_setup(struct platform_intf *intf);
+extern int stumpy_eeprom_setup(struct platform_intf *intf);
 
-#endif /* EXPERIMENTAL_LUMPY_H_ */
+#endif /* PLATFORM_STUMPY_H_ */

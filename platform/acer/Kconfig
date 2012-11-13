@@ -11,4 +11,10 @@ config ACER_CHROMIA700
 	bool "Acer Chromia 700 Chromebook"
 	default n
 
+config PLATFORM_PARROT
+	depends on PLATFORM_ARCH_X86
+	select CHIPSET_INTEL_SERIES6
+	bool "Acer C7 Chromebook"
+	default n
+
 endmenu

@@ -27,13 +27,6 @@ config EXPERIMENTAL_BUTTERFLY
 	bool "butterfly"
 	default n
 
-config EXPERIMENTAL_DAISY
-	depends on PLATFORM_ARCH_ARMEL && PLATFORM_EXPERIMENTAL
-	select GOOGLE_EC_I2C
-	select SOC_SAMSUNG_EXYNOS5
-	bool "daisy"
-	default n
-
 config EXPERIMENTAL_KAEN
 	depends on PLATFORM_ARCH_ARMEL && PLATFORM_EXPERIMENTAL
 	select SOC_NVIDIA_TEGRA2
@@ -61,30 +54,11 @@ config EXPERIMENTAL_LINK
 	bool "link"
 	default n
 
-config EXPERIMENTAL_LUMPY
-	depends on PLATFORM_ARCH_X86 && PLATFORM_EXPERIMENTAL
-	select CHIPSET_INTEL_SERIES6
-	bool "lumpy"
-	default n
-
-config EXPERIMENTAL_PARROT
-	depends on PLATFORM_ARCH_X86 && PLATFORM_EXPERIMENTAL
-	select CHIPSET_INTEL_SERIES6
-	bool "parrot"
-	default n
-
 config EXPERIMENTAL_STOUT
 	depends on PLATFORM_ARCH_X86 && PLATFORM_EXPERIMENTAL
 	select CHIPSET_INTEL_SERIES6
 	select EC_ITE_IT8500
 	bool "stout"
-	default n
-
-config EXPERIMENTAL_STUMPY
-	depends on PLATFORM_ARCH_X86 && PLATFORM_EXPERIMENTAL
-	select CHIPSET_INTEL_SERIES6
-	select SUPERIO_ITE_IT8772
-	bool "stumpy"
 	default n
 
 endmenu

@@ -1,0 +1,9 @@
+#obj-$(CONFIG_PLATFORM_STUMPY)	+= ec.o
+obj-$(CONFIG_PLATFORM_STUMPY)	+= eeprom.o
+#obj-$(CONFIG_PLATFORM_STUMPY)	+= gpio.o
+obj-$(CONFIG_PLATFORM_STUMPY)	+= memory.o
+obj-$(CONFIG_PLATFORM_STUMPY)	+= nvram.o
+obj-$(CONFIG_PLATFORM_STUMPY)	+= sensors.o
+obj-$(CONFIG_PLATFORM_STUMPY)	+= stumpy.o
+obj-$(CONFIG_PLATFORM_STUMPY)	+= sys.o
+obj-$(CONFIG_PLATFORM_STUMPY)	+= vpd.o

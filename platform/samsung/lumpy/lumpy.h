@@ -29,40 +29,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DAISY_H__
-#define DAISY_H__
+#ifndef PLATFORM_LUMPY_H__
+#define PLATFORM_LUMPY_H__
 
 #include <inttypes.h>
 #include "mosys/platform.h"
 
-#define SNOW_BOARD_ID0	"ID_Bit0"
-#define SNOW_BOARD_ID1	"ID_Bit1"
-
-/* board config is used for determining DRAM vendor and platform revision */
-enum daisy_board_config {
-	/* TODO: add Daisy configurations here as well */
-	SNOW_CONFIG_UNKNOWN = -1,
-	SNOW_CONFIG_SAMSUNG_EVT,
-	SNOW_CONFIG_ELPIDA_EVT,
-	SNOW_CONFIG_SAMSUNG_DVT,
-	SNOW_CONFIG_ELPIDA_DVT,
-	SNOW_CONFIG_SAMSUNG_PVT,
-	SNOW_CONFIG_SAMSUNG_PVT2,
-	SNOW_CONFIG_ELPIDA_PVT,
-	SNOW_CONFIG_ELPIDA_PVT2,
-	SNOW_CONFIG_SAMSUNG_MP,
-	SNOW_CONFIG_ELPIDA_MP,
-	SNOW_CONFIG_RSVD,
-};
-
-extern enum daisy_board_config board_config;
-extern int daisy_ec_setup(struct platform_intf *intf);
+#define LUMPY_HOST_FIRMWARE_ROM_SIZE		(8192 * 1024)
+#define LUMPY_GPIO_PCH				0
 
 /* platform callbacks */
-extern struct eeprom_cb daisy_eeprom_cb;	/* eeprom.c */
-extern struct sys_cb daisy_sys_cb;		/* sys.c */
-extern struct gpio_cb daisy_gpio_cb;		/* gpio.c */
-extern struct memory_cb daisy_memory_cb;	/* memory.c */
-extern struct nvram_cb gec_nvram_cb;		/* drivers/google/gec.c */
+extern struct ec_cb lumpy_ec_cb;		/* ec.c */
+extern struct eeprom_cb lumpy_eeprom_cb;	/* eeprom.c */
+extern struct gpio_cb lumpy_gpio_cb;		/* gpio.c */
+extern struct memory_cb lumpy_memory_cb;	/* memory.c */
+extern struct nvram_cb lumpy_nvram_cb;		/* nvram.c */
+extern struct sensor_cb lumpy_sensor_cb;	/* sensors.c */
+extern struct sys_cb lumpy_sys_cb;		/* sys.c */
+extern struct vpd_cb lumpy_vpd_cb;		/* vpd.c */
 
-#endif /* DAISY_H_ */
+/* functions called by setup routines */
+extern int lumpy_vpd_setup(struct platform_intf *intf);
+extern int lumpy_ec_setup(struct platform_intf *intf);
+extern int lumpy_ec_destroy(struct platform_intf *intf);
+extern int lumpy_eeprom_setup(struct platform_intf *intf);
+
+#endif /* PLATFORM_LUMPY_H_ */

@@ -40,21 +40,21 @@ extern struct platform_intf platform_default_x86;
 extern struct platform_intf platform_aebl_tegra2;
 extern struct platform_intf platform_asymptote_tegra2;
 extern struct platform_intf platform_butterfly;
-extern struct platform_intf platform_daisy;
 extern struct platform_intf platform_kaen_tegra2;
 extern struct platform_intf platform_kiev;
 extern struct platform_intf platform_link;
-extern struct platform_intf platform_lumpy;
-extern struct platform_intf platform_parrot;
 extern struct platform_intf platform_seaboard_tegra2;
 extern struct platform_intf platform_stout;
-extern struct platform_intf platform_stumpy;
 
 /* production platforms */
 extern struct platform_intf platform_acer_chromia700;
 extern struct platform_intf platform_google_cr48;
 extern struct platform_intf platform_hp_z600;
 extern struct platform_intf platform_samsung_series5;
+extern struct platform_intf platform_daisy;
+extern struct platform_intf platform_lumpy;
+extern struct platform_intf platform_parrot;
+extern struct platform_intf platform_stumpy;
 
 struct platform_intf *platform_intf_list[] = {
 #ifdef CONFIG_ACER_CHROMIA700
@@ -69,6 +69,18 @@ struct platform_intf *platform_intf_list[] = {
 #ifdef CONFIG_SAMSUNG_SERIES5
 	&platform_samsung_series5,
 #endif
+#ifdef CONFIG_PLATFORM_DAISY
+	&platform_daisy,
+#endif
+#ifdef CONFIG_PLATFORM_LUMPY
+	&platform_lumpy,
+#endif
+#ifdef CONFIG_PLATFORM_PARROT
+	&platform_parrot,
+#endif
+#ifdef CONFIG_PLATFORM_STUMPY
+	&platform_stumpy,
+#endif
 
 /* experimental platforms */
 #ifdef CONFIG_EXPERIMENTAL_AEBL
@@ -80,9 +92,6 @@ struct platform_intf *platform_intf_list[] = {
 #ifdef CONFIG_EXPERIMENTAL_BUTTERFLY
 	&platform_butterfly,
 #endif
-#ifdef CONFIG_EXPERIMENTAL_DAISY
-	&platform_daisy,
-#endif
 #ifdef CONFIG_EXPERIMENTAL_KAEN
 	&platform_kaen_tegra2,
 #endif
@@ -92,20 +101,11 @@ struct platform_intf *platform_intf_list[] = {
 #ifdef CONFIG_EXPERIMENTAL_LINK
 	&platform_link,
 #endif
-#ifdef CONFIG_EXPERIMENTAL_LUMPY
-	&platform_lumpy,
-#endif
-#ifdef CONFIG_EXPERIMENTAL_PARROT
-	&platform_parrot,
-#endif
 #ifdef CONFIG_EXPERIMENTAL_SEABOARD
 	&platform_seaboard_tegra2,
 #endif
 #ifdef CONFIG_EXPERIMENTAL_STOUT
 	&platform_stout,
-#endif
-#ifdef CONFIG_EXPERIMENTAL_STUMPY
-	&platform_stumpy,
 #endif
 
 /* place default platform last */

@@ -29,8 +29,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef EXPERIMENTAL_PARROT_H__
-#define EXPERIMENTAL_PARROT_H__
+#ifndef PLATFORM_PARROT_H__
+#define PLATFORM_PARROT_H__
 
 #include <inttypes.h>
 #include "mosys/platform.h"
@@ -49,4 +49,4 @@ extern struct ec_cb parrot_ec_cb;		/* ec.c */
 extern int parrot_vpd_setup(struct platform_intf *intf);
 extern int parrot_eeprom_setup(struct platform_intf *intf);
 
-#endif /* EXPERIMENTAL_PARROT_H_ */
+#endif /* PLATFORM_PARROT_H_ */

@@ -51,7 +51,7 @@
 
 #include "link.h"
 
-#define LINK_DIMM_COUNT	1
+#define LINK_DIMM_COUNT	2
 
 /*
  * link_dimm_count  -  return total number of dimm slots

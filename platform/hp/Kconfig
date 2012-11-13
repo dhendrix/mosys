@@ -4,7 +4,7 @@
 
 menu "HP Platform Support"
 
-config HP_Z600
+config PLATFORM_Z600
 	depends on PLATFORM_ARCH_X86
 	bool "z600 workstation"
 	default y

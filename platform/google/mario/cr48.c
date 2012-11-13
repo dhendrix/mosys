@@ -134,7 +134,7 @@ struct platform_cb google_cr48_cb = {
 	.vpd		= &google_cr48_vpd_cb,
 };
 
-struct platform_intf platform_google_cr48 = {
+struct platform_intf platform_mario = {
 	.type		= PLATFORM_X86_64,
 	.name		= "Mario",
 	.id_list	= google_cr48_id_list,

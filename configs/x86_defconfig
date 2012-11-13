@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Mosys version: 1.2.03
-# Mon Nov 12 17:01:33 2012
+# Mon Nov 12 17:41:25 2012
 #
 
 #
@@ -29,23 +29,23 @@ CONFIG_DEFAULT_X86=y
 #
 # Acer Platform Support
 #
-CONFIG_ACER_CHROMIA700=y
 CONFIG_PLATFORM_PARROT=y
+CONFIG_PLATFORM_ZGB=y
 
 #
 # Google Platform Support
 #
-CONFIG_GOOGLE_CR48=y
+CONFIG_PLATFORM_MARIO=y
 
 #
 # HP Platform Support
 #
-CONFIG_HP_Z600=y
+CONFIG_PLATFORM_Z600=y
 
 #
 # Samsung Platform Support
 #
-CONFIG_SAMSUNG_SERIES5=y
+CONFIG_PLATFORM_ALEX=y
 CONFIG_PLATFORM_LUMPY=y
 CONFIG_PLATFORM_STUMPY=y
 

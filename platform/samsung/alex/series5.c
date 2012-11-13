@@ -146,7 +146,7 @@ struct platform_cb samsung_series5_cb = {
 	.vpd		= &samsung_series5_vpd_cb,
 };
 
-struct platform_intf platform_samsung_series5 = {
+struct platform_intf platform_alex = {
 	.type		= PLATFORM_X86_64,
 	.name		= "Alex",
 	.id_list	= samsung_series5_id_list,

@@ -4,11 +4,11 @@
 
 menu "Samsung Platform Support"
 
-config SAMSUNG_SERIES5
+config PLATFORM_ALEX
 	depends on PLATFORM_ARCH_X86
 	select CHIPSET_INTEL_NM10
 	select EC_SMSC_MEC1308
-	bool "Samsung Chromebook (Series 5)"
+	bool "Samsung XE500 Chromebook"
 	default n
 
 config PLATFORM_DAISY

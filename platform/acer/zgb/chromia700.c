@@ -142,7 +142,7 @@ struct platform_cb acer_chromia700_cb = {
 	.vpd		= &acer_chromia700_vpd_cb,
 };
 
-struct platform_intf platform_acer_chromia700 = {
+struct platform_intf platform_zgb = {
 	.type		= PLATFORM_X86_64,
 	.name		= "ZGB",
 	.id_list	= acer_chromia700_id_list,

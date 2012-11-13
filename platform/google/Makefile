@@ -1,1 +1,1 @@
-obj-$(CONFIG_GOOGLE_CR48)	+= cr48/
+obj-$(CONFIG_PLATFORM_MARIO)	+= mario/

@@ -86,7 +86,7 @@ struct platform_cb hp_z600_cb = {
 	.sys 		= &hp_z600_sys_cb,
 };
 
-struct platform_intf platform_hp_z600 = {
+struct platform_intf platform_z600 = {
 	.type		= PLATFORM_X86_64,
 	.name		= "HP Z600 Workstation",
 	.id_list	= hp_z600_id_list,

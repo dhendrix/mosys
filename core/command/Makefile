@@ -1,3 +1,4 @@
+obj-y		+= battery.o
 obj-y		+= ec.o
 obj-y		+= eeprom.o
 obj-y		+= eventlog.o

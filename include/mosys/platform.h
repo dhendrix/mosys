@@ -406,6 +406,16 @@ struct pci_cb {
 	                                         int bus, int dev, int func);
 };
 
+/* battery related callbacks */
+struct battery_cb {
+	const char *(*get_fud)(struct platform_intf *intf);
+	int (*set_fud)(struct platform_intf *intf,
+			int day, int month, int year);
+#if 0
+	int (*update)(struct platform_intf *intf);
+#endif
+};
+
 /* platform-specific callbacks */
 struct platform_cb {
 	struct sensor_cb *sensor; 	/* sensor callbacks */
@@ -423,6 +433,7 @@ struct platform_cb {
 	struct vpd_cb *vpd;		/* vpd callbacks */
 	struct ec_cb *ec;		/* ec callbacks */
 	struct hid_cb *hid;		/* hid callbacks */
+	struct battery_cb *battery;	/* battery callbacks */
 };
 
 /*

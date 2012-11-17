@@ -63,7 +63,7 @@ static char *smbios_scan_sysfs(const char *filename)
 	char *val = NULL;
 	char *path;
 
-	list = scanft(&list, SYSFS_SMBIOS_DIR, filename, NULL, 1);
+	list = scanft(&list, SYSFS_SMBIOS_DIR, filename, NULL, -1, 1);
 	if (!list_count(list))
 		goto smbios_scan_sysfs_exit;
 

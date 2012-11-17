@@ -220,7 +220,7 @@ static int gec_probe_i2c_sysfs(struct platform_intf *intf)
 	 * the I2C adapter and not the MFD itself.
 	 */
 	list = scanft(&list, SYSFS_I2C_DEV_ROOT,
-		      "name", GEC_I2C_ADAPTER_NAME, 1);
+		      "name", GEC_I2C_ADAPTER_NAME, -1, 1);
 	if (!list_count(list)) {
 		lprintf(LOG_DEBUG, "GEC I2C adapter not found\n");
 		goto gec_probe_sysfs_exit;

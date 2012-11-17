@@ -49,16 +49,16 @@ static void scanft_test(void **state) {
 	         mosys_get_root_prefix(), "scanft_test/");
 
 	/* The first needle should be in given root. */
-	assert_true(scanft(&list, root, "needle0", NULL, 0) != NULL);
+	assert_true(scanft(&list, root, "needle0", NULL, -1, 0) != NULL);
 	list_cleanup(&list);
 
 	/* The second needle requires some basic recursion to find. */
-	assert_true(scanft(&list, root, "needle1", NULL, 1) != NULL);
+	assert_true(scanft(&list, root, "needle1", NULL,, -1, 1) != NULL);
 	list_cleanup(&list);
 
 	/* The third needle should requires recursion and symlink
 	 * handling to find. */
-	assert_true(scanft(&list, root, "needle2", NULL, 1) != NULL);
+	assert_true(scanft(&list, root, "needle2", NULL, -1, 1) != NULL);
 	list_cleanup(&list);
 
 	/*
@@ -66,7 +66,7 @@ static void scanft_test(void **state) {
 	 * self-referencing directory symlink has been added to the hierarchy to
 	 * test symlink depth handling.
 	 */
-	assert_true(scanft(&list, root, "needle3", NULL, 100) == NULL);
+	assert_true(scanft(&list, root, "needle3", NULL, -1, 100) == NULL);
 	list_cleanup(&list);
 }
 

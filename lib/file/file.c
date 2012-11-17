@@ -159,6 +159,8 @@ int file_open(const char *file, int rw)
  * @filename:	Name of file to search for
  * @str:	Optional NULL terminated string to check at the beginning
  * 		of the file
+ * @maxdepth:	Maximum directory depth to follow. A negative value means
+ *		follow indefinitely. Zero means do not descend.
  * @symdepth:	Maximum depth of symlinks to follow. A negative value means
  * 		follow indefinitely. Zero means do not follow symlinks.
  * 
@@ -167,11 +169,12 @@ int file_open(const char *file, int rw)
  */
 struct ll_node *scanft(struct ll_node **list,
 		       const char *root, const char *filename,
-		       const char *str, int symdepth)
+		       const char *str, int maxdepth, int symdepth)
 {
 	DIR *dp;
 	struct dirent *d;
 	struct stat s;
+	int do_descend = 0;
 
 	if (lstat(root, &s) < 0) {
 		lprintf(LOG_DEBUG, "%s: Error stat'ing %s: %s\n",
@@ -185,6 +188,11 @@ struct ll_node *scanft(struct ll_node **list,
 		else if (symdepth > 0)	/* Follow if not too deep in */
 			symdepth--;	
 	}
+
+	if (maxdepth != 0)
+		do_descend = 1;
+	if (maxdepth > 0)
+		maxdepth--;
 
 	if ((dp = opendir(root)) == NULL) 
 		return NULL;
@@ -232,7 +240,8 @@ struct ll_node *scanft(struct ll_node **list,
 			}
 		}
 
-		scanft(list, newpath, filename, str, symdepth);
+		if (do_descend)
+			scanft(list, newpath, filename, str, maxdepth, symdepth);
 	}
 
 	closedir(dp);
@@ -274,7 +283,7 @@ int sysfs_lowest_smbus(const char *path, const char *name)
 
 	/* populate linked list nodes with all sysfs sub-directories
 	 * containing a named device entry matching our criteria */
-	scanft(&sysfs_ll, path, "name", name, 1);
+	scanft(&sysfs_ll, path, "name", name, -1, 1);
 	if (!sysfs_ll) {
 		lprintf(LOG_DEBUG, "%s: sysfs entry \"%s\" not found\n",
 		        __func__, name);

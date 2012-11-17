@@ -43,7 +43,7 @@ int file_open(const char *file, int rw);
 #include "mosys/list.h"
 extern struct ll_node *scanft(struct ll_node **list,
                               const char *root, const char *name,
-                              const char *str, int symdepth);
+                              const char *str, int maxdepth, int symdepth);
 
 extern void scanft_list_cleanup(struct ll_node **phead);
 

@@ -37,15 +37,44 @@
 
 #define STOUT_HOST_FIRMWARE_ROM_SIZE	(8192 * 1024)
 
+/* These are firmware-specific and not generically useful for it8500 */
+typedef enum stout_ec_command {
+        STOUT_ECCMD_MEM_READ                            = 0x08,
+        STOUT_ECCMD_MEM_WRITE                           = 0x09,
+        STOUT_ECCMD_GET_BATTERY_AUTH_STATUS             = 0x20,
+        STOUT_ECCMD_GET_BATTERY_FIRST_USE_DATE_STATUS   = 0x21,
+        STOUT_ECCMD_LATCH_BATTERY_FIRST_USE_DATE        = 0x22,
+        STOUT_ECCMD_GET_BATTERY_FIRST_USE_DATE_HI       = 0x23,
+        STOUT_ECCMD_GET_BATTERY_FIRST_USE_DATE_LO       = 0x24,
+} stout_ec_command;
+
+typedef enum stout_ec_mem_addr {
+        STOUT_ECMEM_BATTERY_STATUS              = 0x38,
+        STOUT_ECMEM_FW_VERSION_MSB              = 0xe8,
+        STOUT_ECMEM_FW_VERSION_LSB              = 0xe9,
+        STOUT_ECMEM_BATTERY_FIRST_USE_DATE_HI   = 0xbd,
+        STOUT_ECMEM_BATTERY_FIRST_USE_DATE_LO   = 0xbe,
+} stout_ec_mem_addr;
+
 /* platform callbacks */
+extern struct battery_cb stout_battery_cb;	/* battery.c */
 extern struct ec_cb stout_ec_cb;		/* ec.c */
 extern struct eeprom_cb stout_eeprom_cb;	/* eeprom.c */
 extern struct memory_cb stout_memory_cb;	/* memory.c */
-extern struct nvram_cb stout_nvram_cb;	/* nvram.c */
+extern struct nvram_cb stout_nvram_cb;		/* nvram.c */
 extern struct sys_cb stout_sys_cb;		/* sys.c */
 
 /* functions called by setup routines */
 extern int stout_ec_setup(struct platform_intf *intf);
 extern int stout_eeprom_setup(struct platform_intf *intf);
+
+/* ec functions used by ec and battery commands */
+extern int ec_command(struct platform_intf *intf, stout_ec_command command,
+                        uint8_t *input_data, uint8_t input_len,
+                        uint8_t *output_data, uint8_t output_len );
+extern int ecram_read(struct platform_intf *intf,
+                        stout_ec_mem_addr address, uint8_t *data);
+extern int ecram_write(struct platform_intf *intf,
+                        stout_ec_mem_addr address, uint8_t data);
 
 #endif /* EXPERIMENTAL_STOUT_H_ */

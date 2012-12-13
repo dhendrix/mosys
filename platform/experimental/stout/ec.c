@@ -32,6 +32,7 @@
 #include <inttypes.h>
 #include <unistd.h>
 
+#include "stout.h"
 #include "mosys/log.h"
 #include "mosys/platform.h"
 
@@ -40,51 +41,90 @@
 #include "intf/io.h"
 #include "lib/acpi.h"
 
-/* These are firmware-specific and not generically useful for it8500 */
-#define STOUT_ECMEM_READ		0x08
-#define STOUT_ECMEM_WRITE		0x09
-#define STOUT_ECMEM_FW_VERSION_MSB	0xe8
-#define STOUT_ECMEM_FW_VERSION_LSB	0xe9
-
 #define STOUT_EC_CMD_TIMEOUT_MS		1000
 
 /* for i8042-style wait commands */
-struct i8042_host_intf stout_acpi_intf = {
+static struct i8042_host_intf stout_acpi_intf = {
 	/* use sideband ports to avoid racing with kernel ACPI driver */
 	.csr	= 0x6c,
 	.data	= 0x68,
 };
 
-int stout_wait_ibf_clear(struct platform_intf *intf)
+static int stout_wait_ibf_clear(struct platform_intf *intf)
 {
 	return i8042_wait_ibf_clear(intf, &stout_acpi_intf,
 			STOUT_EC_CMD_TIMEOUT_MS);
 }
 
-int stout_wait_obf_set(struct platform_intf *intf)
+static int stout_wait_obf_set(struct platform_intf *intf)
 {
 	return i8042_wait_obf_set(intf, &stout_acpi_intf,
 			STOUT_EC_CMD_TIMEOUT_MS);
 }
 
-/* returns 0 to indicate success, <0 to indicate failure */
-static int ecram_read(struct platform_intf *intf,
-			uint8_t offset, uint8_t *data)
+/*
+ * ec_command - sends command to EC, with optional read/write parameters.
+ *
+ * @inf:		platform interface
+ * command:		EC command
+ * @input_data: 	optional input data to send (NULL if none)
+ * input_len:		length of @input_data (0 if input_data == NULL)
+ * @output_data:	optional output data to send (NULL if none)
+ * output_len:		length of @output_data (0 if output_data == NULL)
+ *
+ * Returns 0 to indicate success, <0 to indicate failure.
+ */
+int ec_command(struct platform_intf *intf, stout_ec_command command,
+			uint8_t *input_data, uint8_t input_len,
+			uint8_t *output_data, uint8_t output_len )
 {
+	int i;
+
 	if (stout_wait_ibf_clear(intf) != 1)
 		return -1;
-	if (io_write8(intf, stout_acpi_intf.csr, STOUT_ECMEM_READ) < 0)
-		return -1;
-	if (stout_wait_ibf_clear(intf) != 1)
-		return -1;
-	if (io_write8(intf, stout_acpi_intf.data, offset) < 0)
-		return -1;
-	if (stout_wait_obf_set(intf) != 1)
-		return -1;
-	if (io_read8(intf, stout_acpi_intf.data, data) < 0)
+	if (io_write8(intf, stout_acpi_intf.csr, command) < 0)
 		return -1;
 
+	if (input_data != NULL) {
+		for (i = 0; i < input_len; i++) {
+			if (stout_wait_ibf_clear(intf) != 1)
+				return -1;
+			if (io_write8(intf, stout_acpi_intf.data,
+					input_data[i] ) < 0)
+				return -1;
+		}
+	}
+
+	if (output_data != NULL) {
+		for (i = 0; i < output_len; i++) {
+			if (stout_wait_obf_set(intf) != 1)
+				return -1;
+			if (io_read8(intf, stout_acpi_intf.data,
+					&output_data[i] ) < 0)
+				return -1;
+		}
+	}
+
 	return 0;
+}
+
+
+/* returns 0 to indicate success, <0 to indicate failure */
+int ecram_read(struct platform_intf *intf,
+			stout_ec_mem_addr address, uint8_t *data)
+{
+	return ec_command(intf, STOUT_ECCMD_MEM_READ, (int8_t *)&address, 1,
+				data, 1);
+}
+
+/* returns 0 to indicate success, <0 to indicate failure */
+int ecram_write(struct platform_intf *intf,
+			stout_ec_mem_addr address, uint8_t data)
+{
+	uint8_t write_data[2] = {address, data};
+
+	return ec_command(intf, STOUT_ECCMD_MEM_WRITE, write_data, 2,
+				NULL, 0);
 }
 
 /*
@@ -171,7 +211,7 @@ int stout_ec_setup(struct platform_intf *intf)
 {
 	int rc = 0;
 
-	/* invert logic -- it8500_detect will return 1 if it finds an it8500 EC */
+	/* invert logic: it8500_detect will return 1 if it finds an it8500 EC */
 	if (!it8500_detect(intf))
 		rc = 1;
 

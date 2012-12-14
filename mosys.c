@@ -47,20 +47,18 @@
 
 static void usage(void)
 {
-	printf("usage: %s [options] [commands]\n"
-                    "\n"
-                    "  Options:\n"
-                    "    -k            print data in key=value format\n"
-                    "    -l            print data in long format\n"
-                    "    -v            verbose (can be used multiple times)\n"
-                    "    -f            ignore mosys lock\n"
-                    "    -t            display command tree\n"
-                    "    -S            print supported platform IDs\n"
-		    "    -s [key]      print value for specified key only\n"
-                    "    -p [id]       force platform id (bypass auto-detection)\n"
-                    "    -h            print this help\n"
-                    "    -V            print version\n"
-                    "\n", PROGRAM);
+	printf("usage: %s [options] [commands]\n\n"
+	"  Options:\n"
+	"    -k            print data in key=value format\n"
+	"    -l            print data in long format\n"
+	"    -v            verbose (can be used multiple times)\n"
+	"    -f            ignore mosys lock\n"
+	"    -t            display command tree\n"
+	"    -s            print supported platform IDs\n"
+	"    -p [id]       force platform id (bypass auto-detection)\n"
+	"    -h            print this help\n"
+	"    -V            print version\n"
+	"\n", PROGRAM);
 }
 
 static void sub_list(struct platform_cmd *sub)

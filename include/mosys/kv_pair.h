@@ -45,6 +45,7 @@ enum kv_pair_style {
 	KV_STYLE_VALUE,		/* | value1 | value2 | */
 	KV_STYLE_LONG,		/* key1         | value1 */
 				/* key2         | value2 */
+	KV_STYLE_SINGLE,	/* prints raw value for specified key */
 };
 
 struct kv_pair {
@@ -56,6 +57,21 @@ struct kv_pair {
 extern enum kv_pair_style mosys_get_kv_pair_style(void);
 
 extern void mosys_set_kv_pair_style(enum kv_pair_style style);
+
+/*
+ * kv_get_single_key  -  get single key to match against if -s option used
+ *
+ * returns single value specified by user
+ * returns NULL if no single value has been specified by the user
+ */
+extern const char *kv_get_single_key(void);
+
+/*
+ * kv_set_single_key  -  set single key to match when using -s option
+ *
+ * @value:	value to match against
+ */
+extern void kv_set_single_key(const char *value);
 
 /*
  * kv_pair_new  -  create new key=value pair

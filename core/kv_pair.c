@@ -194,6 +194,7 @@ int kv_pair_print_to_file(FILE* fp, struct kv_pair *kv_list,
 		enum kv_pair_style style)
 {
 	struct kv_pair *kv_ptr;
+	int single_found = 0;
 
 	switch (style) {
 	case KV_STYLE_PAIR:
@@ -230,7 +231,30 @@ int kv_pair_print_to_file(FILE* fp, struct kv_pair *kv_list,
                                         kv_ptr->value);
 		}
 		break;
+
+
+	case KV_STYLE_SINGLE:{
+		const char *single_key = kv_get_single_key();
+
+		if (!single_key)
+			break;
+
+		for (kv_ptr = kv_list; kv_ptr != NULL; kv_ptr = kv_ptr->next) {
+			if (kv_ptr->key && kv_ptr->value) {
+				if (!strncmp(single_key, kv_ptr->key,
+							strlen(kv_ptr->key))) {
+					fprintf(fp, "%s", kv_ptr->value);
+					single_found = 1;
+				}
+			}
+		}
+
+		break;
 	}
+	}
+
+	if (style == KV_STYLE_SINGLE && !single_found)
+		return -1;
 
 	fprintf(fp, "\n");
 	return 0;
@@ -249,4 +273,16 @@ int kv_pair_print(struct kv_pair *kv_list)
 	FILE *fp = mosys_get_output_file();
 	enum kv_pair_style style = mosys_get_kv_pair_style();
 	return kv_pair_print_to_file(fp, kv_list, style);
+}
+
+static const char *single_key;
+
+const char *kv_get_single_key(void)
+{
+	return single_key;
+}
+
+void kv_set_single_key(const char *key)
+{
+	single_key = key;
 }

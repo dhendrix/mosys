@@ -56,6 +56,7 @@ static void usage(void)
                     "    -f            ignore mosys lock\n"
                     "    -t            display command tree\n"
                     "    -S            print supported platform IDs\n"
+		    "    -s [key]      print value for specified key only\n"
                     "    -p [id]       force platform id (bypass auto-detection)\n"
                     "    -h            print this help\n"
                     "    -V            print version\n"
@@ -203,13 +204,21 @@ int mosys_main(int argc, char **argv)
 	struct platform_intf *intf;
 	enum kv_pair_style style = KV_STYLE_VALUE;
 
-	while ((argflag = getopt(argc, argv, "klvftSp:Vh")) > 0) {
+	while ((argflag = getopt(argc, argv, "klvftSs:p:Vh")) > 0) {
 		switch (argflag) {
 		case 'k':
 			style = KV_STYLE_PAIR;
 			break;
 		case 'l':
 			style = KV_STYLE_LONG;
+			break;
+		case 's':
+			style = KV_STYLE_SINGLE;
+			if (!optarg) {
+				usage();
+				exit(EXIT_FAILURE);
+			}
+			kv_set_single_key(optarg);
 			break;
 		case 'v':
 			verbose++;

@@ -52,10 +52,10 @@ static void usage(void)
 	"    -k            print data in key=value format\n"
 	"    -l            print data in long format\n"
 	"    -v            verbose (can be used multiple times)\n"
-	"    -f            ignore mosys lock\n"
-	"    -t            display command tree\n"
+	"    -f            force (ignore mosys lock, sanity checks, etc)\n"
+	"    -t            display command tree for detected platform\n"
 	"    -s            print supported platform IDs\n"
-	"    -p [id]       force platform id (bypass auto-detection)\n"
+	"    -p [id]       specify platform id (bypass auto-detection)\n"
 	"    -h            print this help\n"
 	"    -V            print version\n"
 	"\n", PROGRAM);

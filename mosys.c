@@ -55,7 +55,7 @@ static void usage(void)
                     "    -v            verbose (can be used multiple times)\n"
                     "    -f            ignore mosys lock\n"
                     "    -t            display command tree\n"
-                    "    -s            print supported platform IDs\n"
+                    "    -S            print supported platform IDs\n"
                     "    -p [id]       force platform id (bypass auto-detection)\n"
                     "    -h            print this help\n"
                     "    -V            print version\n"
@@ -197,13 +197,13 @@ int mosys_main(int argc, char **argv)
 	int argflag;
 	int verbose = 0;
 	int force_lock = 0;
-	int s_opt = 0;
+	int print_platforms_opt = 0;
 	int showtree = 0;
 	char *p_opt = NULL;
 	struct platform_intf *intf;
 	enum kv_pair_style style = KV_STYLE_VALUE;
 
-	while ((argflag = getopt(argc, argv, "klvftsp:Vh")) > 0) {
+	while ((argflag = getopt(argc, argv, "klvftSp:Vh")) > 0) {
 		switch (argflag) {
 		case 'k':
 			style = KV_STYLE_PAIR;
@@ -220,8 +220,8 @@ int mosys_main(int argc, char **argv)
 		case 't':
 			showtree = 1;
 			break;
-		case 's':
-			s_opt = 1;
+		case 'S':
+			print_platforms_opt = 1;
 			break;
 		case 'p':
 			p_opt = optarg;
@@ -239,7 +239,7 @@ int mosys_main(int argc, char **argv)
 	}
 
 	mosys_set_kv_pair_style(style);
-	if (s_opt) {
+	if (print_platforms_opt) {
 		print_platforms();
 		exit(EXIT_SUCCESS);
 	}

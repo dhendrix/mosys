@@ -233,7 +233,7 @@ int gec_vboot_read(struct platform_intf *intf)
 	struct kv_pair *kv;
 	uint8_t block[EC_VBNV_BLOCK_SIZE];
 	char hexstring[EC_VBNV_BLOCK_SIZE * 2 + 1];
-	int i;
+	int i, rc;
 
 	if (gec_vbnvcontext_read(intf, block))
 		return -1;
@@ -243,10 +243,10 @@ int gec_vboot_read(struct platform_intf *intf)
 
 	kv = kv_pair_new();
 	kv_pair_fmt(kv, "vbnvcontext", "%s", hexstring);
-	kv_pair_print(kv);
+	rc = kv_pair_print(kv);
 	kv_pair_free(kv);
 
-	return 0;
+	return rc;
 }
 
 int gec_vboot_write(struct platform_intf *intf, const char *hexstring)

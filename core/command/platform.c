@@ -95,6 +95,7 @@ static int platform_variant_cmd(struct platform_intf *intf,
 static int print_platforminfo(const char *key, const char *value)
 {
 	struct kv_pair *kv = kv_pair_new();
+	int rc;
 
 	if (!value) {
 		lprintf(LOG_ERR, "Unable to determine platform %s\n", key);
@@ -102,10 +103,10 @@ static int print_platforminfo(const char *key, const char *value)
 	}
 
 	kv_pair_add(kv, key, value);
-	kv_pair_print(kv);
+	rc = kv_pair_print(kv);
 	kv_pair_free(kv);
 	free((char*)value);
-	return 0;
+	return rc;
 }
 
 static int platform_reset_cmd(struct platform_intf *intf,

@@ -185,8 +185,13 @@ void kv_pair_free(struct kv_pair *kv_list)
  * kv_pair_print_to_file  -  print a key=value pair list
  *
  * @kv_list:    pointer to key=value list
+ * @style:      print style
+ *
+ * returns 0 to indicate success
+ * returns <0 to indicate failure
  */
-void kv_pair_print_to_file(FILE* fp, struct kv_pair *kv_list, enum kv_pair_style style)
+int kv_pair_print_to_file(FILE* fp, struct kv_pair *kv_list,
+		enum kv_pair_style style)
 {
 	struct kv_pair *kv_ptr;
 
@@ -228,16 +233,20 @@ void kv_pair_print_to_file(FILE* fp, struct kv_pair *kv_list, enum kv_pair_style
 	}
 
 	fprintf(fp, "\n");
+	return 0;
 }
 
 /*
  * kv_pair_print  -  print a key=value pair list to mosys output
  *
  * @kv_list:    pointer to key=value list
+ *
+ * returns 0 to indicate success
+ * returns <0 to indicate failure
  */
-void kv_pair_print(struct kv_pair *kv_list)
+int kv_pair_print(struct kv_pair *kv_list)
 {
 	FILE *fp = mosys_get_output_file();
 	enum kv_pair_style style = mosys_get_kv_pair_style();
-	kv_pair_print_to_file(fp, kv_list, style);
+	return kv_pair_print_to_file(fp, kv_list, style);
 }

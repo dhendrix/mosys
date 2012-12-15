@@ -76,7 +76,10 @@ struct gpio_map {
  *
  * @gpio:	gpio data
  * @state:	gpio state
+ *
+ * returns 0 to indicate success
+ * returns <0 to indicate failure
  */
-extern void kv_pair_print_gpio(struct gpio_map *gpio, int state);
+extern int kv_pair_print_gpio(struct gpio_map *gpio, int state);
 
 #endif /* MOSYS_DRIVERS_GPIO_H__ */

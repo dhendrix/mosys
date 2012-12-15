@@ -271,6 +271,7 @@ void print_tree(struct platform_intf *intf)
 int print_platforms() {
 	struct platform_intf **_intf, *intf;
 	const char **id;
+	int rc;
 
 	/* go through all supported interfaces */
 	for (_intf = platform_intf_list; _intf && *_intf; _intf++) {
@@ -284,10 +285,12 @@ int print_platforms() {
 
 			kv = kv_pair_new();
 			kv_pair_add(kv, "id", *id);
-			kv_pair_print(kv);
+			rc = kv_pair_print(kv);
 			kv_pair_free(kv);
+			if (rc)
+				return rc;
 		}
 	}
 
-	return 0;
+	return rc;
 }

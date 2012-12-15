@@ -64,14 +64,15 @@ static const char *sensor_type_names[] = {
  * @name:	sensor name
  * @reading:	sensor reading
  */
-static void kv_pair_print_sensor(struct sensor *sensor,
-                                 struct sensor_reading *reading)
+static int kv_pair_print_sensor(struct sensor *sensor,
+                                struct sensor_reading *reading)
 {
 	struct kv_pair *kv;
 	const char *mode = NULL;
+	int rc;
 
 	if (!sensor || !reading)
-		return;
+		return -ENOSYS;
 
 	if (reading->mode)
 		mode = val2str(reading->mode, sensor_modes);
@@ -138,8 +139,10 @@ static void kv_pair_print_sensor(struct sensor *sensor,
 		break;
 	}
 
-	kv_pair_print(kv);
+	rc = kv_pair_print(kv);
 	kv_pair_free(kv);
+
+	return rc;
 }
 
 
@@ -308,7 +311,7 @@ static int sensor_print_exec(struct platform_intf *intf,
 {
 	struct sensor_array *sensors;
 	struct sensor *sensor;
-	int i, count = 0;
+	int i, count = 0, rc = 0;
 
 	sensors = get_platform_sensors(intf);
 
@@ -346,7 +349,9 @@ static int sensor_print_exec(struct platform_intf *intf,
 			continue;
 
 		/* print it */
-		kv_pair_print_sensor(sensor, &reading);
+		rc = kv_pair_print_sensor(sensor, &reading);
+		if (rc)
+			break;
 
 		count++;
 	}

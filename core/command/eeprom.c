@@ -75,7 +75,7 @@ static int eeprom_list_cmd(struct platform_intf *intf,
 		{ 1 << EEPROM_VERBOSE_ONLY, "verbose" },
 		{ 0, NULL },
 	};
-	int i;
+	int i, rc;
 
 	if (!intf->cb->eeprom || !intf->cb->eeprom->eeprom_list)
 		return -1;
@@ -99,8 +99,11 @@ static int eeprom_list_cmd(struct platform_intf *intf,
 		if (!flags) {
 			kv_pair_add(kv, "flags", "");
 
-			kv_pair_print(kv);
+			rc = kv_pair_print(kv);
 			kv_pair_free(kv);
+
+			if (rc)
+				break;
 			continue;
 		}
 
@@ -117,12 +120,14 @@ static int eeprom_list_cmd(struct platform_intf *intf,
 		}
 		kv_pair_add(kv, "flags", string_builder_get_string(str));
 
-		kv_pair_print(kv);
+		rc = kv_pair_print(kv);
 		kv_pair_free(kv);
 		free_string_builder(str);
+		if (rc)
+			break;
 	}
 
-	return 0;
+	return rc;
 }
 
 /* helper function for printing fmap area information */

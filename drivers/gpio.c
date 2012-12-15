@@ -41,10 +41,14 @@
  *
  * @gpio:	gpio data
  * @state:	gpio state
+ *
+ * returns 0 to indicate success
+ * returns <0 to indicate failure
  */
-void kv_pair_print_gpio(struct gpio_map *gpio, int state)
+int kv_pair_print_gpio(struct gpio_map *gpio, int state)
 {
 	struct kv_pair *kv;
+	int rc;
 
 	kv = kv_pair_new();
 	kv_pair_add(kv, "device", gpio->devname);
@@ -63,12 +67,13 @@ void kv_pair_print_gpio(struct gpio_map *gpio, int state)
 	default:
 		lprintf(LOG_DEBUG, "Invalid GPIO type %d\n", gpio->type);
 		kv_pair_free(kv);
-		return;
+		return -1;
 	}
 
 	kv_pair_fmt(kv, "state", "%d", state);
 	kv_pair_add(kv, "name", gpio->name);
 
-	kv_pair_print(kv);
+	rc = kv_pair_print(kv);
 	kv_pair_free(kv);
+	return rc;
 }

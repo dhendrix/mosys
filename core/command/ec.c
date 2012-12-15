@@ -40,6 +40,7 @@ static int ec_info(struct platform_intf *intf,
                    struct platform_cmd *cmd, int argc, char **argv)
 {
 	struct kv_pair *kv;
+	int rc;
 
 	/* put ec vendor, name, and firmware version in kv=pair format */
 	if (!intf->cb->ec ||
@@ -55,9 +56,9 @@ static int ec_info(struct platform_intf *intf,
 	kv_pair_add(kv, "name", intf->cb->ec->name(intf));
 	kv_pair_add(kv, "fw_version", intf->cb->ec->fw_version(intf));
 
-	kv_pair_print(kv);
+	rc = kv_pair_print(kv);
 	kv_pair_free(kv);
-	return 0;
+	return rc;
 }
 
 struct platform_cmd ec_cmds[] = {

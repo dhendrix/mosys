@@ -118,15 +118,21 @@ extern void kv_pair_free(struct kv_pair *kv_list);
  *
  * @kv_list:    pointer to key=value list
  * @style:      print style
+ *
+ * returns 0 to indicate success
+ * returns -1 to indicate error
  */
-extern void kv_pair_print_to_file(FILE* fp, struct kv_pair *kv_list,
-                                  enum kv_pair_style style);
+extern int kv_pair_print_to_file(FILE* fp, struct kv_pair *kv_list,
+                                 enum kv_pair_style style);
 
 /*
  * kv_pair_print  -  print a key=value pair list to gsys output
  *
  * @kv_list:    pointer to key=value list
+ *
+ * returns 0 to indicate success
+ * returns -1 to indicate error
  */
-extern void kv_pair_print(struct kv_pair *kv_list);
+extern int kv_pair_print(struct kv_pair *kv_list);
 
 #endif /* KV_PAIR_H__ */

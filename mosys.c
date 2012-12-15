@@ -239,10 +239,8 @@ int mosys_main(int argc, char **argv)
 	}
 
 	mosys_set_kv_pair_style(style);
-	if (print_platforms_opt) {
-		print_platforms();
-		exit(EXIT_SUCCESS);
-	}
+	if (print_platforms_opt)
+		return print_platforms();
 
 	/*
 	 * Init the logging system and the default log output file (stderr).

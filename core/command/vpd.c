@@ -50,6 +50,7 @@ static int vpd_find_string_cmd(struct platform_intf *intf,
 {
 	uint8_t type, num;
 	char *str;
+	int rc = 0;
 
 	/* this is legacy tool format */
 	if (argc < 2) {
@@ -72,12 +73,12 @@ static int vpd_find_string_cmd(struct platform_intf *intf,
 	if (str) {
 		struct kv_pair *kv = kv_pair_new();
 		kv_pair_fmt(kv, "string", str);
-		kv_pair_print(kv);
+		rc = kv_pair_print(kv);
 		kv_pair_free(kv);
 		free(str);
 	}
 
-	return 0;		/* the legacy tool always returns success */
+	return rc;		/* the legacy tool always returns success */
 }
 
 static int vpd_find_blob_cmd(struct platform_intf *intf,
@@ -91,6 +92,7 @@ static int vpd_print_firmware_cmd(struct platform_intf *intf,
 {
 	struct vpd_table table;
 	struct kv_pair *kv;
+	int rc;
 
 	if (vpd_find_table(intf, VPD_TYPE_FIRMWARE, 0, &table,
 	                   vpd_rom_base, vpd_rom_size) < 0)
@@ -105,10 +107,10 @@ static int vpd_print_firmware_cmd(struct platform_intf *intf,
 	kv_pair_fmt(kv, "size", "%u KB",
 		    (table.data.firmware.rom_size_64k_blocks + 1) * 64);
 
-	kv_pair_print(kv);
+	rc = kv_pair_print(kv);
 	kv_pair_free(kv);
 
-	return 0;
+	return rc;
 }
 
 static int vpd_print_system_cmd(struct platform_intf *intf,
@@ -117,6 +119,7 @@ static int vpd_print_system_cmd(struct platform_intf *intf,
 {
 	struct vpd_table table;
 	struct kv_pair *kv;
+	int rc;
 
 	if (vpd_find_table(intf, VPD_TYPE_SYSTEM, 0, &table,
 	                   vpd_rom_base, vpd_rom_size) < 0)
@@ -135,10 +138,10 @@ static int vpd_print_system_cmd(struct platform_intf *intf,
 	kv_pair_add(kv, "family",
 		    table.string[table.data.system.family]);
 
-	kv_pair_print(kv);
+	rc = kv_pair_print(kv);
 	kv_pair_free(kv);
 
-	return 0;
+	return rc;
 }
 
 static int vpd_print_blobs_cmd(struct platform_intf *intf,
@@ -147,7 +150,7 @@ static int vpd_print_blobs_cmd(struct platform_intf *intf,
 {
 	struct vpd_table table;
 	struct kv_pair *kv, *blob_kv;
-	int i;
+	int i, rc;
 
 	for (i = 0; i < 0xffff; i++) {
 		if (vpd_find_table(intf, VPD_TYPE_BINARY_BLOB_POINTER,
@@ -170,14 +173,18 @@ static int vpd_print_blobs_cmd(struct platform_intf *intf,
 
 		vpd_print_blob(intf, blob_kv, &table);
 
-		kv_pair_print(kv);
+		rc = kv_pair_print(kv);
 		kv_pair_free(kv);
-		kv_pair_print(blob_kv);
+		if (rc)
+			break;
+
+		rc = kv_pair_print(blob_kv);
 		kv_pair_free(blob_kv);
+		if (rc)
+			break;
 	}
 
-	return 0;
-
+	return rc;
 }
 
 static int vpd_print_all_cmd(struct platform_intf *intf,

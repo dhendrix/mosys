@@ -48,6 +48,7 @@ static int eventlog_smbios_list_callback(struct platform_intf *intf,
                                          void *arg, int *complete)
 {
 	int *entry_count = arg;
+	int rc;
 	struct kv_pair *kv;
 
 	/* verify entry checksum on OEM types */
@@ -94,10 +95,10 @@ static int eventlog_smbios_list_callback(struct platform_intf *intf,
 	if (intf->cb->eventlog->print_data)
 		intf->cb->eventlog->print_data(intf, entry, kv);
 
-	kv_pair_print(kv);
+	rc = kv_pair_print(kv);
 	kv_pair_free(kv);
 
-	return 0;
+	return rc;
 }
 
 static int eventlog_smbios_list_cmd(struct platform_intf *intf,
@@ -118,6 +119,7 @@ static int eventlog_smbios_info_cmd(struct platform_intf *intf,
 	struct smbios_table table;
 	struct smbios_table_log *log;
 	struct kv_pair *kv;
+	int rc;
 
 	/* find the SMBIOS log structure */
 	if (smbios_find_table(intf, SMBIOS_TYPE_LOG, 0, &table,
@@ -140,10 +142,10 @@ static int eventlog_smbios_info_cmd(struct platform_intf *intf,
 	kv_pair_fmt(kv, "descriptor_num", "%d", log->descriptor_num);
 	kv_pair_fmt(kv, "descriptor_len", "%d", log->descriptor_len);
 
-	kv_pair_print(kv);
+	rc = kv_pair_print(kv);
 	kv_pair_free(kv);
 
-	return 0;
+	return rc;
 }
 
 static int eventlog_smbios_add_cmd(struct platform_intf *intf,

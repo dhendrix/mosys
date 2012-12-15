@@ -187,6 +187,7 @@ static int memory_spd_print_geometry(struct platform_intf *intf, int dimm)
 	struct kv_pair *kv;
 	struct spd_device *spd;
 	uint8_t *spd_data;
+	int rc;
 
 	if (!intf->cb->memory->spd ||
 	    !intf->cb->memory->spd->read)
@@ -208,11 +209,11 @@ static int memory_spd_print_geometry(struct platform_intf *intf, int dimm)
 	spd_print_field(intf, kv, spd_data, SPD_GET_RANKS);
 	spd_print_field(intf, kv, spd_data, SPD_GET_WIDTH);
 
-	kv_pair_print(kv);
+	rc = kv_pair_print(kv);
 	kv_pair_free(kv);
 
 	free(spd);
-	return 0;
+	return rc;
 }
 
 static int memory_spd_print_geometry_cmd(struct platform_intf *intf,
@@ -249,6 +250,7 @@ static int memory_spd_print_id(struct platform_intf *intf, int dimm)
 	struct kv_pair *kv;
 	struct spd_device *spd;
 	uint8_t *spd_data;
+	int rc;
 
 	if (!intf->cb->memory->spd ||
 	    !intf->cb->memory->spd->read)
@@ -270,11 +272,11 @@ static int memory_spd_print_id(struct platform_intf *intf, int dimm)
 	spd_print_field(intf, kv, spd_data, SPD_GET_SERIAL_NUMBER);
 	spd_print_field(intf, kv, spd_data, SPD_GET_PART_NUMBER);
 
-	kv_pair_print(kv);
+	rc = kv_pair_print(kv);
 	kv_pair_free(kv);
 
 	free(spd);
-	return 0;
+	return rc;
 }
 
 static int memory_spd_print_id_cmd(struct platform_intf *intf,
@@ -311,6 +313,7 @@ static int memory_spd_print_timings(struct platform_intf *intf, int dimm)
 	struct kv_pair *kv;
 	struct spd_device *spd;
 	uint8_t *spd_data;
+	int rc;
 
 	if (!intf->cb->memory->spd ||
 	    !intf->cb->memory->spd->read)
@@ -330,11 +333,11 @@ static int memory_spd_print_timings(struct platform_intf *intf, int dimm)
 	kv_pair_fmt(kv, "dimm", "%u", dimm);
 	spd_print_field(intf, kv, spd_data, SPD_GET_SPEEDS);
 
-	kv_pair_print(kv);
+	rc = kv_pair_print(kv);
 	kv_pair_free(kv);
 
 	free(spd);
-	return 0;
+	return rc;
 }
 
 static int memory_spd_print_timings_cmd(struct platform_intf *intf,
@@ -371,6 +374,7 @@ static int memory_spd_print_type(struct platform_intf *intf, int dimm)
 	struct kv_pair *kv;
 	struct spd_device *spd;
 	uint8_t *spd_data;
+	int rc;
 
 	if (!intf->cb->memory->spd ||
 	    !intf->cb->memory->spd->read)
@@ -391,11 +395,11 @@ static int memory_spd_print_type(struct platform_intf *intf, int dimm)
 	spd_print_field(intf, kv, spd_data, SPD_GET_DRAM_TYPE);
 	spd_print_field(intf, kv, spd_data, SPD_GET_MODULE_TYPE);
 
-	kv_pair_print(kv);
+	rc = kv_pair_print(kv);
 	kv_pair_free(kv);
 
 	free(spd);
-	return 0;
+	return rc;
 }
 
 static int memory_spd_print_type_cmd(struct platform_intf *intf,

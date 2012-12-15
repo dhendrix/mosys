@@ -232,7 +232,8 @@ int exynos_gpio_list(struct platform_intf *intf, enum exynos_generation gen)
 			if (state < 0)
 				return -1;
 
-			kv_pair_print_gpio(&gpio, state);
+			if (kv_pair_print_gpio(&gpio, state) < 0)
+				return -1;
 		}
 	}
 

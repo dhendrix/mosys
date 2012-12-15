@@ -47,6 +47,7 @@ static int smbios_get_cmd(struct platform_intf *intf,
 {
 	uint8_t type, num;
 	char *str;
+	int rc = 0;
 
 	/* this is legacy tool format */
 	if (argc < 2) {
@@ -71,14 +72,14 @@ static int smbios_get_cmd(struct platform_intf *intf,
 	if (str) {
 		struct kv_pair *kv = kv_pair_new();
 		kv_pair_fmt(kv, "string", str);
-		kv_pair_print(kv);
+		rc = kv_pair_print(kv);
 		kv_pair_free(kv);
 		free(str);
 	} else {
 		lprintf(LOG_ERR, "Unable to locate table %d\n", type);
 	}
 
-	return 0;		/* the legacy tool always returns success */
+	return rc;		/* the legacy tool always returns success */
 }
 
 static int smbios_info_bios_cmd(struct platform_intf *intf,
@@ -86,6 +87,7 @@ static int smbios_info_bios_cmd(struct platform_intf *intf,
 {
 	struct smbios_table table;
 	struct kv_pair *kv;
+	int rc;
 
 	if (smbios_find_table(intf, SMBIOS_TYPE_BIOS, 0, &table,
 	                      SMBIOS_LEGACY_ENTRY_BASE,
@@ -100,10 +102,10 @@ static int smbios_info_bios_cmd(struct platform_intf *intf,
 	kv_pair_fmt(kv, "size", "%u KB",
 		    (table.data.bios.rom_size_64k_blocks + 1) * 64);
 
-	kv_pair_print(kv);
+	rc = kv_pair_print(kv);
 	kv_pair_free(kv);
 
-	return 0;
+	return rc;
 }
 
 static int smbios_info_system_cmd(struct platform_intf *intf,
@@ -112,6 +114,7 @@ static int smbios_info_system_cmd(struct platform_intf *intf,
 {
 	struct smbios_table table;
 	struct kv_pair *kv;
+	int rc;
 
 	if (smbios_find_table(intf, SMBIOS_TYPE_SYSTEM, 0, &table,
 	                      SMBIOS_LEGACY_ENTRY_BASE,
@@ -133,10 +136,10 @@ static int smbios_info_system_cmd(struct platform_intf *intf,
 		            table.string[table.data.system.family]);
 	}
 
-	kv_pair_print(kv);
+	rc = kv_pair_print(kv);
 	kv_pair_free(kv);
 
-	return 0;
+	return rc;
 }
 
 static int smbios_info_baseboard_cmd(struct platform_intf *intf,
@@ -145,6 +148,7 @@ static int smbios_info_baseboard_cmd(struct platform_intf *intf,
 {
 	struct smbios_table table;
 	struct kv_pair *kv;
+	int rc;
 
 	if (smbios_find_table(intf, SMBIOS_TYPE_BASEBOARD, 0, &table,
 	                      SMBIOS_LEGACY_ENTRY_BASE,
@@ -159,10 +163,10 @@ static int smbios_info_baseboard_cmd(struct platform_intf *intf,
 	kv_pair_add(kv, "serial_number",
 		    table.string[table.data.baseboard.serial_number]);
 
-	kv_pair_print(kv);
+	rc = kv_pair_print(kv);
 	kv_pair_free(kv);
 
-	return 0;
+	return rc;
 }
 
 static int smbios_info_log_cmd(struct platform_intf *intf,
@@ -170,6 +174,7 @@ static int smbios_info_log_cmd(struct platform_intf *intf,
 {
 	struct smbios_table table;
 	struct kv_pair *kv;
+	int rc;
 	const char *access_methods[] = {
 		"Indexed I/O (8bit)",
 		"Indexed I/O (2x8bit)",
@@ -202,10 +207,10 @@ static int smbios_info_log_cmd(struct platform_intf *intf,
 	kv_pair_fmt(kv, "address", "0x%08x", table.data.log.address.mem);
 	kv_pair_fmt(kv, "header_format", "%u", table.data.log.header_format);
 
-	kv_pair_print(kv);
+	rc = kv_pair_print(kv);
 	kv_pair_free(kv);
 
-	return 0;
+	return rc;
 }
 
 struct platform_cmd smbios_info_cmds[] = {

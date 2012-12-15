@@ -95,7 +95,7 @@ static int print_enet_nvram(struct platform_intf *intf,
 			    struct ifreq *ifr,
 			    struct ethtool_eeprom *ee,
 			    struct enet_nvram_field *map) {
-	int i = 0;
+	int i = 0, rc = 0;
 
 	while (map[i].name != NULL) {
 		uint8_t *val;
@@ -119,21 +119,24 @@ static int print_enet_nvram(struct platform_intf *intf,
 		if (f->decode && f->decode(intf, f, val, kv) == NULL) {
 			lprintf(LOG_ERR, "%s: error decoding %s",
 						__func__, f->name);
-			return -1;
+			rc = -1;
+			break;
 		}
 
 		/* Always print raw data last */
 		str = buf2str(ee->data + f->offset, f->len);
 		kv_pair_fmt(kv, "raw", "0x%s", str);
 
-		kv_pair_print(kv);
+		rc = kv_pair_print(kv);
 		kv_pair_free(kv);
 
 		free(val);
 		free(str);
+		if (rc)
+			break;
 	}
 
-	return 0;
+	return rc;
 }
 
 /*

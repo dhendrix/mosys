@@ -39,6 +39,7 @@ static int touchpad_all_info_cmd(struct platform_intf *intf,
                                  char **argv)
 {
 	struct kv_pair *kv;
+	int rc;
 
 	/* put ec vendor, name, and firmware version in kv=pair format */
 	if (!intf->cb->hid ||
@@ -57,9 +58,9 @@ static int touchpad_all_info_cmd(struct platform_intf *intf,
 	kv_pair_add(kv, "fw_version", intf->cb->hid->tp->fw_version(intf));
 	kv_pair_add(kv, "hw_version", intf->cb->hid->tp->hw_version(intf));
 
-	kv_pair_print(kv);
+	rc = kv_pair_print(kv);
 	kv_pair_free(kv);
-	return 0;
+	return rc;
 
 }
 
@@ -68,6 +69,7 @@ static int touchpad_fw_version_cmd(struct platform_intf *intf,
                                    char **argv)
 {
 	struct kv_pair *kv;
+	int rc;
 
 	/* put ec vendor, name, and firmware version in kv=pair format */
 	if (!intf->cb->hid ||
@@ -80,9 +82,9 @@ static int touchpad_fw_version_cmd(struct platform_intf *intf,
 
 	kv_pair_add(kv, "fw_version", intf->cb->hid->tp->fw_version(intf));
 
-	kv_pair_print(kv);
+	rc = kv_pair_print(kv);
 	kv_pair_free(kv);
-	return 0;
+	return rc;
 
 }
 
@@ -90,6 +92,7 @@ static int touchpad_id_cmd(struct platform_intf *intf,
                            struct platform_cmd *cmd, int argc, char **argv)
 {
 	struct kv_pair *kv;
+	int rc;
 
 	/* put ec vendor, name, and firmware version in kv=pair format */
 	if (!intf->cb->hid ||
@@ -106,9 +109,9 @@ static int touchpad_id_cmd(struct platform_intf *intf,
 	kv_pair_add(kv, "name", intf->cb->hid->tp->name(intf));
 	kv_pair_add(kv, "hw_version", intf->cb->hid->tp->hw_version(intf));
 
-	kv_pair_print(kv);
+	rc = kv_pair_print(kv);
 	kv_pair_free(kv);
-	return 0;
+	return rc;
 
 }
 

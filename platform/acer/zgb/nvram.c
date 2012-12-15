@@ -125,6 +125,7 @@ static int acer_chromia700_nvram_list(struct platform_intf *intf)
 	struct valstr *vs;
 	struct cmos_map *map = acer_chromia700_cmos_map;
 	struct kv_pair *kv = kv_pair_new();
+	int rc;
 
 	/* handle each cmos bank */
 	for (vs = map->var_list; vs->str; vs++) {
@@ -141,9 +142,9 @@ static int acer_chromia700_nvram_list(struct platform_intf *intf)
 		kv_pair_fmt(kv, "value", "0x%02x", val);
 	}
 
-	kv_pair_print(kv);
+	rc = kv_pair_print(kv);
 	kv_pair_free(kv);
-	return 0;
+	return rc;
 }
 
 static int acer_chromia700_nvram_dump(struct platform_intf *intf)

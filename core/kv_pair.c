@@ -196,61 +196,48 @@ int kv_pair_print_to_file(FILE* fp, struct kv_pair *kv_list,
 	struct kv_pair *kv_ptr;
 	int single_found = 0;
 
-	switch (style) {
-	case KV_STYLE_PAIR:
-		for (kv_ptr = kv_list; kv_ptr != NULL; kv_ptr = kv_ptr->next) {
-			if (kv_ptr->key && kv_ptr->value) {
-				int i, len = strlen(kv_ptr->value);
-				/* need to escape quotes in value */
-				fprintf(fp, "%s=\"", kv_ptr->key);
-				for (i = 0; i < len; i++) {
-					if (kv_ptr->value[i] == '"')
-						fprintf(fp, "\\\"");
-					else
-						fprintf(fp, "%c", kv_ptr->value[i]);
-				}
-				fprintf(fp, "\" ");
+	for (kv_ptr = kv_list; kv_ptr != NULL; kv_ptr = kv_ptr->next) {
+		if (!kv_ptr->key || !kv_ptr->value)
+			continue;
+
+		switch (style) {
+		case KV_STYLE_PAIR:{
+			int i, len = strlen(kv_ptr->value);
+			/* need to escape quotes in value */
+			fprintf(fp, "%s=\"", kv_ptr->key);
+			for (i = 0; i < len; i++) {
+				if (kv_ptr->value[i] == '"')
+					fprintf(fp, "\\\"");
+				else
+					fprintf(fp, "%c", kv_ptr->value[i]);
 			}
+			fprintf(fp, "\" ");
+			break;
 		}
-		break;
 
-	case KV_STYLE_VALUE:
-		for (kv_ptr = kv_list; kv_ptr != NULL; kv_ptr = kv_ptr->next) {
-			if (kv_ptr->value) {
-				fprintf(fp, "%s", kv_ptr->value);
-				if (kv_ptr->next)
-					fprintf(fp, " | ");
-			}
-		}
-		break;
-
-	case KV_STYLE_LONG:
-		for (kv_ptr = kv_list; kv_ptr != NULL; kv_ptr = kv_ptr->next) {
-			if (kv_ptr->key && kv_ptr->value)
-				fprintf(fp, "%-20s | %s\n", kv_ptr->key,
-                                        kv_ptr->value);
-		}
-		break;
-
-
-	case KV_STYLE_SINGLE:{
-		const char *single_key = kv_get_single_key();
-
-		if (!single_key)
+		case KV_STYLE_VALUE:
+			fprintf(fp, "%s", kv_ptr->value);
+			if (kv_ptr->next)
+				fprintf(fp, " | ");
 			break;
 
-		for (kv_ptr = kv_list; kv_ptr != NULL; kv_ptr = kv_ptr->next) {
-			if (kv_ptr->key && kv_ptr->value) {
-				if (!strncmp(single_key, kv_ptr->key,
-							strlen(kv_ptr->key))) {
-					fprintf(fp, "%s", kv_ptr->value);
-					single_found = 1;
-				}
-			}
-		}
+		case KV_STYLE_LONG:
+			fprintf(fp, "%-20s | %s\n", kv_ptr->key,
+                                       kv_ptr->value);
+			break;
 
-		break;
-	}
+		case KV_STYLE_SINGLE:{
+			const char *single_key = kv_get_single_key();
+			if (!single_key)
+				break;
+			if (!strncmp(single_key, kv_ptr->key,
+						strlen(kv_ptr->key))) {
+				fprintf(fp, "%s", kv_ptr->value);
+				single_found = 1;
+			}
+			break;
+		}
+		}
 	}
 
 	if (style == KV_STYLE_SINGLE && !single_found)

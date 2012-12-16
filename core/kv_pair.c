@@ -222,8 +222,10 @@ int kv_pair_print_to_file(FILE* fp, struct kv_pair *kv_list,
 			break;
 
 		case KV_STYLE_LONG:
-			fprintf(fp, "%-20s | %s\n", kv_ptr->key,
+			fprintf(fp, "%-20s | %s", kv_ptr->key,
                                        kv_ptr->value);
+			if (kv_ptr->next)
+				fprintf(fp, "\n");
 			break;
 
 		case KV_STYLE_SINGLE:{

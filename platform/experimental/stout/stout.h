@@ -46,10 +46,14 @@ typedef enum stout_ec_command {
         STOUT_ECCMD_LATCH_BATTERY_FIRST_USE_DATE        = 0x22,
         STOUT_ECCMD_GET_BATTERY_FIRST_USE_DATE_HI       = 0x23,
         STOUT_ECCMD_GET_BATTERY_FIRST_USE_DATE_LO       = 0x24,
+	STOUT_ECCMD_BATTERY_FW_UPDATE_COMPLETION_STATUS = 0x40,
+	STOUT_ECCMD_BATTERY_FW_UPDATE_NEEDED            = 0x41,
+	STOUT_ECCMD_BATTERY_FW_UPDATE_STATUS            = 0x42,
 } stout_ec_command;
 
 typedef enum stout_ec_mem_addr {
         STOUT_ECMEM_BATTERY_STATUS              = 0x38,
+	STOUT_ECMEM_BATTERY_FW_UPDATE           = 0x3b,
         STOUT_ECMEM_FW_VERSION_MSB              = 0xe8,
         STOUT_ECMEM_FW_VERSION_LSB              = 0xe9,
         STOUT_ECMEM_BATTERY_FIRST_USE_DATE_HI   = 0xbd,

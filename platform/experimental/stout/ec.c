@@ -41,7 +41,7 @@
 #include "intf/io.h"
 #include "lib/acpi.h"
 
-#define STOUT_EC_CMD_TIMEOUT_MS		1000
+#define STOUT_EC_CMD_TIMEOUT_MS		3000
 
 /* for i8042-style wait commands */
 static struct i8042_host_intf stout_acpi_intf = {

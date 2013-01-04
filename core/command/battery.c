@@ -76,6 +76,16 @@ static int battery_set_fud_cmd(struct platform_intf *intf,
                                           system_time->tm_year + 1900);
 }
 
+
+static int battery_update_cmd(struct platform_intf *intf,
+		struct platform_cmd *cmd, int argc, char **argv)
+{
+	if (!intf->cb->battery || !intf->cb->battery->update)
+		return -ENOSYS;
+
+	return intf->cb->battery->update(intf);
+}
+
 struct platform_cmd battery_print_cmds[] = {
 	{
 		.name	= "fud",
@@ -109,15 +119,12 @@ struct platform_cmd battery_cmds[] = {
 		.type	= ARG_TYPE_SUB,
 		.arg	= { .sub = battery_set_cmds },
 	},
-	/* TODO: implement this if needed... */
-#if 0
 	{
 		.name	= "update",
 		.desc	= "Initiate Battery Firmware Update",
 		.type	= ARG_TYPE_SETTER,
 		.arg	= { .sub = battery_update_cmd },
 	},
-#endif
 	{ NULL }
 };
 

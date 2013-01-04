@@ -167,7 +167,87 @@ static int stout_set_battery_fud(struct platform_intf *intf,
 	return 0;
 }
 
+/*
+ * stout_update_battery_fw - Attempts to update battery firmware.
+ *
+ * @intf:	platform interface
+ *
+ * returns 0 if successful or < 0 if failure.
+ */
+static int stout_update_battery_fw(struct platform_intf *intf)
+{
+	uint8_t status;
+
+	if (ecram_read(intf, STOUT_ECMEM_BATTERY_STATUS, &status) < 0)
+		return -1;
+
+	/* Bit 7: main battery attached. */
+	if ((status & 0x80) == 0) {
+		lprintf(LOG_DEBUG, "%s: no battery present.\n", __func__);
+		return -1;
+	}
+
+	/* Check if update needed. */
+	if (ec_command(intf, STOUT_ECCMD_BATTERY_FW_UPDATE_NEEDED,
+		NULL, 0, &status, 1) < 0)
+		return -1;
+
+	if (status != 0) {
+		lprintf(LOG_DEBUG, "%s: no battery fw update needed: %d.\n",
+			__func__, status);
+		return -1;
+	}
+
+	/* Start update. */
+	if (ecram_read(intf, STOUT_ECMEM_BATTERY_FW_UPDATE, &status) < 0)
+		return -1;
+
+	lprintf(LOG_DEBUG, "%s: Starting FW update: %x.\n",
+		__func__, status);
+
+	if (ecram_write(intf, STOUT_ECMEM_BATTERY_FW_UPDATE, status | 0x20) < 0)
+		return -1;
+
+	/* Wait for update completion. */
+	while (1) {
+		if (ec_command(intf, STOUT_ECCMD_BATTERY_FW_UPDATE_STATUS,
+			NULL, 0, &status, 1) < 0)
+			return -1;
+
+		if (status == 1)
+			break;
+
+		sleep(1);
+	}
+
+	lprintf(LOG_DEBUG, "%s: finished FW update: %x.\n",
+		__func__, status);
+
+	/* Clear update flag and check competion status. */
+	if (ecram_read(intf, STOUT_ECMEM_BATTERY_FW_UPDATE, &status) < 0)
+		return -1;
+
+	if (ecram_write(intf, STOUT_ECMEM_BATTERY_FW_UPDATE,
+		status & ~(0x20)) < 0)
+		return -1;
+
+	if (ec_command(intf, STOUT_ECCMD_BATTERY_FW_UPDATE_COMPLETION_STATUS,
+		NULL, 0, &status, 1) < 0)
+		return -1;
+
+	if (status == 0) {
+		lprintf(LOG_DEBUG, "%s: battery FW updated.\n",
+			__func__);
+		return 0;
+	} else {
+		lprintf(LOG_DEBUG, "%s: battery FW update failed: %d.\n",
+			__func__, status);
+		return -1;
+	}
+}
+
 struct battery_cb stout_battery_cb = {
 	.get_fud = stout_get_battery_fud,
 	.set_fud = stout_set_battery_fud,
+	.update  = stout_update_battery_fw,
 };

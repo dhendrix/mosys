@@ -411,9 +411,7 @@ struct battery_cb {
 	const char *(*get_fud)(struct platform_intf *intf);
 	int (*set_fud)(struct platform_intf *intf,
 			int day, int month, int year);
-#if 0
 	int (*update)(struct platform_intf *intf);
-#endif
 };
 
 /* platform-specific callbacks */

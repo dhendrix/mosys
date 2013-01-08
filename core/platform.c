@@ -186,7 +186,7 @@ static int tree_subcommand(struct platform_intf *intf,
 		if (sub->type == ARG_TYPE_SUB) {
 			int pos = 0, len = 0;
 
-			if (mosys_get_verbosity() > 0) {
+			if (mosys_get_verbosity() >= LOG_NOTICE) {
 				printf("[branch %d:%d] %s ", root, branch, str);
 
 				/* add full command info */
@@ -200,11 +200,11 @@ static int tree_subcommand(struct platform_intf *intf,
 			/* continue descending into the hierarchy */
 			tree_subcommand(intf, sub, root, branch, str);
 
-			if (mosys_get_verbosity() > 0) {
+			if (mosys_get_verbosity() >= LOG_NOTICE) {
 				memset(str + pos, 0, len);
 			}
 		} else if (sub->type == ARG_TYPE_GETTER) {
-			if (mosys_get_verbosity() > 0) {
+			if (mosys_get_verbosity() >= LOG_NOTICE) {
 				if (branch == 1) {
 					printf("[leaf %d:%d] %s ",
 						root, leaf, str);
@@ -215,7 +215,7 @@ static int tree_subcommand(struct platform_intf *intf,
 			}
 			printf("%s\n", sub->name);
 		} else if (sub->type == ARG_TYPE_SETTER) {
-			if (mosys_get_verbosity() > 0) {
+			if (mosys_get_verbosity() >= LOG_NOTICE) {
 				if (branch == 1) {
 					printf("[flur %d:%d] %s ",
 						root, leaf, str);
@@ -248,7 +248,7 @@ void print_tree(struct platform_intf *intf)
 	char str[64];
 
 	for (root = 0; intf->sub[root] != NULL; root++) {
-		if (mosys_get_verbosity() > 0) {
+		if (mosys_get_verbosity() >= LOG_NOTICE) {
 			printf("[root %d] ", root);
 			snprintf(str, sizeof(str), "mosys %s",
 						   intf->sub[root]->name);

@@ -285,7 +285,6 @@ int mosys_main(int argc, char **argv)
 		goto do_exit_3;
 	}
 
-	/* FIXME: debug print */
 	/* run command */
 	rc = intf_main(intf, argc - optind, &(argv[optind]));
 	if (rc == -ENOSYS)

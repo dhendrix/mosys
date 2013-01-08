@@ -173,14 +173,14 @@ static int tree_subcommand(struct platform_intf *intf,
 {
 	struct platform_cmd *sub;
 	char *tabs;
-	int leaf;
+	int index;
 
 	branch++;
 	tabs = mosys_malloc(branch + 1);
 	memset(tabs, '\t', branch);
 	tabs[branch] = '\0';
 
-	for (sub = cmd->arg.sub, leaf = 1; sub->name != NULL; sub++, leaf++) {
+	for (sub = cmd->arg.sub, index = 1; sub->name != NULL; sub++, index++) {
 		printf("%s", tabs);
 
 		if (sub->type == ARG_TYPE_SUB) {
@@ -207,10 +207,10 @@ static int tree_subcommand(struct platform_intf *intf,
 			if (mosys_get_verbosity() >= LOG_NOTICE) {
 				if (branch == 1) {
 					printf("[leaf %d:%d] %s ",
-						root, leaf, str);
+						root, index, str);
 				} else {
 					printf("[leaf %d:%d:%d] %s ",
-						root, branch, leaf, str);
+						root, branch, index, str);
 				}
 			}
 			printf("%s\n", sub->name);
@@ -218,10 +218,10 @@ static int tree_subcommand(struct platform_intf *intf,
 			if (mosys_get_verbosity() >= LOG_NOTICE) {
 				if (branch == 1) {
 					printf("[flur %d:%d] %s ",
-						root, leaf, str);
+						root, index, str);
 				} else {
 					printf("[flur %d:%d:%d] %s ",
-						root, branch, leaf, str);
+						root, branch, index, str);
 				}
 			}
 			printf("%s\n", sub->name);

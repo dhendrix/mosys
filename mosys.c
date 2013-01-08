@@ -197,7 +197,7 @@ static int intf_main(struct platform_intf *intf, int argc, char **argv)
 
 int mosys_main(int argc, char **argv)
 {
-	int rc;
+	int rc, errsv;
 	int argflag;
 	int verbose = 0;
 	int force_lock = 0;
@@ -293,7 +293,8 @@ int mosys_main(int argc, char **argv)
 	/* run command */
 	errno = 0;
 	rc = intf_main(intf, argc - optind, &(argv[optind]));
-	if (rc < 0 && errno == ENOSYS)
+	errsv = errno;
+	if (rc < 0 && errsv == ENOSYS)
 		lprintf(LOG_ERR, "Command not supported on this platform\n");
 
 	/* clean up */
@@ -306,10 +307,9 @@ do_exit_2:
 do_exit_1:
 	mosys_log_halt();
 
-	if (rc < 0)
-		exit(EXIT_FAILURE);
-	else
-		exit(EXIT_SUCCESS);
+	if (rc < 0 && errsv > 0)
+		exit(errsv);
+	exit(rc);
 }
 
 int main(int argc, char **argv)

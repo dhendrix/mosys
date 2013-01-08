@@ -160,8 +160,7 @@ void platform_cmd_usage(struct platform_cmd *cmd)
  *
  * @intf:	platform interface
  * @cmd:	command to iterate thru
- * @root:	root number
- * @branch:	branch number (also indicates indentation level)
+ * @depth:	depth of recursion (number of leading tabs to prepend)
  * @str:	string with full command name
  *
  * returns 0 to indicate success
@@ -169,16 +168,15 @@ void platform_cmd_usage(struct platform_cmd *cmd)
  */
 static int tree_subcommand(struct platform_intf *intf,
 			   struct platform_cmd *cmd,
-			   int root, int branch, char *str)
+			   int depth, char *str)
 {
 	struct platform_cmd *sub;
 	char *tabs;
 	int index;
 
-	branch++;
-	tabs = mosys_malloc(branch + 1);
-	memset(tabs, '\t', branch);
-	tabs[branch] = '\0';
+	tabs = mosys_malloc(depth + 1);
+	memset(tabs, '\t', depth);
+	tabs[depth] = '\0';
 
 	for (sub = cmd->arg.sub, index = 1; sub->name != NULL; sub++, index++) {
 		printf("%s", tabs);
@@ -187,7 +185,7 @@ static int tree_subcommand(struct platform_intf *intf,
 			int pos = 0, len = 0;
 
 			if (mosys_get_verbosity() >= LOG_NOTICE) {
-				printf("[branch %d:%d] %s ", root, branch, str);
+				printf("[branch] %s ", str);
 
 				/* add full command info */
 				pos = strlen(str);
@@ -198,32 +196,18 @@ static int tree_subcommand(struct platform_intf *intf,
 			printf("%s\n", sub->name);
 
 			/* continue descending into the hierarchy */
-			tree_subcommand(intf, sub, root, branch, str);
+			tree_subcommand(intf, sub, depth + 1, str);
 
 			if (mosys_get_verbosity() >= LOG_NOTICE) {
 				memset(str + pos, 0, len);
 			}
 		} else if (sub->type == ARG_TYPE_GETTER) {
-			if (mosys_get_verbosity() >= LOG_NOTICE) {
-				if (branch == 1) {
-					printf("[leaf %d:%d] %s ",
-						root, index, str);
-				} else {
-					printf("[leaf %d:%d:%d] %s ",
-						root, branch, index, str);
-				}
-			}
+			if (mosys_get_verbosity() >= LOG_NOTICE)
+				printf("[leaf] %s ", str);
 			printf("%s\n", sub->name);
 		} else if (sub->type == ARG_TYPE_SETTER) {
-			if (mosys_get_verbosity() >= LOG_NOTICE) {
-				if (branch == 1) {
-					printf("[flur %d:%d] %s ",
-						root, index, str);
-				} else {
-					printf("[flur %d:%d:%d] %s ",
-						root, branch, index, str);
-				}
-			}
+			if (mosys_get_verbosity() >= LOG_NOTICE)
+				printf("[flur] %s ", str);
 			printf("%s\n", sub->name);
 		} else {
 			// not a subcommand or function?!?
@@ -232,7 +216,6 @@ static int tree_subcommand(struct platform_intf *intf,
 
 	}
 
-	branch--;
 	free(tabs);
 	return 0;
 }
@@ -249,7 +232,7 @@ void print_tree(struct platform_intf *intf)
 
 	for (root = 0; intf->sub[root] != NULL; root++) {
 		if (mosys_get_verbosity() >= LOG_NOTICE) {
-			printf("[root %d] ", root);
+			printf("[root] ");
 			snprintf(str, sizeof(str), "mosys %s",
 						   intf->sub[root]->name);
 		} else {
@@ -257,7 +240,7 @@ void print_tree(struct platform_intf *intf)
 		}
 		printf("%s\n", str);
 
-		if (tree_subcommand(intf, intf->sub[root], root, 0, str) < 0)
+		if (tree_subcommand(intf, intf->sub[root], 1, str) < 0)
 			lprintf(LOG_DEBUG, "tree walking failed", str);
 	}
 }

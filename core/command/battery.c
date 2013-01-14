@@ -72,7 +72,7 @@ static int battery_set_fud_cmd(struct platform_intf *intf,
 
 	return intf->cb->battery->set_fud(intf,
 					  system_time->tm_mday,
-                                          system_time->tm_mon,
+                                          system_time->tm_mon + 1,
                                           system_time->tm_year + 1900);
 }
 

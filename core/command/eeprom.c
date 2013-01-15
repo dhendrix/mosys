@@ -158,8 +158,12 @@ static int print_fmap_areas(const char *name, struct fmap *fmap)
 }
 
 /*
- * returns 1 to indicate success, fmap area found
- * returns 0 to indicate success, no fmap area found
+ * eeprom_map_cmd_file - helper for printing fmap from ROM image
+ *
+ * @intf:	platform interface
+ * @filename:	name of file (ROM image)
+ *
+ * returns 0 to indicate success
  * returns <0 to indicate failure (e.g. file error) 
  */
 static int eeprom_map_cmd_file(struct platform_intf *intf, char *filename)
@@ -188,8 +192,7 @@ static int eeprom_map_cmd_file(struct platform_intf *intf, char *filename)
 		goto eeprom_map_cmd_file_exit_2;
 	}
 
-	if (print_fmap_areas(filename, (struct fmap *)(blob + offset)) >= 0)
-		rc = 1;
+	rc = print_fmap_areas(filename, (struct fmap *)(blob + offset));
 
 eeprom_map_cmd_file_exit_2:
 	munmap(blob, s.st_size);
@@ -199,13 +202,17 @@ eeprom_map_cmd_file_exit_1:
 }
 
 /*
- * returns 1 to indicate success, fmap area found
- * returns 0 to indicate success, no fmap area found
- * returns <0 to indicate failure (e.g. eeprom not found)
+ * eeprom_map_cmd_eeprom - helper for printing fmap of ROMs in the system
+ *
+ * @intf:	platform interface
+ * @name:	name of ROM/EEPROM for which to print fmap (optional)
+ *
+ * returns 0 to indicate success
+ * returns <0 to indicate failure (e.g. EEPROM not found)
  */
 static int eeprom_map_cmd_eeprom(struct platform_intf *intf, char *name)
 {
-	int rc = -1;
+	int rc = 0, eeprom_found = 0;
 	struct eeprom *eeprom;
 
 	for (eeprom = intf->cb->eeprom->eeprom_list;
@@ -213,53 +220,73 @@ static int eeprom_map_cmd_eeprom(struct platform_intf *intf, char *name)
 	     eeprom++) {
 		struct fmap *fmap = NULL;
 
-		if (name && strcmp(eeprom->name, name))
-			continue;
+		if (name) {
+			if (!strcmp(eeprom->name, name))
+				eeprom_found = 1;
+			else
+				continue;
+		}
 
 		if (!eeprom->device || !eeprom->device->get_map)
 			continue;
 
-		rc = 0;		/* eeprom found; update again if fmap found */
 		fmap = eeprom->device->get_map(intf, eeprom);
 		if (!fmap)
 			continue;
-		else
-			if (print_fmap_areas(eeprom->name, fmap) >= 0)
-				rc = 1;
+
+		/* let caller handle errors, allow loop to continue */
+		rc |= print_fmap_areas(eeprom->name, fmap);
 
 		free(fmap);
 	}
 
+	if (name && !eeprom_found) {
+		errno = ENODEV;
+		rc = -1;
+	}
 	return rc;
 }
 
 static int eeprom_map_cmd(struct platform_intf *intf,
                           struct platform_cmd *cmd, int argc, char **argv)
 {
-	int rc = 0;
+	int rc = -1;
+	char *name = argv[0];
+	struct stat s;
 
-	if (argc) {
-		if (argc != 1) {
-			platform_cmd_usage(cmd);
-			rc = -1;
-			goto eeprom_map_cmd_exit;
-		}
-
-		lprintf(LOG_DEBUG, "%s: attempting to read fmap from file\n",
-		                   __func__);
-		if (eeprom_map_cmd_file(intf, argv[0]) == 1)
-			goto eeprom_map_cmd_exit;
+	/* The simple case: No argument, just print FMAPs from all EEPROMS */
+	if (!argc) {
+		rc = eeprom_map_cmd_eeprom(intf, NULL);
+		goto eeprom_map_cmd_exit;
+	} else if (argc != 1) {
+		platform_cmd_usage(cmd);
+		goto eeprom_map_cmd_exit;
 	}
 
-	lprintf(LOG_DEBUG, "%s: attempting to read fmap from eeprom\n",
-	                   __func__);
-	if (!intf->cb->eeprom)
-		return -1;
-	rc = eeprom_map_cmd_eeprom(intf, argv[0]);
+	/*
+	 * The argument can be either a filename or an EEPROM device name.
+	 * Try using it as a filename first since files are generic. If that
+	 * fails, the argument must be a EEPROM present on the machine.
+	 */
+
+	if (stat(name, &s) == 0) {
+		rc = eeprom_map_cmd_file(intf, name);
+		if (rc < 0) {
+			lperror(LOG_ERR, "Failed to read flashmap from file ",
+				"\"%s\"", name);
+		}
+		goto eeprom_map_cmd_exit;
+	}
+
+	if (intf->cb->eeprom) {
+		rc = eeprom_map_cmd_eeprom(intf, name);
+		if (rc < 0) {
+			lperror(LOG_ERR, "Failed to read flashmap from device ",
+				"\"%s\"", name);
+		}
+	}
 
 eeprom_map_cmd_exit:
-	if (rc < 0)
-		lprintf(LOG_ERR, "could not read flash map\n", __func__);
 	return rc;
 }
 

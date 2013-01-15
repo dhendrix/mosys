@@ -48,6 +48,7 @@ static int memory_dump_cmd(struct platform_intf *intf,
 
 	if (argc < 2) {
 		platform_cmd_usage(cmd);
+		errno = EINVAL;
 		return -1;
 	}
 
@@ -56,6 +57,7 @@ static int memory_dump_cmd(struct platform_intf *intf,
 
 	if (length == 0) {
 		platform_cmd_usage(cmd);
+		errno = EINVAL;
 		return -1;
 	}
 

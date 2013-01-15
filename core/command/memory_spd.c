@@ -51,6 +51,7 @@ static int memory_spd_dump_cmd(struct platform_intf *intf,
 	/* get dimm number from command line */
 	if (argc < 1) {
 		platform_cmd_usage(cmd);
+		errno = EINVAL;
 		return -1;
 	}
 	dimm = (uint8_t) strtoul(argv[0], NULL, 0);
@@ -82,6 +83,7 @@ static int memory_spd_info_cmd(struct platform_intf *intf,
 	/* get dimm number from command line */
 	if (argc < 1) {
 		platform_cmd_usage(cmd);
+		errno = EINVAL;
 		return -1;
 	}
 	dimm = (uint8_t) strtoul(argv[0], NULL, 0);
@@ -189,9 +191,10 @@ static int memory_spd_print_geometry(struct platform_intf *intf, int dimm)
 	uint8_t *spd_data;
 	int rc;
 
-	if (!intf->cb->memory->spd ||
-	    !intf->cb->memory->spd->read)
-		return -ENOSYS;
+	if (!intf->cb->memory->spd || !intf->cb->memory->spd->read) {
+		errno = ENOSYS;
+		return -1;
+	}
 
 	kv = kv_pair_new();
 
@@ -222,9 +225,10 @@ static int memory_spd_print_geometry_cmd(struct platform_intf *intf,
 {
 	int dimm = 0, last_dimm;
 
-	if (!intf->cb->memory ||
-	    !intf->cb->memory->dimm_count)
-		return -ENOSYS;
+	if (!intf->cb->memory || !intf->cb->memory->dimm_count) {
+		errno = ENOSYS;
+		return -1;
+	}
 
 	last_dimm = intf->cb->memory->dimm_count(intf);
 
@@ -232,7 +236,8 @@ static int memory_spd_print_geometry_cmd(struct platform_intf *intf,
 		dimm = strtol(argv[0], NULL, 0);
 		if ((dimm < 0) || (dimm > (last_dimm - 1))) {
 			lprintf(LOG_ERR, "Invalid DIMM: %d\n", dimm);
-			return -EINVAL;
+			errno = EINVAL;
+			return -1;
 		}
 		memory_spd_print_geometry(intf, dimm);
 	} else {
@@ -252,9 +257,10 @@ static int memory_spd_print_id(struct platform_intf *intf, int dimm)
 	uint8_t *spd_data;
 	int rc;
 
-	if (!intf->cb->memory->spd ||
-	    !intf->cb->memory->spd->read)
-		return -ENOSYS;
+	if (!intf->cb->memory->spd || !intf->cb->memory->spd->read) {
+		errno = ENOSYS;
+		return -1;
+	}
 
 	kv = kv_pair_new();
 
@@ -285,9 +291,10 @@ static int memory_spd_print_id_cmd(struct platform_intf *intf,
 {
 	int dimm = 0, last_dimm;
 
-	if (!intf->cb->memory ||
-	    !intf->cb->memory->dimm_count)
-		return -ENOSYS;
+	if (!intf->cb->memory || !intf->cb->memory->dimm_count) {
+		errno = ENOSYS;
+		return -1;
+	}
 
 	last_dimm = intf->cb->memory->dimm_count(intf);
 
@@ -295,7 +302,8 @@ static int memory_spd_print_id_cmd(struct platform_intf *intf,
 		dimm = strtol(argv[0], NULL, 0);
 		if ((dimm < 0) || (dimm > (last_dimm - 1))) {
 			lprintf(LOG_ERR, "Invalid DIMM: %d\n", dimm);
-			return -EINVAL;
+			errno = EINVAL;
+			return -1;
 		}
 		memory_spd_print_id(intf, dimm);
 	} else {
@@ -315,9 +323,10 @@ static int memory_spd_print_timings(struct platform_intf *intf, int dimm)
 	uint8_t *spd_data;
 	int rc;
 
-	if (!intf->cb->memory->spd ||
-	    !intf->cb->memory->spd->read)
-		return -ENOSYS;
+	if (!intf->cb->memory->spd || !intf->cb->memory->spd->read) {
+		errno = ENOSYS;
+		return -1;
+	}
 
 	kv = kv_pair_new();
 
@@ -346,9 +355,10 @@ static int memory_spd_print_timings_cmd(struct platform_intf *intf,
 {
 	int dimm = 0, last_dimm;
 
-	if (!intf->cb->memory ||
-	    !intf->cb->memory->dimm_count)
-		return -ENOSYS;
+	if (!intf->cb->memory || !intf->cb->memory->dimm_count) {
+		errno = ENOSYS;
+		return -1;
+	}
 
 	last_dimm = intf->cb->memory->dimm_count(intf);
 
@@ -356,7 +366,8 @@ static int memory_spd_print_timings_cmd(struct platform_intf *intf,
 		dimm = strtol(argv[0], NULL, 0);
 		if ((dimm < 0) || (dimm > (last_dimm - 1))) {
 			lprintf(LOG_ERR, "Invalid DIMM: %d\n", dimm);
-			return -EINVAL;
+			errno = EINVAL;
+			return -1;
 		}
 		memory_spd_print_timings(intf, dimm);
 	} else {
@@ -376,9 +387,10 @@ static int memory_spd_print_type(struct platform_intf *intf, int dimm)
 	uint8_t *spd_data;
 	int rc;
 
-	if (!intf->cb->memory->spd ||
-	    !intf->cb->memory->spd->read)
-		return -ENOSYS;
+	if (!intf->cb->memory->spd || !intf->cb->memory->spd->read) {
+		errno = ENOSYS;
+		return -1;
+	}
 
 	kv = kv_pair_new();
 
@@ -408,9 +420,10 @@ static int memory_spd_print_type_cmd(struct platform_intf *intf,
 {
 	int dimm = 0, last_dimm;
 
-	if (!intf->cb->memory ||
-	    !intf->cb->memory->dimm_count)
-		return -ENOSYS;
+	if (!intf->cb->memory || !intf->cb->memory->dimm_count) {
+		errno = ENOSYS;
+		return -1;
+	}
 
 	last_dimm = intf->cb->memory->dimm_count(intf);
 
@@ -418,7 +431,8 @@ static int memory_spd_print_type_cmd(struct platform_intf *intf,
 		dimm = strtol(argv[0], NULL, 0);
 		if ((dimm < 0) || (dimm > (last_dimm - 1))) {
 			lprintf(LOG_ERR, "Invalid DIMM: %d\n", dimm);
-			return -EINVAL;
+			errno = EINVAL;
+			return -1;
 		}
 		memory_spd_print_type(intf, dimm);
 	} else {
@@ -437,16 +451,18 @@ static int memory_spd_print_all_cmd(struct platform_intf *intf,
 {
 	int rc = 0, dimm;
 
-	if (!intf->cb->memory ||
-	    !intf->cb->memory->dimm_count)
-		return -ENOSYS;
+	if (!intf->cb->memory || !intf->cb->memory->dimm_count) {
+		errno = ENOSYS;
+		return -1;
+	}
 
 	if (argc) {
 		dimm = strtol(argv[0], NULL, 0);
 		if ((dimm < 0) ||
 		    (dimm > (intf->cb->memory->dimm_count(intf) - 1))) {
 			lprintf(LOG_ERR, "Invalid DIMM: %d\n", dimm);
-			return -EINVAL;
+			errno = EINVAL;
+			return -1;
 		}
 	}
 

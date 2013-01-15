@@ -28,6 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <inttypes.h>
@@ -52,6 +53,7 @@ static int smbios_get_cmd(struct platform_intf *intf,
 	/* this is legacy tool format */
 	if (argc < 2) {
 		platform_cmd_usage(cmd);
+		errno = EINVAL;
 		return -1;
 	}
 

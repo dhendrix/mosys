@@ -46,8 +46,10 @@ static int platform_vendor_cmd(struct platform_intf *intf,
                                struct platform_cmd *cmd,
                                int argc, char **argv)
 {
-	if (!intf->cb || !intf->cb->sys || !intf->cb->sys->vendor)
-		return -ENOSYS;
+	if (!intf->cb || !intf->cb->sys || !intf->cb->sys->vendor) {
+		errno = ENOSYS;
+		return -1;
+	}
 
 	return print_platforminfo("vendor", intf->cb->sys->vendor(intf));
 }
@@ -56,8 +58,10 @@ static int platform_name_cmd(struct platform_intf *intf,
                              struct platform_cmd *cmd,
                              int argc, char **argv)
 {
-	if (!intf->cb || !intf->cb->sys || !intf->cb->sys->name)
-		return -ENOSYS;
+	if (!intf->cb || !intf->cb->sys || !intf->cb->sys->name) {
+		errno = ENOSYS;
+		return -1;
+	}
 
 	return print_platforminfo("name", intf->cb->sys->name(intf));
 }
@@ -66,8 +70,10 @@ static int platform_version_cmd(struct platform_intf *intf,
 			      struct platform_cmd *cmd,
 			      int argc, char **argv)
 {
-	if (!intf->cb || !intf->cb->sys || !intf->cb->sys->version)
-		return -ENOSYS;
+	if (!intf->cb || !intf->cb->sys || !intf->cb->sys->version) {
+		errno = ENOSYS;
+		return -1;
+	}
 
 	return print_platforminfo("version", intf->cb->sys->version(intf));
 }
@@ -76,8 +82,10 @@ static int platform_family_cmd(struct platform_intf *intf,
                                struct platform_cmd *cmd,
                                int argc, char **argv)
 {
-	if (!intf->cb || !intf->cb->sys || !intf->cb->sys->family)
-		return -ENOSYS;
+	if (!intf->cb || !intf->cb->sys || !intf->cb->sys->family) {
+		errno = ENOSYS;
+		return -1;
+	}
 
 	return print_platforminfo("family", intf->cb->sys->family(intf));
 }
@@ -86,8 +94,10 @@ static int platform_variant_cmd(struct platform_intf *intf,
                                struct platform_cmd *cmd,
                                int argc, char **argv)
 {
-	if (!intf->cb || !intf->cb->sys || !intf->cb->sys->variant)
-		return -ENOSYS;
+	if (!intf->cb || !intf->cb->sys || !intf->cb->sys->variant) {
+		errno = ENOSYS;
+		return -1;
+	}
 
 	return print_platforminfo("variant", intf->cb->sys->variant(intf));
 }
@@ -113,8 +123,10 @@ static int platform_reset_cmd(struct platform_intf *intf,
                               struct platform_cmd *cmd,
                               int argc, char **argv)
 {
-	if (!intf->cb || !intf->cb->sys || !intf->cb->sys->reset)
-		return -ENOSYS;
+	if (!intf->cb || !intf->cb->sys || !intf->cb->sys->reset) {
+		errno = ENOSYS;
+		return -1;
+	}
 
 	/* return in case reset function fails somehow */
 	return intf->cb->sys->reset(intf);

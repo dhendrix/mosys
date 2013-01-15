@@ -47,7 +47,8 @@ static int ec_info(struct platform_intf *intf,
 	    !intf->cb->ec->vendor ||
 	    !intf->cb->ec->name ||
 	    !intf->cb->ec->fw_version) {
-		return -ENOSYS;
+		errno = ENOSYS;
+		return -1;
 	}
 
 	kv = kv_pair_new();

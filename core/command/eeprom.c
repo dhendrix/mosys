@@ -58,8 +58,10 @@ static int eeprom_enet_info_cmd(struct platform_intf *intf,
 {
 	if (!intf->cb->eeprom ||
 	    !intf->cb->eeprom->enet ||
-	    !intf->cb->eeprom->enet->read)
+	    !intf->cb->eeprom->enet->read) {
+		errno = ENOSYS;
 		return -1;
+	}
 	
 	return intf->cb->eeprom->enet->read(intf, argc, argv);
 }
@@ -77,8 +79,10 @@ static int eeprom_list_cmd(struct platform_intf *intf,
 	};
 	int i, rc;
 
-	if (!intf->cb->eeprom || !intf->cb->eeprom->eeprom_list)
+	if (!intf->cb->eeprom || !intf->cb->eeprom->eeprom_list) {
+		errno = ENOSYS;
 		return -1;
+	}
 
 	for (eeprom = intf->cb->eeprom->eeprom_list;
 	     eeprom && eeprom->name;
@@ -171,18 +175,20 @@ static int eeprom_map_cmd_file(struct platform_intf *intf, char *filename)
 	struct stat s;
 	uint8_t *blob;
 	off_t offset;
-	int rc = -1, fd;
+	int rc = -1, errsv = 0, fd;
 
 	if ((fd = file_open(filename, FILE_READ)) < 0)
 		return -1;
 
 	if (fstat(fd, &s) < 0) {
+		errsv = errno;
 		lprintf(LOG_ERR, "cannot stat \"%s\"\n", filename);
 		goto eeprom_map_cmd_file_exit_1;
 	}
 
 	blob = mmap(NULL, s.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
 	if (blob == MAP_FAILED) {
+		errsv = errno;
 		lprintf(LOG_ERR, "unable to mmap \"%s\"\n", filename);
 		goto eeprom_map_cmd_file_exit_1;
 	}
@@ -198,6 +204,7 @@ eeprom_map_cmd_file_exit_2:
 	munmap(blob, s.st_size);
 eeprom_map_cmd_file_exit_1:
 	close(fd);
+	errno = errsv;
 	return rc;
 }
 
@@ -250,7 +257,7 @@ static int eeprom_map_cmd_eeprom(struct platform_intf *intf, char *name)
 static int eeprom_map_cmd(struct platform_intf *intf,
                           struct platform_cmd *cmd, int argc, char **argv)
 {
-	int rc = -1;
+	int rc = -1, errsv = 0;
 	char *name = argv[0];
 	struct stat s;
 
@@ -260,6 +267,7 @@ static int eeprom_map_cmd(struct platform_intf *intf,
 		goto eeprom_map_cmd_exit;
 	} else if (argc != 1) {
 		platform_cmd_usage(cmd);
+		errsv = EINVAL;
 		goto eeprom_map_cmd_exit;
 	}
 
@@ -271,6 +279,7 @@ static int eeprom_map_cmd(struct platform_intf *intf,
 
 	if (stat(name, &s) == 0) {
 		rc = eeprom_map_cmd_file(intf, name);
+		errsv = errno;
 		if (rc < 0) {
 			lperror(LOG_ERR, "Failed to read flashmap from file ",
 				"\"%s\"", name);
@@ -280,13 +289,19 @@ static int eeprom_map_cmd(struct platform_intf *intf,
 
 	if (intf->cb->eeprom) {
 		rc = eeprom_map_cmd_eeprom(intf, name);
+		errsv = errno;
 		if (rc < 0) {
 			lperror(LOG_ERR, "Failed to read flashmap from device ",
 				"\"%s\"", name);
 		}
+	} else {
+		errsv = ENOSYS;
 	}
 
 eeprom_map_cmd_exit:
+	if (rc < 0)
+		lprintf(LOG_ERR, "could not read flash map\n", __func__);
+	errno = errsv;
 	return rc;
 }
 
@@ -300,11 +315,16 @@ static int eeprom_csum_cmd(struct platform_intf *intf,
 	int fd = 0, digest_len = 0;
 	int rc = 0;
 
-	if (!intf->cb->eeprom || !intf->cb->eeprom->eeprom_list)
+	if (!intf->cb->eeprom || !intf->cb->eeprom->eeprom_list) {
+		errno = ENOSYS;
 		return -1;
+	}
 
-	if (argc)
-		name = argv[0];
+	if (argc > 1) {
+		errno = EINVAL;
+		return -1;
+	}
+	name = argv[0];
 
 	if ((fd = file_open(name, FILE_READ)) >= 0) {
 		struct stat s;
@@ -414,6 +434,7 @@ static int eeprom_dump_cmd(struct platform_intf *intf,
 
 	if ((argc < 1) || (argc > 2)) {
 		platform_cmd_usage(cmd);
+		errno = EINVAL;
 		return -1;
 	}
 	devname = argv[0];
@@ -422,8 +443,10 @@ static int eeprom_dump_cmd(struct platform_intf *intf,
 	else
 		filename = NULL;
 
-	if (!intf->cb->eeprom || !intf->cb->eeprom->eeprom_list)
+	if (!intf->cb->eeprom || !intf->cb->eeprom->eeprom_list) {
+		errno = ENOSYS;
 		return -1;
+	}
 
 	/* find the eeprom to do work on */
 	for (eeprom = intf->cb->eeprom->eeprom_list;
@@ -434,21 +457,30 @@ static int eeprom_dump_cmd(struct platform_intf *intf,
 	}
 	if (!eeprom->name) {
 		lprintf(LOG_ERR, "eeprom %s not found\n", devname);
+		errno = EINVAL;
 		return -1;
 	}
-	if (!eeprom->device->read)
-		return -ENOSYS;
+	if (!eeprom->device->read) {
+		errno = ENOSYS;
+		return -1;
+	}
 
 	if (filename != NULL) {
 		unsigned int filemode = S_IRUSR | S_IWUSR | S_IRGRP;
 
 		/* Do not overwrite an existing file */
 		if (lstat(filename, &st) == 0) {
+			int errsv = errno;
+
 			lprintf(LOG_ERR, "File %s already exists\n", filename);
+			errno = errsv;
 			return -1;
 		}
 		if ((fd = open(filename, O_CREAT | O_WRONLY, filemode)) < 0) {
+			int errsv = errno;
+
 			lperror(LOG_ERR, "Could not open file %s", filename);
+			errno = errsv;
 			return -1;
 		}
 	}
@@ -487,7 +519,7 @@ static int eeprom_write_cmd(struct platform_intf *intf,
                             struct platform_cmd *cmd, int argc, char **argv)
 {
 	struct eeprom *eeprom;
-	int rc = 0, fd;
+	int rc = 0, fd, errsv = 0;
 	struct stat st;
 	uint8_t *buf = NULL;
 	const char *devname, *filename;
@@ -495,13 +527,16 @@ static int eeprom_write_cmd(struct platform_intf *intf,
 
 	if (argc != 2) {
 		platform_cmd_usage(cmd);
+		errno = EINVAL;
 		return -1;
 	}
 	devname = argv[0];
 	filename = argv[1];
 
-	if (!intf->cb->eeprom || !intf->cb->eeprom->eeprom_list)
+	if (!intf->cb->eeprom || !intf->cb->eeprom->eeprom_list) {
+		errno = ENOSYS;
 		return -1;
+	}
 
 	/* find the eeprom to do work on */
 	for (eeprom = intf->cb->eeprom->eeprom_list;
@@ -514,30 +549,40 @@ static int eeprom_write_cmd(struct platform_intf *intf,
 		lprintf(LOG_ERR, "eeprom %s not found\n", devname);
 		return -1;
 	}
-	if (!eeprom->device->write)
-		return -ENOSYS;
+	if (!eeprom->device->write) {
+		errno = ENOSYS;
+		return -1;
+	}
 
 	/* size sanity checks */
 	eeprom_size = eeprom->device->size(intf, eeprom);
 	if (lstat(filename, &st) < 0) {
+		int errsv = errno;
+
 		lperror(LOG_ERR, "lstat failure on file %s", filename);
+		errno = errsv;
 		return -1;
 	}
 	if (st.st_size > eeprom_size) {
 		lprintf(LOG_ERR, "cannot write %u bytes to %s eeprom "
 			         "(%u bytes)\n", st.st_size, eeprom->name,
 		                  eeprom_size);
+		errno = EFBIG;
 		return -1;
 	}
 
 	if ((fd = open(filename, O_RDONLY)) < 0) {
+		int errsv = errno;
+
 		lperror(LOG_ERR, "Could not open file %s", filename);
+		errno = errsv;
 		return -1;
 	}
 
 	/* do the actual work - read from file, write to eeprom */
 	buf = mosys_malloc(st.st_size);
 	if (read(fd, buf, st.st_size) != st.st_size) {
+		errsv = errno;
 		lperror(LOG_ERR, "Could not read file %s", filename);
 		rc = -1;
 		goto eeprom_write_done;
@@ -555,6 +600,7 @@ static int eeprom_write_cmd(struct platform_intf *intf,
 eeprom_write_done:
 	close(fd);
 	free(buf);
+	errno = errsv;
 	return rc;
 }
 

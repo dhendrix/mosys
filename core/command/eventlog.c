@@ -154,11 +154,13 @@ static int eventlog_smbios_add_cmd(struct platform_intf *intf,
 {
 	if (argc < 1) {
 		platform_cmd_usage(cmd);
+		errno = EINVAL;
 		return -1;
 	}
 
 	if (!intf->cb->eventlog || !intf->cb->eventlog->add) {
-		return -ENOSYS;
+		errno = ENOSYS;
+		return -1;
 	}
 
 	return intf->cb->eventlog->add(intf, argc, argv);
@@ -171,7 +173,8 @@ static int eventlog_smbios_clear_cmd(struct platform_intf *intf,
 	enum eventlog_clear_type type;
 
 	if (!intf->cb->eventlog || !intf->cb->eventlog->clear) {
-		return -ENOSYS;
+		errno = ENOSYS;
+		return -1;
 	}
 
 	if (argc < 1)

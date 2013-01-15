@@ -55,6 +55,7 @@ static int vpd_find_string_cmd(struct platform_intf *intf,
 	/* this is legacy tool format */
 	if (argc < 2) {
 		platform_cmd_usage(cmd);
+		errno = EINVAL;
 		return -1;
 	}
 
@@ -84,6 +85,7 @@ static int vpd_find_string_cmd(struct platform_intf *intf,
 static int vpd_find_blob_cmd(struct platform_intf *intf,
                              struct platform_cmd *cmd, int argc, char **argv)
 {
+	errno = ENOSYS;
 	return -1;
 }
 
@@ -208,16 +210,20 @@ static int vpd_dump_blobs_cmd(struct platform_intf *intf,
 
 	if ((argc < 1)) {
 		platform_cmd_usage(cmd);
+		errno = EINVAL;
 		return -1;
 	}
 	type = strtol(argv[0], NULL, 0);
-	if (type != VPD_TYPE_BINARY_BLOB_POINTER)
+	if (type != VPD_TYPE_BINARY_BLOB_POINTER) {
+		errno = EINVAL;
 		return -1;
+	}
 
 	if (argc == 2) {
 		handle = strtol(argv[1], NULL, 0);
 		if ((handle < 0) || (handle > 0xffff) || (errno == ERANGE)) {
 			lprintf(LOG_ERR, "bad handle: %s\n", argv[1]);
+			errno = EINVAL;
 			return -1;
 		}
 		start = handle;
@@ -246,17 +252,21 @@ static int vpd_dump_blobs_cmd(struct platform_intf *intf,
 		if ((fd = open(filename,
 		               O_CREAT | O_WRONLY | O_TRUNC,
 			       S_IRUSR | S_IWUSR | S_IRGRP)) < 0) {
+			int errsv = errno;
 			lperror(LOG_ERR, "Could not create file \"%s\": %s",
 			        filename, strerror(errno));
 			free(buf);
+			errno = errsv;
 			return -1;
 		}
 
 		if (write(fd, buf, size) != size) {
+			int errsv = errno;
 			lperror(LOG_ERR, "Could not write file \"%s\": %s",
 			        filename, strerror(errno));
 			free(buf);
 			close(fd);
+			errno = errsv;
 			return -1;
 		}
 

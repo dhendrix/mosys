@@ -48,7 +48,8 @@ static int touchpad_all_info_cmd(struct platform_intf *intf,
 	    !intf->cb->hid->tp->name ||
 	    !intf->cb->hid->tp->fw_version ||
 	    !intf->cb->hid->tp->hw_version) {
-		return -ENOSYS;
+		errno = ENOSYS;
+		return -1;
 	}
 
 	kv = kv_pair_new();
@@ -75,7 +76,8 @@ static int touchpad_fw_version_cmd(struct platform_intf *intf,
 	if (!intf->cb->hid ||
 	    !intf->cb->hid->tp ||
 	    !intf->cb->hid->tp->fw_version) {
-		return -ENOSYS;
+		errno = ENOSYS;
+		return -1;
 	}
 
 	kv = kv_pair_new();
@@ -100,7 +102,8 @@ static int touchpad_id_cmd(struct platform_intf *intf,
 	    !intf->cb->hid->tp->vendor ||
 	    !intf->cb->hid->tp->name ||
 	    !intf->cb->hid->tp->hw_version) {
-		return -ENOSYS;
+		errno = ENOSYS;
+		return -1;
 	}
 
 	kv = kv_pair_new();

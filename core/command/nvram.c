@@ -42,7 +42,8 @@ static int nvram_clear_cmd(struct platform_intf *intf,
                            struct platform_cmd *cmd, int argc, char **argv)
 {
 	if (!intf->cb->nvram || !intf->cb->nvram->clear) {
-		return -ENOSYS;
+		errno = ENOSYS;
+		return -1;
 	}
 
 	return intf->cb->nvram->clear(intf);
@@ -52,7 +53,8 @@ static int nvram_list_cmd(struct platform_intf *intf,
                           struct platform_cmd *cmd, int argc, char **argv)
 {
 	if (!intf->cb->nvram || !intf->cb->nvram->list) {
-		return -ENOSYS;
+		errno = ENOSYS;
+		return -1;
 	}
 
 	return intf->cb->nvram->list(intf);
@@ -62,7 +64,8 @@ static int nvram_dump_cmd(struct platform_intf *intf,
                           struct platform_cmd *cmd, int argc, char **argv)
 {
 	if (!intf->cb->nvram || !intf->cb->nvram->dump) {
-		return -ENOSYS;
+		errno = ENOSYS;
+		return -1;
 	}
 
 	return intf->cb->nvram->dump(intf);
@@ -71,8 +74,10 @@ static int nvram_dump_cmd(struct platform_intf *intf,
 static int nvram_vboot_read(struct platform_intf *intf,
                             struct platform_cmd *cmd, int argc, char **argv)
 {
-	if (!intf->cb->nvram || !intf->cb->nvram->vboot_read)
-		return -ENOSYS;
+	if (!intf->cb->nvram || !intf->cb->nvram->vboot_read) {
+		errno = ENOSYS;
+		return -1;
+	}
 
 	return intf->cb->nvram->vboot_read(intf);
 }
@@ -80,11 +85,14 @@ static int nvram_vboot_read(struct platform_intf *intf,
 static int nvram_vboot_write(struct platform_intf *intf,
                              struct platform_cmd *cmd, int argc, char **argv)
 {
-	if (!intf->cb->nvram || !intf->cb->nvram->vboot_write)
-		return -ENOSYS;
+	if (!intf->cb->nvram || !intf->cb->nvram->vboot_write) {
+		errno = ENOSYS;
+		return -1;
+	}
 
 	if (argc != 1) {
 		platform_cmd_usage(cmd);
+		errno = EINVAL;
 		return -1;
 	}
 

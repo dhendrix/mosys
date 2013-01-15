@@ -51,6 +51,7 @@ static int i2c_dump_cmd(struct platform_intf *intf,
 	/* get bus and address from command line */
 	if (argc < 2) {
 		platform_cmd_usage(cmd);
+		errno = EINVAL;
 		return -1;
 	}
 	bus = (int)strtol(argv[0], NULL, 0);
@@ -76,6 +77,7 @@ static int i2c_dump_cmd(struct platform_intf *intf,
 
 	if (length < 0) {
 		lprintf(LOG_ERR, "Failed to read from I2C (not present?)\n");
+		errno = EIO;
 		return -1;
 	}
 

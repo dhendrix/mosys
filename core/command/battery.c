@@ -43,12 +43,16 @@ static int battery_print_fud_cmd(struct platform_intf *intf,
 	const char *date;
 	struct kv_pair *kv;
 
-	if (!intf->cb->battery || !intf->cb->battery->get_fud)
-		return -ENOSYS;
+	if (!intf->cb->battery || !intf->cb->battery->get_fud) {
+		errno = ENOSYS;
+		return -1;
+	}
 
 	date = intf->cb->battery->get_fud(intf);
-	if (!date)
-		return -EIO;
+	if (!date) {
+		errno = EIO;
+		return -1;
+	}
 
 	kv = kv_pair_new();
 	kv_pair_add(kv, "first_use_date", date);
@@ -64,8 +68,10 @@ static int battery_set_fud_cmd(struct platform_intf *intf,
 	time_t t;
 	struct tm *system_time;
 
-	if (!intf->cb->battery || !intf->cb->battery->set_fud)
-		return -ENOSYS;
+	if (!intf->cb->battery || !intf->cb->battery->set_fud) {
+		errno = ENOSYS;
+		return -1;
+	}
 
 	t = time(0);
 	system_time = localtime(&t);
@@ -80,8 +86,10 @@ static int battery_set_fud_cmd(struct platform_intf *intf,
 static int battery_update_cmd(struct platform_intf *intf,
 		struct platform_cmd *cmd, int argc, char **argv)
 {
-	if (!intf->cb->battery || !intf->cb->battery->update)
-		return -ENOSYS;
+	if (!intf->cb->battery || !intf->cb->battery->update) {
+		errno = ENOSYS;
+		return -1;
+	}
 
 	return intf->cb->battery->update(intf);
 }

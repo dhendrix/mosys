@@ -81,8 +81,10 @@ static int sub_main(struct platform_intf *intf,
 {
 	struct platform_cmd *cmd;
 
-	if (!intf || !sub)
+	if (!intf || !sub) {
+		errno = ENOSYS;
 		return -1;
+	}
 
 	switch (sub->type) {
 	case ARG_TYPE_GETTER:
@@ -104,7 +106,7 @@ static int sub_main(struct platform_intf *intf,
 	case ARG_TYPE_SUB:
 		if (argc == 0) {
 			sub_list(sub);
-			return -1;
+			return -1;	/* generic error */
 		}
 
 		/* this is a sub-command, we must have some more args */
@@ -134,6 +136,7 @@ static int sub_main(struct platform_intf *intf,
 	lprintf(LOG_WARNING, "Command not found\n\n");
 	sub_list(sub);
 
+	errno = EINVAL;	/* unknown or invalid subcommand argument */
 	return -1;
 }
 
@@ -145,11 +148,9 @@ static int intf_main(struct platform_intf *intf, int argc, char **argv)
 
 	if (!intf || !intf->sub) {
 		lprintf(LOG_ERR, "No commands defined for this platform\n");
+		errno = ENOSYS;
 		return -1;
 	}
-
-	if (argc == 0)
-		ret = -1;
 
 	if (argc == 0 || strcmp(argv[0], "help") == 0) {
 		do_list = 1;
@@ -181,6 +182,10 @@ static int intf_main(struct platform_intf *intf, int argc, char **argv)
 
 	if (do_list) {
 		printf("\n");
+		if (argc == 0) {
+			errno = EINVAL;
+			ret = -1;
+		}
 		return ret;
 	}
 
@@ -286,8 +291,9 @@ int mosys_main(int argc, char **argv)
 	}
 
 	/* run command */
+	errno = 0;
 	rc = intf_main(intf, argc - optind, &(argv[optind]));
-	if (rc == -ENOSYS)
+	if (rc < 0 && errno == ENOSYS)
 		lprintf(LOG_ERR, "Command not supported on this platform\n");
 
 	/* clean up */

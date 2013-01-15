@@ -71,8 +71,10 @@ static int kv_pair_print_sensor(struct sensor *sensor,
 	const char *mode = NULL;
 	int rc;
 
-	if (!sensor || !reading)
-		return -ENOSYS;
+	if (!sensor || !reading) {
+		errno = ENOSYS;
+		return -1;
+	}
 
 	if (reading->mode)
 		mode = val2str(reading->mode, sensor_modes);
@@ -302,6 +304,7 @@ static int sensor_monitor_cmd(struct platform_intf *intf,
 	}
 
 	platform_cmd_usage(cmd);
+	errno = EINVAL;
 	return -1;
 }
 
@@ -356,11 +359,14 @@ static int sensor_print_exec(struct platform_intf *intf,
 		count++;
 	}
 
-	if (!count)
-		return -ENOSYS;
+	if (!count) {
+		errno = ENOSYS;
+		return -1;
+	}
 
 	if (argc && (count != argc)) {
 		lprintf(LOG_ERR, "Could not print all requested sensors\n");
+		errno = EIO;
 		return -1;
 	}
 
@@ -411,6 +417,7 @@ static int sensor_set_fantach_cmd(struct platform_intf *intf,
 
 	if (argc != 2) {
 		platform_cmd_usage(cmd);
+		errno = EINVAL;
 		return -1;
 	}
 
@@ -418,24 +425,31 @@ static int sensor_set_fantach_cmd(struct platform_intf *intf,
 	spec = argv[1];
 
 	if (!strncmp(spec, "auto", 4)) {
-		if (!intf->cb->sensor->set_fantach_auto)
-			return -ENOSYS;
+		if (!intf->cb->sensor->set_fantach_auto) {
+			errno = ENOSYS;
+			return -1;
+		}
 		lprintf(LOG_DEBUG, "Setting fan %s to auto mode\n", name);
 		ret = intf->cb->sensor->set_fantach_auto(intf, name);
 	} else if (!strncmp(spec, "off", 3)) {
-		if (!intf->cb->sensor->set_fantach_off)
-			return -ENOSYS;
+		if (!intf->cb->sensor->set_fantach_off) {
+			errno = ENOSYS;
+			return -1;
+		}
 		lprintf(LOG_DEBUG, "Disabling fan %s\n", name);
 		ret = intf->cb->sensor->set_fantach_off(intf, name);
 	} else {
-		if (!intf->cb->sensor->set_fantach)
-			return -ENOSYS;
+		if (!intf->cb->sensor->set_fantach) {
+			errno = ENOSYS;
+			return -1;
+		}
 
 		percent = strtoul(spec, NULL, 0);
 
 		if ((percent > 100) || (percent < 0)) {
 			lprintf(LOG_ERR, "Invalid percentage %u%%\n",
 			        percent);
+			errno = EINVAL;
 			return -1;
 		}
 

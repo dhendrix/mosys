@@ -47,7 +47,8 @@ static int gpio_list_cmd(struct platform_intf *intf,
 			 int argc, char **argv)
 {
 	if (!intf->cb->gpio || !intf->cb->gpio->list) {
-		return -ENOSYS;
+		errno = ENOSYS;
+		return -1;
 	}
 
 	return intf->cb->gpio->list(intf);
@@ -61,16 +62,19 @@ static int gpio_set_cmd(struct platform_intf *intf,
 
 	if (argc != 2) {
 		platform_cmd_usage(cmd);
+		errno = EINVAL;
 		return -1;
 	}
 
 	if (!intf->cb->gpio || !intf->cb->gpio->set) {
-		return -ENOSYS;
+		errno = ENOSYS;
+		return -1;
 	}
 
 	state = atoi(argv[1]);
 	if (state != 0 && state != 1) {
 		platform_cmd_usage(cmd);
+		errno = EINVAL;
 		return -1;
 	}
 

@@ -47,6 +47,10 @@
 
 #include "lib/string.h"
 
+#ifndef LINE_MAX
+#define LINE_MAX 64
+#endif
+
 /*
  * mosys_platform_setup  -  identify platform, setup interfaces and commands
  *
@@ -189,7 +193,7 @@ static int tree_subcommand(struct platform_intf *intf,
 
 				/* add full command info */
 				pos = strlen(str);
-				len = strlen(sub->name) + 2;
+				len = LINE_MAX - strlen(str);
 				snprintf(str + pos, len, " %s", sub->name);
 			}
 
@@ -228,7 +232,7 @@ static int tree_subcommand(struct platform_intf *intf,
 void print_tree(struct platform_intf *intf)
 {
 	int root;
-	char str[64];
+	char str[LINE_MAX];
 
 	for (root = 0; intf->sub[root] != NULL; root++) {
 		if (mosys_get_verbosity() >= LOG_NOTICE) {

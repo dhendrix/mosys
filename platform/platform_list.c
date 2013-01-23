@@ -44,7 +44,6 @@ extern struct platform_intf platform_kaen_tegra2;
 extern struct platform_intf platform_kiev;
 extern struct platform_intf platform_link;
 extern struct platform_intf platform_seaboard_tegra2;
-extern struct platform_intf platform_stout;
 
 /* production platforms */
 extern struct platform_intf platform_alex;
@@ -52,6 +51,7 @@ extern struct platform_intf platform_daisy;
 extern struct platform_intf platform_lumpy;
 extern struct platform_intf platform_mario;
 extern struct platform_intf platform_parrot;
+extern struct platform_intf platform_stout;
 extern struct platform_intf platform_stumpy;
 extern struct platform_intf platform_z600;
 extern struct platform_intf platform_zgb;
@@ -71,6 +71,9 @@ struct platform_intf *platform_intf_list[] = {
 #endif
 #ifdef CONFIG_PLATFORM_PARROT
 	&platform_parrot,
+#endif
+#ifdef CONFIG_PLATFORM_STOUT
+	&platform_stout,
 #endif
 #ifdef CONFIG_PLATFORM_STUMPY
 	&platform_stumpy,
@@ -103,9 +106,6 @@ struct platform_intf *platform_intf_list[] = {
 #endif
 #ifdef CONFIG_EXPERIMENTAL_SEABOARD
 	&platform_seaboard_tegra2,
-#endif
-#ifdef CONFIG_EXPERIMENTAL_STOUT
-	&platform_stout,
 #endif
 
 /* place default platform last */

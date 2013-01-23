@@ -1,0 +1,14 @@
+#
+# Lenovo platform configuration
+#
+
+menu "Lenovo Platform Support"
+
+config PLATFORM_STOUT
+	depends on PLATFORM_ARCH_X86 && PLATFORM_EXPERIMENTAL
+	select CHIPSET_INTEL_SERIES6
+	select EC_ITE_IT8500
+	bool "Thinkpad X131e Chromebook"
+	default n
+
+endmenu

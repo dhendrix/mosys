@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Mosys version: 1.2.03
-# Mon Nov 12 16:40:37 2012
+# Tue Feb 12 11:58:31 2013
 #
 
 #
@@ -38,6 +38,10 @@ CONFIG_PLATFORM_DEFAULT=y
 #
 
 #
+# Lenovo Platform Support
+#
+
+#
 # Samsung Platform Support
 #
 CONFIG_PLATFORM_DAISY=y
@@ -50,6 +54,7 @@ CONFIG_EXPERIMENTAL_AEBL=y
 CONFIG_EXPERIMENTAL_ASYMPTOTE=y
 CONFIG_EXPERIMENTAL_KAEN=y
 CONFIG_EXPERIMENTAL_SEABOARD=y
+CONFIG_PLATFORM_SPRING=y
 
 #
 # Device Drivers

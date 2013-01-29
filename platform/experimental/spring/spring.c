@@ -1,5 +1,5 @@
 /*
- * Copyright 2012, Google Inc.
+ * Copyright 2013, Google Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -45,21 +45,17 @@
 #include "lib/math.h"
 #include "lib/probe.h"
 
-#include "daisy.h"
+#include "spring.h"
 
 static const char *probed_platform_id;
-enum daisy_board_config board_config;
+enum spring_board_config spring_board_config;
 
-const char *daisy_id_list[] = {
-	"Daisy",
-	"Google Daisy",
-	"Google Snow",
-	"SMDK5250",
-	"Snow",
+const char *spring_id_list[] = {
+	"Google Spring",
 	NULL
 };
 
-struct platform_cmd *daisy_sub[] = {
+struct platform_cmd *spring_sub[] = {
 	&cmd_ec,
 	&cmd_eeprom,
 	&cmd_gpio,
@@ -99,7 +95,7 @@ static char *model_from_fdt(void)
 	return model;
 }
 
-int daisy_probe(struct platform_intf *intf)
+int spring_probe(struct platform_intf *intf)
 {
 	static int status = 0, probed = 0;
 	const char **id;
@@ -110,10 +106,10 @@ int daisy_probe(struct platform_intf *intf)
 
 	model = model_from_fdt();
 
-	for (id = daisy_id_list; id && *id; id++) {
+	for (id = spring_id_list; id && *id; id++) {
 		if (probe_cpuinfo(intf, "Hardware", *id)) {
 			status = 1;
-			goto daisy_probe_exit;
+			goto spring_probe_exit;
 		}
 
 		if (model) {
@@ -121,7 +117,7 @@ int daisy_probe(struct platform_intf *intf)
 			if (!strcmp(*id, model)) {
 				lprintf(LOG_DEBUG, "yes\n");
 				status = 1;
-				goto daisy_probe_exit;
+				goto spring_probe_exit;
 			} else {
 				lprintf(LOG_DEBUG, "no\n");
 			}
@@ -131,80 +127,71 @@ int daisy_probe(struct platform_intf *intf)
 #if 0
 	if (probe_hwid(hwids)) {
 		status = 1;
-		goto daisy_probe_exit;
+		goto spring_probe_exit;
 	}
 #endif
 
-daisy_probe_exit:
+spring_probe_exit:
 	probed = 1;
 	return status;
 }
 
+/* TODO: implement board ID map when assignments are finalized */
 struct {
 	enum mvl3 v0, v1;
-	enum daisy_board_config config;
-} snow_id_map[] = {
+	enum spring_board_config config;
+} spring_id_map[] = {
 	/*  ID0      ID1         config */
-	{ LOGIC_0, LOGIC_0, SNOW_CONFIG_SAMSUNG_MP },
-	{ LOGIC_0, LOGIC_1, SNOW_CONFIG_ELPIDA_MP },
-	{ LOGIC_1, LOGIC_0, SNOW_CONFIG_SAMSUNG_DVT },
-	{ LOGIC_1, LOGIC_1, SNOW_CONFIG_ELPIDA_DVT },
-	{ LOGIC_0, LOGIC_Z, SNOW_CONFIG_SAMSUNG_PVT },
-	{ LOGIC_1, LOGIC_Z, SNOW_CONFIG_ELPIDA_PVT },
-	{ LOGIC_Z, LOGIC_0, SNOW_CONFIG_SAMSUNG_MP },
-	{ LOGIC_Z, LOGIC_Z, SNOW_CONFIG_ELPIDA_MP },
-	{ LOGIC_Z, LOGIC_1, SNOW_CONFIG_RSVD },
+	{ LOGIC_0, LOGIC_0, SPRING_CONFIG_RSVD },
+	{ LOGIC_0, LOGIC_1, SPRING_CONFIG_RSVD },
+	{ LOGIC_1, LOGIC_0, SPRING_CONFIG_RSVD },
+	{ LOGIC_1, LOGIC_1, SPRING_CONFIG_RSVD },
+	{ LOGIC_0, LOGIC_Z, SPRING_CONFIG_RSVD },
+	{ LOGIC_1, LOGIC_Z, SPRING_CONFIG_RSVD },
+	{ LOGIC_Z, LOGIC_0, SPRING_CONFIG_RSVD },
+	{ LOGIC_Z, LOGIC_Z, SPRING_CONFIG_RSVD },
+	{ LOGIC_Z, LOGIC_1, SPRING_CONFIG_RSVD },
 };
 
-static int snow_get_board_config(struct platform_intf *intf)
+static int spring_get_board_config(struct platform_intf *intf)
 {
 	int i;
 	struct gpio_map *id0, *id1;
 	enum mvl3 v0, v1;
-	enum daisy_board_config config = SNOW_CONFIG_UNKNOWN;
+	enum spring_board_config config = SPRING_CONFIG_UNKNOWN;
 
-	id0 = intf->cb->gpio->map(intf, SNOW_BOARD_ID0);
-	id1 = intf->cb->gpio->map(intf, SNOW_BOARD_ID1);
+	id0 = intf->cb->gpio->map(intf, SPRING_BOARD_ID0);
+	id1 = intf->cb->gpio->map(intf, SPRING_BOARD_ID1);
 	if (!id0 || !id1) {
 		lprintf(LOG_DEBUG, "%s: Unable to determine id0/1\n", __func__);
-		return SNOW_CONFIG_UNKNOWN;
+		return SPRING_CONFIG_UNKNOWN;
 	}
 
 	v0 = exynos5_read_gpio_mvl(intf, id0);
 	v1 = exynos5_read_gpio_mvl(intf, id1);
 	lprintf(LOG_DEBUG, "%s: v0: %u, v1: %u\n", __func__, v0, v1);
 
-	for (i = 0; i < ARRAY_SIZE(snow_id_map); i++) {
-		if (v0 == snow_id_map[i].v0 && v1 == snow_id_map[i].v1)
-			config = snow_id_map[i].config;
+	for (i = 0; i < ARRAY_SIZE(spring_id_map); i++) {
+		if (v0 == spring_id_map[i].v0 && v1 == spring_id_map[i].v1)
+			config = spring_id_map[i].config;
 	}
 
 	return config;
 }
 
-static int daisy_setup_post(struct platform_intf *intf)
+static int spring_setup_post(struct platform_intf *intf)
 {
-	if (daisy_ec_setup(intf) <= 0)
+	spring_board_config = spring_get_board_config(intf);
+	if (spring_board_config == SPRING_CONFIG_UNKNOWN)
 		return -1;
 
-	/*
-	 * FIXME: This is a hack that overrides the "Daisy"
-	 * canonical platform name with "Snow" depending on
-	 * the family of EC which is detected. Daisy is expected
-	 * to use stm32l, and Snow is expected to use stm32f.
-	 */
-	if (!strncmp(intf->cb->ec->name(intf), "stm32f", 6)) {
-		lprintf(LOG_DEBUG, "Overriding platform name %s with %s\n",
-			intf->name, "Snow");
-		intf->name = "Snow";
-
-		board_config = snow_get_board_config(intf);
-	}
+	if (spring_ec_setup(intf) <= 0)
+		return -1;
 
 	return 0;
 }
 
-static int daisy_destroy(struct platform_intf *intf)
+static int spring_destroy(struct platform_intf *intf)
 {
 	if (probed_platform_id)
 		free((char *)probed_platform_id);
@@ -212,22 +199,22 @@ static int daisy_destroy(struct platform_intf *intf)
 	return 0;
 }
 
-struct platform_cb daisy_cb = {
+struct platform_cb spring_cb = {
 	.ec 		= &gec_cb,
-	.eeprom 	= &daisy_eeprom_cb,
-	.gpio		= &daisy_gpio_cb,
-	.memory		= &daisy_memory_cb,
+	.eeprom 	= &spring_eeprom_cb,
+	.gpio		= &spring_gpio_cb,
+	.memory		= &spring_memory_cb,
 	.nvram		= &gec_nvram_cb,
-	.sys 		= &daisy_sys_cb,
+	.sys 		= &spring_sys_cb,
 };
 
-struct platform_intf platform_daisy = {
+struct platform_intf platform_spring = {
 	.type		= PLATFORM_ARMV7,
-	.name		= "Daisy",
-	.id_list	= daisy_id_list,
-	.sub		= daisy_sub,
-	.cb		= &daisy_cb,
-	.probe		= &daisy_probe,
-	.setup_post	= &daisy_setup_post,
-	.destroy	= &daisy_destroy,
+	.name		= "Spring",
+	.id_list	= spring_id_list,
+	.sub		= spring_sub,
+	.cb		= &spring_cb,
+	.probe		= &spring_probe,
+	.setup_post	= &spring_setup_post,
+	.destroy	= &spring_destroy,
 };

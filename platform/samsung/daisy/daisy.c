@@ -54,8 +54,10 @@ const char *daisy_id_list[] = {
 	"Daisy",
 	"Google Daisy",
 	"Google Snow",
+	"Google Spring",
 	"SMDK5250",
 	"Snow",
+	"Spring",
 	NULL
 };
 

@@ -4,6 +4,13 @@
 
 menu "HP Platform Support"
 
+config PLATFORM_BUTTERFLY
+	depends on PLATFORM_ARCH_X86
+	select CHIPSET_INTEL_SERIES6
+	select EC_ENE_KB932
+	bool "HP Pavilion 14-c010us Chromebook"
+	default n
+
 config PLATFORM_Z600
 	depends on PLATFORM_ARCH_X86
 	bool "z600 workstation"

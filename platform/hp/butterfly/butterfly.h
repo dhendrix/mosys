@@ -29,8 +29,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef EXPERIMENTAL_BUTTERFLY_H__
-#define EXPERIMENTAL_BUTTERFLY_H__
+#ifndef PLATFORM_BUTTERFLY_H__
+#define PLATFORM_BUTTERFLY_H__
 
 #include <inttypes.h>
 #include "mosys/platform.h"
@@ -48,4 +48,4 @@ extern struct sys_cb butterfly_sys_cb;		/* sys.c */
 extern int butterfly_ec_setup(struct platform_intf *intf);
 extern int butterfly_eeprom_setup(struct platform_intf *intf);
 
-#endif /* EXPERIMENTAL_BUTTERFLY_H_ */
+#endif /* PLATFORM_BUTTERFLY_H_ */

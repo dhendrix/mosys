@@ -1,0 +1,6 @@
+obj-$(CONFIG_PLATFORM_BUTTERFLY)	+= ec.o
+obj-$(CONFIG_PLATFORM_BUTTERFLY)	+= eeprom.o
+obj-$(CONFIG_PLATFORM_BUTTERFLY)	+= memory.o
+obj-$(CONFIG_PLATFORM_BUTTERFLY)	+= nvram.o
+obj-$(CONFIG_PLATFORM_BUTTERFLY)	+= butterfly.o
+obj-$(CONFIG_PLATFORM_BUTTERFLY)	+= sys.o

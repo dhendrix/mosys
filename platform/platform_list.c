@@ -39,7 +39,6 @@ extern struct platform_intf platform_default_x86;
 /* experimental */
 extern struct platform_intf platform_aebl_tegra2;
 extern struct platform_intf platform_asymptote_tegra2;
-extern struct platform_intf platform_butterfly;
 extern struct platform_intf platform_kaen_tegra2;
 extern struct platform_intf platform_kiev;
 extern struct platform_intf platform_link;
@@ -48,6 +47,7 @@ extern struct platform_intf platform_spring;
 
 /* production platforms */
 extern struct platform_intf platform_alex;
+extern struct platform_intf platform_butterfly;
 extern struct platform_intf platform_daisy;
 extern struct platform_intf platform_lumpy;
 extern struct platform_intf platform_mario;
@@ -60,6 +60,9 @@ extern struct platform_intf platform_zgb;
 struct platform_intf *platform_intf_list[] = {
 #ifdef CONFIG_PLATFORM_ALEX
 	&platform_alex,
+#endif
+#ifdef CONFIG_PLATFORM_BUTTERFLY
+	&platform_butterfly,
 #endif
 #ifdef CONFIG_PLATFORM_DAISY
 	&platform_daisy,
@@ -92,9 +95,6 @@ struct platform_intf *platform_intf_list[] = {
 #endif
 #ifdef CONFIG_EXPERIMENTAL_ASYMPTOTE
 	&platform_asymptote_tegra2,
-#endif
-#ifdef CONFIG_EXPERIMENTAL_BUTTERFLY
-	&platform_butterfly,
 #endif
 #ifdef CONFIG_EXPERIMENTAL_KAEN
 	&platform_kaen_tegra2,

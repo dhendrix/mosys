@@ -43,22 +43,30 @@
 
 #define STOUT_EC_CMD_TIMEOUT_MS		3000
 
-/* for i8042-style wait commands */
-static struct i8042_host_intf stout_acpi_intf = {
+static struct i8042_host_intf stout_acpi_intf_rw = {
 	/* use sideband ports to avoid racing with kernel ACPI driver */
 	.csr	= 0x6c,
 	.data	= 0x68,
 };
 
+static struct i8042_host_intf stout_acpi_intf_ro = {
+	/* try regular ports in case EC is in RO */
+	.csr	= ACPI_EC_SC,
+	.data	= ACPI_EC_DATA,
+};
+
+/* for i8042-style wait commands */
+static struct i8042_host_intf *stout_acpi_intf = &stout_acpi_intf_rw;
+
 static int stout_wait_ibf_clear(struct platform_intf *intf)
 {
-	return i8042_wait_ibf_clear(intf, &stout_acpi_intf,
+	return i8042_wait_ibf_clear(intf, stout_acpi_intf,
 			STOUT_EC_CMD_TIMEOUT_MS);
 }
 
 static int stout_wait_obf_set(struct platform_intf *intf)
 {
-	return i8042_wait_obf_set(intf, &stout_acpi_intf,
+	return i8042_wait_obf_set(intf, stout_acpi_intf,
 			STOUT_EC_CMD_TIMEOUT_MS);
 }
 
@@ -82,14 +90,14 @@ int ec_command(struct platform_intf *intf, stout_ec_command command,
 
 	if (stout_wait_ibf_clear(intf) != 1)
 		return -1;
-	if (io_write8(intf, stout_acpi_intf.csr, command) < 0)
+	if (io_write8(intf, stout_acpi_intf->csr, command) < 0)
 		return -1;
 
 	if (input_data != NULL) {
 		for (i = 0; i < input_len; i++) {
 			if (stout_wait_ibf_clear(intf) != 1)
 				return -1;
-			if (io_write8(intf, stout_acpi_intf.data,
+			if (io_write8(intf, stout_acpi_intf->data,
 					input_data[i] ) < 0)
 				return -1;
 		}
@@ -99,7 +107,7 @@ int ec_command(struct platform_intf *intf, stout_ec_command command,
 		for (i = 0; i < output_len; i++) {
 			if (stout_wait_obf_set(intf) != 1)
 				return -1;
-			if (io_read8(intf, stout_acpi_intf.data,
+			if (io_read8(intf, stout_acpi_intf->data,
 					&output_data[i] ) < 0)
 				return -1;
 		}
@@ -111,9 +119,10 @@ int ec_command(struct platform_intf *intf, stout_ec_command command,
 
 /* returns 0 to indicate success, <0 to indicate failure */
 int ecram_read(struct platform_intf *intf,
-			stout_ec_mem_addr address, uint8_t *data)
+			stout_ec_mem_addr address, uint8_t *data,
+			stout_ec_command cmd)
 {
-	return ec_command(intf, STOUT_ECCMD_MEM_READ, (int8_t *)&address, 1,
+	return ec_command(intf, cmd, (int8_t *)&address, 1,
 				data, 1);
 }
 
@@ -141,10 +150,18 @@ static const char *stout_ec_fw_version(struct platform_intf *intf)
 	char revision;
 	static char version[7];
 	uint8_t msb, lsb;
+	stout_ec_command cmd = STOUT_ECCMD_MEM_READ;
 
-	if (ecram_read(intf, STOUT_ECMEM_FW_VERSION_MSB, &msb) < 0)
-		return NULL;
-	if (ecram_read(intf, STOUT_ECMEM_FW_VERSION_LSB, &lsb) < 0)
+	if (ecram_read(intf, STOUT_ECMEM_FW_VERSION_MSB, &msb, cmd) < 0) {
+		/* Command failed, but we might be in RO. */
+		stout_acpi_intf = &stout_acpi_intf_ro;
+		cmd = ACPI_RD_EC;
+		lprintf(LOG_DEBUG, "%s: Retry w/ RO ports\n", __func__);
+
+		if (ecram_read(intf, STOUT_ECMEM_FW_VERSION_MSB, &msb, cmd) < 0)
+			return NULL;
+	}
+	if (ecram_read(intf, STOUT_ECMEM_FW_VERSION_LSB, &lsb, cmd) < 0)
 		return NULL;
 
 	major = (msb >> 4) & 0xf;

@@ -77,7 +77,8 @@ extern int ec_command(struct platform_intf *intf, stout_ec_command command,
                         uint8_t *input_data, uint8_t input_len,
                         uint8_t *output_data, uint8_t output_len );
 extern int ecram_read(struct platform_intf *intf,
-                        stout_ec_mem_addr address, uint8_t *data);
+                        stout_ec_mem_addr address, uint8_t *data,
+			stout_ec_command cmd);
 extern int ecram_write(struct platform_intf *intf,
                         stout_ec_mem_addr address, uint8_t data);
 

@@ -70,7 +70,8 @@ static const char *stout_get_battery_fud(struct platform_intf *intf)
 	uint8_t status, date_hi, date_lo;
 	int day, month, year;
 
-	if (ecram_read(intf, STOUT_ECMEM_BATTERY_STATUS, &status) < 0)
+	if (ecram_read(intf, STOUT_ECMEM_BATTERY_STATUS, &status,
+	               STOUT_ECCMD_MEM_READ) < 0)
 		return NULL;
 
 	/* Bit 7: main battery attached. */
@@ -121,7 +122,8 @@ static int stout_set_battery_fud(struct platform_intf *intf,
 		return -1;
 	}
 
-	if (ecram_read(intf, STOUT_ECMEM_BATTERY_STATUS, &status) < 0)
+	if (ecram_read(intf, STOUT_ECMEM_BATTERY_STATUS, &status,
+	               STOUT_ECCMD_MEM_READ) < 0)
 		return -1;
 
 	/* Bit 7: main battery attached. */
@@ -177,8 +179,9 @@ static int stout_set_battery_fud(struct platform_intf *intf,
 static int stout_update_battery_fw(struct platform_intf *intf)
 {
 	uint8_t status;
+	stout_ec_command cmd = STOUT_ECCMD_MEM_READ;
 
-	if (ecram_read(intf, STOUT_ECMEM_BATTERY_STATUS, &status) < 0)
+	if (ecram_read(intf, STOUT_ECMEM_BATTERY_STATUS, &status, cmd) < 0)
 		return -1;
 
 	/* Bit 7: main battery attached. */
@@ -199,7 +202,7 @@ static int stout_update_battery_fw(struct platform_intf *intf)
 	}
 
 	/* Start update. */
-	if (ecram_read(intf, STOUT_ECMEM_BATTERY_FW_UPDATE, &status) < 0)
+	if (ecram_read(intf, STOUT_ECMEM_BATTERY_FW_UPDATE, &status, cmd) < 0)
 		return -1;
 
 	lprintf(LOG_DEBUG, "%s: Starting FW update: %x.\n",
@@ -224,7 +227,7 @@ static int stout_update_battery_fw(struct platform_intf *intf)
 		__func__, status);
 
 	/* Clear update flag and check competion status. */
-	if (ecram_read(intf, STOUT_ECMEM_BATTERY_FW_UPDATE, &status) < 0)
+	if (ecram_read(intf, STOUT_ECMEM_BATTERY_FW_UPDATE, &status, cmd) < 0)
 		return -1;
 
 	if (ecram_write(intf, STOUT_ECMEM_BATTERY_FW_UPDATE,

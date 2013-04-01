@@ -60,6 +60,7 @@ struct platform_cmd *stout_sub[] = {
 	&cmd_smbios,
 	&cmd_eventlog,
 	&cmd_battery,
+	&cmd_storage,
 	NULL
 };
 
@@ -137,6 +138,7 @@ struct platform_cb stout_cb = {
 	.sys 		= &stout_sys_cb,
 	.eventlog	= &stout_eventlog_cb,
 	.battery	= &stout_battery_cb,
+	.storage	= &stout_storage_cb,
 };
 
 struct platform_intf platform_stout = {

@@ -59,6 +59,7 @@ struct platform_cmd *butterfly_sub[] = {
 	&cmd_platform,
 	&cmd_smbios,
 	&cmd_eventlog,
+	&cmd_storage,
 	NULL
 };
 
@@ -135,6 +136,7 @@ struct platform_cb butterfly_cb = {
 	.smbios		= &smbios_sysinfo_cb,
 	.sys 		= &butterfly_sys_cb,
 	.eventlog	= &butterfly_eventlog_cb,
+	.storage	= &butterfly_storage_cb,
 };
 
 struct platform_intf platform_butterfly = {

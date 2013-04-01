@@ -85,7 +85,7 @@ extern int probe_cpuinfo(struct platform_intf *intf,
                          const char *key, const char *value);
 
 /*
- * get_cpuinfo - extract value from /proc/cpuinfo
+ * extract_cpuinfo - extract value from /proc/cpuinfo
  *
  * @key:	key to search for
  *
@@ -97,6 +97,16 @@ extern int probe_cpuinfo(struct platform_intf *intf,
  * returns NULL to indicate value not found or error
  */
 extern const char *extract_cpuinfo(const char *key);
+
+/*
+ * extract_block_device_model_name - extract block device name from sysfs
+ *
+ * @device:	device name to extract (ex. "sda")
+ *
+ * returns allocated string containing value if found
+ * returns NULL to indicate value not found or error
+ */
+extern const char *extract_block_device_model_name(const char *device);
 
 /*
  * probe_cmdline - probe /proc/cmdline for key

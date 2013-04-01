@@ -1,0 +1,1 @@
+obj-$(CONFIG_STORAGE_SANDISK_U100)	+= u100.o

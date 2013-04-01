@@ -10,5 +10,6 @@ source "drivers/nuvoton/Kconfig"
 source "drivers/samsung/Kconfig"
 source "drivers/smsc/Kconfig"
 source "drivers/ene/Kconfig"
+source "drivers/sandisk/Kconfig"
 
 endmenu

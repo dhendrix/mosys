@@ -259,3 +259,34 @@ probe_cmdline_done:
 	fclose(cmdline);
 	return ret;
 }
+
+/*
+ * extract_block_device_model_name - Gets model name of block storage device.
+ *
+ * @device:	String containing device name, ex "sda".
+ *
+ * Returns pointer to allocated model name string on success, NULL on failure.
+ */
+const char *extract_block_device_model_name(const char *device)
+{
+	FILE *file;
+	char *model_name = NULL;
+	char path[PATH_MAX];
+	int len;
+
+	sprintf(path, "/sys/class/block/%s/device/model", device);
+	file = fopen(path, "r");
+	if (!file)
+		return NULL;
+
+	model_name = mosys_malloc(PATH_MAX);
+	fgets(model_name, PATH_MAX, file);
+	fclose(file);
+
+	/* Remove trailing newline. */
+	len = strlen(model_name);
+	if (len > 0 && model_name[len-1] == '\n')
+		model_name[len-1] = '\0';
+
+	return (const char *)model_name;
+}

@@ -42,7 +42,9 @@ extern struct ec_cb butterfly_ec_cb;		/* ec.c */
 extern struct eeprom_cb butterfly_eeprom_cb;	/* eeprom.c */
 extern struct memory_cb butterfly_memory_cb;	/* memory.c */
 extern struct nvram_cb butterfly_nvram_cb;	/* nvram.c */
+extern struct storage_cb butterfly_storage_cb;	/* storage.c */
 extern struct sys_cb butterfly_sys_cb;		/* sys.c */
+
 
 /* functions called by setup routines */
 extern int butterfly_ec_setup(struct platform_intf *intf);

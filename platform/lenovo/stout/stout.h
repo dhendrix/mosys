@@ -52,12 +52,12 @@ typedef enum stout_ec_command {
 } stout_ec_command;
 
 typedef enum stout_ec_mem_addr {
-        STOUT_ECMEM_BATTERY_STATUS              = 0x38,
+	STOUT_ECMEM_BATTERY_STATUS              = 0x38,
 	STOUT_ECMEM_BATTERY_FW_UPDATE           = 0x3b,
-        STOUT_ECMEM_FW_VERSION_MSB              = 0xe8,
-        STOUT_ECMEM_FW_VERSION_LSB              = 0xe9,
-        STOUT_ECMEM_BATTERY_FIRST_USE_DATE_HI   = 0xbd,
-        STOUT_ECMEM_BATTERY_FIRST_USE_DATE_LO   = 0xbe,
+	STOUT_ECMEM_FW_VERSION_MSB              = 0xe8,
+	STOUT_ECMEM_FW_VERSION_LSB              = 0xe9,
+	STOUT_ECMEM_BATTERY_FIRST_USE_DATE_HI   = 0xbd,
+	STOUT_ECMEM_BATTERY_FIRST_USE_DATE_LO   = 0xbe,
 } stout_ec_mem_addr;
 
 /* platform callbacks */
@@ -66,6 +66,7 @@ extern struct ec_cb stout_ec_cb;		/* ec.c */
 extern struct eeprom_cb stout_eeprom_cb;	/* eeprom.c */
 extern struct memory_cb stout_memory_cb;	/* memory.c */
 extern struct nvram_cb stout_nvram_cb;		/* nvram.c */
+extern struct storage_cb stout_storage_cb;	/* storage.c */
 extern struct sys_cb stout_sys_cb;		/* sys.c */
 
 /* functions called by setup routines */

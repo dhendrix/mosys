@@ -43,13 +43,15 @@
 
 #define GPIO_SOC	0
 
-#define ID0	SPRING_BOARD_ID0
-#define ID1	SPRING_BOARD_ID1
+#define REV0	SPRING_BOARD_REV0
+#define REV1	SPRING_BOARD_REV1
+#define REV2	SPRING_BOARD_REV2
 
 /* gpio number, in/out, device, port, pin, negate, devname, name */
 static struct gpio_map platform_gpio_map[] = {
-	{  88, GPIO_IN,  GPIO_SOC, EXYNOS5_GPD0,  0, 0, "SOC", ID1 },
-	{  89, GPIO_IN,  GPIO_SOC, EXYNOS5_GPD0,  1, 0, "SOC", ID0 },
+	{  88, GPIO_IN,  GPIO_SOC, EXYNOS5_GPD0,  0, 0, "SOC", REV0 },
+	{  89, GPIO_IN,  GPIO_SOC, EXYNOS5_GPD0,  1, 0, "SOC", REV1 },
+	{  90, GPIO_IN,  GPIO_SOC, EXYNOS5_GPD0,  2, 0, "SOC", REV2 },
 	{   0,       0,         0,       0,  0,   0, NULL, NULL   }
 };
 

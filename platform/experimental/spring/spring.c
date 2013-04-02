@@ -138,43 +138,66 @@ spring_probe_exit:
 
 /* TODO: implement board ID map when assignments are finalized */
 struct {
-	enum mvl3 v0, v1;
+	enum mvl3 v0, v1, v2;
 	enum spring_board_config config;
 } spring_id_map[] = {
-	/*  ID0      ID1         config */
-	{ LOGIC_0, LOGIC_0, SPRING_CONFIG_RSVD },
-	{ LOGIC_0, LOGIC_1, SPRING_CONFIG_RSVD },
-	{ LOGIC_1, LOGIC_0, SPRING_CONFIG_RSVD },
-	{ LOGIC_1, LOGIC_1, SPRING_CONFIG_RSVD },
-	{ LOGIC_0, LOGIC_Z, SPRING_CONFIG_RSVD },
-	{ LOGIC_1, LOGIC_Z, SPRING_CONFIG_RSVD },
-	{ LOGIC_Z, LOGIC_0, SPRING_CONFIG_RSVD },
-	{ LOGIC_Z, LOGIC_Z, SPRING_CONFIG_RSVD },
-	{ LOGIC_Z, LOGIC_1, SPRING_CONFIG_RSVD },
+	/*  REV0     REV1     REV2       config */
+	{ LOGIC_0, LOGIC_0, LOGIC_0, SPRING_CONFIG_RSVD },
+	{ LOGIC_0, LOGIC_0, LOGIC_1, SPRING_CONFIG_RSVD },
+	{ LOGIC_0, LOGIC_0, LOGIC_Z, SPRING_CONFIG_PROTO },
+	{ LOGIC_0, LOGIC_1, LOGIC_0, SPRING_CONFIG_RSVD },
+	{ LOGIC_0, LOGIC_1, LOGIC_1, SPRING_CONFIG_RSVD },
+	{ LOGIC_0, LOGIC_1, LOGIC_Z, SPRING_CONFIG_DVT_NANYA },
+	{ LOGIC_0, LOGIC_Z, LOGIC_0, SPRING_CONFIG_PVT_MICRON },
+	{ LOGIC_0, LOGIC_Z, LOGIC_1, SPRING_CONFIG_RSVD },
+	{ LOGIC_0, LOGIC_Z, LOGIC_Z, SPRING_CONFIG_RSVD },
+	{ LOGIC_1, LOGIC_0, LOGIC_0, SPRING_CONFIG_RSVD },
+	{ LOGIC_1, LOGIC_0, LOGIC_1, SPRING_CONFIG_RSVD },
+	{ LOGIC_1, LOGIC_0, LOGIC_Z, SPRING_CONFIG_EVT_NANYA },
+	{ LOGIC_1, LOGIC_1, LOGIC_0, SPRING_CONFIG_RSVD },
+	{ LOGIC_1, LOGIC_1, LOGIC_1, SPRING_CONFIG_RSVD },
+	{ LOGIC_1, LOGIC_1, LOGIC_Z, SPRING_CONFIG_DVT_MICRON },
+	{ LOGIC_1, LOGIC_Z, LOGIC_0, SPRING_CONFIG_MP_NANYA },
+	{ LOGIC_1, LOGIC_Z, LOGIC_1, SPRING_CONFIG_RSVD },
+	{ LOGIC_1, LOGIC_Z, LOGIC_Z, SPRING_CONFIG_RSVD },
+	{ LOGIC_Z, LOGIC_0, LOGIC_0, SPRING_CONFIG_MP_MICRON },
+	{ LOGIC_Z, LOGIC_0, LOGIC_1, SPRING_CONFIG_RSVD },
+	{ LOGIC_Z, LOGIC_0, LOGIC_Z, SPRING_CONFIG_RSVD },
+	{ LOGIC_Z, LOGIC_1, LOGIC_0, SPRING_CONFIG_RSVD },
+	{ LOGIC_Z, LOGIC_1, LOGIC_1, SPRING_CONFIG_RSVD },
+	{ LOGIC_Z, LOGIC_1, LOGIC_Z, SPRING_CONFIG_EVT_MICRON },
+	{ LOGIC_Z, LOGIC_Z, LOGIC_0, SPRING_CONFIG_PVT_NANYA },
+	{ LOGIC_Z, LOGIC_Z, LOGIC_1, SPRING_CONFIG_RSVD },
+	{ LOGIC_Z, LOGIC_Z, LOGIC_Z, SPRING_CONFIG_RSVD },
 };
 
 static int spring_get_board_config(struct platform_intf *intf)
 {
 	int i;
-	struct gpio_map *id0, *id1;
-	enum mvl3 v0, v1;
+	struct gpio_map *rev0, *rev1, *rev2;
+	enum mvl3 v0, v1, v2;
 	enum spring_board_config config = SPRING_CONFIG_UNKNOWN;
 
-	id0 = intf->cb->gpio->map(intf, SPRING_BOARD_ID0);
-	id1 = intf->cb->gpio->map(intf, SPRING_BOARD_ID1);
-	if (!id0 || !id1) {
-		lprintf(LOG_DEBUG, "%s: Unable to determine id0/1\n", __func__);
+	rev0 = intf->cb->gpio->map(intf, SPRING_BOARD_REV0);
+	rev1 = intf->cb->gpio->map(intf, SPRING_BOARD_REV1);
+	rev2 = intf->cb->gpio->map(intf, SPRING_BOARD_REV2);
+	if (!rev0 || !rev1 || !rev2) {
+		lprintf(LOG_DEBUG, "%s: Unable to determine board "
+				"revision\n", __func__);
 		return SPRING_CONFIG_UNKNOWN;
 	}
 
-	v0 = exynos5_read_gpio_mvl(intf, id0);
-	v1 = exynos5_read_gpio_mvl(intf, id1);
-	lprintf(LOG_DEBUG, "%s: v0: %u, v1: %u\n", __func__, v0, v1);
+	v0 = exynos5_read_gpio_mvl(intf, rev0);
+	v1 = exynos5_read_gpio_mvl(intf, rev1);
+	v2 = exynos5_read_gpio_mvl(intf, rev2);
+	lprintf(LOG_DEBUG, "%s: v0: %u, v1: %u, v2: %u\n",
+			__func__, v0, v1, v2);
 
-	for (i = 0; i < ARRAY_SIZE(spring_id_map); i++) {
-		if (v0 == spring_id_map[i].v0 && v1 == spring_id_map[i].v1)
+	for (i = 0; i < ARRAY_SIZE(spring_id_map); i++)
+		if ((v0 == spring_id_map[i].v0) &&
+		    (v1 == spring_id_map[i].v1) &&
+		    (v2 == spring_id_map[i].v2))
 			config = spring_id_map[i].config;
-	}
 
 	return config;
 }

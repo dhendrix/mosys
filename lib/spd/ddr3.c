@@ -253,10 +253,12 @@ int spd_print_field_ddr3(struct platform_intf *intf, struct kv_pair *kv,
 		int one_added;
 		char speeds[128];
 		const struct valstr possible_mhz[] = {
-			{ 400, "DDR3-800" },
-			{ 533, "DDR3-1066" },
-			{ 667, "DDR3-1333" },
-			{ 800, "DDR3-1600" },
+			{ 400,  "DDR3-800" },
+			{ 533,  "DDR3-1066" },
+			{ 667,  "DDR3-1333" },
+			{ 800,  "DDR3-1600" },
+			{ 933,  "DDR3-1866" },
+			{ 1067, "DDR3-2133" },
 			{ 0 }
 		};
 

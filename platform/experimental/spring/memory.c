@@ -94,6 +94,116 @@ static const uint8_t fake_spd[SPD_MAX_LENGTH] = {
 	[DDR3_SPD_REG_MODULE_PART_NUM_17] = 0,
 };
 
+/* SPD data for Micron modules meeting Spring's spec */
+static const uint8_t micron_ddr3_1600_spd[SPD_MAX_LENGTH] = {
+	[DDR3_SPD_REG_SIZE_CRC]		= 0x92,
+	[DDR3_SPD_REG_REVISION]		= 0x12,
+	[DDR3_SPD_REG_DEVICE_TYPE]	= 0x0b,
+	[DDR3_SPD_REG_MODULE_TYPE]	= 0x03,
+	[DDR3_SPD_REG_DENSITY_BANKS]	= 0x04,	/* 8 banks * 4Gbits= 4GBytes */
+	[DDR3_SPD_REG_ADDRESSING]	= 0x32,	/* 15 rows, 10 cols */
+	[DDR3_SPD_REG_VOLTAGE]		= 0x02,	/* 1.35V */
+	[DDR3_SPD_REG_MODULE_ORG]	= 0x01,	/* 1 rank, x8 */
+	[DDR3_SPD_REG_MODULE_BUS_WIDTH]	= 0x03,
+
+	/* DDR3-1600 = (1/8)ns * 10 = 1.25ns */
+	[DDR3_SPD_REG_MTB_DIVIDEND]	= 1,
+	[DDR3_SPD_REG_MTB_DIVISOR]	= 8,
+	[DDR3_SPD_REG_TCK_MIN]		= 10,
+
+	/* 6, 11 */
+	[DDR3_SPD_REG_CAS_LAT_LSB]	= 0x84,
+	[DDR3_SPD_REG_CAS_LAT_MSB]	= 0x00,
+
+	/* CL-tRCD-tRP: 11-11-11 */
+	[DDR3_SPD_REG_TAA_MIN]		= 0x6e,	/* 13.75ns */
+	[DDR3_SPD_REG_TWR_MIN]		= 0x78,	/* 15ns */
+	[DDR3_SPD_REG_TRCD_MIN]		= 0x6e,	/* 13.75ns */
+
+	/* Micron is bank 1, number 44 (JEP-106) */
+	[DDR3_SPD_REG_MODULE_MANUF_JEDEC_ID_LSB] = 0,
+	[DDR3_SPD_REG_MODULE_MANUF_JEDEC_ID_MSB] = 44,
+
+	[DDR3_SPD_REG_MODULE_MANUF_SERIAL_0] = 0x00000000,
+	[DDR3_SPD_REG_MODULE_MANUF_SERIAL_1] = 0x00000000,
+	[DDR3_SPD_REG_MODULE_MANUF_SERIAL_2] = 0x00000000,
+	[DDR3_SPD_REG_MODULE_MANUF_SERIAL_3] = 0x00000000,
+
+	[DDR3_SPD_REG_MODULE_PART_NUM_0] = 'M',
+	[DDR3_SPD_REG_MODULE_PART_NUM_1] = 'T',
+	[DDR3_SPD_REG_MODULE_PART_NUM_2] = '4',
+	[DDR3_SPD_REG_MODULE_PART_NUM_3] = '1',
+	[DDR3_SPD_REG_MODULE_PART_NUM_4] = 'K',
+	[DDR3_SPD_REG_MODULE_PART_NUM_5] = '2',
+	[DDR3_SPD_REG_MODULE_PART_NUM_6] = '5',
+	[DDR3_SPD_REG_MODULE_PART_NUM_7] = '6',
+	[DDR3_SPD_REG_MODULE_PART_NUM_8] = 'M',
+	[DDR3_SPD_REG_MODULE_PART_NUM_9] = '1',
+	[DDR3_SPD_REG_MODULE_PART_NUM_10] = '6',
+	[DDR3_SPD_REG_MODULE_PART_NUM_11] = 'H',
+	[DDR3_SPD_REG_MODULE_PART_NUM_12] = 'A',
+	[DDR3_SPD_REG_MODULE_PART_NUM_13] = '-',
+	[DDR3_SPD_REG_MODULE_PART_NUM_14] = '1',
+	[DDR3_SPD_REG_MODULE_PART_NUM_15] = '2',
+	[DDR3_SPD_REG_MODULE_PART_NUM_16] = '5',
+	[DDR3_SPD_REG_MODULE_PART_NUM_17] = 'E',
+};
+
+/* SPD data for Nanya modules meeting Spring's spec */
+static const uint8_t nanya_ddr3_1600_spd[SPD_MAX_LENGTH] = {
+	[DDR3_SPD_REG_SIZE_CRC]		= 0x92,
+	[DDR3_SPD_REG_REVISION]		= 0x12,
+	[DDR3_SPD_REG_DEVICE_TYPE]	= 0x0b,
+	[DDR3_SPD_REG_MODULE_TYPE]	= 0x03,
+	[DDR3_SPD_REG_DENSITY_BANKS]	= 0x04,	/* 8 banks * 4Gbits= 4GBytes */
+	[DDR3_SPD_REG_ADDRESSING]	= 0x32,	/* 15 rows, 10 cols */
+	[DDR3_SPD_REG_VOLTAGE]		= 0x02,	/* 1.35V */
+	[DDR3_SPD_REG_MODULE_ORG]	= 0x01,	/* 1 rank, x8 */
+	[DDR3_SPD_REG_MODULE_BUS_WIDTH]	= 0x03,
+
+	/* DDR3-1600 = (1/8)ns * 10 = 1.25ns */
+	[DDR3_SPD_REG_MTB_DIVIDEND]	= 1,
+	[DDR3_SPD_REG_MTB_DIVISOR]	= 8,
+	[DDR3_SPD_REG_TCK_MIN]		= 10,
+
+	/* 5, 6, 7, 8, 9, 10, 11 */
+	[DDR3_SPD_REG_CAS_LAT_LSB]	= 0xfc,
+	[DDR3_SPD_REG_CAS_LAT_MSB]	= 0x00,
+
+	/* CL-tRCD-tRP: 11-11-11 */
+	[DDR3_SPD_REG_TAA_MIN]		= 0x6e,	/* 13.75ns */
+	[DDR3_SPD_REG_TWR_MIN]		= 0x78,	/* 15ns */
+	[DDR3_SPD_REG_TRCD_MIN]		= 0x6e,	/* 13.75ns */
+
+	/* Nanya is bank 4, number 11 (JEP-106) */
+	[DDR3_SPD_REG_MODULE_MANUF_JEDEC_ID_LSB] = 3,
+	[DDR3_SPD_REG_MODULE_MANUF_JEDEC_ID_MSB] = 11,
+
+	[DDR3_SPD_REG_MODULE_MANUF_SERIAL_0] = 0x00000000,
+	[DDR3_SPD_REG_MODULE_MANUF_SERIAL_1] = 0x00000000,
+	[DDR3_SPD_REG_MODULE_MANUF_SERIAL_2] = 0x00000000,
+	[DDR3_SPD_REG_MODULE_MANUF_SERIAL_3] = 0x00000000,
+
+	[DDR3_SPD_REG_MODULE_PART_NUM_0] = 'N',
+	[DDR3_SPD_REG_MODULE_PART_NUM_1] = 'T',
+	[DDR3_SPD_REG_MODULE_PART_NUM_2] = '5',
+	[DDR3_SPD_REG_MODULE_PART_NUM_3] = 'C',
+	[DDR3_SPD_REG_MODULE_PART_NUM_4] = 'C',
+	[DDR3_SPD_REG_MODULE_PART_NUM_5] = '2',
+	[DDR3_SPD_REG_MODULE_PART_NUM_6] = '5',
+	[DDR3_SPD_REG_MODULE_PART_NUM_7] = '6',
+	[DDR3_SPD_REG_MODULE_PART_NUM_8] = 'M',
+	[DDR3_SPD_REG_MODULE_PART_NUM_9] = '1',
+	[DDR3_SPD_REG_MODULE_PART_NUM_10] = '6',
+	[DDR3_SPD_REG_MODULE_PART_NUM_11] = 'B',
+	[DDR3_SPD_REG_MODULE_PART_NUM_12] = 'P',
+	[DDR3_SPD_REG_MODULE_PART_NUM_13] = '-',
+	[DDR3_SPD_REG_MODULE_PART_NUM_14] = 'D',
+	[DDR3_SPD_REG_MODULE_PART_NUM_15] = 'I',
+	[DDR3_SPD_REG_MODULE_PART_NUM_16] = 0,
+	[DDR3_SPD_REG_MODULE_PART_NUM_17] = 0,
+};
+
 /*
  * spring_dimm_count  -  return total number of dimm slots
  *
@@ -113,13 +223,28 @@ static int spring_spd_read(struct platform_intf *intf,
 	int rc = 0;
 
 	switch (spring_board_config) {
-	case SPRING_CONFIG_RSVD:
+	case SPRING_CONFIG_PROTO:
 		/* FIXME: need to add correct timings */
 		memcpy(buf, &fake_spd[reg], len);
 		rc = len;
 		break;
+	case SPRING_CONFIG_EVT_MICRON:
+	case SPRING_CONFIG_DVT_MICRON:
+	case SPRING_CONFIG_PVT_MICRON:
+	case SPRING_CONFIG_MP_MICRON:
+		memcpy(buf, &micron_ddr3_1600_spd[reg], len);
+		rc = len;
+		break;
+	case SPRING_CONFIG_EVT_NANYA:
+	case SPRING_CONFIG_DVT_NANYA:
+	case SPRING_CONFIG_PVT_NANYA:
+	case SPRING_CONFIG_MP_NANYA:
+		memcpy(buf, &nanya_ddr3_1600_spd[reg], len);
+		rc = len;
+		break;
 	default:
 		rc = -1;
+		break;
 	}
 
 	return rc;

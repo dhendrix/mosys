@@ -66,7 +66,8 @@ static enum storage_phy_speed butterfly_get_ssd_phy_speed(
 	enum storage_phy_speed phy_speed = PHY_SPEED_UNKNOWN;
 
 	lprintf(LOG_DEBUG, "%s: SSD model name %s\n", __func__, model_name);
-	if (strcmp(model_name, SANDISK_U100_MODEL_NAME) == 0)
+	if (strcmp(model_name, SANDISK_U100_MODEL_NAME) == 0 ||
+	    strcmp(model_name, SANDISK_SDSA5GK_MODEL_NAME) == 0)
 		phy_speed = sandisk_u100_get_phy_speed(
 			BUTTERFLY_SSD_DEVICE_PATH);
 
@@ -90,7 +91,8 @@ static int butterfly_set_ssd_phy_speed(struct platform_intf *intf,
 	int ret = -1;
 
 	lprintf(LOG_DEBUG, "%s: SSD model name %s\n", __func__, model_name);
-	if (strcmp(model_name, SANDISK_U100_MODEL_NAME) == 0)
+	if (strcmp(model_name, SANDISK_U100_MODEL_NAME) == 0 ||
+	    strcmp(model_name, SANDISK_SDSA5GK_MODEL_NAME) == 0)
 		ret = sandisk_u100_set_phy_speed(BUTTERFLY_SSD_DEVICE_PATH,
 						 phy_speed);
 

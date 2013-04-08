@@ -33,6 +33,8 @@
 #define _U100_H__
 
 #define SANDISK_U100_MODEL_NAME		"SanDisk SSD U100"
+/* Alternate U100 model id. */
+#define SANDISK_SDSA5GK_MODEL_NAME	"SanDisk SDSA5GK-"
 
 /* ATA / SCSI command constants. */
 #define U100_SENSE_BUFFER_LENGTH                32

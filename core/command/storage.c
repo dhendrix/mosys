@@ -114,6 +114,7 @@ static int storage_set_phy_speed_cmd(struct platform_intf *intf,
 {
 	enum storage_phy_speed phy_speed;
 	char *phy = NULL;
+	int ret;
 
 	if (argc == 1)
 		phy = argv[0];
@@ -137,7 +138,12 @@ static int storage_set_phy_speed_cmd(struct platform_intf *intf,
 		return -1;
 	}
 
-	return intf->cb->storage->set_phy_speed(intf, phy_speed);
+	ret = intf->cb->storage->set_phy_speed(intf, phy_speed);
+	/* Don't return error if no supported is found. */
+	if (ret == -ENOTSUP)
+		return 0;
+	else
+		return ret;
 }
 
 struct platform_cmd storage_print_cmds[] = {

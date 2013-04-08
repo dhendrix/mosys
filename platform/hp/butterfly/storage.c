@@ -29,6 +29,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <errno.h>
+
 #include "mosys/alloc.h"
 #include "mosys/log.h"
 #include "mosys/platform.h"
@@ -88,13 +90,15 @@ static int butterfly_set_ssd_phy_speed(struct platform_intf *intf,
 				       enum storage_phy_speed phy_speed)
 {
 	char *model_name = (char*)butterfly_get_ssd_model_name(intf);
-	int ret = -1;
+	int ret;
 
 	lprintf(LOG_DEBUG, "%s: SSD model name %s\n", __func__, model_name);
 	if (strcmp(model_name, SANDISK_U100_MODEL_NAME) == 0 ||
 	    strcmp(model_name, SANDISK_SDSA5GK_MODEL_NAME) == 0)
 		ret = sandisk_u100_set_phy_speed(BUTTERFLY_SSD_DEVICE_PATH,
 						 phy_speed);
+	else
+		ret = -ENOTSUP;
 
 	if (model_name != NULL)
 		free(model_name);

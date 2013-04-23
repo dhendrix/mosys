@@ -41,6 +41,7 @@
 #include "drivers/google/gec.h"
 #include "drivers/samsung/exynos5.h"
 
+#include "lib/elog.h"
 #include "lib/file.h"
 #include "lib/math.h"
 #include "lib/probe.h"
@@ -62,6 +63,7 @@ struct platform_cmd *spring_sub[] = {
 	&cmd_memory,
 	&cmd_nvram,
 	&cmd_platform,
+	&cmd_eventlog,
 	NULL
 };
 
@@ -222,6 +224,15 @@ static int spring_destroy(struct platform_intf *intf)
 	return 0;
 }
 
+struct eventlog_cb spring_eventlog_cb = {
+	.print_type	= &elog_print_type,
+	.print_data	= &elog_print_data,
+	.print_multi	= &elog_print_multi,
+	.verify		= &elog_verify,
+	.verify_header	= &elog_verify_header,
+	.fetch		= &elog_fetch_from_flash,
+};
+
 struct platform_cb spring_cb = {
 	.ec 		= &gec_cb,
 	.eeprom 	= &spring_eeprom_cb,
@@ -229,6 +240,7 @@ struct platform_cb spring_cb = {
 	.memory		= &spring_memory_cb,
 	.nvram		= &gec_nvram_cb,
 	.sys 		= &spring_sys_cb,
+	.eventlog	= &spring_eventlog_cb,
 };
 
 struct platform_intf platform_spring = {

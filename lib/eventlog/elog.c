@@ -649,8 +649,6 @@ int elog_fetch_from_flash(struct platform_intf *intf, uint8_t **data,
 	if (!fmap_area)
 		lprintf(LOG_WARNING, "No event log area in flash.\n");
 
-	lprintf(LOG_WARNING, "Offset = %d.\n", fmap_area->offset);
-
 	*data = malloc(fmap_area->size);
 
 	if (host->device->read(intf, host, fmap_area->offset,

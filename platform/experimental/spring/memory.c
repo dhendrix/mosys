@@ -100,7 +100,7 @@ static const uint8_t micron_ddr3_1600_spd[SPD_MAX_LENGTH] = {
 	[DDR3_SPD_REG_REVISION]		= 0x12,
 	[DDR3_SPD_REG_DEVICE_TYPE]	= 0x0b,
 	[DDR3_SPD_REG_MODULE_TYPE]	= 0x03,
-	[DDR3_SPD_REG_DENSITY_BANKS]	= 0x04,	/* 8 banks * 4Gbits= 4GBytes */
+	[DDR3_SPD_REG_DENSITY_BANKS]	= 0x03,	/* HACK */
 	[DDR3_SPD_REG_ADDRESSING]	= 0x32,	/* 15 rows, 10 cols */
 	[DDR3_SPD_REG_VOLTAGE]		= 0x02,	/* 1.35V */
 	[DDR3_SPD_REG_MODULE_ORG]	= 0x01,	/* 1 rank, x8 */
@@ -155,7 +155,7 @@ static const uint8_t nanya_ddr3_1600_spd[SPD_MAX_LENGTH] = {
 	[DDR3_SPD_REG_REVISION]		= 0x12,
 	[DDR3_SPD_REG_DEVICE_TYPE]	= 0x0b,
 	[DDR3_SPD_REG_MODULE_TYPE]	= 0x03,
-	[DDR3_SPD_REG_DENSITY_BANKS]	= 0x04,	/* 8 banks * 4Gbits= 4GBytes */
+	[DDR3_SPD_REG_DENSITY_BANKS]	= 0x03,	/* HACK */
 	[DDR3_SPD_REG_ADDRESSING]	= 0x32,	/* 15 rows, 10 cols */
 	[DDR3_SPD_REG_VOLTAGE]		= 0x02,	/* 1.35V */
 	[DDR3_SPD_REG_MODULE_ORG]	= 0x01,	/* 1 rank, x8 */

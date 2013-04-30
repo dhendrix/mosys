@@ -112,7 +112,7 @@ static int i2c_open_dev(struct platform_intf *intf, int bus, int address)
 	}
 
 #if defined (__linux__)
-	if (ioctl(fd, I2C_SLAVE, address) < 0) {
+	if (ioctl(fd, I2C_SLAVE_FORCE, address) < 0) {
 		lperror(LOG_NOTICE, "Unable to set I2C slave address to 0x%02x",
 		        address);
 		close(fd);

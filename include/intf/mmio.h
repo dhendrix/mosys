@@ -34,7 +34,8 @@
 
 #include <inttypes.h>
 
-struct platform_intf;
+#include "mosys/platform.h"
+
 struct file_backed_range;
 
 struct mmio_intf {

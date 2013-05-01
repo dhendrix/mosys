@@ -32,10 +32,14 @@
 #include <inttypes.h>
 #include <valstr.h>
 
+#include "intf/mmio.h"
+
 #include "lib/elog.h"
 #include "lib/eventlog.h"
+#include "lib/smbios.h"
 #include "lib/string.h"
 
+#include "mosys/alloc.h"
 #include "mosys/kv_pair.h"
 #include "mosys/log.h"
 #include "mosys/platform.h"
@@ -563,4 +567,46 @@ int elog_verify(struct platform_intf *intf, struct smbios_log_entry *entry)
 	}
 
 	return checksum == 0;
+}
+
+/*
+ * elog_fetch_from_smbios - fetch the eventlog from the SMBIOS tables.
+ *
+ * @intf:          platform interface used for low level hardware access
+ * @data:          pointer to the fetched contents of the event log
+ * @length:        pointer to the length of the event log
+ * @header_offset: offset of the header in the event log
+ * @data_offset:   offset of the first event in the event log
+ *
+ * returns -1 on failure, 0 on success
+ */
+int elog_fetch_from_smbios(struct platform_intf *intf, uint8_t **data,
+			   size_t *length, off_t *header_offset,
+			   off_t *data_offset)
+{
+	struct smbios_table table;
+
+	if (smbios_find_table(intf, SMBIOS_TYPE_LOG, 0, &table,
+			      SMBIOS_LEGACY_ENTRY_BASE,
+			      SMBIOS_LEGACY_ENTRY_LEN) < 0) {
+		lprintf(LOG_WARNING, "Unable to find SMBIOS eventlog table.\n");
+		return -1;
+	}
+
+	if (table.data.log.header_format != ELOG_HEADER_FORMAT)
+		return -1;
+
+	/* Only support memory mapped I/O access */
+	if (table.data.log.method != SMBIOS_LOG_METHOD_TYPE_MEM)
+		return -1;
+
+	*length = table.data.log.length;
+	*data = mosys_malloc(*length);
+	*header_offset = table.data.log.header_start;
+	*data_offset = table.data.log.data_start;
+
+	if (mmio_read(intf, table.data.log.address.mem, *length, *data) < 0)
+		return -1;
+
+	return 0;
 }

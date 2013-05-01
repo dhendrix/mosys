@@ -32,6 +32,8 @@
 #ifndef MOSYS_PLATFORM_H__
 #define MOSYS_PLATFORM_H__
 
+#include <sys/types.h>
+
 #include "lib/elog.h"
 
 #include "mosys/mosys.h"
@@ -237,6 +239,8 @@ struct eventlog_cb {
 	int (*add)(struct platform_intf *intf, int argc, char **argv);
 	int (*clear)(struct platform_intf *intf,
 	             enum eventlog_clear_type type);
+	int (*fetch)(struct platform_intf *intf, uint8_t **data,
+		     size_t *length, off_t *header_offset, off_t *data_offset);
 };
 
 /* boot number callbacks */

@@ -36,13 +36,10 @@
 
 #include "lib/common.h"
 #include "lib/eventlog.h"
-#include "lib/smbios.h"
 
 #include "mosys/log.h"
 #include "mosys/kv_pair.h"
 #include "mosys/platform.h"
-
-#include "intf/mmio.h"
 
 static int eventlog_smbios_list_callback(struct platform_intf *intf,
                                          struct smbios_log_entry *entry,

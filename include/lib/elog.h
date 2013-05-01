@@ -33,6 +33,7 @@
 #define MOSYS_LIB_ELOG_H_
 
 #include <inttypes.h>
+#include <sys/types.h>
 
 struct platform_intf;
 struct kv_pair;
@@ -59,6 +60,9 @@ extern int elog_verify(struct platform_intf *intf,
 extern int elog_verify_header(struct elog_header *elog_header);
 extern int elog_print_multi(struct platform_intf *intf,
                             struct smbios_log_entry *entry, int start_id);
+extern int elog_fetch_from_smbios(struct platform_intf *intf,
+				  uint8_t **data, size_t *length,
+				  off_t *header_offset, off_t *data_offset);
 
 /*
  * Generic event log payloads modified by Google

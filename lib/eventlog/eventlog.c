@@ -62,47 +62,39 @@ struct smbios_eventlog_iterator {
 	int header_offset;    /* offset into log area to read the header. */
 	int data_offset;      /* offset into log area of first data element */
 	int current_offset;   /* current offset into log_area */
-	uint8_t log_area[0];  /* log area */
+	uint8_t *log_area;    /* log area */
 };
 
 /*
  * smbios_new_eventlog_iterator - obtain a new smbios_eventlog_iterator
  *                                for iterating through SMBIOS event log.
  *
- * @intf:        platform_intf used for filling initializing
- *               smbios_eventlog_iterator
- * @elog_table:  pointer to SMBIOS event log used to initialize a
- *               smbios_eventlog_iterator
+ * @intf:          platform_intf used for filling initializing
+ *                 smbios_eventlog_iterator
+ * @data:          pointer to the data in the event log
+ * @length:        length of the event log data
+ * @header_offset: offset into log area to read the header
+ * @data_offset:   offset into log area of first data element
  *
- * Return new smbios_eventlog_iterator based on smbios_table_log pointed to
- * by elog_table.
+ * Return new smbios_eventlog_iterator based on the event log.
  */
 struct smbios_eventlog_iterator *smbios_new_eventlog_iterator(
-    struct platform_intf *intf, struct smbios_table_log *elog_table)
+    struct platform_intf *intf, uint8_t *data, size_t length,
+    off_t header_offset, off_t data_offset)
 {
 	struct smbios_eventlog_iterator *elog_iter;
 
-	if (intf == NULL || elog_table == NULL)
-		return NULL;
-
-	/* Only support memory mapped I/O access */
-	if (elog_table->method != SMBIOS_LOG_METHOD_TYPE_MEM)
+	if (intf == NULL)
 		return NULL;
 
 	/* Allocate and fill in iterator. */
-	elog_iter = mosys_malloc(sizeof(*elog_iter) + elog_table->length);
+	elog_iter = mosys_malloc(sizeof(*elog_iter));
+	elog_iter->log_area = data;
 	elog_iter->verbose = mosys_get_verbosity();
-	elog_iter->log_area_length = elog_table->length;
-	elog_iter->header_offset = elog_table->header_start;
-	elog_iter->data_offset = elog_table->data_start;
+	elog_iter->log_area_length = length;
+	elog_iter->header_offset = header_offset;
+	elog_iter->data_offset = data_offset;
 	smbios_eventlog_iterator_reset(elog_iter);
-
-	/* Copy the current log inforamtion in. */
-	if (mmio_read(intf, elog_table->address.mem,
-	              elog_table->length, &elog_iter->log_area[0]) < 0) {
-		smbios_free_eventlog_iterator(elog_iter);
-		return NULL;
-	}
 
 	if (mosys_get_verbosity() > 4)
 		print_buffer(elog_iter->log_area, elog_iter->log_area_length);
@@ -372,7 +364,9 @@ int smbios_eventlog_foreach_event(struct platform_intf *intf,
                                   smbios_eventlog_verify_header verify,
                                   smbios_eventlog_callback callback, void *arg)
 {
-	struct smbios_table table;
+	uint8_t *data;
+	size_t length;
+	off_t header_offset, data_offset;
 	struct smbios_eventlog_iterator *elog_iter;
 	struct smbios_log_entry *entry;
 	int complete;
@@ -381,15 +375,14 @@ int smbios_eventlog_foreach_event(struct platform_intf *intf,
 	MOSYS_DCHECK(intf);
 	MOSYS_DCHECK(callback);
 
-	if (smbios_find_table(intf, SMBIOS_TYPE_LOG, 0, &table,
-			      SMBIOS_LEGACY_ENTRY_BASE,
-			      SMBIOS_LEGACY_ENTRY_LEN) < 0) {
-		lprintf(LOG_WARNING, "Unable to find SMBIOS eventlog table.\n");
+	if (intf->cb->eventlog->fetch(intf, &data, &length, &header_offset,
+				      &data_offset)) {
 		return -1;
 	}
 
 	/* Obtain handle to eventlog. */
-	elog_iter = smbios_new_eventlog_iterator(intf, &table.data.log);
+	elog_iter = smbios_new_eventlog_iterator(intf, data, length,
+						 header_offset, data_offset);
 
 	if (verify != NULL) {
 		void *eventlog_header = smbios_eventlog_get_header(elog_iter);

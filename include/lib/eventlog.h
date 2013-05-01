@@ -33,6 +33,7 @@
 #define MOSYS_LIB_EVENTLOG_H__
 
 #include <inttypes.h>
+#include <sys/types.h>
 
 #include "mosys/platform.h"
 
@@ -67,7 +68,8 @@ typedef int (*smbios_eventlog_verify_header)(struct elog_header *elog_header);
 
 /* SMBIOS Event Log */
 extern struct smbios_eventlog_iterator *smbios_new_eventlog_iterator(
-    struct platform_intf *intf, struct smbios_table_log *elog_table);
+    struct platform_intf *intf, uint8_t *data, size_t length,
+    off_t header_offset, off_t data_offset);
 extern void smbios_free_eventlog_iterator(
     struct smbios_eventlog_iterator *elog_iter);
 extern int smbios_eventlog_iterator_reset(

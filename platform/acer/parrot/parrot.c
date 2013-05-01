@@ -131,6 +131,7 @@ struct eventlog_cb parrot_eventlog_cb = {
 	.print_multi	= &elog_print_multi,
 	.verify		= &elog_verify,
 	.verify_header	= &elog_verify_header,
+	.fetch		= &elog_fetch_from_smbios,
 };
 
 struct platform_cb parrot_cb = {

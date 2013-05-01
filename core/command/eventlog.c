@@ -113,42 +113,6 @@ static int eventlog_smbios_list_cmd(struct platform_intf *intf,
 		eventlog_smbios_list_callback, &entry_count);
 }
 
-static int eventlog_smbios_info_cmd(struct platform_intf *intf,
-				    struct platform_cmd *cmd,
-				    int argc, char **argv)
-{
-	struct smbios_table table;
-	struct smbios_table_log *log;
-	struct kv_pair *kv;
-	int rc;
-
-	/* find the SMBIOS log structure */
-	if (smbios_find_table(intf, SMBIOS_TYPE_LOG, 0, &table,
-			      SMBIOS_LEGACY_ENTRY_BASE,
-			      SMBIOS_LEGACY_ENTRY_LEN) < 0)
-		return -1;
-
-	log = &table.data.log;
-
-	kv = kv_pair_new();
-	kv_pair_fmt(kv, "length", "%d bytes", log->length);
-	kv_pair_fmt(kv, "header_start", "0x%04x", log->header_start);
-	kv_pair_fmt(kv, "data_start", "0x%04x", log->data_start);
-	kv_pair_fmt(kv, "method", "0x%02x", log->method);
-	kv_pair_fmt(kv, "status", "0x%02x", log->status);
-	kv_pair_fmt(kv, "valid", "%s", log->status & 1 ? "yes" : "no");
-	kv_pair_fmt(kv, "full", "%s", log->status & 2 ? "yes" : "no");
-	kv_pair_fmt(kv, "change_token", "0x%08x", log->change_token);
-	kv_pair_fmt(kv, "header_format", "0x%02x", log->header_format);
-	kv_pair_fmt(kv, "descriptor_num", "%d", log->descriptor_num);
-	kv_pair_fmt(kv, "descriptor_len", "%d", log->descriptor_len);
-
-	rc = kv_pair_print(kv);
-	kv_pair_free(kv);
-
-	return rc;
-}
-
 static int eventlog_smbios_add_cmd(struct platform_intf *intf,
 				   struct platform_cmd *cmd,
 				   int argc, char **argv)
@@ -198,12 +162,6 @@ static int eventlog_smbios_clear_cmd(struct platform_intf *intf,
 }
 
 struct platform_cmd eventlog_smbios_cmds[] = {
-	{
-		.name	= "info",
-		.desc	= "Event Log Information",
-		.type	= ARG_TYPE_GETTER,
-		.arg	= { .func = eventlog_smbios_info_cmd }
-	},
 	{
 		.name	= "list",
 		.desc	= "List Event Log",

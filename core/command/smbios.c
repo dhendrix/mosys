@@ -205,9 +205,14 @@ static int smbios_info_log_cmd(struct platform_intf *intf,
 		    access_methods[table.data.log.method] : "Unknown");
 	kv_pair_add(kv, "status",
 		    val2str(table.data.log.status, log_status_map));
+	kv_pair_fmt(kv, "valid", "%s",
+		    table.data.log.status & 1 ? "yes" : "no");
+	kv_pair_fmt(kv, "full", "%s", table.data.log.status & 2 ? "yes" : "no");
 	kv_pair_fmt(kv, "change_token", "0x%08x", table.data.log.change_token);
 	kv_pair_fmt(kv, "address", "0x%08x", table.data.log.address.mem);
 	kv_pair_fmt(kv, "header_format", "%u", table.data.log.header_format);
+	kv_pair_fmt(kv, "descriptor_num", "%d", table.data.log.descriptor_num);
+	kv_pair_fmt(kv, "descriptor_len", "%d", table.data.log.descriptor_len);
 
 	rc = kv_pair_print(kv);
 	kv_pair_free(kv);

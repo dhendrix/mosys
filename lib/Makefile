@@ -3,6 +3,7 @@ obj-y		+= cbfs/
 obj-y		+= crypto/	# TODO: Make this a build option
 obj-y		+= dynamic_array/
 obj-y		+= eeprom/
+obj-y		+= eventlog/
 obj-y		+= file/
 obj-y		+= flashrom/
 obj-y		+= math/

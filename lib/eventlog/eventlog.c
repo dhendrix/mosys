@@ -53,6 +53,7 @@
 #include "intf/mmio.h"
 
 #include "lib/common.h"
+#include "lib/eventlog.h"
 #include "lib/smbios.h"
 
 struct smbios_eventlog_iterator {

@@ -33,7 +33,7 @@
 #include <valstr.h>
 
 #include "lib/elog.h"
-#include "lib/smbios.h"
+#include "lib/eventlog.h"
 #include "lib/string.h"
 
 #include "mosys/kv_pair.h"

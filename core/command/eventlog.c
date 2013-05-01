@@ -35,6 +35,7 @@
 #include <errno.h>
 
 #include "lib/common.h"
+#include "lib/eventlog.h"
 #include "lib/smbios.h"
 
 #include "mosys/log.h"

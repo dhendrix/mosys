@@ -59,13 +59,11 @@ typedef int (*smbios_eventlog_callback)(struct platform_intf *intf,
 /* Callback definition for an optional verification step of the eventlog
  * metadata when sequencing through each event.
  *
- * @table - SMBIOS eventlog table
  * @eventlog_header  SMBIOS eventlog header
  *
  * returns 0 on successful verification, < 0 otherwise.
  */
-typedef int (*smbios_eventlog_verify_metadata)(struct smbios_table_log *table,
-                                               void *eventlog_header);
+typedef int (*smbios_eventlog_verify_header)(struct elog_header *elog_header);
 
 /* SMBIOS Event Log */
 extern struct smbios_eventlog_iterator *smbios_new_eventlog_iterator(
@@ -109,7 +107,7 @@ extern int smbios_eventlog_event_time(struct smbios_log_entry *entry,
  * returns the aggregation (OR) of return codes for each call to callback.
  */
 extern int smbios_eventlog_foreach_event(struct platform_intf *intf,
-					 smbios_eventlog_verify_metadata verify,
+					 smbios_eventlog_verify_header verify,
 					 smbios_eventlog_callback callback,
 					 void *arg);
 

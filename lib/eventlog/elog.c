@@ -48,32 +48,16 @@
  *
  * return < 0 if invalid, 0 if valid
  */
-static int elog_verify_header(void *header)
+int elog_verify_header(struct elog_header *header)
 {
-	struct elog_header *hdr;
-
 	if (header == NULL)
 		return -1;
 
-	hdr = header;
-
-	if (hdr->elog_magic != ELOG_MAGIC)
+	if (header->elog_magic != ELOG_MAGIC)
 		return -1;
-	if (hdr->elog_size != sizeof(*hdr))
+	if (header->elog_size != sizeof(*header))
 		return -1;
-	if (hdr->elog_version != ELOG_VERSION)
-		return -1;
-
-	return 0;
-}
-
-int elog_verify_metadata(struct smbios_table_log *table, void *eventlog_header)
-{
-	MOSYS_DCHECK(table);
-
-	if (table->header_format != ELOG_HEADER_FORMAT)
-		return -1;
-	if (elog_verify_header(eventlog_header) < 0)
+	if (header->elog_version != ELOG_VERSION)
 		return -1;
 
 	return 0;

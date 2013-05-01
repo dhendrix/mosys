@@ -109,7 +109,7 @@ static int eventlog_smbios_list_cmd(struct platform_intf *intf,
 	int entry_count = 0;
 
 	return smbios_eventlog_foreach_event(
-		intf, intf->cb->eventlog->verify_metadata,
+		intf, intf->cb->eventlog->verify_header,
 		eventlog_smbios_list_callback, &entry_count);
 }
 

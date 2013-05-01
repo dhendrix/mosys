@@ -56,8 +56,7 @@ extern int elog_print_data(struct platform_intf *intf,
                            struct smbios_log_entry *entry, struct kv_pair *kv);
 extern int elog_verify(struct platform_intf *intf,
                        struct smbios_log_entry *entry);
-extern int elog_verify_metadata(struct smbios_table_log *table,
-                                void *eventlog_header);
+extern int elog_verify_header(struct elog_header *elog_header);
 extern int elog_print_multi(struct platform_intf *intf,
                             struct smbios_log_entry *entry, int start_id);
 

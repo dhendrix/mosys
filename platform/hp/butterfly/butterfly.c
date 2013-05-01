@@ -125,7 +125,7 @@ struct eventlog_cb butterfly_eventlog_cb = {
 	.print_data	= &elog_print_data,
 	.print_multi	= &elog_print_multi,
 	.verify		= &elog_verify,
-	.verify_metadata= &elog_verify_metadata,
+	.verify_header	= &elog_verify_header,
 };
 
 struct platform_cb butterfly_cb = {

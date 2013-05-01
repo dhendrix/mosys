@@ -32,6 +32,8 @@
 #ifndef MOSYS_PLATFORM_H__
 #define MOSYS_PLATFORM_H__
 
+#include "lib/elog.h"
+
 #include "mosys/mosys.h"
 
 struct kv_pair;
@@ -231,8 +233,7 @@ struct eventlog_cb {
 			   int start_id);
 	int (*verify)(struct platform_intf *intf,
 	              struct smbios_log_entry *entry);
-	int (*verify_metadata)(struct smbios_table_log *table,
-			       void *eventlog_header);
+	int (*verify_header)(struct elog_header *elog_header);
 	int (*add)(struct platform_intf *intf, int argc, char **argv);
 	int (*clear)(struct platform_intf *intf,
 	             enum eventlog_clear_type type);

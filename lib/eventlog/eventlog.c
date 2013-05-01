@@ -369,7 +369,7 @@ int smbios_eventlog_event_time(struct smbios_log_entry *entry, time_t *time)
  * returns the aggregation (OR) of return codes for each call to callback.
  */
 int smbios_eventlog_foreach_event(struct platform_intf *intf,
-                                  smbios_eventlog_verify_metadata verify,
+                                  smbios_eventlog_verify_header verify,
                                   smbios_eventlog_callback callback, void *arg)
 {
 	struct smbios_table table;
@@ -394,7 +394,7 @@ int smbios_eventlog_foreach_event(struct platform_intf *intf,
 	if (verify != NULL) {
 		void *eventlog_header = smbios_eventlog_get_header(elog_iter);
 
-		if (verify(&table.data.log, eventlog_header) < 0) {
+		if (verify(eventlog_header) < 0) {
 			ret = -1;
 			goto smbios_eventlog_foreach_event_out;
 		}

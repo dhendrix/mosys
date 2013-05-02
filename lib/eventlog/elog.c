@@ -28,12 +28,14 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+#include <fmap.h>
 #include <stdlib.h>
 #include <inttypes.h>
 #include <valstr.h>
 
 #include "intf/mmio.h"
 
+#include "lib/eeprom.h"
 #include "lib/elog.h"
 #include "lib/eventlog.h"
 #include "lib/smbios.h"
@@ -42,6 +44,7 @@
 #include "mosys/alloc.h"
 #include "mosys/kv_pair.h"
 #include "mosys/log.h"
+#include "mosys/output.h"
 #include "mosys/platform.h"
 
 /*
@@ -607,6 +610,59 @@ int elog_fetch_from_smbios(struct platform_intf *intf, uint8_t **data,
 
 	if (mmio_read(intf, table.data.log.address.mem, *length, *data) < 0)
 		return -1;
+
+	return 0;
+}
+
+/*
+ * elog_fetch_from_flash - fetch the eventlog from the RW_ELOG area of flash.
+ *
+ * @intf:          platform interface used for low level hardware access
+ * @data:          pointer to the fetched contents of the event log
+ * @length:        pointer to the length of the event log
+ * @header_offset: offset of the header in the event log
+ * @data_offset:   offset of the first event in the event log
+ *
+ * returns -1 on failure, 0 on success
+ */
+int elog_fetch_from_flash(struct platform_intf *intf, uint8_t **data,
+			  size_t *length, off_t *header_offset,
+			  off_t *data_offset)
+{
+	struct fmap *fmap;
+	struct fmap_area *fmap_area;
+	struct eeprom *host;
+
+	host = &intf->cb->eeprom->eeprom_list[0];
+	while (host->name && strcmp(host->name, "host_firmware"))
+		host++;
+	if (!host->name) {
+		lprintf(LOG_WARNING, "No host firmware found.\n");
+		return -1;
+	}
+
+	fmap = host->device->get_map(intf, host);
+	if (!fmap)
+		return -1;
+
+	fmap_area = fmap_find_area(fmap, "RW_ELOG");
+	if (!fmap_area)
+		lprintf(LOG_WARNING, "No event log area in flash.\n");
+
+	lprintf(LOG_WARNING, "Offset = %d.\n", fmap_area->offset);
+
+	*data = malloc(fmap_area->size);
+
+	if (host->device->read(intf, host, fmap_area->offset,
+			       fmap_area->size, *data)) {
+		free(*data);
+		lprintf(LOG_WARNING, "Failed to read event log from flash.\n");
+		return -1;
+	}
+
+	*length = fmap_area->size;
+	*header_offset = 0;
+	*data_offset = sizeof(struct elog_header);
 
 	return 0;
 }

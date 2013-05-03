@@ -81,6 +81,14 @@ static struct eeprom_dev spring_host_firmware = {
 	.get_map	= eeprom_get_fmap,
 };
 
+static struct eeprom_region spring_host_firmware_regions[] = {
+	{
+		.name	= "RW_ELOG",
+		.flag	= EEPROM_FLAG_EVENTLOG,
+	},
+	{ NULL },
+};
+
 static size_t spring_ec_firmware_size(struct platform_intf *intf,
 				     struct eeprom *eeprom)
 {
@@ -125,8 +133,10 @@ static struct eeprom spring_eeproms[] = {
 	{
 		.name		= "host_firmware",
 		.type		= EEPROM_TYPE_FW,
-		.flags		= EEPROM_FLAG_RDWR,
+		.flags		= EEPROM_FLAG_RDWR |
+				  EEPROM_FLAG_FMAP | EEPROM_FLAG_EVENTLOG,
 		.device		= &spring_host_firmware,
+		.regions	= &spring_host_firmware_regions,
 	},
 	{
 		.name		= "ec_firmware",

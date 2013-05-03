@@ -55,6 +55,7 @@ enum eeprom_type {
 enum eeprom_flag_types {
 	EEPROM_RD,
 	EEPROM_WR,
+	EEPROM_EVENTLOG,	/* has an eventlog */
 	EEPROM_FMAP,		/* has an FMAP blob */
 	EEPROM_VERBOSE_ONLY,
 };
@@ -62,6 +63,7 @@ enum eeprom_flag_types {
 #define EEPROM_FLAG_RD			1 << EEPROM_RD
 #define EEPROM_FLAG_WR			1 << EEPROM_WR
 #define EEPROM_FLAG_RDWR		(1 << EEPROM_RD) | (1 << EEPROM_WR)
+#define EEPROM_FLAG_EVENTLOG		1 << EEPROM_EVENTLOG
 #define EEPROM_FLAG_FMAP		1 << EEPROM_FMAP
 #define EEPROM_FLAG_VERBOSE_ONLY	1 << EEPROM_VERBOSE_ONLY
 

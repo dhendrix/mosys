@@ -615,7 +615,7 @@ int elog_fetch_from_smbios(struct platform_intf *intf, uint8_t **data,
 }
 
 /*
- * elog_fetch_from_flash - fetch the eventlog from the RW_ELOG area of flash.
+ * elog_fetch_from_flash - fetch the eventlog from the flash.
  *
  * @intf:          platform interface used for low level hardware access
  * @data:          pointer to the fetched contents of the event log
@@ -629,38 +629,45 @@ int elog_fetch_from_flash(struct platform_intf *intf, uint8_t **data,
 			  size_t *length, off_t *header_offset,
 			  off_t *data_offset)
 {
-	struct fmap *fmap;
-	struct fmap_area *fmap_area;
-	struct eeprom *host;
+	struct eeprom *eeprom;
+	struct eeprom_region *region = NULL;
+	int found = 0;
+	int bytes_read;
 
-	host = &intf->cb->eeprom->eeprom_list[0];
-	while (host->name && strcmp(host->name, "host_firmware"))
-		host++;
-	if (!host->name) {
-		lprintf(LOG_WARNING, "No host firmware found.\n");
+	for (eeprom = &intf->cb->eeprom->eeprom_list[0];
+			eeprom->name; eeprom++) {
+
+		if (!(eeprom->flags & EEPROM_FLAG_EVENTLOG))
+			continue;
+
+		for (region = &eeprom->regions[0]; region->flag; region++) {
+			if (region->flag & EEPROM_FLAG_EVENTLOG) {
+				found = 1;
+				break;
+			}
+		}
+
+		if (found)
+			break;
+	}
+
+	if (!found) {
+		lprintf(LOG_WARNING, "No ROM with eventlog regions found.\n");
 		return -1;
 	}
 
-	fmap = host->device->get_map(intf, host);
-	if (!fmap)
+	/* TODO: for now we assume that the eventlog will be found using fmap */
+	if (!(eeprom->flags & EEPROM_FLAG_FMAP) && region->name)
 		return -1;
 
-	fmap_area = fmap_find_area(fmap, "RW_ELOG");
-	if (!fmap_area) {
-		lprintf(LOG_WARNING, "No event log area in flash.\n");
-		return -1;
-	}
-
-	*data = malloc(fmap_area->size);
-
-	if (host->device->read(intf, host, fmap_area->offset,
-			       fmap_area->size, *data)) {
-		free(*data);
+	bytes_read = eeprom->device->read_by_name(intf, eeprom,
+						region->name, data);
+	if (bytes_read < 0) {
 		lprintf(LOG_WARNING, "Failed to read event log from flash.\n");
 		return -1;
 	}
 
-	*length = fmap_area->size;
+	*length = bytes_read;
 	*header_offset = 0;
 	*data_offset = sizeof(struct elog_header);
 

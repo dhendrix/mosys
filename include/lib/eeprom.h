@@ -53,6 +53,7 @@ enum eeprom_type {
 #define EEPROM_TYPE_FW			1 << EEPROM_FW
 
 enum eeprom_flag_types {
+	EEPROM_UNKNOWN	= 0,
 	EEPROM_RD,
 	EEPROM_WR,
 	EEPROM_EVENTLOG,	/* has an eventlog */
@@ -129,6 +130,15 @@ struct eeprom_dev {
 	                        struct eeprom *eeprom);
 };
 
+/* eeprom_region contains attributes used to assist library functions */
+struct eeprom_region {
+	const char *name;	/* may be something found in an fmap */
+	int handle;		/* handle for this instance */
+	off_t offset;
+	size_t len;
+	enum eeprom_flag_types flag;
+};
+
 /* high-level eeprom interface (includes name, topology info, etc) */
 struct eeprom {
 	const char *name;
@@ -142,6 +152,12 @@ struct eeprom {
 	uint8_t flags;
 	int (*setup)(struct platform_intf *intf, struct eeprom *eeprom);
 	void *priv;
+
+	/*
+	 * Regions of interest may be described with attributes to assist
+	 * library functions in finding and processing them.
+	 */
+	struct eeprom_region *regions;
 };
 
 extern int eeprom_mmio_read(struct platform_intf *intf, struct eeprom *eeprom,

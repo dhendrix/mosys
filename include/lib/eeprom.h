@@ -100,6 +100,24 @@ struct eeprom_dev {
 		    void *data);
 
 	/*
+	 * read_by_name  -  read region from eeprom specified by name
+	 *
+	 * @intf:	platform interface
+	 * @eeprom:	eeprom interface
+	 * @name:	name of region to read
+	 * @data:	double-pointer to data buffer
+	 *
+	 * This allocates the buffer and fills it data from the named region.
+	 *
+	 * returns the number of bytes read if successful
+	 * returns <0 to indicate error
+	 */
+	int (*read_by_name)(struct platform_intf *intf,
+			    struct eeprom *eeprom,
+			    const char *name,
+			    uint8_t **data);
+
+	/*
 	 * write  -  write to eeprom
 	 *
 	 * @intf:	platform interface

@@ -90,7 +90,7 @@ static int do_flashrom(const char *cmd)
 		re_acquire_lock = 0;
 #endif
 
-	if (system(cmd) < 0) {
+	if (system(cmd) != EXIT_SUCCESS) {
 		lprintf(LOG_DEBUG, "%s: Failed to run %s\n", __func__, cmd);
 		rc = -1;
 	}

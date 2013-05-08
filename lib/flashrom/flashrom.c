@@ -90,7 +90,7 @@ static int do_flashrom(const char *cmd)
 		re_acquire_lock = 0;
 #endif
 
-	if (system(cmd) != EXIT_SUCCESS) {
+	if (system(cmd) != 0) {
 		lprintf(LOG_DEBUG, "%s: Failed to run %s\n", __func__, cmd);
 		rc = -1;
 	}
@@ -178,6 +178,82 @@ flashrom_read_exit_2:
 	free(flashrom_cmd);
 flashrom_read_exit_1:
 	unlink(filename);
+	free_string_builder(sb);
+	return rc;
+}
+
+int flashrom_read_by_name(uint8_t **buf,
+                  enum target_bus target, const char *region)
+{
+	int fd, rc = -1;
+	struct string_builder *sb = new_string_builder();
+	char *flashrom_cmd;
+	char filename[] = "/tmp/flashrom_XXXXXX";
+	struct stat s;
+	const char *path;
+
+	if (!region)
+		goto flashrom_read_exit_0;
+
+	if ((path = flashrom_path()) == NULL)
+		goto flashrom_read_exit_0;
+
+	string_builder_sprintf(sb, path);
+
+	switch(target) {
+	case INTERNAL_BUS_SPI:
+		string_builder_strcat(sb, " -p internal:bus=spi");
+		break;
+	case INTERNAL_BUS_I2C:
+		string_builder_strcat(sb, " -p internal:bus=i2c");
+		break;
+	case INTERNAL_BUS_LPC:
+		string_builder_strcat(sb, " -p internal:bus=lpc");
+		break;
+	default:
+		lprintf(LOG_DEBUG, "Unsupported target: %d\n", target);
+		goto flashrom_read_exit_1;
+	}
+
+	if (!mkstemp(filename)) {
+		lperror(LOG_DEBUG, "Unable to make temporary file for flashrom");
+		goto flashrom_read_exit_1;
+	}
+
+	string_builder_strcat(sb, " -i ");
+	string_builder_strcat(sb, region);
+	string_builder_strcat(sb, ":");
+	string_builder_strcat(sb, filename);
+
+	string_builder_strcat(sb, " -r /dev/null");
+	string_builder_strcat(sb, " >/dev/null 2>&1");
+
+	flashrom_cmd = mosys_strdup(string_builder_get_string(sb));
+	lprintf(LOG_DEBUG, "Calling \"%s\"\n", flashrom_cmd);
+	if (do_flashrom(flashrom_cmd) < 0) {
+		lprintf(LOG_DEBUG, "Unable to read region \"%s\"\n", region);
+		goto flashrom_read_exit_2;
+	}
+
+	fd = open(filename, O_RDONLY);
+	if (fstat(fd, &s) < 0) {
+		lprintf(LOG_DEBUG, "%s: Cannot stat %s\n", __func__, filename);
+		goto flashrom_read_exit_2;
+	}
+
+	*buf = mosys_malloc(s.st_size);
+	if (read(fd, *buf, s.st_size) < 0) {
+		lperror(LOG_DEBUG, "%s: Unable to read image");
+		free(*buf);
+		goto flashrom_read_exit_2;
+	}
+
+	rc = s.st_size;
+flashrom_read_exit_2:
+	free(flashrom_cmd);
+flashrom_read_exit_1:
+	unlink(filename);
+flashrom_read_exit_0:
 	free_string_builder(sb);
 	return rc;
 }

@@ -100,7 +100,7 @@ struct eeprom_dev {
 		    void *data);
 
 	/*
-	 * read_by_name  -  read region from eeprom specified by name
+	 * read_by_name  -  read region specified by name from eeprom
 	 *
 	 * @intf:	platform interface
 	 * @eeprom:	eeprom interface

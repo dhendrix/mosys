@@ -53,4 +53,20 @@ enum target_bus {
 extern int flashrom_read(uint8_t *buf, size_t size,
                          enum target_bus target, const char *region);
 
+/*
+ * flashrom_read_fmap_area - Partial read using Flashrom utility
+ *
+ * @buf:	double-pointer of buffer to allocate and fill
+ * @target:	target ROM
+ * @region:	region to include with -i
+ *
+ * This function reads the target ROM by calling Flashrom with appropriate
+ * parameters. It will allocate the appropriate number of bytes in buf.
+ *
+ * returns number of bytes read from region to indicate success
+ * returns <0 to indicate failure
+ */
+extern int flashrom_read_by_name(uint8_t **buf,
+                         enum target_bus target, const char *region);
+
 #endif /* MOSYS_LIB_FLASHROM_H__ */

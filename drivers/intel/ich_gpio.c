@@ -41,7 +41,7 @@
 #include "intf/pci.h"
 
 #include "drivers/gpio.h"
-#include "drivers/intel/nm10.h"
+#include "drivers/intel/ich_generic.h"
 
 /* For ports 0, 1, and 2 */
 static uint8_t ich_use_sel_offsets[] = { 0x00, 0x30, 0x40 };

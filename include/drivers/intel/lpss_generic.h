@@ -1,5 +1,5 @@
 /*
- * Copyright 2012, Google Inc.
+ * Copyright 2013, Google Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,58 +29,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MOSYS_DRIVERS_INTEL_ICH_H__
-#define MOSYS_DRIVERS_INTEL_ICH_H__
+#ifndef MOSYS_DRIVERS_INTEL_LPSS_GENERIC_H__
+#define MOSYS_DRIVERS_INTEL_LPSS_GENERIC_H__
 
-/* convert GPIO# to pin# */
-#define ICH_GPIO_PORT1_TO_PIN(x)	(32 - (x))
-#define ICH_GPIO_PORT2_TO_PIN(x)	(64 - (x))
+#define LPSS_GPIO_CONF0(num)		(0x100 + ((num) * 8))
+#define  LPSS_GPIO_CONF0_MODE_BIT	0
+#define  LPSS_GPIO_CONF0_DIR_BIT	2
+#define  LPSS_GPIO_CONF0_INV_BIT	3
+#define  LPSS_GPIO_CONF0_GPI_BIT	30
+#define  LPSS_GPIO_CONF0_GPO_BIT	31
 
 /* forward declarations */
 struct platform_intf;
 struct gpio_map;
+enum ich_generation;
 
-enum ich_generation {
-	ICH7,		/* ICH7 and NM10 */
-	ICH8,
-	ICH9,
-	ICH10,
-	ICH_6_SERIES,	/* Cougar Point */
-	ICH_7_SERIES,	/* Panther Point */
-	ICH_8_SERIES,	/* LynxPoint-H */
-	ICH_8_LPSS,	/* LynxPoint-LP */
-};
-
-/* Boot BIOS Straps for ICH7-ICH10 chipsets */
-enum ich_bbs_ich7 {
-	ICH7_BBS_UNKNOWN	= -1,
-	ICH7_BBS_RSVD		= 0x0,	/* note: this is also SPI on ICH10 */
-	ICH7_BBS_SPI		= 0x1,
-	ICH7_BBS_PCI		= 0x2,
-	ICH7_BBS_LPC		= 0x3,
-};
-
-/* Boot BIOS Straps for Sandy Bridge and newer chipsets */
-enum ich_snb_bbs {
-	ICH_SNB_BBS_UNKNOWN	= -1,
-	ICH_SNB_BBS_LPC		= 0x0,
-	ICH_SNB_BBS_RSVD	= 0x1,
-	ICH_SNB_BBS_PCI		= 0x2,
-	ICH_SNB_BBS_SPI		= 0x3,
+/* Boot BIOS Straps for LPSS chipsets */
+enum ich_lpss_bbs {
+	LPSS_BBS_UNKNOWN	= -1,
+	LPSS_BBS_SPI		= 0,
+	LPSS_BBS_LPC		= 1,
 };
 
 /*
- * ich_get_bbs - get bios boot straps (bbs) value
+ * lpss_get_bbs - get bios boot straps (bbs) value
  *
  * @intf:	platform interface
  *
  * returns BBS value to indicate success
  * returns <0 to indicate failure
  */
-extern int ich_get_bbs(struct platform_intf *intf);
+int lpss_get_bbs(struct platform_intf *intf);
 
 /*
- * ich_set_bbs - set bios boot straps (bbs) value
+ * lpss_set_bbs - set bios boot straps (bbs) value
  *
  * @intf:	platform interface
  * @bbs:	bbs value
@@ -88,26 +70,25 @@ extern int ich_get_bbs(struct platform_intf *intf);
  * returns 0 to indicate success
  * returns <0 to indicate failure
  */
-int ich_set_bbs(struct platform_intf *intf, int bbs);
-
+int lpss_set_bbs(struct platform_intf *intf, int bbs);
 
 /*
- * ich_get_gpio_base  - get GPIO base address.
+ * lpss_get_gpio_base  - get GPIO base address.
  *
  * @intf:	platform interface
  * @val:	location to store value
  *
  * This function is primarily useful when setting values that are related to
- * GPIOs. For reading and writing GPIOs themselves, use the ich_read_gpio and
- * ich_set_gpio wrapper functions for added safety.
- * 
+ * GPIOs. For reading and writing GPIOs themselves, use the lpss_read_gpio and
+ * lpss_set_gpio wrapper functions for added safety.
+ *
  * returns 0 to indicate success
  * returns <0 on read failure
  */
-extern int ich_get_gpio_base(struct platform_intf *intf, uint16_t *val);
+int lpss_get_gpio_base(struct platform_intf *intf, uint32_t *val);
 
 /*
- * ich_read_gpio  - read GPIO status
+ * lpss_read_gpio  - read GPIO status
  *
  * @intf:	platform interface
  * @gen:	chipset generation
@@ -116,11 +97,11 @@ extern int ich_get_gpio_base(struct platform_intf *intf, uint16_t *val);
  * returns GPIO state as 0 or 1
  * returns <0 on read failure
  */
-int ich_read_gpio(struct platform_intf *intf,
-                  enum ich_generation gen, struct gpio_map *gpio);
+int lpss_read_gpio(struct platform_intf *intf,
+		   enum ich_generation gen, struct gpio_map *gpio);
 
 /*
- * ich_set_gpio  - set GPIO status
+ * lpss_set_gpio  - set GPIO status
  *
  * @intf:	platform interface
  * @gen:	chipset generation
@@ -130,15 +111,15 @@ int ich_read_gpio(struct platform_intf *intf,
  * returns 0 if successful
  * returns <0 on read failure
  */
-int ich_set_gpio(struct platform_intf *intf, enum ich_generation gen,
-                 struct gpio_map *gpio, int state);
+int lpss_set_gpio(struct platform_intf *intf, enum ich_generation gen,
+		  struct gpio_map *gpio, int state);
 
 /*
- * ich_gpio_list  -  list GPIOs in a given bank
+ * lpss_gpio_list  -  list GPIOs
  *
  * @intf:	platform interface
- * @port:	GPIO port
- * @gpio_pins:	set of GPIO pins to list
+ * @gen:	chipset generation
+ * @gpio_ids:	set of GPIO IDs to list
  * @num_gpios:	number of GPIOs in set
  *
  * Note: Some chipsets do not implement certain GPIOs. Use the gpios
@@ -147,16 +128,7 @@ int ich_set_gpio(struct platform_intf *intf, enum ich_generation gen,
  * returns 0 if successful
  * returns <0 if failure
  */
-extern int ich_gpio_list(struct platform_intf *intf, enum ich_generation gen,
-                         int port, int gpio_pins[], int num_gpios);
+int lpss_gpio_list(struct platform_intf *intf, enum ich_generation gen,
+		   int gpio_ids[], int num_gpios);
 
-/*
- * ich_global_reset - initiate reset via reset control register (0xcf9)
- *
- * @intf:	platform interface
- *
- * returns <0 to indicate failure
- */
-extern int ich_global_reset(struct platform_intf *intf);
-
-#endif /* MOSYS_DRIVERS_INTEL_ICH_H__ */
+#endif /* MOSYS_DRIVERS_INTEL_LPSS_GENERIC_H__ */

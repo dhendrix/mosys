@@ -15,3 +15,8 @@ config CHIPSET_INTEL_SERIES6
 	default n
 	help
 	  This currently includes the QM67, UM67, HM67, HM65, and QS67 SKUs
+
+config CHIPSET_INTEL_LYNXPOINT_LP
+	bool "Intel LynxPoint Low Power Chipset"
+	select CHIPSET_INTEL
+	default n

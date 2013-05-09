@@ -5,4 +5,5 @@ obj-$(CONFIG_EXPERIMENTAL_KAEN)		+= kaen/
 obj-$(CONFIG_EXPERIMENTAL_KIEV)		+= kiev/
 obj-$(CONFIG_EXPERIMENTAL_LINK)		+= link/
 obj-$(CONFIG_EXPERIMENTAL_SEABOARD)	+= seaboard/
+obj-$(CONFIG_EXPERIMENTAL_SLIPPY)	+= slippy/
 obj-$(CONFIG_PLATFORM_SPRING)		+= spring/

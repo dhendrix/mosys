@@ -47,6 +47,13 @@ config EXPERIMENTAL_LINK
 	bool "link"
 	default n
 
+config EXPERIMENTAL_SLIPPY
+	depends on PLATFORM_ARCH_X86 && PLATFORM_EXPERIMENTAL
+	select CHIPSET_INTEL_LYNXPOINT_LP
+	select GOOGLE_EC_LPC
+	bool "slippy"
+	default n
+
 config PLATFORM_SPRING
         depends on PLATFORM_ARCH_ARMEL && PLATFORM_EXPERIMENTAL
         select GOOGLE_EC_I2C

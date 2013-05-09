@@ -131,7 +131,7 @@ struct platform_cmd battery_cmds[] = {
 		.name	= "update",
 		.desc	= "Initiate Battery Firmware Update",
 		.type	= ARG_TYPE_SETTER,
-		.arg	= { .sub = battery_update_cmd },
+		.arg	= { .func = battery_update_cmd },
 	},
 	{ NULL }
 };

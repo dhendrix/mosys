@@ -113,12 +113,14 @@ static uint8_t nm10_read_cmos(struct platform_intf *intf,
 	return data;
 }
 
+#if 0
 static void nm10_write_cmos(struct platform_intf *intf,
 			       int addr, int reg, uint8_t val)
 {
 	io_write8(intf, nm10_cmos_port[addr], reg);
 	io_write8(intf, nm10_cmos_port[addr] + 1, val);
 }
+#endif
 
 static int acer_chromia700_nvram_list(struct platform_intf *intf)
 {

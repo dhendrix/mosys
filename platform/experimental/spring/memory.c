@@ -37,8 +37,8 @@
 
 #include "spring.h"
 
-/* we're not using DIMMs, so count it as a single logical "slot" */
-#define SPRING_DIMM_COUNT	1
+/* Each channel will be represented as a logical DIMM */
+#define SPRING_DIMM_COUNT	2
 
 /* Fake SPD data for now (based off Elpida SPD for Snow) */
 static const uint8_t fake_spd[SPD_MAX_LENGTH] = {
@@ -46,11 +46,11 @@ static const uint8_t fake_spd[SPD_MAX_LENGTH] = {
 	[DDR3_SPD_REG_REVISION]		= 0x10,
 	[DDR3_SPD_REG_DEVICE_TYPE]	= 0x0b,
 	[DDR3_SPD_REG_MODULE_TYPE]	= 0x03,
-	[DDR3_SPD_REG_DENSITY_BANKS]	= 0x03,	/* 8 banks * 256MB = 2GBytes */
+	[DDR3_SPD_REG_DENSITY_BANKS]	= 0x04,	/* 8 banks * 512Mbits = 4Gb */
 	[DDR3_SPD_REG_ADDRESSING]	= 0x32,	/* 15 rows, 10 cols */
 	[DDR3_SPD_REG_VOLTAGE]		= 0x02,	/* 1.35V */
-	[DDR3_SPD_REG_MODULE_ORG]	= 0x01,	/* 1 rank, x8 */
-	[DDR3_SPD_REG_MODULE_BUS_WIDTH]	= 0x03,
+	[DDR3_SPD_REG_MODULE_ORG]	= 0x02,	/* 1 rank, x16 */
+	[DDR3_SPD_REG_MODULE_BUS_WIDTH]	= 0x02,	/* 32-bits */
 
 	/* DDR3-1666 = (1/8)ns * 10 = 1.25ns */
 	[DDR3_SPD_REG_MTB_DIVIDEND]	= 1,
@@ -100,11 +100,11 @@ static const uint8_t micron_ddr3_1600_spd[SPD_MAX_LENGTH] = {
 	[DDR3_SPD_REG_REVISION]		= 0x12,
 	[DDR3_SPD_REG_DEVICE_TYPE]	= 0x0b,
 	[DDR3_SPD_REG_MODULE_TYPE]	= 0x03,
-	[DDR3_SPD_REG_DENSITY_BANKS]	= 0x03,	/* HACK */
+	[DDR3_SPD_REG_DENSITY_BANKS]	= 0x04,	/* 8 banks * 512Mbits = 4Gb */
 	[DDR3_SPD_REG_ADDRESSING]	= 0x32,	/* 15 rows, 10 cols */
 	[DDR3_SPD_REG_VOLTAGE]		= 0x02,	/* 1.35V */
-	[DDR3_SPD_REG_MODULE_ORG]	= 0x01,	/* 1 rank, x8 */
-	[DDR3_SPD_REG_MODULE_BUS_WIDTH]	= 0x03,
+	[DDR3_SPD_REG_MODULE_ORG]	= 0x02,	/* 1 rank, x16 */
+	[DDR3_SPD_REG_MODULE_BUS_WIDTH]	= 0x02,	/* 32-bits */
 
 	/* DDR3-1600 = (1/8)ns * 10 = 1.25ns */
 	[DDR3_SPD_REG_MTB_DIVIDEND]	= 1,
@@ -155,11 +155,11 @@ static const uint8_t nanya_ddr3_1600_spd[SPD_MAX_LENGTH] = {
 	[DDR3_SPD_REG_REVISION]		= 0x12,
 	[DDR3_SPD_REG_DEVICE_TYPE]	= 0x0b,
 	[DDR3_SPD_REG_MODULE_TYPE]	= 0x03,
-	[DDR3_SPD_REG_DENSITY_BANKS]	= 0x03,	/* HACK */
+	[DDR3_SPD_REG_DENSITY_BANKS]	= 0x04,	/* 8 banks * 512Mbits = 4Gb */
 	[DDR3_SPD_REG_ADDRESSING]	= 0x32,	/* 15 rows, 10 cols */
 	[DDR3_SPD_REG_VOLTAGE]		= 0x02,	/* 1.35V */
-	[DDR3_SPD_REG_MODULE_ORG]	= 0x01,	/* 1 rank, x8 */
-	[DDR3_SPD_REG_MODULE_BUS_WIDTH]	= 0x03,
+	[DDR3_SPD_REG_MODULE_ORG]	= 0x02,	/* 1 rank, x16 */
+	[DDR3_SPD_REG_MODULE_BUS_WIDTH]	= 0x02,	/* 32-bits */
 
 	/* DDR3-1600 = (1/8)ns * 10 = 1.25ns */
 	[DDR3_SPD_REG_MTB_DIVIDEND]	= 1,

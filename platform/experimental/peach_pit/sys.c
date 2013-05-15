@@ -27,54 +27,70 @@
  * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * gpio.c: GPIO functions for Exynos5420
  */
 
-#include <inttypes.h>
-
+#include "mosys/alloc.h"
 #include "mosys/platform.h"
 
-#include "drivers/gpio.h"
-#include "drivers/samsung/exynos_generic.h"
-#include "drivers/samsung/exynos5420/gpio.h"
+#include "peach_pit.h"
 
-#define EXYNOS5420_GPIO_RIGHT	0x13400000
-#define EXYNOS5420_GPIO_TOP	0x13410000
-#define EXYNOS5420_GPIO_LEFT	0x14000000
-#define EXYNOS5420_GPIO_BOTTOM	0x14010000
+#if 0
+static const char *pit_get_vendor(struct platform_intf *intf)
+{
+	/* FIXME: add then when it becomes public */
+}
+#endif
 
-/* banks of GPIO registers corresponding to a port */
-const struct exynos_gpio_bank exynos5420_gpio_banks[] = {
-	/*
-	 * Note 1: Keep in order of exynos5_gpio_port enum.
-	 * Note 2: ETC registers are special, so they are not included here.
-	 */
+static const char *get_name(struct platform_intf *intf)
+{
+	char *ret = NULL;
 
-	/* base == EXYNOS5420_GPIO_RIGHT */
-	{ "GPY7", EXYNOS5420_GPIO_RIGHT + 0x0000 },
+	ret = mosys_strdup(intf->name);
 
-	/* TODO: finish filling this out if needed */
-	{ NULL },
+	return (const char *)ret;
+}
+
+static const char *get_version(struct platform_intf *intf)
+{
+	char *ret = NULL;
+
+	switch (peach_pit_board_config) {
+	case PEACH_PIT_CONFIG_PROTO:
+		ret = mosys_strdup("PROTO");
+		break;
+	case PEACH_PIT_CONFIG_EVT_2GB:
+	case PEACH_PIT_CONFIG_EVT_4GB:
+		ret = mosys_strdup("EVT");
+		break;
+	case PEACH_PIT_CONFIG_DVT1_2GB:
+	case PEACH_PIT_CONFIG_DVT1_4GB:
+	case PEACH_PIT_CONFIG_DVT2_2GB:
+	case PEACH_PIT_CONFIG_DVT2_4GB:
+		ret = mosys_strdup("DVT");
+		break;
+	case PEACH_PIT_CONFIG_PVT1_2GB:
+	case PEACH_PIT_CONFIG_PVT1_4GB:
+	case PEACH_PIT_CONFIG_PVT2_2GB:
+	case PEACH_PIT_CONFIG_PVT2_4GB:
+		ret = mosys_strdup("PVT");
+		break;
+	case PEACH_PIT_CONFIG_MP_2GB:
+	case PEACH_PIT_CONFIG_MP_4GB:
+		ret = mosys_strdup("MP");
+		break;
+	case PEACH_PIT_CONFIG_RSVD:
+		ret = mosys_strdup("RSVD");
+		break;
+	default:
+		ret = mosys_strdup("Unknown");
+		break;
+	}
+
+	return ret;
+}
+
+struct sys_cb peach_pit_sys_cb = {
+//	.vendor		= &get_vendor,
+	.name		= &get_name,
+	.version	= &get_version,
 };
-
-int exynos5420_read_gpio(struct platform_intf *intf, struct gpio_map *gpio)
-{
-	return exynos_read_gpio(intf, exynos5420_gpio_banks, gpio);
-}
-
-int exynos5420_read_gpio_mvl(struct platform_intf *intf, struct gpio_map *gpio)
-{
-	return exynos_read_gpio_mvl(intf, exynos5420_gpio_banks, gpio);
-}
-
-int exynos5420_set_gpio(struct platform_intf *intf,
-		     struct gpio_map *gpio, int state)
-{
-	return exynos_set_gpio(intf, exynos5420_gpio_banks, gpio, state);
-}
-
-int exynos5420_gpio_list(struct platform_intf *intf)
-{
-	return exynos_gpio_list(intf, exynos5420_gpio_banks);
-}

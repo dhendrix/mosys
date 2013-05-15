@@ -1,5 +1,5 @@
 /*
- * Copyright 2013, Google Inc.
+ * Copyright 2012, Google Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,54 +27,45 @@
  * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * gpio.c: GPIO functions for Exynos5420
  */
 
-#include <inttypes.h>
+#ifndef PLATFORM_PEACH_PIT_H__
+#define PLATFORM_PEACH_PIT_H__
 
+#include <inttypes.h>
 #include "mosys/platform.h"
 
-#include "drivers/gpio.h"
-#include "drivers/samsung/exynos_generic.h"
-#include "drivers/samsung/exynos5420/gpio.h"
+#define PEACH_PIT_BOARD_REV0	"BOARD_REV0"
+#define PEACH_PIT_BOARD_REV1	"BOARD_REV1"
+#define PEACH_PIT_BOARD_REV2	"BOARD_REV2"
+#define PEACH_PIT_BOARD_REV3	"BOARD_REV3"
 
-#define EXYNOS5420_GPIO_RIGHT	0x13400000
-#define EXYNOS5420_GPIO_TOP	0x13410000
-#define EXYNOS5420_GPIO_LEFT	0x14000000
-#define EXYNOS5420_GPIO_BOTTOM	0x14010000
-
-/* banks of GPIO registers corresponding to a port */
-const struct exynos_gpio_bank exynos5420_gpio_banks[] = {
-	/*
-	 * Note 1: Keep in order of exynos5_gpio_port enum.
-	 * Note 2: ETC registers are special, so they are not included here.
-	 */
-
-	/* base == EXYNOS5420_GPIO_RIGHT */
-	{ "GPY7", EXYNOS5420_GPIO_RIGHT + 0x0000 },
-
-	/* TODO: finish filling this out if needed */
-	{ NULL },
+enum peach_pit_board_config {
+	PEACH_PIT_CONFIG_UNKNOWN = -1,
+	PEACH_PIT_CONFIG_RSVD = 0,
+	PEACH_PIT_CONFIG_PROTO,
+	PEACH_PIT_CONFIG_EVT_2GB,
+	PEACH_PIT_CONFIG_EVT_4GB,
+	PEACH_PIT_CONFIG_DVT1_2GB,
+	PEACH_PIT_CONFIG_DVT1_4GB,
+	PEACH_PIT_CONFIG_DVT2_2GB,
+	PEACH_PIT_CONFIG_DVT2_4GB,
+	PEACH_PIT_CONFIG_PVT1_2GB,
+	PEACH_PIT_CONFIG_PVT1_4GB,
+	PEACH_PIT_CONFIG_PVT2_2GB,
+	PEACH_PIT_CONFIG_PVT2_4GB,
+	PEACH_PIT_CONFIG_MP_2GB,
+	PEACH_PIT_CONFIG_MP_4GB,
 };
 
-int exynos5420_read_gpio(struct platform_intf *intf, struct gpio_map *gpio)
-{
-	return exynos_read_gpio(intf, exynos5420_gpio_banks, gpio);
-}
+extern enum peach_pit_board_config peach_pit_board_config;
+extern int peach_pit_ec_setup(struct platform_intf *intf);
 
-int exynos5420_read_gpio_mvl(struct platform_intf *intf, struct gpio_map *gpio)
-{
-	return exynos_read_gpio_mvl(intf, exynos5420_gpio_banks, gpio);
-}
+/* platform callbacks */
+extern struct eeprom_cb peach_pit_eeprom_cb;	/* eeprom.c */
+extern struct sys_cb peach_pit_sys_cb;		/* sys.c */
+extern struct gpio_cb peach_pit_gpio_cb;	/* gpio.c */
+extern struct memory_cb peach_pit_memory_cb;	/* memory.c */
+extern struct nvram_cb gec_nvram_cb;		/* drivers/google/gec.c */
 
-int exynos5420_set_gpio(struct platform_intf *intf,
-		     struct gpio_map *gpio, int state)
-{
-	return exynos_set_gpio(intf, exynos5420_gpio_banks, gpio, state);
-}
-
-int exynos5420_gpio_list(struct platform_intf *intf)
-{
-	return exynos_gpio_list(intf, exynos5420_gpio_banks);
-}
+#endif /* PLATFORM_PEACH_PIT_H_ */

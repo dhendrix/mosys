@@ -27,54 +27,42 @@
  * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * gpio.c: GPIO functions for Exynos5420
  */
 
-#include <inttypes.h>
-
+#include "mosys/log.h"
 #include "mosys/platform.h"
 
-#include "drivers/gpio.h"
-#include "drivers/samsung/exynos_generic.h"
-#include "drivers/samsung/exynos5420/gpio.h"
+#include "drivers/google/gec.h"
 
-#define EXYNOS5420_GPIO_RIGHT	0x13400000
-#define EXYNOS5420_GPIO_TOP	0x13410000
-#define EXYNOS5420_GPIO_LEFT	0x14000000
-#define EXYNOS5420_GPIO_BOTTOM	0x14010000
+#define PEACH_PIT_EC_BUS	2
+#define	PEACH_PIT_EC_CS		0
 
-/* banks of GPIO registers corresponding to a port */
-const struct exynos_gpio_bank exynos5420_gpio_banks[] = {
-	/*
-	 * Note 1: Keep in order of exynos5_gpio_port enum.
-	 * Note 2: ETC registers are special, so they are not included here.
-	 */
-
-	/* base == EXYNOS5420_GPIO_RIGHT */
-	{ "GPY7", EXYNOS5420_GPIO_RIGHT + 0x0000 },
-
-	/* TODO: finish filling this out if needed */
-	{ NULL },
+#if 0
+struct gec_priv peach_pit_ec_priv = {
+	.addr.spi.bus	= PEACH_PIT_EC_BUS,		/* may be overridden */
+	.addr.spi.cs	= PEACH_PIT_EC_CS,
 };
 
-int exynos5420_read_gpio(struct platform_intf *intf, struct gpio_map *gpio)
+int peach_pit_ec_setup(struct platform_intf *intf)
 {
-	return exynos_read_gpio(intf, exynos5420_gpio_banks, gpio);
-}
+	int ret;
 
-int exynos5420_read_gpio_mvl(struct platform_intf *intf, struct gpio_map *gpio)
-{
-	return exynos_read_gpio_mvl(intf, exynos5420_gpio_banks, gpio);
-}
+	MOSYS_CHECK(intf->cb && intf->cb->ec);
+	intf->cb->ec->priv = &peach_pit_ec_priv;
 
-int exynos5420_set_gpio(struct platform_intf *intf,
-		     struct gpio_map *gpio, int state)
-{
-	return exynos_set_gpio(intf, exynos5420_gpio_banks, gpio, state);
-}
+	ret = gec_probe_spi(intf);
+	if (ret == 1)
+		lprintf(LOG_DEBUG, "GEC found on SPI bus\n");
+	else if (ret == 0)
+		lprintf(LOG_DEBUG, "GEC not found on SPI bus\n");
+	else
+		lprintf(LOG_ERR, "Error when probing GEC on SPI bus\n");
 
-int exynos5420_gpio_list(struct platform_intf *intf)
+	return ret;
+}
+#endif
+int peach_pit_ec_setup(struct platform_intf *intf)
 {
-	return exynos_gpio_list(intf, exynos5420_gpio_banks);
+	/* TODO: implement this */
+	return 1;
 }

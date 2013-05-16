@@ -195,10 +195,13 @@ static int daisy_setup_post(struct platform_intf *intf)
 	 * Daisy is expected to use stm32l, and Snow is expected to use stm32f.
 	 *
 	 * If name == NULL, it means communication with the EC failed somehow.
-	 * For now, treat this as non-fatal.
 	 */
 	name = intf->cb->ec->name(intf);
-	if (name && !strncmp(name, "stm32f", 6)) {
+	if (!name) {
+		lprintf(LOG_ERR, "Unable to determine platform variant\n");
+		return -1;
+	}
+	if (!strncmp(name, "stm32f", 6)) {
 		lprintf(LOG_DEBUG, "Overriding platform name %s with %s\n",
 			intf->name, "Snow");
 		intf->name = "Snow";

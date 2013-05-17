@@ -8,3 +8,8 @@ config SOC_SAMSUNG_EXYNOS5
 	bool "Exynos 5"
 	select SOC_SAMSUNG
 	default n
+
+config SOC_SAMSUNG_EXYNOS5420
+	bool "Exynos 5420"
+	select SOC_SAMSUNG
+	default n

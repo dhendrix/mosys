@@ -228,7 +228,7 @@ int exynos_gpio_list(struct platform_intf *intf, enum exynos_generation gen)
 			sprintf(gpioname, "%s_%d", bank->name, gpio.pin);
 			gpio.name = gpioname;
 
-			state = exynos_read_gpio(intf, EXYNOS5, &gpio);
+			state = exynos_read_gpio(intf, gen, &gpio);
 			if (state < 0)
 				return -1;
 

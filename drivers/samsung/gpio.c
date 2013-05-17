@@ -39,7 +39,7 @@
 
 #include "drivers/gpio.h"
 #include "drivers/samsung/exynos_generic.h"
-#include "drivers/samsung/exynos5.h"
+#include "drivers/samsung/exynos5250/gpio.h"
 #include "drivers/samsung/exynos5420/gpio.h"
 
 #include "intf/mmio.h"

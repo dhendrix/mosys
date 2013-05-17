@@ -4,8 +4,8 @@ config SOC_SAMSUNG
 	bool
 	default n
 
-config SOC_SAMSUNG_EXYNOS5
-	bool "Exynos 5"
+config SOC_SAMSUNG_EXYNOS5250
+	bool "Exynos 5250"
 	select SOC_SAMSUNG
 	default n
 

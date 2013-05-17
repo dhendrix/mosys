@@ -1,4 +1,4 @@
 obj-$(CONFIG_SOC_SAMSUNG)		+= gpio.o
 
-obj-$(CONFIG_SOC_SAMSUNG_EXYNOS5)	+= exynos5/
+obj-$(CONFIG_SOC_SAMSUNG_EXYNOS5250)	+= exynos5250/
 obj-$(CONFIG_SOC_SAMSUNG_EXYNOS5420)	+= exynos5420/

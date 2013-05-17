@@ -64,7 +64,7 @@ config EXPERIMENTAL_SLIPPY
 config PLATFORM_SPRING
         depends on PLATFORM_ARCH_ARMEL && PLATFORM_EXPERIMENTAL
         select GOOGLE_EC_I2C
-        select SOC_SAMSUNG_EXYNOS5
+        select SOC_SAMSUNG_EXYNOS5250
         bool "spring"
         default n
 

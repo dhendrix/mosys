@@ -29,71 +29,72 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MOSYS_DRIVERS_SAMSUNG_EXYNOS5_H__
-#define MOSYS_DRIVERS_SAMSUNG_EXYNOS5_H__
+#ifndef MOSYS_DRIVERS_SAMSUNG_EXYNOS5250_H__
+#define MOSYS_DRIVERS_SAMSUNG_EXYNOS5250_H__
 
 #include "drivers/samsung/exynos_generic.h"	/* for exynos_gpio_bank */
 
-enum exynos5_gpio_port {
-	/* Note: use same ordering as exynos5_gpio_banks */
-	EXYNOS5_GPA0,
-	EXYNOS5_GPA1,
-	EXYNOS5_GPA2,
+enum exynos5250_gpio_port {
+	/* Note: use same ordering as exynos5250_gpio_banks */
+	EXYNOS5250_GPA0,
+	EXYNOS5250_GPA1,
+	EXYNOS5250_GPA2,
 
-	EXYNOS5_GPB0,
-	EXYNOS5_GPB1,
-	EXYNOS5_GPB2,
-	EXYNOS5_GPB3,
+	EXYNOS5250_GPB0,
+	EXYNOS5250_GPB1,
+	EXYNOS5250_GPB2,
+	EXYNOS5250_GPB3,
 
-	EXYNOS5_GPC0,
-	EXYNOS5_GPC1,
-	EXYNOS5_GPC2,
-	EXYNOS5_GPC3,
+	EXYNOS5250_GPC0,
+	EXYNOS5250_GPC1,
+	EXYNOS5250_GPC2,
+	EXYNOS5250_GPC3,
 
-	EXYNOS5_GPD0,
-	EXYNOS5_GPD1,
+	EXYNOS5250_GPD0,
+	EXYNOS5250_GPD1,
 
-	EXYNOS5_GPY0,
-	EXYNOS5_GPY1,
-	EXYNOS5_GPY2,
-	EXYNOS5_GPY3,
-	EXYNOS5_GPY4,
-	EXYNOS5_GPY5,
-	EXYNOS5_GPY6,
+	EXYNOS5250_GPY0,
+	EXYNOS5250_GPY1,
+	EXYNOS5250_GPY2,
+	EXYNOS5250_GPY3,
+	EXYNOS5250_GPY4,
+	EXYNOS5250_GPY5,
+	EXYNOS5250_GPY6,
 
-	EXYNOS5_GPX0,
-	EXYNOS5_GPX1,
-	EXYNOS5_GPX2,
-	EXYNOS5_GPX3,
+	EXYNOS5250_GPX0,
+	EXYNOS5250_GPX1,
+	EXYNOS5250_GPX2,
+	EXYNOS5250_GPX3,
 
-	EXYNOS5_GPE0,
-	EXYNOS5_GPE1,
+	EXYNOS5250_GPE0,
+	EXYNOS5250_GPE1,
 
-	EXYNOS5_GPF0,
-	EXYNOS5_GPF1,
+	EXYNOS5250_GPF0,
+	EXYNOS5250_GPF1,
 
-	EXYNOS5_GPG0,
-	EXYNOS5_GPG1,
-	EXYNOS5_GPG2,
+	EXYNOS5250_GPG0,
+	EXYNOS5250_GPG1,
+	EXYNOS5250_GPG2,
 
-	EXYNOS5_GPH0,
-	EXYNOS5_GPH1,
+	EXYNOS5250_GPH0,
+	EXYNOS5250_GPH1,
 
-	EXYNOS5_GPV0,
-	EXYNOS5_GPV1,
-	EXYNOS5_GPV2,
-	EXYNOS5_GPV3,
-	EXYNOS5_GPV4,
+	EXYNOS5250_GPV0,
+	EXYNOS5250_GPV1,
+	EXYNOS5250_GPV2,
+	EXYNOS5250_GPV3,
+	EXYNOS5250_GPV4,
 
-	EXYNOS5_GPZ,
+	EXYNOS5250_GPZ,
 };
 
-extern const struct exynos_gpio_bank exynos5_gpio_banks[];
-extern int exynos5_read_gpio(struct platform_intf *intf, struct gpio_map *gpio);
-extern int exynos5_read_gpio_mvl(struct platform_intf *intf,
+extern const struct exynos_gpio_bank exynos5250_gpio_banks[];
+extern int exynos5250_read_gpio(struct platform_intf *intf,
+				struct gpio_map *gpio);
+extern int exynos5250_read_gpio_mvl(struct platform_intf *intf,
 				 struct gpio_map *gpio);
-extern int exynos5_set_gpio(struct platform_intf *intf,
+extern int exynos5250_set_gpio(struct platform_intf *intf,
 			    struct gpio_map *gpio, int state);
-extern int exynos5_gpio_list(struct platform_intf *intf);
+extern int exynos5250_gpio_list(struct platform_intf *intf);
 
-#endif /* MOSYS_DRIVERS_SAMSUNG_EXYNOS5_H__ */
+#endif /* MOSYS_DRIVERS_SAMSUNG_EXYNOS5250_H__ */

@@ -39,7 +39,7 @@
 
 #include "drivers/gpio.h"
 #include "drivers/google/gec.h"
-#include "drivers/samsung/exynos5.h"
+#include "drivers/samsung/exynos5250/gpio.h"
 
 #include "lib/file.h"
 #include "lib/math.h"
@@ -170,8 +170,8 @@ static int snow_get_board_config(struct platform_intf *intf)
 		return SNOW_CONFIG_UNKNOWN;
 	}
 
-	v0 = exynos5_read_gpio_mvl(intf, id0);
-	v1 = exynos5_read_gpio_mvl(intf, id1);
+	v0 = exynos5250_read_gpio_mvl(intf, id0);
+	v1 = exynos5250_read_gpio_mvl(intf, id1);
 	lprintf(LOG_DEBUG, "%s: v0: %u, v1: %u\n", __func__, v0, v1);
 
 	for (i = 0; i < ARRAY_SIZE(snow_id_map); i++) {

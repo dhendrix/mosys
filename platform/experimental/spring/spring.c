@@ -39,7 +39,7 @@
 
 #include "drivers/gpio.h"
 #include "drivers/google/gec.h"
-#include "drivers/samsung/exynos5.h"
+#include "drivers/samsung/exynos5250/gpio.h"
 
 #include "lib/elog.h"
 #include "lib/file.h"
@@ -189,9 +189,9 @@ static int spring_get_board_config(struct platform_intf *intf)
 		return SPRING_CONFIG_UNKNOWN;
 	}
 
-	v0 = exynos5_read_gpio_mvl(intf, rev0);
-	v1 = exynos5_read_gpio_mvl(intf, rev1);
-	v2 = exynos5_read_gpio_mvl(intf, rev2);
+	v0 = exynos5250_read_gpio_mvl(intf, rev0);
+	v1 = exynos5250_read_gpio_mvl(intf, rev1);
+	v2 = exynos5250_read_gpio_mvl(intf, rev2);
 	lprintf(LOG_DEBUG, "%s: v0: %u, v1: %u, v2: %u\n",
 			__func__, v0, v1, v2);
 

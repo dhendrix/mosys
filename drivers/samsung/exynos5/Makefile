@@ -1,1 +1,0 @@
-obj-$(CONFIG_SOC_SAMSUNG_EXYNOS5)	+= gpio.o

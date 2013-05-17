@@ -33,7 +33,7 @@
 #include "mosys/log.h"
 
 #include "drivers/gpio.h"
-#include "drivers/samsung/exynos5.h"
+#include "drivers/samsung/exynos5250/gpio.h"
 
 #include "intf/mmio.h"
 
@@ -49,9 +49,9 @@
 
 /* gpio number, in/out, device, port, pin, negate, devname, name */
 static struct gpio_map platform_gpio_map[] = {
-	{  88, GPIO_IN,  GPIO_SOC, EXYNOS5_GPD0,  0, 0, "SOC", REV0 },
-	{  89, GPIO_IN,  GPIO_SOC, EXYNOS5_GPD0,  1, 0, "SOC", REV1 },
-	{  90, GPIO_IN,  GPIO_SOC, EXYNOS5_GPD0,  2, 0, "SOC", REV2 },
+	{  88, GPIO_IN,  GPIO_SOC, EXYNOS5250_GPD0,  0, 0, "SOC", REV0 },
+	{  89, GPIO_IN,  GPIO_SOC, EXYNOS5250_GPD0,  1, 0, "SOC", REV1 },
+	{  90, GPIO_IN,  GPIO_SOC, EXYNOS5250_GPD0,  2, 0, "SOC", REV2 },
 	{   0,       0,         0,       0,  0,   0, NULL, NULL   }
 };
 
@@ -70,7 +70,7 @@ static int spring_gpio_read(struct platform_intf *intf, struct gpio_map *gpio)
 
 	switch (gpio->dev) {
 	case GPIO_SOC:
-		ret = exynos5_read_gpio(intf, gpio);
+		ret = exynos5250_read_gpio(intf, gpio);
 		break;
 	default:
 		ret = -1;
@@ -140,7 +140,7 @@ static int spring_gpio_set(struct platform_intf *intf,
 
 		switch (gpio->dev) {
 		case GPIO_SOC:
-			ret = exynos5_set_gpio(intf, gpio, state);
+			ret = exynos5250_set_gpio(intf, gpio, state);
 			break;
 		default:
 			return -1;
@@ -154,6 +154,6 @@ static int spring_gpio_set(struct platform_intf *intf,
 struct gpio_cb spring_gpio_cb = {
 	.read	= spring_gpio_read,
 	.map	= spring_gpio_map,
-	.list	= exynos5_gpio_list,	/* generic listing for now */
+	.list	= exynos5250_gpio_list,	/* generic listing for now */
 	.set	= spring_gpio_set,
 };

@@ -36,11 +36,6 @@
 struct platform_intf;
 struct gpio_map;
 
-enum exynos_generation {
-	EXYNOS4,
-	EXYNOS5,
-};
-
 struct exynos_gpio_bank {
 	const char *name;	/* name of port (GPAn, GPBn, etc) */
 	uint32_t baseaddr;	/* base address */
@@ -57,69 +52,53 @@ struct exynos_gpio_regs {
 } __attribute__ ((packed));
 
 /*
- * exynos_get_gpio_regs  - fill in GPIO register info for a given GPIO
- *
- * @gpio:	high-level GPIO information
- * @regs:	GPIO register set
- *
- * This function is primarily useful when obtaining information GPIO
- * configuration and MMIO addresses.
- *
- * returns 0 to indicate success
- * returns <0 on read failure
- */
-extern int exynos_get_gpio_regs(struct gpio_map *gpio,
-				struct exynos_gpio_regs *regs);
-
-/*
  * exynos_read_gpio  - read GPIO status
  *
  * @intf:	platform interface
- * @gen:	chipset generation
- * @gpio:	gpio map
+ * @banks:	exynos register banks
+ * @gpio:	gpio map info for target GPIO
  *
  * returns GPIO state as 0 or 1
  * returns <0 on read failure
  */
 extern int exynos_read_gpio(struct platform_intf *intf,
-			    enum exynos_generation gen, struct gpio_map *gpio);
+			    const struct exynos_gpio_bank *banks,
+			    struct gpio_map *gpio);
 
 /*
  * exynos_read_gpio_mvl  - read many-value logic GPIO status
  *
  * @intf:	platform interface
- * @gen:	chipset generation
- * @gpio:	gpio map
+ * @banks:	exynos register banks
+ * @gpio:	gpio map info for target GPIO
  *
  * returns GPIO state as 0, 1, or Z
  * returns <0 on read failure
  */
 extern int exynos_read_gpio_mvl(struct platform_intf *intf,
-				enum exynos_generation gen,
+			        const struct exynos_gpio_bank *banks,
 				struct gpio_map *gpio);
 
 /*
  * exynos_set_gpio  - set GPIO status
  *
  * @intf:	platform interface
- * @gen:	chipset generation
- * @gpio:	gpio map
+ * @banks:	exynos register banks
+ * @gpio:	gpio map info for target GPIO
  * @status:	0/1
  *
  * returns 0 if successful
  * returns <0 on read failure
  */
 extern int exynos_set_gpio(struct platform_intf *intf,
-			   enum exynos_generation gen,
+			   const struct exynos_gpio_bank *banks,
 			   struct gpio_map *gpio, int state);
 
 /*
  * exynos_gpio_list  -  list GPIOs in a given bank
  *
  * @intf:	platform interface
- * @port:	GPIO port
- * @gpio_pins:	set of GPIO pins to list
- * @num_gpios:	number of GPIOs in set
+ * @banks:	exynos register banks
  *
  * Note: Some chipsets do not implement certain GPIOs. Use the gpios
  * array to specify which GPIOs should be listed by default.
@@ -128,6 +107,6 @@ extern int exynos_set_gpio(struct platform_intf *intf,
  * returns <0 if failure
  */
 extern int exynos_gpio_list(struct platform_intf *intf,
-			    enum exynos_generation gen);
+			    const struct exynos_gpio_bank *banks);
 
 #endif /* MOSYS_DRIVERS_SAMSUNG_EXYNOS_H__ */

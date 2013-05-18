@@ -48,29 +48,16 @@
 /* "safe" value for allowing a GPIO settle after changing configuration */
 #define GPIO_DELAY_NS 5000	/* nanoseconds */
 
-static const struct exynos_gpio_bank *get_banks(enum exynos_generation gen)
-{
-	const struct exynos_gpio_bank *banks = NULL;
-
-	switch (gen) {
-	case EXYNOS5:
-		banks = exynos5_gpio_banks;
-		break;
-	default:
-		break;
-	}
-
-	return banks;
-}
-
 /* gpio struct must have at minimum valid port and pin values */
 int exynos_read_gpio(struct platform_intf *intf,
-		     enum exynos_generation gen, struct gpio_map *gpio)
+		     const struct exynos_gpio_bank *banks,
+		     struct gpio_map *gpio)
 {
-	const struct exynos_gpio_bank *bank, *banks;
+	const struct exynos_gpio_bank *bank;
 	uint32_t dat;
 
-	banks = get_banks(gen);
+	MOSYS_CHECK(banks);
+
 	bank = &banks[gpio->port];
 
 	if (mmio_read32(intf, bank->baseaddr + 0x04, &dat) < 0)
@@ -81,16 +68,17 @@ int exynos_read_gpio(struct platform_intf *intf,
 
 /* TODO: this could be made more generic with better GPIO config methods */
 int exynos_read_gpio_mvl(struct platform_intf *intf,
-			 enum exynos_generation gen,
+			 const struct exynos_gpio_bank *banks,
 			 struct gpio_map *gpio)
 {
-	const struct exynos_gpio_bank *bank, *banks;
+	const struct exynos_gpio_bank *bank;
 	struct exynos_gpio_regs *regs;
 	int vpu, vpd, ret;
 	uint32_t dat, con, pud, pud_orig;
 	struct timespec rem, req = { .tv_sec = 0, .tv_nsec = GPIO_DELAY_NS };
 
-	banks = get_banks(gen);
+	MOSYS_CHECK(banks);
+
 	bank = &banks[gpio->port];
 	regs = (struct exynos_gpio_regs *)bank->baseaddr;
 
@@ -151,13 +139,14 @@ int exynos_read_gpio_mvl(struct platform_intf *intf,
 	return ret;
 }
 
-int exynos_set_gpio(struct platform_intf *intf, enum exynos_generation gen,
+int exynos_set_gpio(struct platform_intf *intf,
+		    const struct exynos_gpio_bank *banks,
 		    struct gpio_map *gpio, int state)
 {
-	const struct exynos_gpio_bank *bank, *banks;
+	const struct exynos_gpio_bank *bank;
 	uint32_t dat;
 
-	banks = get_banks(gen);
+	MOSYS_CHECK(banks);
 	bank = &banks[gpio->port];
 
 	if (mmio_read32(intf, bank->baseaddr + 0x04, &dat) < 0)
@@ -184,15 +173,14 @@ int exynos_set_gpio(struct platform_intf *intf, enum exynos_generation gen,
  * returns 0 if successful
  * returns <0 if failure
  */
-int exynos_gpio_list(struct platform_intf *intf, enum exynos_generation gen)
+int exynos_gpio_list(struct platform_intf *intf,
+		     const struct exynos_gpio_bank *banks)
 {
-	const struct exynos_gpio_bank *bank, *banks;
+	const struct exynos_gpio_bank *bank;
 	struct gpio_map gpio;
 	int i;
 
-	banks = get_banks(gen);
-	if (!banks)
-		return -1;
+	MOSYS_CHECK(banks);
 
 	for (bank = banks, i = 0; bank && bank->name; bank++, i++) {
 		int j;
@@ -228,7 +216,7 @@ int exynos_gpio_list(struct platform_intf *intf, enum exynos_generation gen)
 			sprintf(gpioname, "%s_%d", bank->name, gpio.pin);
 			gpio.name = gpioname;
 
-			state = exynos_read_gpio(intf, gen, &gpio);
+			state = exynos_read_gpio(intf, banks, &gpio);
 			if (state < 0)
 				return -1;
 

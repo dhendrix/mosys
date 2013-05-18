@@ -114,21 +114,21 @@ const struct exynos_gpio_bank exynos5_gpio_banks[] = {
 
 int exynos5_read_gpio(struct platform_intf *intf, struct gpio_map *gpio)
 {
-	return exynos_read_gpio(intf, EXYNOS5, gpio);
+	return exynos_read_gpio(intf, exynos5_gpio_banks, gpio);
 }
 
 int exynos5_read_gpio_mvl(struct platform_intf *intf, struct gpio_map *gpio)
 {
-	return exynos_read_gpio_mvl(intf, EXYNOS5, gpio);
+	return exynos_read_gpio_mvl(intf, exynos5_gpio_banks, gpio);
 }
 
 int exynos5_set_gpio(struct platform_intf *intf,
 		     struct gpio_map *gpio, int state)
 {
-	return exynos_set_gpio(intf, EXYNOS5, gpio, state);
+	return exynos_set_gpio(intf, exynos5_gpio_banks, gpio, state);
 }
 
 int exynos5_gpio_list(struct platform_intf *intf)
 {
-	return exynos_gpio_list(intf, EXYNOS5);
+	return exynos_gpio_list(intf, exynos5_gpio_banks);
 }

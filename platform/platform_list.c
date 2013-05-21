@@ -44,6 +44,7 @@ extern struct platform_intf platform_kiev;
 extern struct platform_intf platform_link;
 extern struct platform_intf platform_peach_pit;
 extern struct platform_intf platform_seaboard_tegra2;
+extern struct platform_intf platform_slippy;
 extern struct platform_intf platform_spring;
 
 /* production platforms */
@@ -111,6 +112,9 @@ struct platform_intf *platform_intf_list[] = {
 #endif
 #ifdef CONFIG_EXPERIMENTAL_SEABOARD
 	&platform_seaboard_tegra2,
+#endif
+#ifdef CONFIG_EXPERIMENTAL_SLIPPY
+	&platform_slippy,
 #endif
 #ifdef CONFIG_PLATFORM_SPRING
 	&platform_spring,

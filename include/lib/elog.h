@@ -151,6 +151,7 @@ struct elog_ec_event {
 #define ELOG_WAKE_SOURCE_RTC               0x03
 #define ELOG_WAKE_SOURCE_GPIO              0x04
 #define ELOG_WAKE_SOURCE_SMBUS             0x05
+#define ELOG_WAKE_SOURCE_PWRBTN            0x06
 struct elog_wake_source {
 	uint8_t source;
 	uint32_t instance;

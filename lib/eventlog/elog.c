@@ -158,6 +158,7 @@ int elog_print_data(struct platform_intf *intf, struct smbios_log_entry *entry,
 		{ ELOG_WAKE_SOURCE_RTC, "RTC Alarm" },
 		{ ELOG_WAKE_SOURCE_GPIO, "GPIO" },
 		{ ELOG_WAKE_SOURCE_SMBUS, "SMBALERT" },
+		{ ELOG_WAKE_SOURCE_PWRBTN, "Power Button" },
 		{ 0, NULL },
 	};
 	static struct valstr ec_event_types[] = {

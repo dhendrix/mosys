@@ -46,11 +46,26 @@
 
 #include "slippy.h"
 
-static const char *probed_platform_id;
+struct probe_ids {
+	const char *names[2];
+	const char *hwids[2];
+	const char *frids[2];
+};
 
-const char *slippy_id_list[] = {
-	"Slippy",
-	NULL
+static const struct probe_ids probe_id_list[] = {
+	{ { "Falco", NULL },
+	  { "X86 FALCO", NULL },
+	  { "Google_Falco", NULL },
+	},
+	{ { "Peppy", NULL },
+	  { "X86 PEPPY", NULL },
+	  { "Google_Peppy", NULL },
+	},
+	{ { "Slippy", NULL },
+	  { "X86 SLIPPY", NULL },
+	  { "Google_Slippy", NULL },
+	},
+	{ { NULL } }
 };
 
 struct platform_cmd *slippy_sub[] = {
@@ -65,40 +80,39 @@ struct platform_cmd *slippy_sub[] = {
 	NULL
 };
 
-static const char *hwids[] = {
-	"X86 SLIPPY",
-	NULL
-};
-
-static const char *frids[] = {
-	"Google_Slippy",
-	NULL
-};
-
 int slippy_probe(struct platform_intf *intf)
 {
 	static int status = 0, probed = 0;
+	const struct probe_ids *pid;
 
 	if (probed)
 		return status;
 
-	if (probe_hwid(hwids)) {
-		status = 1;
-		goto slippy_probe_exit;
-	}
+	for (pid = probe_id_list; pid && pid->names[0]; pid++) {
+		/* HWID */
+		if (probe_hwid((const char **)pid->hwids)) {
+			status = 1;
+			goto slippy_probe_exit;
+		}
 
-	if (probe_frid(frids)) {
-		status = 1;
-		goto slippy_probe_exit;
-	}
+		/* FRID */
+		if (probe_frid((const char **)pid->frids)) {
+			status = 1;
+			goto slippy_probe_exit;
+		}
 
-	if (probe_smbios(intf, slippy_id_list)) {
-		status = 1;
-		goto slippy_probe_exit;
+		/* SMBIOS */
+		if (probe_smbios(intf, (const char **)pid->names)) {
+			status = 1;
+			goto slippy_probe_exit;
+		}
 	}
+	return 0;
 
 slippy_probe_exit:
 	probed = 1;
+	/* Update canonical platform name */
+	intf->name = pid->names[0];
 	return status;
 }
 
@@ -115,9 +129,6 @@ static int slippy_setup_post(struct platform_intf *intf)
 
 static int slippy_destroy(struct platform_intf *intf)
 {
-	if (probed_platform_id)
-		free((char *)probed_platform_id);
-
 	return 0;
 }
 
@@ -144,7 +155,6 @@ struct platform_cb slippy_cb = {
 struct platform_intf platform_slippy = {
 	.type		= PLATFORM_X86_64,
 	.name		= "Slippy",
-	.id_list	= slippy_id_list,
 	.sub		= slippy_sub,
 	.cb		= &slippy_cb,
 	.probe		= &slippy_probe,

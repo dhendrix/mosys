@@ -34,14 +34,7 @@
 
 #include "drivers/google/gec.h"
 
-#define PEACH_PIT_EC_BUS	2
-#define	PEACH_PIT_EC_CS		0
-
-#if 0
-struct gec_priv peach_pit_ec_priv = {
-	.addr.spi.bus	= PEACH_PIT_EC_BUS,		/* may be overridden */
-	.addr.spi.cs	= PEACH_PIT_EC_CS,
-};
+struct gec_priv peach_pit_ec_priv;
 
 int peach_pit_ec_setup(struct platform_intf *intf)
 {
@@ -50,19 +43,13 @@ int peach_pit_ec_setup(struct platform_intf *intf)
 	MOSYS_CHECK(intf->cb && intf->cb->ec);
 	intf->cb->ec->priv = &peach_pit_ec_priv;
 
-	ret = gec_probe_spi(intf);
+	ret = gec_probe_dev(intf);
 	if (ret == 1)
-		lprintf(LOG_DEBUG, "GEC found on SPI bus\n");
+		lprintf(LOG_DEBUG, "CrOS EC found using /dev interface\n");
 	else if (ret == 0)
-		lprintf(LOG_DEBUG, "GEC not found on SPI bus\n");
+		lprintf(LOG_DEBUG, "CrOS EC not found in /dev\n");
 	else
-		lprintf(LOG_ERR, "Error when probing GEC on SPI bus\n");
+		lprintf(LOG_ERR, "Error when probing GEC via devfs\n");
 
 	return ret;
-}
-#endif
-int peach_pit_ec_setup(struct platform_intf *intf)
-{
-	/* TODO: implement this */
-	return 1;
 }

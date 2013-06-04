@@ -192,11 +192,8 @@ static int peach_pit_setup_post(struct platform_intf *intf)
 	if (peach_pit_board_config == PEACH_PIT_CONFIG_UNKNOWN)
 		return -1;
 
-	/* FIXME: add pit EC support */
-#if 0
 	if (peach_pit_ec_setup(intf) <= 0)
 		return -1;
-#endif
 
 	return 0;
 }
@@ -207,7 +204,7 @@ static int peach_pit_destroy(struct platform_intf *intf)
 }
 
 struct platform_cb peach_pit_cb = {
-//	.ec 		= &gec_cb,
+	.ec 		= &gec_cb,
 	.eeprom 	= &peach_pit_eeprom_cb,
 	.gpio		= &peach_pit_gpio_cb,
 	.memory		= &peach_pit_memory_cb,

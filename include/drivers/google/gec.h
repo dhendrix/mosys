@@ -61,6 +61,7 @@ extern int gec_chip_info(struct platform_intf *intf,
 extern int gec_flash_info(struct platform_intf *intf,
 		         struct ec_response_flash_info *info);
 extern int gec_detect(struct platform_intf *intf);
+extern int gec_probe_dev(struct platform_intf *intf);
 extern int gec_probe_i2c(struct platform_intf *intf);
 extern int gec_probe_lpc(struct platform_intf *intf);
 

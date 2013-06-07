@@ -231,14 +231,18 @@ static int spring_spd_read(struct platform_intf *intf,
 	case SPRING_CONFIG_EVT_MICRON:
 	case SPRING_CONFIG_DVT1_MICRON:
 	case SPRING_CONFIG_DVT2_MICRON:
+	case SPRING_CONFIG_PREPVT_MICRON:
 	case SPRING_CONFIG_PVT_MICRON:
+	case SPRING_CONFIG_MP_MICRON:
 		memcpy(buf, &micron_ddr3_1600_spd[reg], len);
 		rc = len;
 		break;
 	case SPRING_CONFIG_EVT_NANYA:
 	case SPRING_CONFIG_DVT1_NANYA:
 	case SPRING_CONFIG_DVT2_NANYA:
+	case SPRING_CONFIG_PREPVT_NANYA:
 	case SPRING_CONFIG_PVT_NANYA:
+	case SPRING_CONFIG_MP_NANYA:
 		memcpy(buf, &nanya_ddr3_1600_spd[reg], len);
 		rc = len;
 		break;

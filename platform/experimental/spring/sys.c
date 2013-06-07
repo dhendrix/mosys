@@ -77,9 +77,17 @@ static const char *spring_get_version(struct platform_intf *intf)
 	case SPRING_CONFIG_DVT2_MICRON:
 		ret = mosys_strdup("DVT2");
 		break;
+	case SPRING_CONFIG_PREPVT_NANYA:
+	case SPRING_CONFIG_PREPVT_MICRON:
+		ret = mosys_strdup("pre-PVT1");
+		break;
 	case SPRING_CONFIG_PVT_NANYA:
 	case SPRING_CONFIG_PVT_MICRON:
 		ret = mosys_strdup("PVT");
+		break;
+	case SPRING_CONFIG_MP_NANYA:
+	case SPRING_CONFIG_MP_MICRON:
+		ret = mosys_strdup("MP");
 		break;
 	case SPRING_CONFIG_RSVD:
 		ret = mosys_strdup("RSVD");

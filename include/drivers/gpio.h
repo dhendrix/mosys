@@ -55,9 +55,9 @@ enum gpio_types {
  *      1  |  1  | 1
  */
 enum mvl3 {
+	LOGIC_Z,		/* high impedance / tri-stated / floating */
 	LOGIC_0,
 	LOGIC_1,
-	LOGIC_Z,		/* high impedence / tri-stated / floating */
 };
 
 struct gpio_map {

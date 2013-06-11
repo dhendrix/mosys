@@ -195,6 +195,22 @@ struct elog_event_data_me_extended {
 
 /* Last post code from previous boot */
 #define ELOG_TYPE_LAST_POST_CODE         0xa3
+#define ELOG_TYPE_POST_EXTRA             0xa6
+#define  ELOG_TYPE_POST_EXTRA_PATH       0x01
+#define   ELOG_DEV_PATH_TYPE_NONE          0
+#define   ELOG_DEV_PATH_TYPE_ROOT          1
+#define   ELOG_DEV_PATH_TYPE_PCI           2
+#define   ELOG_DEV_PATH_TYPE_PNP           3
+#define   ELOG_DEV_PATH_TYPE_I2C           4
+#define   ELOG_DEV_PATH_TYPE_APIC          5
+#define   ELOG_DEV_PATH_TYPE_DOMAIN        6
+#define   ELOG_DEV_PATH_TYPE_CPU_CLUSTER   7
+#define   ELOG_DEV_PATH_TYPE_CPU           8
+#define   ELOG_DEV_PATH_TYPE_CPU_BUS       9
+#define   ELOG_DEV_PATH_TYPE_IOAPIC        10
+
+/* EC Shutdown Reason */
+#define ELOG_TYPE_EC_SHUTDOWN            0xa5
 
 
 /* Recovery reason codes for EVENT_TYPE_CROS_RECOVERY_MODE */

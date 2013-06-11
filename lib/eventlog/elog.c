@@ -35,6 +35,7 @@
 
 #include "intf/mmio.h"
 
+#include "lib/coreboot.h"
 #include "lib/eeprom.h"
 #include "lib/elog.h"
 #include "lib/eventlog.h"
@@ -106,6 +107,8 @@ int elog_print_type(struct platform_intf *intf, struct smbios_log_entry *entry,
 		{ ELOG_TYPE_MANAGEMENT_ENGINE, "Management Engine" },
 		{ ELOG_TYPE_MANAGEMENT_ENGINE_EXT, "Management Engine Extra" },
 		{ ELOG_TYPE_LAST_POST_CODE, "Last post code in previous boot" },
+		{ ELOG_TYPE_POST_EXTRA, "Extra info from previous boot" },
+		{ ELOG_TYPE_EC_SHUTDOWN, "EC Shutdown" },
 		{ 0x0, NULL },
 	};
 
@@ -124,6 +127,64 @@ int elog_print_type(struct platform_intf *intf, struct smbios_log_entry *entry,
 	kv_pair_add(kv, "type", "Unknown");
 	kv_pair_fmt(kv, "value", "0x%02x", entry->type);
 	return 1;
+}
+
+/*
+ * CMOS Extra log format:
+ * [31:24] = Extra Log Type
+ * [23:0]  = Extra Log Data
+ *
+ * If Extra Log Type is 0x01 then Data is Device Path
+ * [23:16] = Device Type
+ * [15:0]  = Encoded Device Path
+ */
+static int elog_print_post_extra(struct platform_intf *intf,
+				 struct kv_pair *kv, uint32_t extra)
+{
+	const struct valstr path_type_values[] = {
+		{ ELOG_DEV_PATH_TYPE_PCI, "PCI" },
+		{ ELOG_DEV_PATH_TYPE_PNP, "PNP" },
+		{ ELOG_DEV_PATH_TYPE_I2C, "I2C" },
+		{ ELOG_DEV_PATH_TYPE_APIC, "APIC" },
+		{ ELOG_DEV_PATH_TYPE_DOMAIN, "DOMAIN" },
+		{ ELOG_DEV_PATH_TYPE_CPU_CLUSTER, "CPU Cluster" },
+		{ ELOG_DEV_PATH_TYPE_CPU, "CPU" },
+		{ ELOG_DEV_PATH_TYPE_CPU_BUS, "CPU Bus" },
+		{ ELOG_DEV_PATH_TYPE_IOAPIC, "IO-APIC" },
+		{ 0, NULL },
+	};
+	uint8_t type = (extra >> 16) & 0xff;
+
+	/* Currently only know how to print device path */
+	if ((extra >> 24) != ELOG_TYPE_POST_EXTRA_PATH) {
+		kv_pair_fmt(kv, "extra", "0x%08x", extra);
+		return 0;
+	}
+
+	kv_pair_add(kv, "device", val2str(type, path_type_values));
+
+	/* Handle different device path types */
+	switch (type) {
+	case ELOG_DEV_PATH_TYPE_PCI:
+		kv_pair_fmt(kv, "path", "%02x:%02x.%1x", (extra >> 8) & 0xff,
+			    (extra >> 3) & 0x1f, (extra & 0x3));
+		break;
+	case ELOG_DEV_PATH_TYPE_PNP:
+	case ELOG_DEV_PATH_TYPE_I2C:
+		kv_pair_fmt(kv, "path", "%02x:%02x", (extra >> 8) & 0xff,
+			    extra & 0xff);
+		break;
+	case ELOG_DEV_PATH_TYPE_APIC:
+	case ELOG_DEV_PATH_TYPE_DOMAIN:
+	case ELOG_DEV_PATH_TYPE_CPU_CLUSTER:
+	case ELOG_DEV_PATH_TYPE_CPU:
+	case ELOG_DEV_PATH_TYPE_CPU_BUS:
+	case ELOG_DEV_PATH_TYPE_IOAPIC:
+		kv_pair_fmt(kv, "path", "0x%04x", extra & 0xffff);
+		break;
+	}
+
+	return 0;
 }
 
 /*
@@ -249,6 +310,36 @@ int elog_print_data(struct platform_intf *intf, struct smbios_log_entry *entry,
 		{ ELOG_ME_PATH_FW_UPDATE, "Firmware Update" },
 		{ 0, NULL },
 	};
+	static struct valstr coreboot_post_codes[] = {
+		{ POST_RESET_VECTOR_CORRECT, "Reset Vector Correct" },
+		{ POST_ENTER_PROTECTED_MODE, "Enter Protected Mode" },
+		{ POST_PREPARE_RAMSTAGE, "Prepare RAM stage" },
+		{ POST_ENTRY_C_START, "RAM stage Start" },
+		{ POST_PRE_HARDWAREMAIN, "Before Hardware Main" },
+		{ POST_ENTRY_RAMSTAGE, "RAM stage Main" },
+		{ POST_CONSOLE_READY, "Console is ready" },
+		{ POST_CONSOLE_BOOT_MSG, "Console Boot Message" },
+		{ POST_ENABLING_CACHE, "Before Enabling Cache" },
+		{ POST_ENTER_ELF_BOOT, "Before ELF Boot" },
+		{ POST_JUMPING_TO_PAYLOAD, "Before Jump to Payload" },
+		{ POST_DEAD_CODE, "Dead Code" },
+		{ POST_OS_RESUME, "Before OS Resume" },
+		{ POST_OS_BOOT, "Before OS Boot" },
+		{ POST_DIE, "Coreboot Dead" },
+		{ POST_BS_PRE_DEVICE, "Before Device Probe" },
+		{ POST_BS_DEV_INIT_CHIPS, "Initialize Chips" },
+		{ POST_BS_DEV_ENUMERATE, "Device Enumerate" },
+		{ POST_BS_DEV_RESOURCES, "Device Resource Allocation" },
+		{ POST_BS_DEV_ENABLE, "Device Enable" },
+		{ POST_BS_DEV_INIT, "Device Initialize" },
+		{ POST_BS_POST_DEVICE, "After Device Probe" },
+		{ POST_BS_OS_RESUME_CHECK, "OS Resume Check" },
+		{ POST_BS_OS_RESUME, "OS Resume" },
+		{ POST_BS_WRITE_TABLES, "Write Tables" },
+		{ POST_BS_PAYLOAD_LOAD, "Load Payload" },
+		{ POST_BS_PAYLOAD_BOOT, "Boot Payload" },
+		{ 0, NULL },
+	};
 
 	switch (entry->type) {
 	case SMBIOS_EVENT_TYPE_LOGCLEAR:
@@ -268,6 +359,13 @@ int elog_print_data(struct platform_intf *intf, struct smbios_log_entry *entry,
 	{
 		uint16_t *code = (void *)&entry->data[0];
 		kv_pair_fmt(kv, "code", "0x%02x", *code);
+		kv_pair_add(kv, "desc",  val2str(*code, coreboot_post_codes));
+		break;
+	}
+	case ELOG_TYPE_POST_EXTRA:
+	{
+		uint32_t *extra = (void *)&entry->data[0];
+		elog_print_post_extra(intf, kv, *extra);
 		break;
 	}
 	case ELOG_TYPE_OS_EVENT:

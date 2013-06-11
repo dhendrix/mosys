@@ -48,20 +48,41 @@ enum cmos_device {
 	CMOS_DEVICE_PCH,
 };
 
+struct cmos_var_map {
+	uint8_t offset;
+	uint8_t length;
+	char *desc;
+};
+
 struct cmos_map {
 	enum cmos_device type;
 	const char *device;
 	int bank;
 	int length;
 	int clear_start;	/* first bytes are usually reserved for RTC */
-	struct valstr *var_list;
+	struct cmos_var_map *var_list;
+};
+
+static struct cmos_var_map coreboot_cmos_bank0_vars[] = {
+	{ 0x70, 1, "Post Code Bank" },
+	{ 0x71, 1, "Post Code Bank 0" },
+	{ 0x72, 1, "Post Code Bank 1" },
+	{ 0x73, 4, "Post Extra Bank 0" },
+	{ 0x77, 4, "Post Extra Bank 1" },
+	{ 0 }
+};
+
+static struct cmos_var_map coreboot_cmos_bank1_vars[] = {
+	{ 0x12, 4, "Boot Count" }, /* 0x92 */
+	{ 0 }
 };
 
 struct cmos_map slippy_cmos_map[] = {
-	{ CMOS_DEVICE_PCH, "LPSS", 0, 128, 0x29, NULL },
+	{ CMOS_DEVICE_PCH, "LPSS0", 0, 128, 0x29, coreboot_cmos_bank0_vars },
+	{ CMOS_DEVICE_PCH, "LPSS1", 1, 128, 0x00, coreboot_cmos_bank1_vars },
 };
 
-static const uint16_t slippy_cmos_port[] = { 0x70 };
+static const uint16_t slippy_cmos_port[] = { 0x70, 0x72 };
 
 static uint8_t slippy_read_cmos(struct platform_intf *intf,
                                 int addr, int reg)
@@ -79,6 +100,47 @@ static void slippy_write_cmos(struct platform_intf *intf,
 	io_write8(intf, slippy_cmos_port[addr] + 1, val);
 }
 
+static int slippy_nvram_list_bank(struct platform_intf *intf,
+				  struct cmos_map *map)
+{
+	struct cmos_var_map *var;
+	int i;
+
+	/* handle each cmos bank */
+	for (var = map->var_list; var && var->desc; var++) {
+		struct kv_pair *kv = kv_pair_new();
+		uint32_t val = 0;
+
+		switch (map->type) {
+		case CMOS_DEVICE_PCH:
+			for (i = 0; i < var->length; i++)
+				val |= slippy_read_cmos(
+					intf, map->bank,
+					var->offset + i) << (i*8);
+			break;
+		}
+
+		kv_pair_add(kv, "device", map->device);
+		kv_pair_add(kv, "name", var->desc);
+		kv_pair_fmt(kv, "value", "0x%x", val);
+		kv_pair_print(kv);
+		kv_pair_free(kv);
+	}
+
+	return 0;
+}
+
+static int slippy_nvram_list(struct platform_intf *intf)
+{
+	int dev, rc = 0;
+
+	/* handle each cmos bank */
+	for (dev = 0; dev < ARRAY_SIZE(slippy_cmos_map); dev++)
+		rc |= slippy_nvram_list_bank(intf, &slippy_cmos_map[dev]);
+
+	return rc;
+}
+
 static int slippy_nvram_dump(struct platform_intf *intf)
 {
 	struct cmos_map *map;
@@ -86,10 +148,7 @@ static int slippy_nvram_dump(struct platform_intf *intf)
 	uint8_t cmos_data[128];
 
 	/* handle each cmos bank */
-	for (dev = 0;
-	     dev < sizeof(slippy_cmos_map) /
-	           sizeof(slippy_cmos_map[0]);
-	     dev++) {
+	for (dev = 0; dev < ARRAY_SIZE(slippy_cmos_map); dev++) {
 		map = &slippy_cmos_map[dev];
 
 		if (map->length > sizeof(cmos_data))
@@ -137,6 +196,7 @@ static int slippy_nvram_clear(struct platform_intf *intf)
 }
 
 struct nvram_cb slippy_nvram_cb = {
+	.list	= slippy_nvram_list,
 	.dump	= slippy_nvram_dump,
 	.clear	= slippy_nvram_clear,
 };

@@ -85,6 +85,179 @@ static int wait_for_ec(struct platform_intf *intf,
 	return -1;  /* Timeout */
 }
 
+/* Check to see if versioned commands are supported by the EC */
+static int gec_command_lpc_cmd_args_supported(struct platform_intf *intf)
+{
+	uint8_t id1, id2, flags;
+
+	if (io_read8(intf, EC_LPC_ADDR_MEMMAP + EC_MEMMAP_ID, &id1))
+		return -1;
+	if (io_read8(intf, EC_LPC_ADDR_MEMMAP + EC_MEMMAP_ID + 1, &id2))
+		return -1;
+	if (io_read8(intf, EC_LPC_ADDR_MEMMAP + EC_MEMMAP_HOST_CMD_FLAGS,
+		     &flags))
+		return -1;
+
+	/* Check for support of versioned commands */
+	if (id1 == 'E' && id2 == 'C' &&
+	    (flags & EC_HOST_CMD_FLAG_LPC_ARGS_SUPPORTED))
+		return 1;
+
+	return 0;
+}
+
+/* Sends a versioned command to the EC.  Returns the command status code,
+ * or -1 if other error. */
+static int gec_command_lpc_new(struct platform_intf *intf,
+			       int command, int command_version,
+			       const void *indata, int insize,
+			       const void *outdata, int outsize)
+{
+	struct ec_lpc_host_args args = {
+		.flags = EC_HOST_ARGS_FLAG_FROM_HOST,
+		.command_version = command_version,
+		.data_size = outsize,
+	};
+	uint8_t *d;
+	int csum, i;
+	uint8_t ec_response;
+
+	/* Initialize checksum */
+	csum = command + args.flags + args.command_version + args.data_size;
+
+	if (wait_for_ec(intf, EC_LPC_ADDR_HOST_CMD, 1000000)) {
+		lprintf(LOG_DEBUG, "%s: timeout waiting for EC ready\n",
+		                   __func__);
+		return -1;
+	}
+
+	/* Write data and update checksum */
+	for (i = 0, d = (uint8_t *)outdata; i < outsize; i++, d++) {
+		if (io_write8(intf, EC_LPC_ADDR_HOST_PARAM + i, *d))
+			return -1;
+		csum += *d;
+	}
+
+	/* Finalize checksum and write args */
+	args.checksum = (uint8_t)csum;
+	for (i = 0, d = (uint8_t *)&args; i < sizeof(args); i++, d++) {
+		if (io_write8(intf, EC_LPC_ADDR_HOST_ARGS + i, *d))
+			return -1;
+	}
+
+	/* Issue the command */
+	if (io_write8(intf, EC_LPC_ADDR_HOST_CMD, command))
+		return -1;
+
+	if (wait_for_ec(intf, EC_LPC_ADDR_HOST_CMD, 1000000)) {
+		lprintf(LOG_DEBUG, "%s: timeout waiting for EC response\n",
+		                   __func__);
+		return -1;
+	}
+
+	/* Check result */
+	if (io_read8(intf, EC_LPC_ADDR_HOST_DATA, &ec_response))
+		return -1;
+
+	if (ec_response) {
+		lprintf(LOG_DEBUG, "%s: EC returned error result code %d\n",
+		                   __func__, ec_response);
+		return -1;
+	}
+
+	/* Read back args */
+	for (i = 0, d = (uint8_t *)&args; i < sizeof(args); i++, d++) {
+		if (io_read8(intf, EC_LPC_ADDR_HOST_ARGS + i, d))
+			return -1;
+	}
+
+	/*
+	 * If EC didn't modify args flags, then somehow we sent a new-style
+	 * command to an old EC, which means it would have read its params
+	 * from the wrong place.
+	 */
+	if (!(args.flags & EC_HOST_ARGS_FLAG_TO_HOST)) {
+		lprintf(LOG_DEBUG, "%s: EC protocol mismatch\n", __func__);
+		return -1;
+	}
+
+	if (args.data_size > insize) {
+		lprintf(LOG_DEBUG, "%s: EC returned too much data\n", __func__);
+		return -1;
+	}
+	insize = args.data_size;
+
+	/* Start calculating response checksum */
+	csum = command + args.flags + args.command_version + args.data_size;
+
+	/* Read data, if any */
+	for (i = 0, d = (uint8_t *)indata; i < insize; i++, d++) {
+		if (io_read8(intf, EC_LPC_ADDR_HOST_PARAM + i, d))
+			return -1;
+		csum += *d;
+	}
+
+	/* Verify checksum */
+	if (args.checksum != (uint8_t)csum) {
+		lprintf(LOG_DEBUG, "%s: EC response has invalid checksum\n",
+			__func__);
+		return -1;
+	}
+
+	return ec_response;
+}
+
+/* Sends a command to the EC.  Returns the command status code, or
+ * -1 if other error. */
+static int gec_command_lpc_old(struct platform_intf *intf,
+			       int command, int command_version,
+			       const void *indata, int insize,
+			       const void *outdata, int outsize)
+{
+	uint8_t *d;
+	int i;
+	uint8_t ec_response;
+
+	if (wait_for_ec(intf, EC_LPC_ADDR_HOST_CMD, 1000000)) {
+		lprintf(LOG_DEBUG, "%s: timeout waiting for EC ready\n",
+		                   __func__);
+		return -1;
+	}
+
+	/* Write data, if any */
+	for (i = 0, d = (uint8_t *)outdata; i < outsize; i++, d++) {
+		if (io_write8(intf, EC_LPC_ADDR_OLD_PARAM + i, *d))
+			return -1;
+	}
+
+	if (io_write8(intf, EC_LPC_ADDR_HOST_CMD, command))
+		return -1;
+
+	if (wait_for_ec(intf, EC_LPC_ADDR_HOST_CMD, 1000000)) {
+		lprintf(LOG_DEBUG, "%s: timeout waiting for EC response\n",
+		                   __func__);
+		return -1;
+	}
+
+	/* Check result */
+	if (io_read8(intf, EC_LPC_ADDR_HOST_DATA, &ec_response))
+		return -1;
+
+	if (ec_response) {
+		lprintf(LOG_DEBUG, "%s: EC returned error result code %d\n",
+		                   __func__, ec_response);
+		return -1;
+	}
+
+	/* Read data, if any */
+	for (i = 0, d = (uint8_t *)indata; i < insize; i++, d++) {
+		if (io_read8(intf, EC_LPC_ADDR_OLD_PARAM + i, d))
+			return -1;
+	}
+
+	return ec_response;
+}
+
 /* Sends a command to the EC.  Returns the command status code, or
  * -1 if other error. */
 static int gec_command_lpc(struct platform_intf *intf,
@@ -92,17 +265,7 @@ static int gec_command_lpc(struct platform_intf *intf,
 			   const void *indata, int insize,
 			   const void *outdata, int outsize)
 {
-	uint8_t *d;
-	int i;
-	uint8_t ec_response;
 	int rc = -1;
-
-	if (command_version) {
-		/* TODO(clchiou): Implement new-style command for LPC */
-		lprintf(LOG_DEBUG, "%s: Not implement new-style command yet: "
-			"version=%d\n", __func__, command_version);
-		return -1;
-	}
 
 	if (insize > EC_HOST_PARAM_SIZE || outsize > EC_HOST_PARAM_SIZE) {
 		lprintf(LOG_DEBUG, "%s: data size too big\n", __func__);
@@ -113,48 +276,19 @@ static int gec_command_lpc(struct platform_intf *intf,
 		GEC_LOCK_TIMEOUT_SECS);
 	if (acquire_gec_lock(GEC_LOCK_TIMEOUT_SECS) < 0) {
 		lprintf(LOG_ERR, "Could not acquire GEC lock.\n");
-		goto ec_command_lpc_exit;
+		return -1;
 	}
 
-	if (wait_for_ec(intf, EC_LPC_ADDR_HOST_CMD, 1000000)) {
-		lprintf(LOG_DEBUG, "%s: timeout waiting for EC ready\n",
-		                   __func__);
-		goto ec_command_lpc_exit;
+	if (gec_command_lpc_cmd_args_supported(intf)) {
+		rc = gec_command_lpc_new(
+			intf, command, command_version,
+			indata, insize, outdata, outsize);
+	} else {
+		rc = gec_command_lpc_old(
+			intf, command, command_version,
+			indata, insize, outdata, outsize);
 	}
 
-	/* Write data, if any */
-	for (i = 0, d = (uint8_t *)outdata; i < outsize; i++, d++) {
-		if (io_write8(intf, EC_LPC_ADDR_OLD_PARAM + i, *d))
-			goto ec_command_lpc_exit;
-	}
-
-	if (io_write8(intf, EC_LPC_ADDR_HOST_CMD, command))
-		goto ec_command_lpc_exit;
-
-	if (wait_for_ec(intf, EC_LPC_ADDR_HOST_CMD, 1000000)) {
-		lprintf(LOG_DEBUG, "%s: timeout waiting for EC response\n",
-		                   __func__);
-		goto ec_command_lpc_exit;
-	}
-
-	/* Check result */
-	if (io_read8(intf, EC_LPC_ADDR_HOST_DATA, &ec_response))
-		goto ec_command_lpc_exit;
-	rc = ec_response;
-
-	if (ec_response) {
-		lprintf(LOG_DEBUG, "%s: EC returned error result code %d\n",
-		                   __func__, ec_response);
-		goto ec_command_lpc_exit;
-	}
-
-	/* Read data, if any */
-	for (i = 0, d = (uint8_t *)indata; i < insize; i++, d++) {
-		if (io_read8(intf, EC_LPC_ADDR_OLD_PARAM + i, d))
-			goto ec_command_lpc_exit;
-	}
-
-ec_command_lpc_exit:
 	release_gec_lock();
 	return rc;
 }

@@ -134,6 +134,11 @@ static int gec_command_dev(struct platform_intf *intf, int command,
 	return 0;
 }
 
+void gec_close_dev(void)
+{
+	close(gec_fd);
+}
+
 /* returns 1 if EC detected, 0 if not, <0 to indicate failure */
 int gec_probe_dev(struct platform_intf *intf)
 {
@@ -151,6 +156,7 @@ int gec_probe_dev(struct platform_intf *intf)
 				__func__, filename);
 		ret = -1;
 	} else {
+		intf->cb->ec->destroy = gec_close_dev;
 		priv->cmd = gec_command_dev;
 		ret = 1;
 	}

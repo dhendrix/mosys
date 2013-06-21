@@ -200,6 +200,7 @@ static int peach_pit_setup_post(struct platform_intf *intf)
 
 static int peach_pit_destroy(struct platform_intf *intf)
 {
+	intf->cb->ec->destroy(intf);
 	return 0;
 }
 

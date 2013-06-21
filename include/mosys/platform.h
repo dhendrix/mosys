@@ -395,6 +395,9 @@ struct ec_cb {
 	const char *(*name)(struct platform_intf *intf);
 	const char *(*fw_version)(struct platform_intf *intf);
 
+	int (*setup)(struct platform_intf *intf);
+	int (*destroy)(struct platform_intf *intf);
+
 	void *priv;	/* private data for EC */
 };
 

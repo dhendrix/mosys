@@ -53,18 +53,6 @@
 #define SLIPPY_DIMM_COUNT	2
 
 /*
- * slippy_dimm_count  -  return total number of dimm slots
- *
- * @intf:       platform interface
- *
- * returns dimm slot count
- */
-static int slippy_dimm_count(struct platform_intf *intf)
-{
-	return SLIPPY_DIMM_COUNT;
-}
-
-/*
  * SPD blob contains up to six entries which are selected by
  * board strappings.
  *
@@ -93,6 +81,21 @@ static int slippy_get_spd_index(struct platform_intf *intf)
 	spd_index |= val << 2;
 
 	return spd_index;
+}
+
+/*
+ * slippy_dimm_count  -  return total number of dimm slots
+ *
+ * @intf:       platform interface
+ *
+ * returns dimm slot count
+ */
+static int slippy_dimm_count(struct platform_intf *intf)
+{
+	if (!strncmp(intf->name, "Falco", 5))
+		return slippy_get_spd_index(intf) >= 3 ? 1 : 2;
+	else
+		return SLIPPY_DIMM_COUNT;
 }
 
 static int slippy_spd_read_cbfs(struct platform_intf *intf,

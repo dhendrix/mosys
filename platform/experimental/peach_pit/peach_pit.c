@@ -215,7 +215,7 @@ struct platform_cb peach_pit_cb = {
 
 struct platform_intf platform_peach_pit = {
 	.type		= PLATFORM_ARMV7,
-	.name		= "Peach Pit",
+	.name		= "Pit",
 	.id_list	= peach_pit_id_list,
 	.sub		= peach_pit_sub,
 	.cb		= &peach_pit_cb,

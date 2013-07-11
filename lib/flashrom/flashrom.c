@@ -257,3 +257,84 @@ flashrom_read_exit_0:
 	free_string_builder(sb);
 	return rc;
 }
+
+int flashrom_write_by_name(size_t size, uint8_t *buf,
+                  enum target_bus target, const char *region)
+{
+	int fd, written, rc = -1;
+	struct string_builder *sb = new_string_builder();
+	char *flashrom_cmd;
+	char filename[] = "/tmp/flashrom_XXXXXX";
+	const char *path;
+
+	if (!region)
+		goto flashrom_write_exit_0;
+
+	if ((path = flashrom_path()) == NULL)
+		goto flashrom_write_exit_0;
+
+	string_builder_sprintf(sb, path);
+
+	switch(target) {
+	case INTERNAL_BUS_SPI:
+		string_builder_strcat(sb, " -p internal:bus=spi");
+		break;
+	case INTERNAL_BUS_I2C:
+		string_builder_strcat(sb, " -p internal:bus=i2c");
+		break;
+	case INTERNAL_BUS_LPC:
+		string_builder_strcat(sb, " -p internal:bus=lpc");
+		break;
+	default:
+		lprintf(LOG_DEBUG, "Unsupported target: %d\n", target);
+		goto flashrom_write_exit_0;
+	}
+
+	if (!mkstemp(filename)) {
+		lperror(LOG_DEBUG,
+			"Unable to make temporary file for flashrom");
+		goto flashrom_write_exit_1;
+	}
+
+	string_builder_strcat(sb, " -i ");
+	string_builder_strcat(sb, region);
+	string_builder_strcat(sb, ":");
+	string_builder_strcat(sb, filename);
+
+	string_builder_strcat(sb, " -w /dev/null");
+	string_builder_strcat(sb, " >/dev/null 2>&1");
+
+	fd = open(filename, O_WRONLY);
+	if (fd < 0) {
+		lprintf(LOG_DEBUG, "%s: Couldn't open %s\n", __func__,
+			filename);
+		goto flashrom_write_exit_0;
+	}
+	written = write(fd, buf, size);
+	if (written < 0) {
+		lprintf(LOG_DEBUG, "%s: Couldn't write to %s\n", __func__,
+			filename);
+		goto flashrom_write_exit_0;
+	}
+	if (written != size) {
+		lprintf(LOG_DEBUG, "%s: Incomplete write to %s\n", __func__,
+			filename);
+		goto flashrom_write_exit_0;
+	}
+
+	flashrom_cmd = mosys_strdup(string_builder_get_string(sb));
+	lprintf(LOG_DEBUG, "Calling \"%s\"\n", flashrom_cmd);
+	if (do_flashrom(flashrom_cmd) < 0) {
+		lprintf(LOG_DEBUG, "Unable to write region \"%s\"\n", region);
+		goto flashrom_write_exit_1;
+	}
+
+	rc = written;
+
+flashrom_write_exit_1:
+	free(flashrom_cmd);
+flashrom_write_exit_0:
+	unlink(filename);
+	free_string_builder(sb);
+	return rc;
+}

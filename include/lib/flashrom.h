@@ -69,4 +69,21 @@ extern int flashrom_read(uint8_t *buf, size_t size,
 extern int flashrom_read_by_name(uint8_t **buf,
                          enum target_bus target, const char *region);
 
+/*
+ * flashrom_write_by_name - Partial write using Flashrom utility
+ *
+ * @size:	size of the data to write
+ * @buf:	pointer to the buffer to write
+ * @target:	target ROM
+ * @region:	region to include with -i
+ *
+ * This function reads the target ROM by calling Flashrom with appropriate
+ * parameters. It will allocate the appropriate number of bytes in buf.
+ *
+ * returns number of bytes read from region to indicate success
+ * returns <0 to indicate failure
+ */
+extern int flashrom_write_by_name(size_t size, uint8_t *buf,
+                         enum target_bus target, const char *region);
+
 #endif /* MOSYS_LIB_FLASHROM_H__ */

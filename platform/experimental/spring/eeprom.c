@@ -83,9 +83,19 @@ static int spring_host_firmware_read_by_name(struct platform_intf *intf,
 	return flashrom_read_by_name(data, INTERNAL_BUS_SPI, name);
 }
 
+static int spring_host_firmware_write_by_name(struct platform_intf *intf,
+					     struct eeprom *eeprom,
+					     const char *name,
+					     unsigned int len,
+					     uint8_t *data)
+{
+	return flashrom_write_by_name(len, data, INTERNAL_BUS_SPI, name);
+}
+
 static struct eeprom_dev spring_host_firmware = {
 	.size		= spring_host_firmware_size,
 	.read		= spring_host_firmware_read,
+	.write_by_name	= spring_host_firmware_write_by_name,
 	.read_by_name	= spring_host_firmware_read_by_name,
 	.get_map	= eeprom_get_fmap,
 };

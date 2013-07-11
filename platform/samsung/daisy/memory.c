@@ -147,6 +147,60 @@ const uint8_t samsung_ddr3_1600_spd[SPD_MAX_LENGTH] = {
 	[DDR3_SPD_REG_MODULE_PART_NUM_17] = 0,
 };
 
+/* SPD data for Samsung (DDR3Lx16-1600K) */
+const uint8_t samsung_ddr3x16_1600_spd[SPD_MAX_LENGTH] = {
+	[DDR3_SPD_REG_SIZE_CRC]		= 0x92,
+	[DDR3_SPD_REG_REVISION]		= 0x11,
+	[DDR3_SPD_REG_DEVICE_TYPE]	= 0x0b,
+	[DDR3_SPD_REG_MODULE_TYPE]	= 0x03,
+	[DDR3_SPD_REG_DENSITY_BANKS]	= 0x04,	/* 4Gb(512MB) * 4 banks = 2GBytes  */
+	[DDR3_SPD_REG_ADDRESSING]	= 0x19,	/* 15 rows, 10 cols */
+	[DDR3_SPD_REG_VOLTAGE]		= 0x02,	/* 1.35V and 1.5V */
+	[DDR3_SPD_REG_MODULE_ORG]	= 0x02,	/* 1 ranks, x16 */
+	[DDR3_SPD_REG_MODULE_BUS_WIDTH]	= 0x03,
+
+	/* DDR3-1666 = (1/8)ns * 10 = 1.25ns */
+	[DDR3_SPD_REG_MTB_DIVIDEND]	= 1,
+	[DDR3_SPD_REG_MTB_DIVISOR]	= 8,
+	[DDR3_SPD_REG_TCK_MIN]		= 10,
+
+	/* 5, 6, 7, 8, 9, 10, 11 */
+	[DDR3_SPD_REG_CAS_LAT_LSB]	= 0xfe,
+	[DDR3_SPD_REG_CAS_LAT_MSB]	= 0x00,
+
+	[DDR3_SPD_REG_TAA_MIN]		= 0x69,	/* 13.125ns */
+	[DDR3_SPD_REG_TWR_MIN]		= 0x78,	/* 15ns */
+	[DDR3_SPD_REG_TRCD_MIN]		= 0x68,	/* 13.125ns */
+
+	/* Samsung is bank 1, number 78 (JEP-106) */
+	[DDR3_SPD_REG_MODULE_MANUF_JEDEC_ID_LSB] = 0x80,
+	[DDR3_SPD_REG_MODULE_MANUF_JEDEC_ID_MSB] = 0xce,
+
+	[DDR3_SPD_REG_MODULE_MANUF_SERIAL_0] = 0x00000000,
+	[DDR3_SPD_REG_MODULE_MANUF_SERIAL_1] = 0x00000000,
+	[DDR3_SPD_REG_MODULE_MANUF_SERIAL_2] = 0x00000000,
+	[DDR3_SPD_REG_MODULE_MANUF_SERIAL_3] = 0x00000000,
+
+	[DDR3_SPD_REG_MODULE_PART_NUM_0] = 'K',
+	[DDR3_SPD_REG_MODULE_PART_NUM_1] = '4',
+	[DDR3_SPD_REG_MODULE_PART_NUM_2] = 'B',
+	[DDR3_SPD_REG_MODULE_PART_NUM_3] = '4',
+	[DDR3_SPD_REG_MODULE_PART_NUM_4] = 'G',
+	[DDR3_SPD_REG_MODULE_PART_NUM_5] = '1',
+	[DDR3_SPD_REG_MODULE_PART_NUM_6] = '6',
+	[DDR3_SPD_REG_MODULE_PART_NUM_7] = '4',
+	[DDR3_SPD_REG_MODULE_PART_NUM_8] = '6',
+	[DDR3_SPD_REG_MODULE_PART_NUM_9] = 'B',
+	[DDR3_SPD_REG_MODULE_PART_NUM_10] = '-',
+	[DDR3_SPD_REG_MODULE_PART_NUM_11] = 'H',
+	[DDR3_SPD_REG_MODULE_PART_NUM_12] = 'Y',
+	[DDR3_SPD_REG_MODULE_PART_NUM_13] = 'K',
+	[DDR3_SPD_REG_MODULE_PART_NUM_14] = '0',
+	[DDR3_SPD_REG_MODULE_PART_NUM_15] = '\0',
+	[DDR3_SPD_REG_MODULE_PART_NUM_16] = 0,
+	[DDR3_SPD_REG_MODULE_PART_NUM_17] = 0,
+};
+
 /*
  * daisy_dimm_count  -  return total number of dimm slots
  *
@@ -184,6 +238,10 @@ static int daisy_spd_read(struct platform_intf *intf,
 	case SNOW_CONFIG_SAMSUNG_PVT2:
 	case SNOW_CONFIG_SAMSUNG_MP:
 		memcpy(buf, &samsung_ddr3_1600_spd[reg], len);
+		rc = len;
+		break;
+	case SNOW_CONFIG_SAMSUNG_MP_1_2:
+		memcpy(buf, &samsung_ddr3x16_1600_spd[reg], len);
 		rc = len;
 		break;
 	default:

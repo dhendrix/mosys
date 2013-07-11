@@ -145,7 +145,7 @@ struct {
 	enum daisy_board_config config;
 } snow_id_map[] = {
 	/*  ID0      ID1         config */
-	{ LOGIC_0, LOGIC_0, SNOW_CONFIG_SAMSUNG_MP },
+	{ LOGIC_0, LOGIC_0, SNOW_CONFIG_SAMSUNG_MP_1_2 },
 	{ LOGIC_0, LOGIC_1, SNOW_CONFIG_ELPIDA_MP },
 	{ LOGIC_1, LOGIC_0, SNOW_CONFIG_SAMSUNG_DVT },
 	{ LOGIC_1, LOGIC_1, SNOW_CONFIG_ELPIDA_DVT },

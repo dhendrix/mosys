@@ -241,6 +241,7 @@ struct eventlog_cb {
 	             enum eventlog_clear_type type);
 	int (*fetch)(struct platform_intf *intf, uint8_t **data,
 		     size_t *length, off_t *header_offset, off_t *data_offset);
+	int (*write)(struct platform_intf *intf, uint8_t *data, size_t length);
 };
 
 /* boot number callbacks */

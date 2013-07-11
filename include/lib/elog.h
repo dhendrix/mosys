@@ -66,6 +66,8 @@ extern int elog_fetch_from_smbios(struct platform_intf *intf,
 extern int elog_fetch_from_flash(struct platform_intf *intf,
 				 uint8_t **data, size_t *length,
 				 off_t *header_offset, off_t *data_offset);
+extern int elog_write_to_flash(struct platform_intf *intf, uint8_t *data,
+			       size_t length);
 
 /*
  * Generic event log payloads modified by Google

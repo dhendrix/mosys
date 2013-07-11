@@ -741,25 +741,13 @@ int elog_fetch_from_smbios(struct platform_intf *intf, uint8_t **data,
 	return 0;
 }
 
-/*
- * elog_fetch_from_flash - fetch the eventlog from the flash.
- *
- * @intf:          platform interface used for low level hardware access
- * @data:          pointer to the fetched contents of the event log
- * @length:        pointer to the length of the event log
- * @header_offset: offset of the header in the event log
- * @data_offset:   offset of the first event in the event log
- *
- * returns -1 on failure, 0 on success
- */
-int elog_fetch_from_flash(struct platform_intf *intf, uint8_t **data,
-			  size_t *length, off_t *header_offset,
-			  off_t *data_offset)
+static int elog_find_log_in_flash(struct platform_intf *intf,
+				  struct eeprom **eeprom_p,
+				  struct eeprom_region **region_p)
 {
 	struct eeprom *eeprom;
 	struct eeprom_region *region = NULL;
 	int found = 0;
-	int bytes_read;
 
 	for (eeprom = &intf->cb->eeprom->eeprom_list[0];
 			eeprom->name; eeprom++) {
@@ -787,6 +775,33 @@ int elog_fetch_from_flash(struct platform_intf *intf, uint8_t **data,
 	if (!(eeprom->flags & EEPROM_FLAG_FMAP) && region->name)
 		return -1;
 
+	*region_p = region;
+	*eeprom_p = eeprom;
+	return 0;
+}
+
+/*
+ * elog_fetch_from_flash - fetch the eventlog from the flash.
+ *
+ * @intf:          platform interface used for low level hardware access
+ * @data:          pointer to the fetched contents of the event log
+ * @length:        pointer to the length of the event log
+ * @header_offset: offset of the header in the event log
+ * @data_offset:   offset of the first event in the event log
+ *
+ * returns -1 on failure, 0 on success
+ */
+int elog_fetch_from_flash(struct platform_intf *intf, uint8_t **data,
+			  size_t *length, off_t *header_offset,
+			  off_t *data_offset)
+{
+	struct eeprom *eeprom;
+	struct eeprom_region *region;
+	int bytes_read;
+
+	if (elog_find_log_in_flash(intf, &eeprom, &region))
+		return -1;
+
 	bytes_read = eeprom->device->read_by_name(intf, eeprom,
 						region->name, data);
 	if (bytes_read < 0) {
@@ -797,6 +812,36 @@ int elog_fetch_from_flash(struct platform_intf *intf, uint8_t **data,
 	*length = bytes_read;
 	*header_offset = 0;
 	*data_offset = sizeof(struct elog_header);
+
+	return 0;
+}
+
+/*
+ * elog_write_to_flash - write the eventlog to flash.
+ *
+ * @intf:          platform interface used for low level hardware access
+ * @data:          pointer to the contents of the event log
+ * @length:        length of the event log
+ *
+ * returns -1 on failure, 0 on success
+ */
+int elog_write_to_flash(struct platform_intf *intf, uint8_t *data,
+			size_t length)
+{
+	struct eeprom *eeprom;
+	struct eeprom_region *region;
+	int bytes_written;
+
+	if (elog_find_log_in_flash(intf, &eeprom, &region))
+		return -1;
+
+	bytes_written = eeprom->device->write_by_name(intf, eeprom,
+						      region->name, length,
+						      data);
+	if (bytes_written != length) {
+		lprintf(LOG_WARNING, "Failed to write event log to flash.\n");
+		return -1;
+	}
 
 	return 0;
 }

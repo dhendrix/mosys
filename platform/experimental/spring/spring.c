@@ -229,7 +229,9 @@ struct eventlog_cb spring_eventlog_cb = {
 	.print_multi	= &elog_print_multi,
 	.verify		= &elog_verify,
 	.verify_header	= &elog_verify_header,
+	.clear		= &elog_clear_manually,
 	.fetch		= &elog_fetch_from_flash,
+	.write		= &elog_write_to_flash,
 };
 
 struct platform_cb spring_cb = {

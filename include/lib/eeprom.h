@@ -136,6 +136,24 @@ struct eeprom_dev {
 		     void *data);
 
 	/*
+	 * write_by_name  -  write region specified by name to eeprom
+	 *
+	 * @intf:	platform interface
+	 * @eeprom:	eeprom interface
+	 * @name:	name of region to write
+	 * @len		length of the data buffer
+	 * @data	pointer to the data buffer to write
+	 *
+	 * returns the number of bytes written if successful
+	 * returns <0 to indicate error
+	 */
+	int (*write_by_name)(struct platform_intf *intf,
+			     struct eeprom *eeprom,
+			     const char *name,
+			     unsigned int len,
+			     uint8_t *data);
+
+	/*
 	 * get_map  -  retrieve flash map
 	 *
 	 * @intf:	platform interface

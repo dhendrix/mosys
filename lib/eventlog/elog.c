@@ -31,6 +31,7 @@
 #include <fmap.h>
 #include <stdlib.h>
 #include <inttypes.h>
+#include <time.h>
 #include <valstr.h>
 
 #include "intf/mmio.h"
@@ -39,6 +40,7 @@
 #include "lib/eeprom.h"
 #include "lib/elog.h"
 #include "lib/eventlog.h"
+#include "lib/math.h"
 #include "lib/smbios.h"
 #include "lib/string.h"
 
@@ -676,6 +678,19 @@ int elog_print_multi(struct platform_intf *intf,
 }
 
 /*
+ * elog_update_checksum  -  update the checksum at the last byte
+ *
+ * @entry:	entry structure to update
+ * @checksum:	what to set the checksum to
+ */
+static void elog_update_checksum(struct smbios_log_entry *entry,
+				 uint8_t checksum)
+{
+	uint8_t *entry_data = (uint8_t *)entry;
+	entry_data[entry->length - 1] = checksum;
+}
+
+/*
  * elog_verify - verify the contents of the SMBIOS log entry.
  *
  * @intf:   platform interface used for low level hardware access
@@ -685,18 +700,158 @@ int elog_print_multi(struct platform_intf *intf,
  */
 int elog_verify(struct platform_intf *intf, struct smbios_log_entry *entry)
 {
-	char *data;
-	char checksum;
-	int i;
+	return rolling8_csum((void *)entry, entry->length) == 0;
+}
 
-	checksum = 0;
-	data = (void *)entry;
+/*
+ * elog_fill_timestamp  -  populate timestamp in entry with current time
+ *
+ * @entry:	the entry to fill in
+ *
+ * returns 0 on succcess, non-zero on failure
+ */
+static int elog_fill_timestamp(struct smbios_log_entry *entry)
+{
+	time_t secs = time(NULL);
+	struct tm tm;
+	int res = 0;
 
-	for (i = 0; i < entry->length; i++) {
-		checksum += data[i];
+	if (secs == -1)
+		res = -1;
+
+	if (gmtime_r(&secs, &tm) == NULL)
+		res = -1;
+
+	entry->second = bin2bcd(tm.tm_sec);
+	entry->minute = bin2bcd(tm.tm_min);
+	entry->hour   = bin2bcd(tm.tm_hour);
+	entry->day    = bin2bcd(tm.tm_mday);
+	entry->month  = bin2bcd(tm.tm_mon + 1);
+	entry->year   = bin2bcd(tm.tm_year % 100);
+
+	/* Basic sanity check whether rtc_get worked and of expected ranges */
+	if (res || entry->month > 0x12 || entry->day > 0x31 ||
+	    entry->hour > 0x23 || entry->minute > 0x59 ||
+	    entry->second > 0x59) {
+		entry->year   = 0;
+		entry->month  = 0;
+		entry->day    = 0;
+		entry->hour   = 0;
+		entry->minute = 0;
+		entry->second = 0;
 	}
 
-	return checksum == 0;
+	return res;
+}
+
+/*
+ * elog_prepare_entry  -  fill out an event structure
+ *
+ * @buf:	buffer for the event
+ * @entry_type	the type of the new entry
+ * @data:	what data to append to the entry
+ * @data_size:	how big the data is
+ * returns 0 on success, non-zero on failure
+ */
+int elog_prepare_entry(void *buf, enum smbios_log_entry_type entry_type,
+		       void *data, uint8_t data_size)
+{
+	struct smbios_log_entry *entry = buf;
+
+	entry->type = entry_type;
+	entry->length = sizeof(*entry) + data_size + 1;
+	if (elog_fill_timestamp(entry))
+		return -1;
+
+	if (data_size)
+		memcpy(&entry->data, data, data_size);
+
+	/* Zero the checksum byte and then compute checksum */
+	elog_update_checksum(entry, 0);
+	elog_update_checksum(entry, -rolling8_csum((void *)entry,
+						   entry->length));
+
+	return 0;
+}
+
+struct elog_copy_events_params {
+	uint8_t *dest;
+	off_t to_skip;
+	off_t skipped;
+};
+
+static int elog_copy_events(struct platform_intf *intf,
+			    struct smbios_log_entry *entry,
+			    void *arg, int *complete)
+{
+	struct elog_copy_events_params *params = arg;
+
+	MOSYS_DCHECK(entry);
+	MOSYS_DCHECK(arg);
+	MOSYS_DCHECK(complete);
+
+	if (params->skipped < params->to_skip) {
+		params->skipped += entry->length;
+	} else {
+		memcpy(params->dest, entry, entry->length);
+		params->dest += entry->length;
+	}
+
+	return 0;
+}
+
+/*
+ * elog_clear_manually - clear the eventlog by reading and writing it directly.
+ *
+ * @intf:          platform interface used for low level hardware access
+ *
+ * returns -1 on failure, 0 on success
+ */
+int elog_clear_manually(struct platform_intf *intf)
+{
+	uint8_t *data;
+	uint8_t *new_data;
+	size_t length;
+	off_t header_offset, data_offset, data_size;
+	struct elog_copy_events_params params;
+	uint32_t skipped;
+
+	if (!intf->cb->eventlog->fetch || !intf->cb->eventlog->write) {
+		errno = ENOSYS;
+		return -1;
+	}
+
+	if (intf->cb->eventlog->fetch(intf, &data, &length, &header_offset,
+				      &data_offset))
+		return -1;
+
+	data_size = length - data_offset;
+
+	new_data = mosys_malloc(length);
+	memcpy(new_data, data, data_offset);
+	memset(new_data + data_offset, 0xff, data_size);
+
+	params.dest = new_data + data_offset;
+	params.skipped = 0;
+	params.to_skip = data_size;
+	if (smbios_eventlog_foreach_event(intf, NULL, &elog_copy_events,
+					  &params)) {
+		free(new_data);
+		return -1;
+	}
+	skipped = params.skipped;
+	if (elog_prepare_entry(params.dest, SMBIOS_EVENT_TYPE_LOGCLEAR,
+			       &skipped, sizeof(skipped))) {
+		free(new_data);
+		return -1;
+	}
+
+	if (intf->cb->eventlog->write(intf, new_data, length)) {
+		free(new_data);
+		return -1;
+	}
+
+	return 0;
 }
 
 /*

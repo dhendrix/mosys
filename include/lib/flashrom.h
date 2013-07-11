@@ -54,7 +54,7 @@ extern int flashrom_read(uint8_t *buf, size_t size,
                          enum target_bus target, const char *region);
 
 /*
- * flashrom_read_fmap_area - Partial read using Flashrom utility
+ * flashrom_read_by_name - Partial read using Flashrom utility
  *
  * @buf:	double-pointer of buffer to allocate and fill
  * @target:	target ROM

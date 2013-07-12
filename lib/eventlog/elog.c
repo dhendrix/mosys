@@ -800,6 +800,113 @@ static int elog_copy_events(struct platform_intf *intf,
 	return 0;
 }
 
+static int elog_events_size(struct platform_intf *intf,
+			    struct smbios_log_entry *entry,
+			    void *arg, int *complete)
+{
+	size_t *events_size = (size_t *)arg;
+	*events_size += entry->length;
+	return 0;
+}
+
+/*
+ * elog_add_event_manually - add an event by accessing the log directly.
+ *
+ * @intf:          platform interface used for low level hardware access
+ * @type:          the type of event to add
+ * @data_size:     the size of the data to add to the event
+ * @data:          pointer to the data to add
+ *
+ * returns -1 on failure, 0 on success
+ */
+int elog_add_event_manually(struct platform_intf *intf,
+			    enum smbios_log_entry_type type,
+			    size_t event_data_size, uint8_t *event_data)
+{
+	size_t full_threshold, shrink_size;
+
+	uint8_t *data;
+	uint8_t *new_data = NULL;
+	size_t length, data_size, events_size;
+	size_t event_size = sizeof(struct smbios_log_entry) +
+			    event_data_size + 1;
+	off_t header_offset, data_offset;
+	struct elog_copy_events_params params;
+
+	if (!intf->cb->eventlog->fetch || !intf->cb->eventlog->write) {
+		errno = ENOSYS;
+		return -1;
+	}
+
+	if (intf->cb->eventlog->fetch(intf, &data, &length, &header_offset,
+				      &data_offset))
+		return -1;
+
+	data_size = length - data_offset;
+
+	/*
+	 * Assume the full threshold is 3/4 the log size, and the shrink size
+	 * is 1/4 the size.
+	 */
+	full_threshold = (length * 3) / 4;
+	shrink_size = length / 4;
+
+	if (event_size > shrink_size) {
+		lprintf(LOG_WARNING, "Event size %d is too large.\n",
+			event_size);
+		return -1;
+	}
+
+	/* Figure out how much space the existing events take up. */
+	events_size = 0;
+	if (smbios_eventlog_foreach_event(intf, NULL, &elog_events_size,
+					  &events_size))
+		return -1;
+
+	/* Shrink the log if it's going to exceed the full threshold. */
+	if (events_size + event_size > full_threshold) {
+		uint32_t skipped;
+
+		new_data = mosys_malloc(length);
+		memcpy(new_data, data, data_offset);
+		memset(new_data + data_offset, 0xff, data_size);
+
+		params.dest = new_data + data_offset;
+		params.skipped = 0;
+		params.to_skip = shrink_size;
+
+		if (smbios_eventlog_foreach_event(intf, NULL, &elog_copy_events,
+						  &params)) {
+			free(new_data);
+			return -1;
+		}
+
+		skipped = params.skipped;
+		events_size -= skipped;
+		data = new_data;
+		elog_prepare_entry(data + data_offset + events_size,
+				   SMBIOS_EVENT_TYPE_LOGCLEAR,
+				   &skipped, sizeof(skipped));
+		events_size += sizeof(struct smbios_log_entry) +
+			sizeof(skipped) + 1;
+	}
+
+	/* Add the new event. */
+	if (elog_prepare_entry(data + data_offset + events_size, type,
+			       event_data, event_data_size)) {
+		free(new_data);
+		return -1;
+	}
+
+	if (intf->cb->eventlog->write(intf, data, length)) {
+		free(new_data);
+		return -1;
+	}
+
+	free(new_data);
+	return 0;
+}
+
 /*
  * elog_clear_manually - clear the eventlog by reading and writing it directly.
  *

@@ -132,30 +132,12 @@ static int eventlog_smbios_clear_cmd(struct platform_intf *intf,
 				     struct platform_cmd *cmd,
 				     int argc, char **argv)
 {
-	enum eventlog_clear_type type;
-
 	if (!intf->cb->eventlog || !intf->cb->eventlog->clear) {
 		errno = ENOSYS;
 		return -1;
 	}
 
-	if (argc < 1)
-		return intf->cb->eventlog->clear(intf, EVENTLOG_CLEAR_100);
-
-	if (0 == strncmp(argv[0], "25", 2))
-		type = EVENTLOG_CLEAR_25;
-	else if (0 == strncmp(argv[0], "50", 2))
-		type = EVENTLOG_CLEAR_50;
-	else if (0 == strncmp(argv[0], "75", 2))
-		type = EVENTLOG_CLEAR_75;
-	else if (0 == strncmp(argv[0], "100", 3))
-		type = EVENTLOG_CLEAR_100;
-	else if (0 == strncmp(argv[0], "status", 6))
-		type = EVENTLOG_CLEAR_STATUS;
-	else
-		type = EVENTLOG_CLEAR_100;
-
-	return intf->cb->eventlog->clear(intf, type);
+	return intf->cb->eventlog->clear(intf);
 }
 
 struct platform_cmd eventlog_smbios_cmds[] = {
@@ -175,7 +157,6 @@ struct platform_cmd eventlog_smbios_cmds[] = {
 	{
 		.name	= "clear",
 		.desc	= "Clear Event Log",
-		.usage	= "[25 | 50 | 75 | 100]",
 		.type	= ARG_TYPE_SETTER,
 		.arg	= { .func = eventlog_smbios_clear_cmd }
 	},

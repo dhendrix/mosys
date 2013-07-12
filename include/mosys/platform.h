@@ -211,15 +211,6 @@ struct memory_cb {
 	struct memory_spd_cb *spd;
 };
 
-/* eventlog clearing and status */
-enum eventlog_clear_type {
-	EVENTLOG_CLEAR_STATUS = 0,
-	EVENTLOG_CLEAR_25 = 25,
-	EVENTLOG_CLEAR_50 = 50,
-	EVENTLOG_CLEAR_75 = 75,
-	EVENTLOG_CLEAR_100 = 100,
-};
-
 /* eventlog related callbacks */
 struct smbios_log_entry;
 struct smbios_table_log;
@@ -237,8 +228,7 @@ struct eventlog_cb {
 	              struct smbios_log_entry *entry);
 	int (*verify_header)(struct elog_header *elog_header);
 	int (*add)(struct platform_intf *intf, int argc, char **argv);
-	int (*clear)(struct platform_intf *intf,
-	             enum eventlog_clear_type type);
+	int (*clear)(struct platform_intf *intf);
 	int (*fetch)(struct platform_intf *intf, uint8_t **data,
 		     size_t *length, off_t *header_offset, off_t *data_offset);
 	int (*write)(struct platform_intf *intf, uint8_t *data, size_t length);

@@ -212,6 +212,7 @@ struct memory_cb {
 };
 
 /* eventlog related callbacks */
+enum smbios_log_entry_type;
 struct smbios_log_entry;
 struct smbios_table_log;
 struct eventlog_cb {
@@ -227,7 +228,8 @@ struct eventlog_cb {
 	int (*verify)(struct platform_intf *intf,
 	              struct smbios_log_entry *entry);
 	int (*verify_header)(struct elog_header *elog_header);
-	int (*add)(struct platform_intf *intf, int argc, char **argv);
+	int (*add)(struct platform_intf *intf, enum smbios_log_entry_type type,
+		   size_t data_size, uint8_t *data);
 	int (*clear)(struct platform_intf *intf);
 	int (*fetch)(struct platform_intf *intf, uint8_t **data,
 		     size_t *length, off_t *header_offset, off_t *data_offset);

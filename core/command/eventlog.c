@@ -37,6 +37,7 @@
 #include "lib/common.h"
 #include "lib/eventlog.h"
 
+#include "mosys/alloc.h"
 #include "mosys/log.h"
 #include "mosys/kv_pair.h"
 #include "mosys/platform.h"
@@ -114,18 +115,55 @@ static int eventlog_smbios_add_cmd(struct platform_intf *intf,
 				   struct platform_cmd *cmd,
 				   int argc, char **argv)
 {
-	if (argc < 1) {
-		platform_cmd_usage(cmd);
-		errno = EINVAL;
-		return -1;
-	}
+	enum smbios_log_entry_type type;
+	size_t data_size = 0;
+	uint8_t *data = NULL;
+	int res;
 
 	if (!intf->cb->eventlog || !intf->cb->eventlog->add) {
 		errno = ENOSYS;
 		return -1;
 	}
 
-	return intf->cb->eventlog->add(intf, argc, argv);
+	if (argc < 1 || argc > 2) {
+		platform_cmd_usage(cmd);
+		errno = EINVAL;
+		return -1;
+	}
+
+	type = strtol(argv[0], NULL, 0);
+
+	if (argc == 2) {
+		size_t len = strlen(argv[1]);
+		char byte[3] = { 0, 0, 0 };
+		char *endptr;
+		int i;
+
+		if (len % 2) {
+			platform_cmd_usage(cmd);
+			errno = EINVAL;
+			return -1;
+		}
+
+		data_size = len / 2;
+		data = mosys_malloc(data_size);
+		for (i = 0; i < data_size; i++) {
+			byte[0] = *argv[1]++;
+			byte[1] = *argv[1]++;
+			data[i] = strtol(byte, &endptr, 0);
+			if (endptr != &byte[2]) {
+				free(data);
+				platform_cmd_usage(cmd);
+				errno = EINVAL;
+				return -1;
+			}
+		}
+	}
+
+	res = intf->cb->eventlog->add(intf, type, data_size, data);
+
+	free(data);
+	return res;
 }
 
 static int eventlog_smbios_clear_cmd(struct platform_intf *intf,
@@ -150,7 +188,9 @@ struct platform_cmd eventlog_smbios_cmds[] = {
 	{
 		.name	= "add",
 		.desc	= "Add entry to Event Log",
-		.usage	= "<event>",
+		.usage	= "<event type> [event data]\n\n"
+			  "event type is number, event data is a "
+			  "series of bytes",
 		.type	= ARG_TYPE_GETTER,
 		.arg	= { .func = eventlog_smbios_add_cmd }
 	},

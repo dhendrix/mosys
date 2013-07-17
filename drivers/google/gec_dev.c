@@ -126,12 +126,12 @@ static int gec_command_dev(struct platform_intf *intf, int command,
 	if (ret < 0 && errno == -EAGAIN)
 		ret = command_wait_for_response();
 
-	if (ret) {
+	if (ret < 0) {
 		lprintf(LOG_ERR, "%s: Transfer failed: %d\n", __func__, ret);
 		return -EC_RES_ERROR;
 	}
 
-	return 0;
+	return 0; /* Should we return ret here? */
 }
 
 void gec_close_dev(void)

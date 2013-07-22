@@ -290,7 +290,33 @@ struct elog_event_data_me_extended {
 /* Test error from LoadKernel() */
 #define VBNV_RECOVERY_RW_TEST_LK      0x47
 /* No bootable disk found */
-#define VBNV_RECOVERY_RW_NO_DISK      0x48
+#define VBNV_RECOVERY_DEP_RW_NO_DISK  0x48
+/* Rebooting did not correct TPM_E_FAIL or TPM_E_FAILEDSELFTEST  */
+#define VBNV_RECOVERY_TPM_E_FAIL      0x49
+/* TPM setup error in read-only firmware */
+#define VBNV_RECOVERY_RO_TPM_S_ERROR  0x50
+/* TPM write error in read-only firmware */
+#define VBNV_RECOVERY_RO_TPM_W_ERROR  0x51
+/* TPM lock error in read-only firmware */
+#define VBNV_RECOVERY_RO_TPM_L_ERROR  0x52
+/* TPM update error in read-only firmware */
+#define VBNV_RECOVERY_RO_TPM_U_ERROR  0x53
+/* TPM read error in rewritable firmware */
+#define VBNV_RECOVERY_RW_TPM_R_ERROR  0x54
+/* TPM write error in rewritable firmware */
+#define VBNV_RECOVERY_RW_TPM_W_ERROR  0x55
+/* TPM lock error in rewritable firmware */
+#define VBNV_RECOVERY_RW_TPM_L_ERROR  0x56
+/* EC software sync unable to get EC image hash */
+#define VBNV_RECOVERY_EC_HASH_FAILED  0x57
+/* EC software sync invalid image hash size */
+#define VBNV_RECOVERY_EC_HASH_SIZE    0x58
+/* Unspecified error while trying to load kernel */
+#define VBNV_RECOVERY_LK_UNSPECIFIED  0x59
+/* No bootable storage device in system */
+#define VBNV_RECOVERY_RW_NO_DISK      0x5A
+/* No bootable kernel found on disk */
+#define VBNV_RECOVERY_RW_NO_KERNEL    0x5B
 /* Unspecified/unknown error in rewritable firmware */
 #define VBNV_RECOVERY_RW_UNSPECIFIED  0x7F
 /* DM-verity error */

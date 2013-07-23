@@ -35,6 +35,8 @@
 #include <inttypes.h>
 #include <sys/types.h>
 
+#include "mosys/mosys.h"
+
 #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
 
 /*
@@ -89,6 +91,12 @@ extern uint8_t zero8_csum(uint8_t *buf, size_t len);
 #ifndef __abs
 # define __abs(x) ((x) < 0 ? -(x) : (x))
 #endif
+
+static inline uint8_t bin2bcd(uint8_t bin)
+{
+	MOSYS_DCHECK(bin <= 99);
+	return (bin % 10) | ((bin / 10) * 0x10);
+}
 
 /* unittest stuff */
 extern int math_unittest(void);

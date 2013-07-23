@@ -301,7 +301,7 @@ int flashrom_write_by_name(size_t size, uint8_t *buf,
 	string_builder_strcat(sb, ":");
 	string_builder_strcat(sb, filename);
 
-	string_builder_strcat(sb, " -w");
+	string_builder_strcat(sb, " -w --fast-verify");
 	string_builder_strcat(sb, " >/dev/null 2>&1");
 
 	fd = open(filename, O_WRONLY);

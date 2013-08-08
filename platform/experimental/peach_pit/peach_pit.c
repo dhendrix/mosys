@@ -61,6 +61,7 @@ struct platform_cmd *peach_pit_sub[] = {
 	&cmd_memory,
 	&cmd_nvram,
 	&cmd_platform,
+	&cmd_eventlog,
 	NULL
 };
 
@@ -204,6 +205,18 @@ static int peach_pit_destroy(struct platform_intf *intf)
 	return 0;
 }
 
+struct eventlog_cb peach_pit_eventlog_cb = {
+	.print_type	= &elog_print_type,
+	.print_data	= &elog_print_data,
+	.print_multi	= &elog_print_multi,
+	.verify		= &elog_verify,
+	.verify_header	= &elog_verify_header,
+	.add		= &elog_add_event_manually,
+	.clear		= &elog_clear_manually,
+	.fetch		= &elog_fetch_from_flash,
+	.write		= &elog_write_to_flash,
+};
+
 struct platform_cb peach_pit_cb = {
 	.ec 		= &gec_cb,
 	.eeprom 	= &peach_pit_eeprom_cb,
@@ -211,6 +224,7 @@ struct platform_cb peach_pit_cb = {
 	.memory		= &peach_pit_memory_cb,
 	.nvram		= &gec_nvram_cb,
 	.sys 		= &peach_pit_sys_cb,
+	.eventlog	= &peach_pit_eventlog_cb,
 };
 
 struct platform_intf platform_peach_pit = {

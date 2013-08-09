@@ -56,6 +56,7 @@
 #define POST_ENTER_ELF_BOOT			0xf8
 #define POST_JUMPING_TO_PAYLOAD			0xf3
 #define POST_DEAD_CODE				0xee
+#define POST_RESUME_FAILURE			0xef
 #define POST_OS_RESUME				0xfd
 #define POST_OS_BOOT				0xfe
 #define POST_DIE 				0xff

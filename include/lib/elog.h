@@ -222,6 +222,7 @@ struct elog_event_data_me_extended {
 /* ARM/generic versions of sleep/wake */
 #define ELOG_TYPE_SLEEP                  0xa7
 #define ELOG_TYPE_WAKE                   0xa8
+#define ELOG_TYPE_FW_WAKE                0xa9
 
 
 /* Recovery reason codes for EVENT_TYPE_CROS_RECOVERY_MODE */

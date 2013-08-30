@@ -96,6 +96,7 @@ static int slippy_dimm_count(struct platform_intf *intf)
 		return slippy_get_spd_index(intf) >= 3 ? 1 : 2;
 	else if (!strncmp(intf->name, "Peppy", 5))
 		return slippy_get_spd_index(intf) >= 4 ? 1 : 2;
+	/* FIXME: Add Leon and Wolf handling (if needed) */
 	else
 		return SLIPPY_DIMM_COUNT;
 }

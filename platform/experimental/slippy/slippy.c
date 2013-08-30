@@ -57,6 +57,10 @@ static const struct probe_ids probe_id_list[] = {
 	  { "X86 FALCO", NULL },
 	  { "Google_Falco", NULL },
 	},
+	{ { "Leon", NULL },
+	  { "X86 LEON", NULL },
+	  { "Google_Leon", NULL },
+	},
 	{ { "Peppy", NULL },
 	  { "X86 PEPPY", NULL },
 	  { "Google_Peppy", NULL },
@@ -64,6 +68,10 @@ static const struct probe_ids probe_id_list[] = {
 	{ { "Slippy", NULL },
 	  { "X86 SLIPPY", NULL },
 	  { "Google_Slippy", NULL },
+	},
+	{ { "Wolf", NULL },
+	  { "X86 WOLF", NULL },
+	  { "Google_Wolf", NULL },
 	},
 	{ { NULL } }
 };

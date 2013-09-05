@@ -4,6 +4,13 @@
 
 menu "Google Platform Support"
 
+config PLATFORM_LINK
+	depends on PLATFORM_ARCH_X86
+	select CHIPSET_INTEL_SERIES6
+	select GOOGLE_EC_LPC
+	bool "Google Pixel"
+	default n
+
 config PLATFORM_MARIO
 	depends on PLATFORM_ARCH_X86
 	select CHIPSET_INTEL_NM10

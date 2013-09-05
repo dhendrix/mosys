@@ -3,7 +3,6 @@ obj-$(CONFIG_EXPERIMENTAL_ASYMPTOTE)	+= asymptote/
 obj-$(CONFIG_EXPERIMENTAL_BUTTERFLY)	+= butterfly/
 obj-$(CONFIG_EXPERIMENTAL_KAEN)		+= kaen/
 obj-$(CONFIG_EXPERIMENTAL_KIEV)		+= kiev/
-obj-$(CONFIG_EXPERIMENTAL_LINK)		+= link/
 obj-$(CONFIG_PLATFORM_PEACH_PIT)	+= peach_pit/
 obj-$(CONFIG_EXPERIMENTAL_SEABOARD)	+= seaboard/
 obj-$(CONFIG_EXPERIMENTAL_SLIPPY)	+= slippy/

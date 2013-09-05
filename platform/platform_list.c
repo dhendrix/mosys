@@ -41,7 +41,6 @@ extern struct platform_intf platform_aebl_tegra2;
 extern struct platform_intf platform_asymptote_tegra2;
 extern struct platform_intf platform_kaen_tegra2;
 extern struct platform_intf platform_kiev;
-extern struct platform_intf platform_link;
 extern struct platform_intf platform_peach_pit;
 extern struct platform_intf platform_seaboard_tegra2;
 extern struct platform_intf platform_slippy;
@@ -51,6 +50,7 @@ extern struct platform_intf platform_spring;
 extern struct platform_intf platform_alex;
 extern struct platform_intf platform_butterfly;
 extern struct platform_intf platform_daisy;
+extern struct platform_intf platform_link;
 extern struct platform_intf platform_lumpy;
 extern struct platform_intf platform_mario;
 extern struct platform_intf platform_parrot;
@@ -68,6 +68,9 @@ struct platform_intf *platform_intf_list[] = {
 #endif
 #ifdef CONFIG_PLATFORM_DAISY
 	&platform_daisy,
+#endif
+#ifdef CONFIG_PLATFORM_LINK
+	&platform_link,
 #endif
 #ifdef CONFIG_PLATFORM_LUMPY
 	&platform_lumpy,
@@ -103,9 +106,6 @@ struct platform_intf *platform_intf_list[] = {
 #endif
 #ifdef CONFIG_EXPERIMENTAL_KIEV
 	&platform_kiev,
-#endif
-#ifdef CONFIG_EXPERIMENTAL_LINK
-	&platform_link,
 #endif
 #ifdef CONFIG_PLATFORM_PEACH_PIT
 	&platform_peach_pit,

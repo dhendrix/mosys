@@ -29,8 +29,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef EXPERIMENTAL_LINK_H__
-#define EXPERIMENTAL_LINK_H__
+#ifndef PLATFORM_LINK_H__
+#define PLATFORM_LINK_H__
 
 #include <inttypes.h>
 #include "mosys/platform.h"
@@ -49,4 +49,4 @@ extern struct sys_cb link_sys_cb;		/* sys.c */
 extern int link_vpd_setup(struct platform_intf *intf);
 extern int link_ec_setup(struct platform_intf *intf);
 
-#endif /* EXPERIMENTAL_LINK_H_ */
+#endif /* PLATFORM_LINK_H_ */

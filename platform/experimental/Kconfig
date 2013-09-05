@@ -40,13 +40,6 @@ config EXPERIMENTAL_KIEV
 	bool "kiev"
 	default n
 
-config EXPERIMENTAL_LINK
-	depends on PLATFORM_ARCH_X86 && PLATFORM_EXPERIMENTAL
-	select CHIPSET_INTEL_SERIES6
-	select GOOGLE_EC_LPC
-	bool "link"
-	default n
-
 config PLATFORM_PEACH_PIT
         depends on PLATFORM_ARCH_ARMEL && PLATFORM_EXPERIMENTAL
         select GOOGLE_EC_SPI

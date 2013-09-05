@@ -49,9 +49,22 @@
 
 enum peach_board_config peach_board_config;
 
-const char *peach_id_list[] = {
+struct probe_id {
+	const char *probe_name;
+	const char *canonical_name;
+};
+
+char *peach_id_list_old[] = {
+	/* old style list for certain rarely-used commands (-S, -p) */
 	"Google Peach Pit",
-	NULL
+	"Google Peach Kirby",
+	NULL,
+};
+
+struct probe_id peach_id_list[] = {
+	{ "Google Peach Pit", "Pit" },
+	{ "Google Peach Kirby", "Kirby" },
+	{ NULL, NULL },
 };
 
 struct platform_cmd *peach_sub[] = {
@@ -64,12 +77,6 @@ struct platform_cmd *peach_sub[] = {
 	&cmd_eventlog,
 	NULL
 };
-
-#if 0
-static const char *hwids[] = {
-	NULL
-};
-#endif
 
 /* TODO: replace this with proper FDT parsing */
 #define FDT_MODEL_NODE	"/proc/device-tree/model"
@@ -97,21 +104,22 @@ static char *model_from_fdt(void)
 
 int peach_probe(struct platform_intf *intf)
 {
-	const char **id;
 	char *model = NULL;
 	int found = 0;
+	struct probe_id *id;
 
 	model = model_from_fdt();
 	if (!model)
 		return -1;
 
-	for (id = peach_id_list; id && *id; id++) {
-		lprintf(LOG_DEBUG, "\"%s\" == \"%s\" ? ", model, *id);
+	for (id = &peach_id_list[0]; id && id->probe_name; id++) {
+		lprintf(LOG_DEBUG, "\"%s\" == \"%s\" ? ",
+					model, id->probe_name);
 		/*
 		 * Allow for partial match since FDT-provided model may
 		 * include extra revision info at the end.
 		 */
-		if (!strncmp(*id, model, strlen(*id))) {
+		if (!strncmp(id->probe_name, model, strlen(id->probe_name))) {
 			lprintf(LOG_DEBUG, "yes\n");
 			found = 1;
 			break;
@@ -120,13 +128,16 @@ int peach_probe(struct platform_intf *intf)
 		}
 	}
 
+	intf->name = id->canonical_name;
 	return found;
 }
 
-struct {
+struct id_map {
 	enum mvl3 v3, v2, v1, v0;
 	enum peach_board_config config;
-} peach_pit_id_map[] = {
+};
+
+struct id_map peach_pit_id_map[] = {
 	/*  REV3     REV3     REV1     REV0       config */
 	{ LOGIC_0, LOGIC_0, LOGIC_0, LOGIC_0, PEACH_PIT_CONFIG_PROTO },
 
@@ -150,12 +161,43 @@ struct {
 	{ LOGIC_0, LOGIC_Z, LOGIC_Z, LOGIC_Z, PEACH_PIT_CONFIG_MP_4GB },
 };
 
-static int board_config(struct platform_intf *intf)
+struct id_map peach_kirby_id_map[] = {
+	/*  REV3     REV2     REV1     REV0       config */
+	{ LOGIC_0, LOGIC_0, LOGIC_0, LOGIC_0, PEACH_KIRBY_CONFIG_PROTO0 },
+	{ LOGIC_0, LOGIC_0, LOGIC_0, LOGIC_1, PEACH_KIRBY_CONFIG_PROTO1 },
+	{ LOGIC_0, LOGIC_0, LOGIC_0, LOGIC_Z, PEACH_KIRBY_CONFIG_EVT },
+	{ LOGIC_0, LOGIC_0, LOGIC_1, LOGIC_0, PEACH_KIRBY_CONFIG_DVT },
+	{ LOGIC_0, LOGIC_0, LOGIC_1, LOGIC_1, PEACH_KIRBY_CONFIG_PVT },
+	{ LOGIC_0, LOGIC_0, LOGIC_1, LOGIC_Z, PEACH_KIRBY_CONFIG_MP },
+
+	/* Strappings set aside, but not assigned a particular ID */
+	{ LOGIC_0, LOGIC_0, LOGIC_Z, LOGIC_0, PEACH_KIRBY_CONFIG_RSVD },
+	{ LOGIC_0, LOGIC_0, LOGIC_Z, LOGIC_1, PEACH_KIRBY_CONFIG_RSVD },
+	{ LOGIC_0, LOGIC_0, LOGIC_Z, LOGIC_Z, PEACH_KIRBY_CONFIG_RSVD },
+};
+
+static int get_peach_board_config(struct platform_intf *intf)
 {
-	int i;
+	int i, count;
 	struct gpio_map *rev0, *rev1, *rev2, *rev3;
 	enum mvl3 v0, v1, v2, v3;
 	enum peach_board_config config = PEACH_CONFIG_UNKNOWN;
+	struct id_map *map;
+	char logic[] = {
+		[LOGIC_Z] = 'Z',
+		[LOGIC_0] = '0',
+		[LOGIC_1] = '1',
+	};
+
+	if (!strcmp(intf->name, "Pit")) {
+		map = peach_pit_id_map;
+		count = ARRAY_SIZE(peach_pit_id_map);
+	} else if (!strcmp(intf->name, "Kirby")) {
+		map = peach_kirby_id_map;
+		count = ARRAY_SIZE(peach_kirby_id_map);
+	} else {
+		return PEACH_CONFIG_UNKNOWN;
+	}
 
 	rev3 = intf->cb->gpio->map(intf, PEACH_BOARD_REV3);
 	rev2 = intf->cb->gpio->map(intf, PEACH_BOARD_REV2);
@@ -171,15 +213,15 @@ static int board_config(struct platform_intf *intf)
 	v2 = exynos5420_read_gpio_mvl(intf, rev2);
 	v1 = exynos5420_read_gpio_mvl(intf, rev1);
 	v0 = exynos5420_read_gpio_mvl(intf, rev0);
-	lprintf(LOG_DEBUG, "%s: v3: %u, v2: %u, v1: %u, v0: %u\n",
-			__func__, v3, v2, v1, v0);
+	lprintf(LOG_DEBUG, "%s: v3: %c, v2: %c, v1: %c, v0: %c\n",
+			__func__, logic[v3], logic[v2], logic[v1], logic[v0]);
 
-	for (i = 0; i < ARRAY_SIZE(peach_pit_id_map); i++) {
-		if ((v3 == peach_pit_id_map[i].v3) &&
-		    (v2 == peach_pit_id_map[i].v2) &&
-		    (v1 == peach_pit_id_map[i].v1) &&
-		    (v0 == peach_pit_id_map[i].v0)) {
-			config = peach_pit_id_map[i].config;
+	for (i = 0; i < count; i++) {
+		if ((v3 == map[i].v3) &&
+		    (v2 == map[i].v2) &&
+		    (v1 == map[i].v1) &&
+		    (v0 == map[i].v0)) {
+			config = map[i].config;
 			break;
 		}
 	}
@@ -189,7 +231,7 @@ static int board_config(struct platform_intf *intf)
 
 static int peach_setup_post(struct platform_intf *intf)
 {
-	peach_board_config = board_config(intf);
+	peach_board_config = get_peach_board_config(intf);
 	if (peach_board_config == PEACH_CONFIG_UNKNOWN)
 		return -1;
 
@@ -229,8 +271,8 @@ struct platform_cb peach_cb = {
 
 struct platform_intf platform_peach = {
 	.type		= PLATFORM_ARMV7,
-	.name		= "Pit",
-	.id_list	= peach_id_list,
+	.name		= "Peach",
+	.id_list	= peach_id_list_old,
 	.sub		= peach_sub,
 	.cb		= &peach_cb,
 	.probe		= &peach_probe,

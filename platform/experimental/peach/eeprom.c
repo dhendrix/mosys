@@ -44,7 +44,7 @@
 #include "lib/eeprom.h"
 #include "lib/flashrom.h"
 
-#include "peach_pit.h"
+#include "peach.h"
 
 #define PEACH_PIT_HOST_FIRMWARE_ROM_SIZE	(4096 * 1024)
 
@@ -157,7 +157,7 @@ static struct eeprom eeproms[] = {
 	{ 0 },
 };
 
-int peach_pit_eeprom_setup(struct platform_intf *intf)
+int peach_eeprom_setup(struct platform_intf *intf)
 {
 	struct eeprom *eeprom;
 	int rc = 0;
@@ -172,6 +172,6 @@ int peach_pit_eeprom_setup(struct platform_intf *intf)
 	return rc;
 }
 
-struct eeprom_cb peach_pit_eeprom_cb = {
+struct eeprom_cb peach_eeprom_cb = {
 	.eeprom_list	= eeproms,
 };

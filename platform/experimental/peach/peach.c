@@ -45,16 +45,16 @@
 #include "lib/math.h"
 #include "lib/probe.h"
 
-#include "peach_pit.h"
+#include "peach.h"
 
-enum peach_pit_board_config peach_pit_board_config;
+enum peach_board_config peach_board_config;
 
-const char *peach_pit_id_list[] = {
+const char *peach_id_list[] = {
 	"Google Peach Pit",
 	NULL
 };
 
-struct platform_cmd *peach_pit_sub[] = {
+struct platform_cmd *peach_sub[] = {
 	&cmd_ec,
 	&cmd_eeprom,
 	&cmd_gpio,
@@ -95,7 +95,7 @@ static char *model_from_fdt(void)
 	return model;
 }
 
-int peach_pit_probe(struct platform_intf *intf)
+int peach_probe(struct platform_intf *intf)
 {
 	const char **id;
 	char *model = NULL;
@@ -105,7 +105,7 @@ int peach_pit_probe(struct platform_intf *intf)
 	if (!model)
 		return -1;
 
-	for (id = peach_pit_id_list; id && *id; id++) {
+	for (id = peach_id_list; id && *id; id++) {
 		lprintf(LOG_DEBUG, "\"%s\" == \"%s\" ? ", model, *id);
 		/*
 		 * Allow for partial match since FDT-provided model may
@@ -125,7 +125,7 @@ int peach_pit_probe(struct platform_intf *intf)
 
 struct {
 	enum mvl3 v3, v2, v1, v0;
-	enum peach_pit_board_config config;
+	enum peach_board_config config;
 } peach_pit_id_map[] = {
 	/*  REV3     REV3     REV1     REV0       config */
 	{ LOGIC_0, LOGIC_0, LOGIC_0, LOGIC_0, PEACH_PIT_CONFIG_PROTO },
@@ -155,16 +155,16 @@ static int board_config(struct platform_intf *intf)
 	int i;
 	struct gpio_map *rev0, *rev1, *rev2, *rev3;
 	enum mvl3 v0, v1, v2, v3;
-	enum peach_pit_board_config config = PEACH_PIT_CONFIG_UNKNOWN;
+	enum peach_board_config config = PEACH_CONFIG_UNKNOWN;
 
-	rev3 = intf->cb->gpio->map(intf, PEACH_PIT_BOARD_REV3);
-	rev2 = intf->cb->gpio->map(intf, PEACH_PIT_BOARD_REV2);
-	rev1 = intf->cb->gpio->map(intf, PEACH_PIT_BOARD_REV1);
-	rev0 = intf->cb->gpio->map(intf, PEACH_PIT_BOARD_REV0);
+	rev3 = intf->cb->gpio->map(intf, PEACH_BOARD_REV3);
+	rev2 = intf->cb->gpio->map(intf, PEACH_BOARD_REV2);
+	rev1 = intf->cb->gpio->map(intf, PEACH_BOARD_REV1);
+	rev0 = intf->cb->gpio->map(intf, PEACH_BOARD_REV0);
 	if (!rev3 || !rev2 || !rev1 || !rev0) {
 		lprintf(LOG_DEBUG, "%s: Unable to determine board "
 				"revision\n", __func__);
-		return PEACH_PIT_CONFIG_UNKNOWN;
+		return PEACH_CONFIG_UNKNOWN;
 	}
 
 	v3 = exynos5420_read_gpio_mvl(intf, rev3);
@@ -187,25 +187,25 @@ static int board_config(struct platform_intf *intf)
 	return config;
 }
 
-static int peach_pit_setup_post(struct platform_intf *intf)
+static int peach_setup_post(struct platform_intf *intf)
 {
-	peach_pit_board_config = board_config(intf);
-	if (peach_pit_board_config == PEACH_PIT_CONFIG_UNKNOWN)
+	peach_board_config = board_config(intf);
+	if (peach_board_config == PEACH_CONFIG_UNKNOWN)
 		return -1;
 
-	if (peach_pit_ec_setup(intf) <= 0)
+	if (peach_ec_setup(intf) <= 0)
 		return -1;
 
 	return 0;
 }
 
-static int peach_pit_destroy(struct platform_intf *intf)
+static int peach_destroy(struct platform_intf *intf)
 {
 	intf->cb->ec->destroy(intf);
 	return 0;
 }
 
-struct eventlog_cb peach_pit_eventlog_cb = {
+struct eventlog_cb peach_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
 	.print_multi	= &elog_print_multi,
@@ -217,23 +217,23 @@ struct eventlog_cb peach_pit_eventlog_cb = {
 	.write		= &elog_write_to_flash,
 };
 
-struct platform_cb peach_pit_cb = {
+struct platform_cb peach_cb = {
 	.ec 		= &gec_cb,
-	.eeprom 	= &peach_pit_eeprom_cb,
-	.gpio		= &peach_pit_gpio_cb,
-	.memory		= &peach_pit_memory_cb,
+	.eeprom 	= &peach_eeprom_cb,
+	.gpio		= &peach_gpio_cb,
+	.memory		= &peach_memory_cb,
 	.nvram		= &gec_nvram_cb,
-	.sys 		= &peach_pit_sys_cb,
-	.eventlog	= &peach_pit_eventlog_cb,
+	.sys 		= &peach_sys_cb,
+	.eventlog	= &peach_eventlog_cb,
 };
 
-struct platform_intf platform_peach_pit = {
+struct platform_intf platform_peach = {
 	.type		= PLATFORM_ARMV7,
 	.name		= "Pit",
-	.id_list	= peach_pit_id_list,
-	.sub		= peach_pit_sub,
-	.cb		= &peach_pit_cb,
-	.probe		= &peach_pit_probe,
-	.setup_post	= &peach_pit_setup_post,
-	.destroy	= &peach_pit_destroy,
+	.id_list	= peach_id_list,
+	.sub		= peach_sub,
+	.cb		= &peach_cb,
+	.probe		= &peach_probe,
+	.setup_post	= &peach_setup_post,
+	.destroy	= &peach_destroy,
 };

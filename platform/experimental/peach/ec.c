@@ -1,5 +1,5 @@
 /*
- * Copyright 2012, Google Inc.
+ * Copyright 2013, Google Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,43 +29,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PLATFORM_PEACH_PIT_H__
-#define PLATFORM_PEACH_PIT_H__
-
-#include <inttypes.h>
+#include "mosys/log.h"
 #include "mosys/platform.h"
 
-#define PEACH_PIT_BOARD_REV0	"BOARD_REV0"
-#define PEACH_PIT_BOARD_REV1	"BOARD_REV1"
-#define PEACH_PIT_BOARD_REV2	"BOARD_REV2"
-#define PEACH_PIT_BOARD_REV3	"BOARD_REV3"
+#include "drivers/google/gec.h"
 
-enum peach_pit_board_config {
-	PEACH_PIT_CONFIG_UNKNOWN = -1,
-	PEACH_PIT_CONFIG_RSVD = 0,
-	PEACH_PIT_CONFIG_PROTO,
-	PEACH_PIT_CONFIG_EVT_2GB,
-	PEACH_PIT_CONFIG_EVT_4GB,
-	PEACH_PIT_CONFIG_DVT1_2GB,
-	PEACH_PIT_CONFIG_DVT1_4GB,
-	PEACH_PIT_CONFIG_DVT2_2GB,
-	PEACH_PIT_CONFIG_DVT2_4GB,
-	PEACH_PIT_CONFIG_PVT1_2GB,
-	PEACH_PIT_CONFIG_PVT1_4GB,
-	PEACH_PIT_CONFIG_PVT2_2GB,
-	PEACH_PIT_CONFIG_PVT2_4GB,
-	PEACH_PIT_CONFIG_MP_2GB,
-	PEACH_PIT_CONFIG_MP_4GB,
-};
+struct gec_priv peach_ec_priv;
 
-extern enum peach_pit_board_config peach_pit_board_config;
-extern int peach_pit_ec_setup(struct platform_intf *intf);
+int peach_ec_setup(struct platform_intf *intf)
+{
+	int ret;
 
-/* platform callbacks */
-extern struct eeprom_cb peach_pit_eeprom_cb;	/* eeprom.c */
-extern struct sys_cb peach_pit_sys_cb;		/* sys.c */
-extern struct gpio_cb peach_pit_gpio_cb;	/* gpio.c */
-extern struct memory_cb peach_pit_memory_cb;	/* memory.c */
-extern struct nvram_cb gec_nvram_cb;		/* drivers/google/gec.c */
+	MOSYS_CHECK(intf->cb && intf->cb->ec);
+	intf->cb->ec->priv = &peach_ec_priv;
 
-#endif /* PLATFORM_PEACH_PIT_H_ */
+	ret = gec_probe_dev(intf);
+	if (ret == 1)
+		lprintf(LOG_DEBUG, "CrOS EC found using /dev interface\n");
+	else if (ret == 0)
+		lprintf(LOG_DEBUG, "CrOS EC not found in /dev\n");
+	else
+		lprintf(LOG_ERR, "Error when probing GEC via devfs\n");
+
+	return ret;
+}

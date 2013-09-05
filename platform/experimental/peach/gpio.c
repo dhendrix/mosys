@@ -39,14 +39,14 @@
 
 #include "lib/string.h"
 
-#include "peach_pit.h"
+#include "peach.h"
 
 #define GPIO_SOC	0
 
-#define REV0	PEACH_PIT_BOARD_REV0
-#define REV1	PEACH_PIT_BOARD_REV1
-#define REV2	PEACH_PIT_BOARD_REV2
-#define REV3	PEACH_PIT_BOARD_REV3
+#define REV0	PEACH_BOARD_REV0
+#define REV1	PEACH_BOARD_REV1
+#define REV2	PEACH_BOARD_REV2
+#define REV3	PEACH_BOARD_REV3
 
 /* gpio number, in/out, device, port, pin, negate, devname, name */
 static struct gpio_map platform_gpio_map[] = {
@@ -153,7 +153,7 @@ static int gpio_set(struct platform_intf *intf,
 	return ret;
 }
 
-struct gpio_cb peach_pit_gpio_cb = {
+struct gpio_cb peach_gpio_cb = {
 	.read	= gpio_read,
 	.map	= gpio_map,
 	.list	= exynos5420_gpio_list,	/* generic listing for now */

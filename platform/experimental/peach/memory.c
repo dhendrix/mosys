@@ -36,7 +36,7 @@
 #include "lib/math.h"
 #include "lib/spd.h"
 
-#include "peach_pit.h"
+#include "peach.h"
 
 /* Treat the chips on each channel as a logical DIMM */
 #define PEACH_PIT_DIMM_COUNT	2
@@ -114,7 +114,7 @@ static int spd_read(struct platform_intf *intf,
 {
 	int rc = 0;
 
-	switch (peach_pit_board_config) {
+	switch (peach_board_config) {
 	case PEACH_PIT_CONFIG_PROTO:
 	case PEACH_PIT_CONFIG_EVT_2GB:
 	case PEACH_PIT_CONFIG_DVT1_2GB:
@@ -149,7 +149,7 @@ static struct memory_spd_cb spd_cb = {
 	.read		= spd_read,
 };
 
-struct memory_cb peach_pit_memory_cb = {
+struct memory_cb peach_memory_cb = {
 	.dimm_count	= dimm_count,
 	.spd		= &spd_cb,
 };

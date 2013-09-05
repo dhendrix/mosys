@@ -32,7 +32,7 @@
 #include "mosys/alloc.h"
 #include "mosys/platform.h"
 
-#include "peach_pit.h"
+#include "peach.h"
 
 #if 0
 static const char *pit_get_vendor(struct platform_intf *intf)
@@ -54,7 +54,7 @@ static const char *get_version(struct platform_intf *intf)
 {
 	char *ret = NULL;
 
-	switch (peach_pit_board_config) {
+	switch (peach_board_config) {
 	case PEACH_PIT_CONFIG_PROTO:
 		ret = mosys_strdup("PROTO");
 		break;
@@ -89,7 +89,7 @@ static const char *get_version(struct platform_intf *intf)
 	return ret;
 }
 
-struct sys_cb peach_pit_sys_cb = {
+struct sys_cb peach_sys_cb = {
 //	.vendor		= &get_vendor,
 	.name		= &get_name,
 	.version	= &get_version,

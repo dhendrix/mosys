@@ -56,6 +56,8 @@ const char *daisy_id_list[] = {
 	"Google Snow",
 	"SMDK5250",
 	"Snow",
+	"google,snow-any",
+	"google,snow",
 	NULL
 };
 
@@ -104,6 +106,7 @@ int daisy_probe(struct platform_intf *intf)
 	static int status = 0, probed = 0;
 	const char **id;
 	char *model = NULL;
+	int index;
 
 	if (probed)
 		return status;
@@ -126,6 +129,15 @@ int daisy_probe(struct platform_intf *intf)
 				lprintf(LOG_DEBUG, "no\n");
 			}
 		}
+	}
+
+	index = probe_fdt_compatible(&daisy_id_list[0],
+					ARRAY_SIZE(daisy_id_list));
+	if (index >= 0) {
+		lprintf(LOG_DEBUG, "Found platform \"%s\" via FDT compatible "
+				"node.\n", daisy_id_list[index]);
+		status = 1;
+		goto daisy_probe_exit;
 	}
 
 #if 0

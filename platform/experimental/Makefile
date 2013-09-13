@@ -1,6 +1,5 @@
 obj-$(CONFIG_EXPERIMENTAL_AEBL)		+= aebl/
 obj-$(CONFIG_EXPERIMENTAL_ASYMPTOTE)	+= asymptote/
-obj-$(CONFIG_EXPERIMENTAL_BUTTERFLY)	+= butterfly/
 obj-$(CONFIG_EXPERIMENTAL_KAEN)		+= kaen/
 obj-$(CONFIG_EXPERIMENTAL_KIEV)		+= kiev/
 obj-$(CONFIG_PLATFORM_PEACH)		+= peach/

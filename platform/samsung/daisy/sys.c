@@ -82,6 +82,8 @@ static const char *daisy_get_version(struct platform_intf *intf)
 		break;
 	case SNOW_CONFIG_ELPIDA_MP:
 	case SNOW_CONFIG_SAMSUNG_MP:
+		ret = mosys_strdup("MP");
+		break;
 	case SNOW_CONFIG_SAMSUNG_MP_1_2:
 		ret = mosys_strdup("MPx16");
 		break;

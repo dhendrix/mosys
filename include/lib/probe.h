@@ -121,6 +121,14 @@ extern const char *extract_block_device_model_name(const char *device);
 extern int probe_cmdline(const char *key, int cs);
 
 /*
+ * fdt_model - Get platform model from FDT
+ *
+ * returns pointer to model string to indiciate success
+ * returns NULL to indicate failure
+ */
+extern char *fdt_model(void);
+
+/*
  * probe_fdt_compatible - Probe platform using device tree "compatible" node
  *
  * @id_list:	Known platform IDs to compare with

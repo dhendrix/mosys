@@ -78,37 +78,13 @@ struct platform_cmd *peach_sub[] = {
 	NULL
 };
 
-/* TODO: replace this with proper FDT parsing */
-#define FDT_MODEL_NODE	"/proc/device-tree/model"
-static char *model_from_fdt(void)
-{
-	int fd;
-	static char model[32];
-	int len;
-
-	fd = file_open(FDT_MODEL_NODE, FILE_READ);
-	if (fd < 0) {
-		lperror(LOG_DEBUG, "Unable to open %s", FDT_MODEL_NODE);
-		return NULL;
-	}
-
-	memset(model, 0, sizeof(model));
-	len = read(fd, &model, sizeof(model));
-	if (len < 0) {
-		lprintf(LOG_DEBUG, "%s: Could not read FDT\n", __func__);
-		return NULL;
-	}
-
-	return model;
-}
-
 int peach_probe(struct platform_intf *intf)
 {
 	char *model = NULL;
 	int found = 0;
 	struct probe_id *id;
 
-	model = model_from_fdt();
+	model = fdt_model();
 	if (!model)
 		return -1;
 

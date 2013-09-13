@@ -35,6 +35,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <limits.h>
+#include <unistd.h>
 
 #include "mosys/alloc.h"
 #include "mosys/callbacks.h"
@@ -43,6 +44,7 @@
 #include "mosys/platform.h"
 
 #include "lib/acpi.h"
+#include "lib/file.h"
 #include "lib/smbios.h"
 #include "lib/string.h"
 
@@ -289,4 +291,59 @@ const char *extract_block_device_model_name(const char *device)
 		model_name[len-1] = '\0';
 
 	return (const char *)model_name;
+}
+
+#define FDT_COMPATIBLE	"/proc/device-tree/compatible"
+int probe_fdt_compatible(const char *id_list[], int num_ids)
+{
+	int ret = -1, i, fd;
+	char path[PATH_MAX];
+	char compat[64];	/* arbitrarily chosen max size */
+	char *p;
+
+	lprintf(LOG_DEBUG, "Probing platform with FDT compatible node\n");
+
+	snprintf(path, PATH_MAX, "%s/%s",
+			mosys_get_root_prefix(), FDT_COMPATIBLE);
+	fd = file_open(path, FILE_READ);
+	if (fd < 0) {
+		lprintf(LOG_DEBUG, "Cannot open %s\n", path);
+		return -1;
+	}
+
+	/*
+	 * Device tree "compatible" data consists of a list of comma-separated
+	 * pairs with a NULL after each pair. For example, "foo,bar\0bam,baz\0"
+	 * is foo,bar and bam,baz.
+	 */
+	p = &compat[0];
+	while (read(fd, p, 1) == 1) {
+		if (*p != 0) {
+			p++;
+			if (p - &compat[0] > sizeof(compat)) {
+				lprintf(LOG_ERR,
+					"FDT compatible identifier too long\n");
+				goto probe_fdt_compatible_exit;
+			}
+			continue;
+		}
+
+		for (i = 0; (i < num_ids) && id_list[i]; i++) {
+			lprintf(LOG_DEBUG, "\t\"%s\" == \"%s\" ? ",
+					&compat[0], id_list[i]);
+			if (!strcmp(&compat[0], id_list[i])) {
+				lprintf(LOG_DEBUG, "yes\n");
+				ret = i;
+				goto probe_fdt_compatible_exit;
+			} else {
+				lprintf(LOG_DEBUG, "no\n");
+			}
+		}
+
+		p = &compat[0];
+	}
+
+probe_fdt_compatible_exit:
+	close(fd);
+	return ret;
 }

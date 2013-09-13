@@ -120,4 +120,15 @@ extern const char *extract_block_device_model_name(const char *device);
  */
 extern int probe_cmdline(const char *key, int cs);
 
+/*
+ * probe_fdt_compatible - Probe platform using device tree "compatible" node
+ *
+ * @id_list:	Known platform IDs to compare with
+ * @num_ids:	Number of known platform IDs
+ *
+ * returns the index of the platform ID if found
+ * returns <0 to indicate error
+ */
+extern int probe_fdt_compatible(const char *id_list[], int num_ids);
+
 #endif /* MOSYS_LIB_PROBE_H__ */

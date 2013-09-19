@@ -1,0 +1,3 @@
+obj-$(CONFIG_EXPERIMENTAL_NYAN)	+= ec.o
+obj-$(CONFIG_EXPERIMENTAL_NYAN)	+= sys.o
+obj-$(CONFIG_EXPERIMENTAL_NYAN)	+= nyan.o

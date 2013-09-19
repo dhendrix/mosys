@@ -41,6 +41,7 @@ extern struct platform_intf platform_aebl_tegra2;
 extern struct platform_intf platform_asymptote_tegra2;
 extern struct platform_intf platform_kaen_tegra2;
 extern struct platform_intf platform_kiev;
+extern struct platform_intf platform_nyan;
 extern struct platform_intf platform_peach;
 extern struct platform_intf platform_seaboard_tegra2;
 extern struct platform_intf platform_slippy;
@@ -106,6 +107,9 @@ struct platform_intf *platform_intf_list[] = {
 #endif
 #ifdef CONFIG_EXPERIMENTAL_KIEV
 	&platform_kiev,
+#endif
+#ifdef CONFIG_EXPERIMENTAL_NYAN
+	&platform_nyan,
 #endif
 #ifdef CONFIG_PLATFORM_PEACH
 	&platform_peach,

@@ -2,6 +2,7 @@ obj-$(CONFIG_EXPERIMENTAL_AEBL)		+= aebl/
 obj-$(CONFIG_EXPERIMENTAL_ASYMPTOTE)	+= asymptote/
 obj-$(CONFIG_EXPERIMENTAL_KAEN)		+= kaen/
 obj-$(CONFIG_EXPERIMENTAL_KIEV)		+= kiev/
+obj-$(CONFIG_EXPERIMENTAL_NYAN)		+= nyan/
 obj-$(CONFIG_PLATFORM_PEACH)		+= peach/
 obj-$(CONFIG_EXPERIMENTAL_SEABOARD)	+= seaboard/
 obj-$(CONFIG_EXPERIMENTAL_SLIPPY)	+= slippy/

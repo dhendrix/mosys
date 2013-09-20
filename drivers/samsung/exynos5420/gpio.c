@@ -47,14 +47,51 @@
 /* banks of GPIO registers corresponding to a port */
 const struct exynos_gpio_bank exynos5420_gpio_banks[] = {
 	/*
-	 * Note 1: Keep in order of exynos5_gpio_port enum.
-	 * Note 2: ETC registers are special, so they are not included here.
+	 * Note 1: ETC registers are special, so they are not included here.
 	 */
 
 	/* base == EXYNOS5420_GPIO_RIGHT */
 	{ "GPY7", EXYNOS5420_GPIO_RIGHT + 0x0000 },
+	{ "GPX0", EXYNOS5420_GPIO_RIGHT + 0x0c00 },
+	{ "GPX1", EXYNOS5420_GPIO_RIGHT + 0x0c20 },
+	{ "GPX2", EXYNOS5420_GPIO_RIGHT + 0x0c40 },
+	{ "GPX3", EXYNOS5420_GPIO_RIGHT + 0x0c60 },
 
-	/* TODO: finish filling this out if needed */
+	{ "GPC0", EXYNOS5420_GPIO_TOP + 0x0000 },
+	{ "GPC1", EXYNOS5420_GPIO_TOP + 0x0020 },
+	{ "GPC2", EXYNOS5420_GPIO_TOP + 0x0040 },
+	{ "GPC3", EXYNOS5420_GPIO_TOP + 0x0060 },
+	{ "GPC4", EXYNOS5420_GPIO_TOP + 0x0080 },
+	{ "GPD1", EXYNOS5420_GPIO_TOP + 0x00a0 },
+	{ "GPY0", EXYNOS5420_GPIO_TOP + 0x00c0 },
+	{ "GPY1", EXYNOS5420_GPIO_TOP + 0x00e0 },
+	{ "GPY2", EXYNOS5420_GPIO_TOP + 0x0100 },
+	{ "GPY3", EXYNOS5420_GPIO_TOP + 0x0120 },
+	{ "GPY4", EXYNOS5420_GPIO_TOP + 0x0140 },
+	{ "GPY5", EXYNOS5420_GPIO_TOP + 0x0160 },
+	{ "GPY6", EXYNOS5420_GPIO_TOP + 0x0180 },
+
+	{ "GPE0", EXYNOS5420_GPIO_LEFT + 0x0000 },
+	{ "GPE1", EXYNOS5420_GPIO_LEFT + 0x0020 },
+	{ "GPF0", EXYNOS5420_GPIO_LEFT + 0x0040 },
+	{ "GPF1", EXYNOS5420_GPIO_LEFT + 0x0060 },
+	{ "GPG0", EXYNOS5420_GPIO_LEFT + 0x0080 },
+	{ "GPG1", EXYNOS5420_GPIO_LEFT + 0x00a0 },
+	{ "GPG2", EXYNOS5420_GPIO_LEFT + 0x00c0 },
+	{ "GPJ4", EXYNOS5420_GPIO_LEFT + 0x00e0 },
+
+	{ "GPA0", EXYNOS5420_GPIO_BOTTOM + 0x0000 },
+	{ "GPA1", EXYNOS5420_GPIO_BOTTOM + 0x0020 },
+	{ "GPA2", EXYNOS5420_GPIO_BOTTOM + 0x0040 },
+	{ "GPB0", EXYNOS5420_GPIO_BOTTOM + 0x0060 },
+	{ "GPB1", EXYNOS5420_GPIO_BOTTOM + 0x0080 },
+	{ "GPB2", EXYNOS5420_GPIO_BOTTOM + 0x00a0 },
+	{ "GPB3", EXYNOS5420_GPIO_BOTTOM + 0x00c0 },
+	{ "GPB4", EXYNOS5420_GPIO_BOTTOM + 0x00e0 },
+	{ "GPH0", EXYNOS5420_GPIO_BOTTOM + 0x0100 },
+
+	{ "GPZ", 0x03860000 + 0x0000 },
+
 	{ NULL },
 };
 

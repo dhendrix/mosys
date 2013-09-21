@@ -198,7 +198,7 @@ int exynos_gpio_list(struct platform_intf *intf,
 
 		for (j = 0; j < 8; j++) {
 			int tmp;
-			uint32_t mask = __mask(j * 4 + 4, j * 4);
+			uint32_t mask = __mask(j * 4 + 4 - 1, j * 4);
 			char gpioname[16];
 			int state;
 

@@ -241,6 +241,7 @@ static int daisy_spd_read(struct platform_intf *intf,
 		rc = len;
 		break;
 	case SNOW_CONFIG_SAMSUNG_MP_1_2:
+	case SNOW_CONFIG_SAMSUNG_MP_2_0:
 		memcpy(buf, &samsung_ddr3x16_1600_spd[reg], len);
 		rc = len;
 		break;

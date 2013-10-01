@@ -121,6 +121,9 @@ static int slippy_dimm_count(struct platform_intf *intf)
 		 * {1,1,0} = 2GB Elpida
 		 */
 		return slippy_get_spd_index(intf) >= 4 ? 1 : 2;
+	} else if (!strncmp(intf->name, "Samus", 5)) {
+		/* Samus has 2 DIMM config */
+		return 2;
 	}
 	/* FIXME: Add Leon and Wolf handling (if needed) */
 	else

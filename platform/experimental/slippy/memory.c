@@ -92,10 +92,36 @@ static int slippy_get_spd_index(struct platform_intf *intf)
  */
 static int slippy_dimm_count(struct platform_intf *intf)
 {
-	if (!strncmp(intf->name, "Falco", 5))
-		return slippy_get_spd_index(intf) >= 3 ? 1 : 2;
-	else if (!strncmp(intf->name, "Peppy", 5))
+	if (!strncmp(intf->name, "Falco", 5)) {
+		/* Falco has 1 or 2 DIMM config based on RAM_ID.
+		 * {0,0,0} = 4GB Micron
+		 * {0,0,1} = 4GB Hynix
+		 * {0,1,0} = 4GB Elpida
+		 * {0,1,1} = 2GB Micron
+		 * {1,0,0} = 2GB Hynix
+		 * {1,0,1} = 2GB Elpida
+		 * {1,1,0} = 4GB Samsung
+		 * {1,1,1} = 2GB Samsung
+		 */
+		int index = slippy_get_spd_index(intf);
+		switch (index) {
+		case 3: case 4: case 5: case 7:
+			return 1;
+		default:
+			return 2;
+		}
+	} else if (!strncmp(intf->name, "Peppy", 5)) {
+		/* Peppy has 1 or 2 DIMM config based on RAM_ID.
+		 * {0,0,0} = 4GB Micron
+		 * {0,0,1} = 4GB Hynix
+		 * {0,1,0} = 4GB Elpida
+		 * {0,1,1} = UNUSED
+		 * {1,0,0} = 2GB Micron
+		 * {1,0,1} = 2GB Hynix
+		 * {1,1,0} = 2GB Elpida
+		 */
 		return slippy_get_spd_index(intf) >= 4 ? 1 : 2;
+	}
 	/* FIXME: Add Leon and Wolf handling (if needed) */
 	else
 		return SLIPPY_DIMM_COUNT;

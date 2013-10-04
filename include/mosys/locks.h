@@ -48,7 +48,7 @@
 #define MOSYS_LOCK_BIGLOCK	(MOSYS_IPC_LOCK_KEY + 0)
 
 /* for Google EC */
-#define GEC_LOCK		(MOSYS_IPC_LOCK_KEY + 1)
+#define CROS_EC_LOCK		(MOSYS_IPC_LOCK_KEY + 1)
 
 /* key for testing, should never be used in production */
 #define MOSYS_TEST_KEY		0xffffffff

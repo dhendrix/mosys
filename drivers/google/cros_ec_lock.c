@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+/* Copyright 2012, Google Inc.
+ * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -26,65 +26,21 @@
  * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * gec_cb.c: EC accessor functions / callbacks for use in platform_intf
  */
 
-#include "mosys/alloc.h"
-#include "mosys/callbacks.h"
-#include "mosys/log.h"
-#include "mosys/platform.h"
+#include "mosys/ipc_lock.h"
+#include "mosys/locks.h"
 
-#include "drivers/google/gec.h"
-#include "drivers/google/gec_ec_commands.h"
+#include "drivers/google/cros_ec_lock.h"
 
-static const char *gec_name(struct platform_intf *intf)
+static struct ipc_lock cros_ec_lock = IPC_LOCK_INIT(CROS_EC_LOCK);
+
+int acquire_cros_ec_lock(int timeout_secs)
 {
-	static const char *name = NULL;
-	struct ec_response_get_chip_info chip_info;
-
-	if (name)
-		return name;
-
-	if (gec_chip_info(intf, &chip_info))
-		return NULL;
-
-	name = mosys_strdup(chip_info.name);
-	add_destroy_callback(free, (void *)name);
-	return name;
+	return mosys_lock(&cros_ec_lock, timeout_secs*1000);
 }
 
-static const char *gec_vendor(struct platform_intf *intf)
+int release_cros_ec_lock(void)
 {
-	static const char *vendor = NULL;
-	struct ec_response_get_chip_info chip_info;
-
-	if (vendor)
-		return vendor;
-
-	if (gec_chip_info(intf, &chip_info))
-		return NULL;
-
-	vendor = mosys_strdup(chip_info.vendor);
-	add_destroy_callback(free, (void *)vendor);
-	return vendor;
+	return mosys_unlock(&cros_ec_lock);
 }
-
-static const char *gec_fw_version(struct platform_intf *intf)
-{
-	static const char *version = NULL;
-
-	if (version)
-		return version;
-
-	version = gec_version(intf);
-	if (version)
-		add_destroy_callback(free, (void *)version);
-	return version;
-}
-
-struct ec_cb gec_cb = {
-	.vendor		= gec_vendor,
-	.name		= gec_name,
-	.fw_version	= gec_fw_version,
-};

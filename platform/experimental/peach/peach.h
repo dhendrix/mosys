@@ -75,6 +75,6 @@ extern struct eeprom_cb peach_eeprom_cb;	/* eeprom.c */
 extern struct sys_cb peach_sys_cb;		/* sys.c */
 extern struct gpio_cb peach_gpio_cb;		/* gpio.c */
 extern struct memory_cb peach_memory_cb;	/* memory.c */
-extern struct nvram_cb gec_nvram_cb;		/* drivers/google/gec.c */
+extern struct nvram_cb cros_ec_nvram_cb;	/* drivers/google/cros_ec.c */
 
 #endif /* PLATFORM_PEACH_H_ */

@@ -42,6 +42,6 @@ extern struct eeprom_cb nyan_eeprom_cb;	        /* eeprom.c */
 extern struct sys_cb nyan_sys_cb;		/* sys.c */
 extern struct gpio_cb nyan_gpio_cb;	        /* gpio.c */
 extern struct memory_cb nyan_memory_cb;	        /* memory.c */
-extern struct nvram_cb gec_nvram_cb;		/* drivers/google/gec.c */
+extern struct nvram_cb cros_ec_nvram_cb;	/* drivers/google/cros_ec.c */
 
 #endif /* PLATFORM_NYAN_H_ */

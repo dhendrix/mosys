@@ -27,7 +27,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * gec_lpc.c: Subset of Google LPC EC interface functionality (ported from
+ * cros_ec_lpc.c: Subset of Google LPC EC interface functionality (ported from
  * chromium os repo)
  */
 
@@ -38,9 +38,9 @@
 #include "mosys/log.h"
 #include "mosys/platform.h"
 
-#include "drivers/google/gec.h"
-#include "drivers/google/gec_ec_commands.h"
-#include "drivers/google/gec_lock.h"
+#include "drivers/google/cros_ec.h"
+#include "drivers/google/cros_ec_commands.h"
+#include "drivers/google/cros_ec_lock.h"
 
 #include "intf/io.h"
 
@@ -49,20 +49,20 @@
 /* LPC command status byte masks */
 /* EC has written a byte in the data register and host hasn't read it yet */
 /* Host has written a command/data byte and the EC hasn't read it yet */
-#define GEC_STATUS_FROM_HOST   0x02
+#define CROS_EC_STATUS_FROM_HOST   0x02
 /* EC is processing a command */
-#define GEC_STATUS_PROCESSING  0x04
+#define CROS_EC_STATUS_PROCESSING  0x04
 /* Last write to EC was a command, not data */
-#define GEC_STATUS_LAST_CMD    0x08
+#define CROS_EC_STATUS_LAST_CMD    0x08
 /* EC is in burst mode.  Chrome EC doesn't support this, so this bit is never
  * set. */
-#define GEC_STATUS_BURST_MODE  0x10
+#define CROS_EC_STATUS_BURST_MODE  0x10
 /* SCI event is pending (requesting SCI query) */
-#define GEC_STATUS_SCI_PENDING 0x20
+#define CROS_EC_STATUS_SCI_PENDING 0x20
 /* SMI event is pending (requesting SMI query) */
-#define GEC_STATUS_SMI_PENDING 0x40
+#define CROS_EC_STATUS_SMI_PENDING 0x40
 /* (reserved) */
-#define GEC_STATUS_RESERVED    0x80
+#define CROS_EC_STATUS_RESERVED    0x80
 
 /* Waits for the EC to be unbusy.  Returns 0 if unbusy, non-zero if
  * timeout. */
@@ -86,7 +86,7 @@ static int wait_for_ec(struct platform_intf *intf,
 }
 
 /* Check to see if versioned commands are supported by the EC */
-static int gec_command_lpc_cmd_args_supported(struct platform_intf *intf)
+static int cros_ec_command_lpc_cmd_args_supported(struct platform_intf *intf)
 {
 	uint8_t id1, id2, flags;
 
@@ -108,7 +108,7 @@ static int gec_command_lpc_cmd_args_supported(struct platform_intf *intf)
 
 /* Sends a versioned command to the EC.  Returns the command status code,
  * or -1 if other error. */
-static int gec_command_lpc_new(struct platform_intf *intf,
+static int cros_ec_command_lpc_new(struct platform_intf *intf,
 			       int command, int command_version,
 			       const void *indata, int insize,
 			       const void *outdata, int outsize)
@@ -209,7 +209,7 @@ static int gec_command_lpc_new(struct platform_intf *intf,
 
 /* Sends a command to the EC.  Returns the command status code, or
  * -1 if other error. */
-static int gec_command_lpc_old(struct platform_intf *intf,
+static int cros_ec_command_lpc_old(struct platform_intf *intf,
 			       int command, int command_version,
 			       const void *indata, int insize,
 			       const void *outdata, int outsize)
@@ -260,7 +260,7 @@ static int gec_command_lpc_old(struct platform_intf *intf,
 
 /* Sends a command to the EC.  Returns the command status code, or
  * -1 if other error. */
-static int gec_command_lpc(struct platform_intf *intf,
+static int cros_ec_command_lpc(struct platform_intf *intf,
 			   int command, int command_version,
 			   const void *indata, int insize,
 			   const void *outdata, int outsize)
@@ -272,43 +272,43 @@ static int gec_command_lpc(struct platform_intf *intf,
 		return -1;
 	}
 
-	lprintf(LOG_DEBUG, "Acquiring GEC lock (timeout=%d sec)...\n",
-		GEC_LOCK_TIMEOUT_SECS);
-	if (acquire_gec_lock(GEC_LOCK_TIMEOUT_SECS) < 0) {
-		lprintf(LOG_ERR, "Could not acquire GEC lock.\n");
+	lprintf(LOG_DEBUG, "Acquiring CrOS EC lock (timeout=%d sec)...\n",
+		CROS_EC_LOCK_TIMEOUT_SECS);
+	if (acquire_cros_ec_lock(CROS_EC_LOCK_TIMEOUT_SECS) < 0) {
+		lprintf(LOG_ERR, "Could not acquire CrOS EC lock.\n");
 		return -1;
 	}
 
-	if (gec_command_lpc_cmd_args_supported(intf)) {
-		rc = gec_command_lpc_new(
+	if (cros_ec_command_lpc_cmd_args_supported(intf)) {
+		rc = cros_ec_command_lpc_new(
 			intf, command, command_version,
 			indata, insize, outdata, outsize);
 	} else {
-		rc = gec_command_lpc_old(
+		rc = cros_ec_command_lpc_old(
 			intf, command, command_version,
 			indata, insize, outdata, outsize);
 	}
 
-	release_gec_lock();
+	release_cros_ec_lock();
 	return rc;
 }
 
-struct gec_priv gec_priv_lpc = {
-	.cmd		= &gec_command_lpc,
+struct cros_ec_priv cros_ec_priv_lpc = {
+	.cmd		= &cros_ec_command_lpc,
 	.addr.io	= EC_LPC_ADDR_HOST_CMD,
 };
 
 /* returns 1 if EC detected, 0 if not, <0 to indicate failure */
-int gec_probe_lpc(struct platform_intf *intf)
+int cros_ec_probe_lpc(struct platform_intf *intf)
 {
 	int ret = -1;
 
-	lprintf(LOG_DEBUG, "%s: probing for GEC on LPC...\n", __func__);
+	lprintf(LOG_DEBUG, "%s: probing for CrOS EC on LPC...\n", __func__);
 
-	intf->cb->ec->priv = &gec_priv_lpc;
-	ret = gec_detect(intf);
+	intf->cb->ec->priv = &cros_ec_priv_lpc;
+	ret = cros_ec_detect(intf);
 	if (ret == 1) {
-		lprintf(LOG_DEBUG, "GEC detected on LPC bus\n");
+		lprintf(LOG_DEBUG, "CrOS EC detected on LPC bus\n");
 	}
 
 	return ret;

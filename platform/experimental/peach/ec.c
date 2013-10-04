@@ -32,9 +32,9 @@
 #include "mosys/log.h"
 #include "mosys/platform.h"
 
-#include "drivers/google/gec.h"
+#include "drivers/google/cros_ec.h"
 
-struct gec_priv peach_ec_priv;
+struct cros_ec_priv peach_ec_priv;
 
 int peach_ec_setup(struct platform_intf *intf)
 {
@@ -43,13 +43,13 @@ int peach_ec_setup(struct platform_intf *intf)
 	MOSYS_CHECK(intf->cb && intf->cb->ec);
 	intf->cb->ec->priv = &peach_ec_priv;
 
-	ret = gec_probe_dev(intf);
+	ret = cros_ec_probe_dev(intf);
 	if (ret == 1)
 		lprintf(LOG_DEBUG, "CrOS EC found using /dev interface\n");
 	else if (ret == 0)
 		lprintf(LOG_DEBUG, "CrOS EC not found in /dev\n");
 	else
-		lprintf(LOG_ERR, "Error when probing GEC via devfs\n");
+		lprintf(LOG_ERR, "Error when probing CrOS EC via devfs\n");
 
 	return ret;
 }

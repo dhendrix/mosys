@@ -15,8 +15,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GEC_DEV_H__
-#define GEC_DEV_H__
+#ifndef CROS_EC_DEV_H__
+#define CROS_EC_DEV_H__
 
 #include <linux/types.h>
 
@@ -42,4 +42,4 @@ struct cros_ec_command {
 #define CROS_EC_DEV_IOC		':'
 #define CROS_EC_DEV_IOCXCMD	_IOWR(':', 0, struct cros_ec_command)
 
-#endif /* GEC_DEV_H__ */
+#endif /* CROS_EC_DEV_H__ */

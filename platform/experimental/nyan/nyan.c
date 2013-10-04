@@ -38,7 +38,7 @@
 #include "mosys/log.h"
 
 #include "drivers/gpio.h"
-#include "drivers/google/gec.h"
+#include "drivers/google/cros_ec.h"
 
 #include "lib/file.h"
 #include "lib/math.h"
@@ -142,8 +142,8 @@ struct eventlog_cb nyan_eventlog_cb = {
 };
 
 struct platform_cb nyan_cb = {
-	.ec 		= &gec_cb,
-	.nvram		= &gec_nvram_cb,
+	.ec 		= &cros_ec_cb,
+	.nvram		= &cros_ec_nvram_cb,
 	.sys 		= &nyan_sys_cb,
 	.eventlog	= &nyan_eventlog_cb,
 };

@@ -27,7 +27,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * gec_dev.c: Chrome EC interface via /dev
+ * cros_ec_dev.c: Chrome EC interface via /dev
  */
 
 #include <inttypes.h>
@@ -38,16 +38,16 @@
 #include "mosys/log.h"
 #include "mosys/platform.h"
 
-#include "drivers/google/gec.h"
-#include "drivers/google/gec_dev.h"
-#include "drivers/google/gec_ec_commands.h"
+#include "drivers/google/cros_ec.h"
+#include "drivers/google/cros_ec_dev.h"
+#include "drivers/google/cros_ec_commands.h"
 
 #include "lib/file.h"
 
-#define GEC_DEV_NAME		"/dev/cros_ec"
-#define GEC_COMMAND_RETRIES	50
+#define CROS_EC_DEV_NAME		"/dev/cros_ec"
+#define CROS_EC_COMMAND_RETRIES	50
 
-static int gec_fd;		/* File descriptor of GEC_DEV_NAME */
+static int cros_ec_fd;		/* File descriptor of CROS_EC_DEV_NAME */
 
 /*
  * Wait for a command to complete, then return the response
@@ -72,8 +72,8 @@ static int command_wait_for_response(void)
 	cmd.indata = (uint8_t *)&status;
 	cmd.insize = sizeof(status);
 
-	for (i = 1; i <= GEC_COMMAND_RETRIES; i++) {
-		ret = ioctl(gec_fd, CROS_EC_DEV_IOCXCMD, &cmd, sizeof(cmd));
+	for (i = 1; i <= CROS_EC_COMMAND_RETRIES; i++) {
+		ret = ioctl(cros_ec_fd, CROS_EC_DEV_IOCXCMD, &cmd, sizeof(cmd));
 		if (ret) {
 			lprintf(LOG_ERR, "%s: CrOS EC command failed: %d\n",
 				 __func__, ret);
@@ -93,7 +93,7 @@ static int command_wait_for_response(void)
 }
 
 /*
- * gec_command_dev - Issue command to GEC device
+ * cros_ec_command_dev - Issue command to CROS_EC device
  *
  * @command:	command code
  * @outdata:	data to send to EC
@@ -109,7 +109,7 @@ static int command_wait_for_response(void)
  *
  * Returns >=0 for success, or negative if other error.
  */
-static int gec_command_dev(struct platform_intf *intf, int command,
+static int cros_ec_command_dev(struct platform_intf *intf, int command,
 			   int version, const void *indata, int insize,
 			   const void *outdata, int outsize)
 {
@@ -122,7 +122,7 @@ static int gec_command_dev(struct platform_intf *intf, int command,
 	cmd.outsize = outsize;
 	cmd.indata = (uint8_t *)indata;
 	cmd.insize = insize;
-	ret = ioctl(gec_fd, CROS_EC_DEV_IOCXCMD, &cmd, sizeof(cmd));
+	ret = ioctl(cros_ec_fd, CROS_EC_DEV_IOCXCMD, &cmd, sizeof(cmd));
 	if (ret < 0 && errno == -EAGAIN)
 		ret = command_wait_for_response();
 
@@ -134,30 +134,30 @@ static int gec_command_dev(struct platform_intf *intf, int command,
 	return 0; /* Should we return ret here? */
 }
 
-void gec_close_dev(void)
+void cros_ec_close_dev(void)
 {
-	close(gec_fd);
+	close(cros_ec_fd);
 }
 
 /* returns 1 if EC detected, 0 if not, <0 to indicate failure */
-int gec_probe_dev(struct platform_intf *intf)
+int cros_ec_probe_dev(struct platform_intf *intf)
 {
 	int ret = 0;
-	struct gec_priv *priv;
+	struct cros_ec_priv *priv;
 	char filename[PATH_MAX];
 
 	MOSYS_DCHECK(intf->cb->ec && intf->cb->ec->priv);
 	priv = intf->cb->ec->priv;
 
-	sprintf(filename, "%s/%s", mosys_get_root_prefix(), GEC_DEV_NAME);
-	gec_fd = file_open(filename, FILE_WRITE);
-	if (gec_fd < 0) {
+	sprintf(filename, "%s/%s", mosys_get_root_prefix(), CROS_EC_DEV_NAME);
+	cros_ec_fd = file_open(filename, FILE_WRITE);
+	if (cros_ec_fd < 0) {
 		lprintf(LOG_DEBUG, "%s: unable to open \"%s\"\n",
 				__func__, filename);
 		ret = -1;
 	} else {
-		intf->cb->ec->destroy = gec_close_dev;
-		priv->cmd = gec_command_dev;
+		intf->cb->ec->destroy = cros_ec_close_dev;
+		priv->cmd = cros_ec_command_dev;
 		ret = 1;
 	}
 

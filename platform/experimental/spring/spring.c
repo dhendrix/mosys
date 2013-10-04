@@ -38,7 +38,7 @@
 #include "mosys/log.h"
 
 #include "drivers/gpio.h"
-#include "drivers/google/gec.h"
+#include "drivers/google/cros_ec.h"
 #include "drivers/samsung/exynos5250/gpio.h"
 
 #include "lib/elog.h"
@@ -236,11 +236,11 @@ struct eventlog_cb spring_eventlog_cb = {
 };
 
 struct platform_cb spring_cb = {
-	.ec 		= &gec_cb,
+	.ec 		= &cros_ec_cb,
 	.eeprom 	= &spring_eeprom_cb,
 	.gpio		= &spring_gpio_cb,
 	.memory		= &spring_memory_cb,
-	.nvram		= &gec_nvram_cb,
+	.nvram		= &cros_ec_nvram_cb,
 	.sys 		= &spring_sys_cb,
 	.eventlog	= &spring_eventlog_cb,
 };

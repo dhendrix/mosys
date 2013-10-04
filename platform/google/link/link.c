@@ -38,7 +38,7 @@
 #include "mosys/intf_list.h"
 #include "mosys/log.h"
 
-#include "drivers/google/gec.h"
+#include "drivers/google/cros_ec.h"
 
 #include "lib/probe.h"
 #include "lib/smbios.h"
@@ -131,7 +131,7 @@ struct eventlog_cb link_eventlog_cb = {
 };
 
 struct platform_cb link_cb = {
-	.ec		= &gec_cb,
+	.ec		= &cros_ec_cb,
 	.eeprom		= &link_eeprom_cb,
 	.gpio		= &link_gpio_cb,
 	.memory		= &link_memory_cb,

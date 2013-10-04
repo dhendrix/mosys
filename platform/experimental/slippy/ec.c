@@ -32,7 +32,7 @@
 #include "mosys/log.h"
 #include "mosys/platform.h"
 
-#include "drivers/google/gec.h"
+#include "drivers/google/cros_ec.h"
 
 int slippy_ec_setup(struct platform_intf *intf)
 {
@@ -40,13 +40,13 @@ int slippy_ec_setup(struct platform_intf *intf)
 
 	MOSYS_CHECK(intf->cb && intf->cb->ec);
 
-	ret = gec_probe_lpc(intf);
+	ret = cros_ec_probe_lpc(intf);
 	if (ret == 1)
-		lprintf(LOG_DEBUG, "GEC found on LPC bus\n");
+		lprintf(LOG_DEBUG, "CrOS EC found on LPC bus\n");
 	else if (ret == 0)
-		lprintf(LOG_DEBUG, "GEC not found on LPC bus\n");
+		lprintf(LOG_DEBUG, "CrOS EC not found on LPC bus\n");
 	else
-		lprintf(LOG_ERR, "Error when probing GEC on LPC bus\n");
+		lprintf(LOG_ERR, "Error when probing CrOS EC on LPC bus\n");
 
 	return ret;
 }

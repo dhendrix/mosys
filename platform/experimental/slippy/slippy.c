@@ -38,7 +38,7 @@
 #include "mosys/intf_list.h"
 #include "mosys/log.h"
 
-#include "drivers/google/gec.h"
+#include "drivers/google/cros_ec.h"
 
 #include "lib/probe.h"
 #include "lib/smbios.h"
@@ -158,7 +158,7 @@ struct eventlog_cb slippy_eventlog_cb = {
 };
 
 struct platform_cb slippy_cb = {
-	.ec		= &gec_cb,
+	.ec		= &cros_ec_cb,
 	.eeprom		= &slippy_eeprom_cb,
 	.gpio		= &slippy_gpio_cb,
 	.memory		= &slippy_memory_cb,

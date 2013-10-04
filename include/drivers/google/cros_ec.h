@@ -1,6 +1,5 @@
 /*
- * Copyright 2012, Google Inc.
- * All rights reserved.
+ * Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -27,14 +26,47 @@
  * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * cros_ec.h: Subset of ChromeOS EC interface functionality (ported from
+ * Chromium OS repo).
  */
 
-#ifndef GEC_LOCK_H__
-#define GEC_LOCK_H__
+#ifndef MOSYS_DRIVERS_EC_GOOGLE_H__
+#define MOSYS_DRIVERS_EC_GOOGLE_H__
 
-#define GEC_LOCK_TIMEOUT_SECS 30  /* 30 secs */
+#include "intf/i2c.h"
 
-extern int acquire_gec_lock(int timeout_secs);
-extern int release_gec_lock(void);
+struct platform_intf;
+struct ec_response_get_chip_info;
+struct ec_response_flash_info;
 
-#endif /* GEC_LOCK_H__ */
+struct cros_ec_priv {
+	/* the low-level command function depends on bus */
+	int (*cmd)(struct platform_intf *intf,
+		   int command, int command_version,
+		   const void *indata, int insize,
+		   const void *outdata, int outsize);
+
+	union {
+		struct i2c_addr i2c;
+		uint16_t io;
+	} addr;
+};
+
+extern struct ec_cb cros_ec_cb;
+extern int cros_ec_hello(struct platform_intf *intf);
+const char *cros_ec_version(struct platform_intf *intf);
+extern int cros_ec_chip_info(struct platform_intf *intf,
+		         struct ec_response_get_chip_info *info);
+extern int cros_ec_flash_info(struct platform_intf *intf,
+		         struct ec_response_flash_info *info);
+extern int cros_ec_detect(struct platform_intf *intf);
+extern int cros_ec_probe_dev(struct platform_intf *intf);
+extern int cros_ec_probe_i2c(struct platform_intf *intf);
+extern int cros_ec_probe_lpc(struct platform_intf *intf);
+
+extern int cros_ec_vbnvcontext_read(struct platform_intf *intf, uint8_t *block);
+extern int cros_ec_vbnvcontext_write(struct platform_intf *intf,
+				 const uint8_t *block);
+
+#endif	/* MOSYS_DRIVERS_EC_GOOGLE__ */

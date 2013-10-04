@@ -42,27 +42,27 @@ config EXPERIMENTAL_KIEV
 
 config PLATFORM_PEACH
         depends on PLATFORM_ARCH_ARMEL && PLATFORM_EXPERIMENTAL
-        select GOOGLE_EC_SPI
+        select CROS_EC_SPI
         select SOC_SAMSUNG_EXYNOS5420
         bool "peach"
         default n
 
 config EXPERIMENTAL_NYAN
         depends on PLATFORM_ARCH_ARMEL && PLATFORM_EXPERIMENTAL
-        select GOOGLE_EC_SPI
+        select CROS_EC_SPI
         bool "nyan"
         default n
 
 config EXPERIMENTAL_SLIPPY
 	depends on PLATFORM_ARCH_X86 && PLATFORM_EXPERIMENTAL
 	select CHIPSET_INTEL_LYNXPOINT_LP
-	select GOOGLE_EC_LPC
+	select CROS_EC_LPC
 	bool "slippy"
 	default n
 
 config PLATFORM_SPRING
         depends on PLATFORM_ARCH_ARMEL && PLATFORM_EXPERIMENTAL
-        select GOOGLE_EC_I2C
+        select CROS_EC_I2C
         select SOC_SAMSUNG_EXYNOS5250
         bool "spring"
         default n

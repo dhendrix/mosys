@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
+ * Copyright 2012, Google Inc.
+ * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -26,47 +27,14 @@
  * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * gec.h: Subset of Google EC interface functionality (ported from chromium
- * os repo).
  */
 
-#ifndef MOSYS_DRIVERS_EC_GOOGLE_H__
-#define MOSYS_DRIVERS_EC_GOOGLE_H__
+#ifndef CROS_EC_LOCK_H__
+#define CROS_EC_LOCK_H__
 
-#include "intf/i2c.h"
+#define CROS_EC_LOCK_TIMEOUT_SECS 30  /* 30 secs */
 
-struct platform_intf;
-struct ec_response_get_chip_info;
-struct ec_response_flash_info;
+extern int acquire_cros_ec_lock(int timeout_secs);
+extern int release_cros_ec_lock(void);
 
-struct gec_priv {
-	/* the low-level command function depends on bus */
-	int (*cmd)(struct platform_intf *intf,
-		   int command, int command_version,
-		   const void *indata, int insize,
-		   const void *outdata, int outsize);
-
-	union {
-		struct i2c_addr i2c;
-		uint16_t io;
-	} addr;
-};
-
-extern struct ec_cb gec_cb;
-extern int gec_hello(struct platform_intf *intf);
-const char *gec_version(struct platform_intf *intf);
-extern int gec_chip_info(struct platform_intf *intf,
-		         struct ec_response_get_chip_info *info);
-extern int gec_flash_info(struct platform_intf *intf,
-		         struct ec_response_flash_info *info);
-extern int gec_detect(struct platform_intf *intf);
-extern int gec_probe_dev(struct platform_intf *intf);
-extern int gec_probe_i2c(struct platform_intf *intf);
-extern int gec_probe_lpc(struct platform_intf *intf);
-
-extern int gec_vbnvcontext_read(struct platform_intf *intf, uint8_t *block);
-extern int gec_vbnvcontext_write(struct platform_intf *intf,
-				 const uint8_t *block);
-
-#endif	/* MOSYS_DRIVERS_EC_GOOGLE__ */
+#endif /* CROS_EC_LOCK_H__ */

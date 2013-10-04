@@ -1,5 +1,5 @@
-/* Copyright 2012, Google Inc.
- * All rights reserved.
+/*
+ * Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -26,21 +26,65 @@
  * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * cros_ec_cb.c: EC accessor functions / callbacks for use in platform_intf
  */
 
-#include "mosys/ipc_lock.h"
-#include "mosys/locks.h"
+#include "mosys/alloc.h"
+#include "mosys/callbacks.h"
+#include "mosys/log.h"
+#include "mosys/platform.h"
 
-#include "drivers/google/gec_lock.h"
+#include "drivers/google/cros_ec.h"
+#include "drivers/google/cros_ec_commands.h"
 
-static struct ipc_lock gec_lock = IPC_LOCK_INIT(GEC_LOCK);
-
-int acquire_gec_lock(int timeout_secs)
+static const char *cros_ec_name(struct platform_intf *intf)
 {
-	return mosys_lock(&gec_lock, timeout_secs*1000);
+	static const char *name = NULL;
+	struct ec_response_get_chip_info chip_info;
+
+	if (name)
+		return name;
+
+	if (cros_ec_chip_info(intf, &chip_info))
+		return NULL;
+
+	name = mosys_strdup(chip_info.name);
+	add_destroy_callback(free, (void *)name);
+	return name;
 }
 
-int release_gec_lock(void)
+static const char *cros_ec_vendor(struct platform_intf *intf)
 {
-	return mosys_unlock(&gec_lock);
+	static const char *vendor = NULL;
+	struct ec_response_get_chip_info chip_info;
+
+	if (vendor)
+		return vendor;
+
+	if (cros_ec_chip_info(intf, &chip_info))
+		return NULL;
+
+	vendor = mosys_strdup(chip_info.vendor);
+	add_destroy_callback(free, (void *)vendor);
+	return vendor;
 }
+
+static const char *cros_ec_fw_version(struct platform_intf *intf)
+{
+	static const char *version = NULL;
+
+	if (version)
+		return version;
+
+	version = cros_ec_version(intf);
+	if (version)
+		add_destroy_callback(free, (void *)version);
+	return version;
+}
+
+struct ec_cb cros_ec_cb = {
+	.vendor		= cros_ec_vendor,
+	.name		= cros_ec_name,
+	.fw_version	= cros_ec_fw_version,
+};

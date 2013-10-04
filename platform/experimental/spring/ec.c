@@ -32,12 +32,12 @@
 #include "mosys/log.h"
 #include "mosys/platform.h"
 
-#include "drivers/google/gec.h"
+#include "drivers/google/cros_ec.h"
 
 #define SPRING_EC_BUS		4
 #define	SPRING_EC_ADDRESS	0x1e
 
-struct gec_priv spring_ec_priv = {
+struct cros_ec_priv spring_ec_priv = {
 	.addr.i2c.bus	= SPRING_EC_BUS,		/* may be overridden */
 	.addr.i2c.addr	= SPRING_EC_ADDRESS,
 };
@@ -49,13 +49,13 @@ int spring_ec_setup(struct platform_intf *intf)
 	MOSYS_CHECK(intf->cb && intf->cb->ec);
 	intf->cb->ec->priv = &spring_ec_priv;
 
-	ret = gec_probe_i2c(intf);
+	ret = cros_ec_probe_i2c(intf);
 	if (ret == 1)
-		lprintf(LOG_DEBUG, "GEC found on I2C bus\n");
+		lprintf(LOG_DEBUG, "CrOS EC found on I2C bus\n");
 	else if (ret == 0)
-		lprintf(LOG_DEBUG, "GEC not found on I2C bus\n");
+		lprintf(LOG_DEBUG, "CrOS EC not found on I2C bus\n");
 	else
-		lprintf(LOG_ERR, "Error when probing GEC on I2C bus\n");
+		lprintf(LOG_ERR, "Error when probing CrOS EC on I2C bus\n");
 
 	return ret;
 }

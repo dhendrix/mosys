@@ -27,7 +27,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * gec_i2c.c: Subset of Google I2C EC interface functionality (ported from
+ * cros_ec_i2c.c: Subset of Google I2C EC interface functionality (ported from
  * chromium os repo)
  */
 
@@ -40,8 +40,8 @@
 #include "mosys/output.h"
 #include "mosys/platform.h"
 
-#include "drivers/google/gec.h"
-#include "drivers/google/gec_ec_commands.h"
+#include "drivers/google/cros_ec.h"
+#include "drivers/google/cros_ec_commands.h"
 
 #include "lib/file.h"
 #include "lib/math.h"
@@ -49,14 +49,14 @@
 #include "intf/i2c.h"
 
 #define SYSFS_I2C_DEV_ROOT	"/sys/bus/i2c/devices"
-#define GEC_I2C_ADAPTER_NAME	"cros_ec_i2c"
+#define CROS_EC_I2C_ADAPTER_NAME	"cros_ec_i2c"
 
 /* protocol bytes (command/response code + checksum byte) */
-#define GEC_PROTO_BYTES		2
+#define CROS_EC_PROTO_BYTES		2
 
 /* Sends a command to the EC.  Returns the command status code, or
  * -1 if other error. */
-static int gec_command_i2c(struct platform_intf *intf,
+static int cros_ec_command_i2c(struct platform_intf *intf,
 			   int command, int command_version,
 			   const void *indata, int insize,
 			   const void *outdata, int outsize) {
@@ -64,7 +64,7 @@ static int gec_command_i2c(struct platform_intf *intf,
 	uint8_t *req_buf = NULL, *resp_buf = NULL;
 	int req_len = 0, resp_len = 0;
 	int i, len, csum;
-	struct gec_priv *priv = intf->cb->ec->priv;
+	struct cros_ec_priv *priv = intf->cb->ec->priv;
 	struct i2c_addr *addr = &(priv->addr.i2c);
 
 	if (insize > EC_HOST_PARAM_SIZE || outsize > EC_HOST_PARAM_SIZE) {
@@ -89,7 +89,7 @@ static int gec_command_i2c(struct platform_intf *intf,
 	} else {
 		/* Old-style command */
 		if (outsize) {
-			req_len = outsize + GEC_PROTO_BYTES;
+			req_len = outsize + CROS_EC_PROTO_BYTES;
 			req_buf = mosys_calloc(1, req_len);
 
 			/* copy message payload and compute checksum */
@@ -103,7 +103,7 @@ static int gec_command_i2c(struct platform_intf *intf,
 		req_buf[0] = command;
 
 		if (insize) {
-			resp_len = insize + GEC_PROTO_BYTES;
+			resp_len = insize + CROS_EC_PROTO_BYTES;
 			resp_buf = mosys_calloc(1, resp_len);
 			if (!resp_buf)
 				goto done;
@@ -202,13 +202,13 @@ done:
 }
 
 /* returns bus number if found, <0 otherwise */
-static int gec_probe_i2c_sysfs(struct platform_intf *intf)
+static int cros_ec_probe_i2c_sysfs(struct platform_intf *intf)
 {
 	const char *path, *s;
 	int ret = -1, bus;
 	struct ll_node *list = NULL, *head;
 
-	lprintf(LOG_DEBUG, "%s: probing for GEC on I2C...\n", __func__);
+	lprintf(LOG_DEBUG, "%s: probing for CrOS EC on I2C...\n", __func__);
 
 	/*
 	 * It is possible for the MFD to show up on a different bus than
@@ -220,10 +220,10 @@ static int gec_probe_i2c_sysfs(struct platform_intf *intf)
 	 * the I2C adapter and not the MFD itself.
 	 */
 	list = scanft(&list, SYSFS_I2C_DEV_ROOT,
-		      "name", GEC_I2C_ADAPTER_NAME, 2, 1);
+		      "name", CROS_EC_I2C_ADAPTER_NAME, 2, 1);
 	if (!list_count(list)) {
-		lprintf(LOG_DEBUG, "GEC I2C adapter not found\n");
-		goto gec_probe_sysfs_exit;
+		lprintf(LOG_DEBUG, "CrOS EC I2C adapter not found\n");
+		goto cros_ec_probe_sysfs_exit;
 	}
 
 	head = list_head(list);
@@ -241,37 +241,37 @@ static int gec_probe_i2c_sysfs(struct platform_intf *intf)
 
 	if ((s == path) || (sscanf(s, "i2c-%u", &bus) != 1)) {
 		lprintf(LOG_ERR, "Unable to parse I2C bus number\n");
-		goto gec_probe_sysfs_exit;
+		goto cros_ec_probe_sysfs_exit;
 	}
 
 	if ((bus >= 0) && (bus <= 255))
 		ret = bus;
 
-gec_probe_sysfs_exit:
+cros_ec_probe_sysfs_exit:
 	list_cleanup(&list);
 	return ret;
 }
 
 /* returns 1 if EC detected, 0 if not, <0 to indicate failure */
-int gec_probe_i2c(struct platform_intf *intf)
+int cros_ec_probe_i2c(struct platform_intf *intf)
 {
 	int ret = -1, bus;
-	struct gec_priv *priv;
+	struct cros_ec_priv *priv;
 
 	MOSYS_DCHECK(intf->cb->ec && intf->cb->ec->priv);
 	priv = intf->cb->ec->priv;
 
-	bus = gec_probe_i2c_sysfs(intf);
+	bus = cros_ec_probe_i2c_sysfs(intf);
 	if (bus >= 0) {
 		lprintf(LOG_DEBUG, "%s: Overriding bus %d with %d\n",
 			__func__, priv->addr.i2c.bus, bus);
 		priv->addr.i2c.bus = bus;
 	}
 
-	priv->cmd = gec_command_i2c;
-	ret = gec_detect(intf);
+	priv->cmd = cros_ec_command_i2c;
+	ret = cros_ec_detect(intf);
 	if (ret == 1)
-		lprintf(LOG_DEBUG, "GEC detected on I2C bus\n");
+		lprintf(LOG_DEBUG, "CrOS EC detected on I2C bus\n");
 
 	return ret;
 }

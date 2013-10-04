@@ -66,6 +66,6 @@ extern struct eeprom_cb spring_eeprom_cb;	/* eeprom.c */
 extern struct sys_cb spring_sys_cb;		/* sys.c */
 extern struct gpio_cb spring_gpio_cb;		/* gpio.c */
 extern struct memory_cb spring_memory_cb;	/* memory.c */
-extern struct nvram_cb gec_nvram_cb;		/* drivers/google/gec.c */
+extern struct nvram_cb cros_ec_nvram_cb;	/* drivers/google/cros_ec.c */
 
 #endif /* PLATFORM_SPRING_H_ */

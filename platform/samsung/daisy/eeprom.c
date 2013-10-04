@@ -38,8 +38,8 @@
 #include "mosys/platform.h"
 #include "mosys/log.h"
 
-#include "drivers/google/gec.h"
-#include "drivers/google/gec_ec_commands.h"
+#include "drivers/google/cros_ec.h"
+#include "drivers/google/cros_ec_commands.h"
 
 #include "lib/eeprom.h"
 #include "lib/flashrom.h"
@@ -86,7 +86,7 @@ static size_t daisy_ec_firmware_size(struct platform_intf *intf,
 {
 	struct ec_response_flash_info info;
 
-	if (gec_flash_info(intf, &info) < 0) {
+	if (cros_ec_flash_info(intf, &info) < 0) {
 		lprintf(LOG_ERR, "%s: Failed to obtain flash info\n", __func__);
 		return 0;
 	}

@@ -1,15 +1,15 @@
 # google config variables
 
-config GOOGLE_EC
+config CROS_EC
 	bool
 	default n
 
-config GOOGLE_EC_I2C
-        bool "Google interface for I2C ECs"
-	select GOOGLE_EC
+config CROS_EC_I2C
+        bool "I2C interface used in some Chromebook ECs"
+	select CROS_EC
         default n
 
-config GOOGLE_EC_LPC
-        bool "Google interface for LPC ECs"
-	select GOOGLE_EC
+config CROS_EC_LPC
+        bool "LPC interface used in some Chromebook ECs"
+	select CROS_EC
         default n

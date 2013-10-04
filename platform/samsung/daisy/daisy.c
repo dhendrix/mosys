@@ -38,7 +38,7 @@
 #include "mosys/log.h"
 
 #include "drivers/gpio.h"
-#include "drivers/google/gec.h"
+#include "drivers/google/cros_ec.h"
 #include "drivers/samsung/exynos5250/gpio.h"
 
 #include "lib/file.h"
@@ -196,11 +196,11 @@ static int daisy_destroy(struct platform_intf *intf)
 }
 
 struct platform_cb daisy_cb = {
-	.ec 		= &gec_cb,
+	.ec 		= &cros_ec_cb,
 	.eeprom 	= &daisy_eeprom_cb,
 	.gpio		= &daisy_gpio_cb,
 	.memory		= &daisy_memory_cb,
-	.nvram		= &gec_nvram_cb,
+	.nvram		= &cros_ec_nvram_cb,
 	.sys 		= &daisy_sys_cb,
 };
 

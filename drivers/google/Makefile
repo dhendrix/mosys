@@ -1,6 +1,6 @@
-obj-$(CONFIG_GOOGLE_EC)		+= gec.o
-obj-$(CONFIG_GOOGLE_EC)		+= gec_cb.o
-obj-$(CONFIG_GOOGLE_EC)		+= gec_dev.o
-obj-$(CONFIG_GOOGLE_EC)		+= gec_lock.o
-obj-$(CONFIG_GOOGLE_EC_I2C)	+= gec_i2c.o
-obj-$(CONFIG_GOOGLE_EC_LPC)	+= gec_lpc.o
+obj-$(CONFIG_CROS_EC)		+= cros_ec.o
+obj-$(CONFIG_CROS_EC)		+= cros_ec_cb.o
+obj-$(CONFIG_CROS_EC)		+= cros_ec_dev.o
+obj-$(CONFIG_CROS_EC)		+= cros_ec_lock.o
+obj-$(CONFIG_CROS_EC_I2C)	+= cros_ec_i2c.o
+obj-$(CONFIG_CROS_EC_LPC)	+= cros_ec_lpc.o

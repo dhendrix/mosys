@@ -13,7 +13,7 @@ config PLATFORM_ALEX
 
 config PLATFORM_DAISY
 	depends on PLATFORM_ARCH_ARMEL
-	select GOOGLE_EC_I2C
+	select CROS_EC_I2C
 	select SOC_SAMSUNG_EXYNOS5250
 	bool "Samsung XE303 Chromebook"
 	default n

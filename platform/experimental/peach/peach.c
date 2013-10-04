@@ -38,7 +38,7 @@
 #include "mosys/log.h"
 
 #include "drivers/gpio.h"
-#include "drivers/google/gec.h"
+#include "drivers/google/cros_ec.h"
 #include "drivers/samsung/exynos5420/gpio.h"
 
 #include "lib/file.h"
@@ -236,11 +236,11 @@ struct eventlog_cb peach_eventlog_cb = {
 };
 
 struct platform_cb peach_cb = {
-	.ec 		= &gec_cb,
+	.ec 		= &cros_ec_cb,
 	.eeprom 	= &peach_eeprom_cb,
 	.gpio		= &peach_gpio_cb,
 	.memory		= &peach_memory_cb,
-	.nvram		= &gec_nvram_cb,
+	.nvram		= &cros_ec_nvram_cb,
 	.sys 		= &peach_sys_cb,
 	.eventlog	= &peach_eventlog_cb,
 };

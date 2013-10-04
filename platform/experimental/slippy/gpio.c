@@ -43,9 +43,12 @@
 
 /* gpio number, in/out, device, port, pin, negate, devname, name */
 static struct gpio_map platform_gpio_map[] = {
-	{  13,  GPIO_IN,    0,    0,    13,   1, "PCH", "GPIO13" },
-	{   9,  GPIO_IN,    0,    0,     9,   1, "PCH", "GPIO09" },
-	{  47,  GPIO_IN,    0,    1,    15,   1, "PCH", "GPIO47" },
+	{  13,  GPIO_IN,    0,    0,    13,   0, "PCH", "GPIO13" },
+	{   9,  GPIO_IN,    0,    0,     9,   0, "PCH", "GPIO09" },
+	{  47,  GPIO_IN,    0,    1,    15,   0, "PCH", "GPIO47" },
+	{  67,  GPIO_IN,    0,    2,     3,   0, "PCH", "GPIO67" },
+	{  68,  GPIO_IN,    0,    2,     4,   0, "PCH", "GPIO68" },
+	{  69,  GPIO_IN,    0,    2,     5,   0, "PCH", "GPIO69" },
 	{   0,        0,    0,    0,     0,   0,  NULL, NULL     } /* end */
 };
 

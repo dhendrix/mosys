@@ -53,6 +53,7 @@ enum spd_dram_type {
 	SPD_DRAM_TYPE_DDR2	= 0x08,
 	SPD_DRAM_TYPE_FBDIMM	= 0x09,
 	SPD_DRAM_TYPE_DDR3	= 0x0b,
+	SPD_DRAM_TYPE_LPDDR3	= 0xf1,
 };
 
 /* spd register handlers */

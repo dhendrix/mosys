@@ -179,6 +179,7 @@ int spd_total_size(uint8_t *data)
 		break;
 	}
 	case SPD_DRAM_TYPE_DDR3:
+	case SPD_DRAM_TYPE_LPDDR3:
 	case SPD_DRAM_TYPE_FBDIMM:{
 		uint8_t tmp;
 
@@ -323,6 +324,7 @@ int spd_print_field(struct platform_intf *intf,
 //	case SPD_DRAM_TYPE_FBDIMM:
 //		return spd_print_field_fbdimm(intf, kv, data, type);
 	case SPD_DRAM_TYPE_DDR3:
+	case SPD_DRAM_TYPE_LPDDR3:
 		return spd_print_field_ddr3(intf, kv, data, type);
 	default:
 		lprintf(LOG_ERR, "SPD type %02x not supported\n", byte[2]);

@@ -53,8 +53,12 @@ enum daisy_board_config board_config;
 const char *daisy_id_list[] = {
 	"Daisy",
 	"Google Daisy",
-	"Google Snow",
 	"SMDK5250",
+	NULL
+};
+
+const char *snow_id_list[] = {
+	"Google Snow",
 	"Snow",
 	"google,snow-any",
 	"google,snow",
@@ -74,31 +78,21 @@ struct platform_cmd *daisy_sub[] = {
 int daisy_probe(struct platform_intf *intf)
 {
 	static int status = 0, probed = 0;
-	const char **id;
-	char *model = NULL;
 	int index;
 
 	if (probed)
 		return status;
 
-	model = fdt_model();
-
-	for (id = daisy_id_list; id && *id; id++) {
-		if (probe_cpuinfo(intf, "Hardware", *id)) {
-			status = 1;
-			goto daisy_probe_exit;
-		}
-
-		if (model) {
-			lprintf(LOG_DEBUG, "\"%s\" == \"%s\" ? ", model, *id);
-			if (!strcmp(*id, model)) {
-				lprintf(LOG_DEBUG, "yes\n");
-				status = 1;
-				goto daisy_probe_exit;
-			} else {
-				lprintf(LOG_DEBUG, "no\n");
-			}
-		}
+	index = probe_fdt_compatible(&snow_id_list[0],
+					ARRAY_SIZE(snow_id_list));
+	if (index >= 0) {
+		lprintf(LOG_DEBUG, "Found platform \"%s\" via FDT compatible "
+				"node.\n", snow_id_list[index]);
+		lprintf(LOG_DEBUG, "Overriding platform name %s with %s\n",
+			intf->name, "Snow");
+		intf->name = "Snow";
+		status = 1;
+		goto probe_exit;
 	}
 
 	index = probe_fdt_compatible(&daisy_id_list[0],
@@ -107,10 +101,10 @@ int daisy_probe(struct platform_intf *intf)
 		lprintf(LOG_DEBUG, "Found platform \"%s\" via FDT compatible "
 				"node.\n", daisy_id_list[index]);
 		status = 1;
-		goto daisy_probe_exit;
+		goto probe_exit;
 	}
 
-daisy_probe_exit:
+probe_exit:
 	probed = 1;
 	return status;
 }
@@ -164,25 +158,8 @@ static int daisy_setup_post(struct platform_intf *intf)
 	if (daisy_ec_setup(intf) <= 0)
 		return -1;
 
-	/*
-	 * FIXME: This is a hack that overrides the "Daisy" canonical platform
-	 * name with "Snow" depending on the family of EC which is detected.
-	 * Daisy is expected to use stm32l, and Snow is expected to use stm32f.
-	 *
-	 * If name == NULL, it means communication with the EC failed somehow.
-	 */
-	name = intf->cb->ec->name(intf);
-	if (!name) {
-		lprintf(LOG_ERR, "Unable to determine platform variant\n");
-		return -1;
-	}
-	if (!strncmp(name, "stm32f", 6)) {
-		lprintf(LOG_DEBUG, "Overriding platform name %s with %s\n",
-			intf->name, "Snow");
-		intf->name = "Snow";
-
+	if (!strcmp(intf->name, "Snow"))
 		board_config = snow_get_board_config(intf);
-	}
 
 	return 0;
 }

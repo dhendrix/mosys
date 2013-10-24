@@ -158,8 +158,17 @@ static int slippy_dimm_count(struct platform_intf *intf)
 	} else if (!strncmp(intf->name, "Samus", 5)) {
 		/* Samus has 2 DIMM config */
 		return 2;
+	} else if (!strncmp(intf->name, "Leon", 4)) {
+		/* Leon RAM_ID
+		 * {0,0,0} = 4G Micron
+		 * {0,0,1} = 4G Hynix
+		 * {0,1,0} = 4G Samsung
+		 * {1,0,1} = 2G Hynix
+		 * {1,1,0} = 2G Samsung
+		 */
+		return slippy_get_spd_index(intf) >= 4 ? 1 : 2;
 	}
-	/* FIXME: Add Leon and Wolf handling (if needed) */
+        /* FIXME: Add Wolf handling (if needed) */
 	else
 		return SLIPPY_DIMM_COUNT;
 }

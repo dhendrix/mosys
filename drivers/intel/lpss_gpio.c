@@ -122,21 +122,21 @@ int lpss_set_gpio(struct platform_intf *intf, enum ich_generation gen,
 		return -1;
 
 	/* Check if the GPIO is native mode */
-	if (!(val & LPSS_GPIO_CONF0_MODE_BIT)) {
+	if (!(val & (1 << LPSS_GPIO_CONF0_MODE_BIT))) {
 		lprintf(LOG_DEBUG, "Changing GPIO ID %d from native to "
 			"GPIO mode\n", gpio->id);
 
-		val |= LPSS_GPIO_CONF0_MODE_BIT;
+		val |= (1 << LPSS_GPIO_CONF0_MODE_BIT);
 		if (io_write32(intf, addr, val) < 0)
 			return -1;
 	}
 
 	/* Check if the GPIO is output */
-	if (val & LPSS_GPIO_CONF0_DIR_BIT) {
+	if (val & (1 << LPSS_GPIO_CONF0_DIR_BIT)) {
 		lprintf(LOG_DEBUG, "Changing GPIO ID %d from input to "
 		        "output\n", gpio->id);
 
-		val &= ~LPSS_GPIO_CONF0_DIR_BIT;
+		val &= ~(1 << LPSS_GPIO_CONF0_DIR_BIT);
 		if (io_write32(intf, addr, val) < 0)
 			return -1;
 	}
@@ -144,7 +144,7 @@ int lpss_set_gpio(struct platform_intf *intf, enum ich_generation gen,
 	/* Set the output value */
 	switch (state) {
 	case 0:
-		if (!(val & LPSS_GPIO_CONF0_GPO_BIT)) {
+		if (!(val & (1 << LPSS_GPIO_CONF0_GPO_BIT))) {
 			lprintf(LOG_DEBUG, "GPIO '%s' already 0\n", gpio->name);
 		} else {
 			val &= ~LPSS_GPIO_CONF0_GPO_BIT;
@@ -153,10 +153,10 @@ int lpss_set_gpio(struct platform_intf *intf, enum ich_generation gen,
 		}
 		break;
 	case 1:
-		if (val & LPSS_GPIO_CONF0_GPO_BIT) {
+		if (val & (1 << LPSS_GPIO_CONF0_GPO_BIT)) {
 			lprintf(LOG_DEBUG, "GPIO '%s' already 1\n", gpio->name);
 		} else {
-			val |= LPSS_GPIO_CONF0_GPO_BIT;
+			val |= (1 << LPSS_GPIO_CONF0_GPO_BIT);
 			if (io_write32(intf, addr, val) < 0)
 				return -1;
 		}
@@ -196,15 +196,15 @@ int lpss_gpio_list(struct platform_intf *intf, enum ich_generation gen,
 			return -1;
 
 		/* skip if signal is "native function" instead of GPIO */
-		if (!(val & LPSS_GPIO_CONF0_MODE_BIT))
+		if (!(val & (1 << LPSS_GPIO_CONF0_MODE_BIT)))
 			continue;
 
-		if (val & LPSS_GPIO_CONF0_DIR_BIT)
+		if (val & (1 << LPSS_GPIO_CONF0_DIR_BIT))
 			gpio.type = GPIO_IN;
 		else
 			gpio.type = GPIO_OUT;
 
-		if (val & LPSS_GPIO_CONF0_INV_BIT)
+		if (val & (1 << LPSS_GPIO_CONF0_INV_BIT))
 			gpio.neg = 1;
 
 		sprintf(tmp, "LPSS");
@@ -214,10 +214,9 @@ int lpss_gpio_list(struct platform_intf *intf, enum ich_generation gen,
 		gpio.name = mosys_strdup(tmp);
 
 		state = lpss_read_gpio(intf, gen, &gpio);
-		if (state < 0)
-			continue;
+		if (state >= 0)
+			kv_pair_print_gpio(&gpio, state);
 
-		kv_pair_print_gpio(&gpio, state);
 		free((void *)gpio.devname);
 		free((void *)gpio.name);
 	}

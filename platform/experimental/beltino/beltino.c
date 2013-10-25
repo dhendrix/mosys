@@ -55,6 +55,10 @@ static const struct probe_ids probe_id_list[] = {
 	  { "X86 BELTINO", NULL },
 	  { "Google_Beltino", NULL },
 	},
+	{ { "Panther", NULL },
+	  { "X86 PANTHER", NULL },
+	  { "Google_Panther", NULL },
+	},
 	{ { NULL } }
 };
 

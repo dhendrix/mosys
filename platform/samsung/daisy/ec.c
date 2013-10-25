@@ -44,18 +44,23 @@ struct cros_ec_priv daisy_ec_priv = {
 
 int daisy_ec_setup(struct platform_intf *intf)
 {
-	int ret;
-
 	MOSYS_CHECK(intf->cb && intf->cb->ec);
 	intf->cb->ec->priv = &daisy_ec_priv;
 
-	ret = cros_ec_probe_i2c(intf);
-	if (ret == 1)
-		lprintf(LOG_DEBUG, "CrOS EC found on I2C bus\n");
-	else if (ret == 0)
-		lprintf(LOG_DEBUG, "CrOS EC not found on I2C bus\n");
-	else
-		lprintf(LOG_ERR, "Error when probing CrOS EC on I2C bus\n");
+	/* Use cros_ec device if available, fall back on raw I2C if needed. */
+	if ((cros_ec_probe_dev(intf) == 1) && (cros_ec_detect(intf) == 1)) {
+		lprintf(LOG_DEBUG, "CrOS EC found using /dev interface\n");
+		return 1;
+	} else {
+		lprintf(LOG_DEBUG, "CrOS EC not found with cros_ec driver\n");
+	}
 
-	return ret;
+	if ((cros_ec_probe_i2c(intf) == 1) && (cros_ec_detect(intf) == 1)) {
+		lprintf(LOG_DEBUG, "CrOS EC found using raw I2C interface\n");
+		return 1;
+	} else {
+		lprintf(LOG_DEBUG, "CrOS EC not found using raw I2C\n");
+	}
+
+	return 0;
 }

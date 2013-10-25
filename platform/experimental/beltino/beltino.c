@@ -38,13 +38,11 @@
 #include "mosys/intf_list.h"
 #include "mosys/log.h"
 
-#include "drivers/google/cros_ec.h"
-
 #include "lib/probe.h"
 #include "lib/smbios.h"
 #include "lib/elog.h"
 
-#include "slippy.h"
+#include "beltino.h"
 
 struct probe_ids {
 	const char *names[2];
@@ -53,50 +51,26 @@ struct probe_ids {
 };
 
 static const struct probe_ids probe_id_list[] = {
-	{ { "Bolt", NULL },
-	  { "X86 BOLT", NULL },
-	  { "Google_Bolt", NULL },
-	},
-	{ { "Falco", NULL },
-	  { "X86 FALCO", NULL },
-	  { "Google_Falco", NULL },
-	},
-	{ { "Leon", NULL },
-	  { "X86 LEON", NULL },
-	  { "Google_Leon", NULL },
-	},
-	{ { "Peppy", NULL },
-	  { "X86 PEPPY", NULL },
-	  { "Google_Peppy", NULL },
-	},
-	{ { "Samus", NULL },
-	  { "X86 SAMUS", NULL },
-	  { "Google_Samus", NULL },
-	},
-	{ { "Slippy", NULL },
-	  { "X86 SLIPPY", NULL },
-	  { "Google_Slippy", NULL },
-	},
-	{ { "Wolf", NULL },
-	  { "X86 WOLF", NULL },
-	  { "Google_Wolf", NULL },
+	{ { "Beltino", NULL },
+	  { "X86 BELTINO", NULL },
+	  { "Google_Beltino", NULL },
 	},
 	{ { NULL } }
 };
 
-struct platform_cmd *slippy_sub[] = {
-	&cmd_ec,
+struct platform_cmd *beltino_sub[] = {
 	&cmd_eeprom,
 	&cmd_gpio,
 	&cmd_memory,
 	&cmd_nvram,
 	&cmd_platform,
+	&cmd_sensor,
 	&cmd_smbios,
 	&cmd_eventlog,
 	NULL
 };
 
-int slippy_probe(struct platform_intf *intf)
+int beltino_probe(struct platform_intf *intf)
 {
 	static int status = 0, probed = 0;
 	const struct probe_ids *pid;
@@ -108,47 +82,36 @@ int slippy_probe(struct platform_intf *intf)
 		/* HWID */
 		if (probe_hwid((const char **)pid->hwids)) {
 			status = 1;
-			goto slippy_probe_exit;
+			goto beltino_probe_exit;
 		}
 
 		/* FRID */
 		if (probe_frid((const char **)pid->frids)) {
 			status = 1;
-			goto slippy_probe_exit;
+			goto beltino_probe_exit;
 		}
 
 		/* SMBIOS */
 		if (probe_smbios(intf, (const char **)pid->names)) {
 			status = 1;
-			goto slippy_probe_exit;
+			goto beltino_probe_exit;
 		}
 	}
 	return 0;
 
-slippy_probe_exit:
+beltino_probe_exit:
 	probed = 1;
 	/* Update canonical platform name */
 	intf->name = pid->names[0];
 	return status;
 }
 
-/* late setup routine; not critical to core functionality */
-static int slippy_setup_post(struct platform_intf *intf)
-{
-	int rc = 0;
-
-	rc |= slippy_ec_setup(intf);
-	if (rc)
-		lprintf(LOG_DEBUG, "%s: failed\n", __func__);
-	return rc;
-}
-
-static int slippy_destroy(struct platform_intf *intf)
+static int beltino_destroy(struct platform_intf *intf)
 {
 	return 0;
 }
 
-struct eventlog_cb slippy_eventlog_cb = {
+struct eventlog_cb beltino_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
 	.print_multi	= &elog_print_multi,
@@ -157,23 +120,22 @@ struct eventlog_cb slippy_eventlog_cb = {
 	.fetch		= &elog_fetch_from_smbios,
 };
 
-struct platform_cb slippy_cb = {
-	.ec		= &cros_ec_cb,
-	.eeprom		= &slippy_eeprom_cb,
-	.gpio		= &slippy_gpio_cb,
-	.memory		= &slippy_memory_cb,
-	.nvram		= &slippy_nvram_cb,
+struct platform_cb beltino_cb = {
+	.eeprom		= &beltino_eeprom_cb,
+	.gpio		= &beltino_gpio_cb,
+	.memory		= &beltino_memory_cb,
+	.nvram		= &beltino_nvram_cb,
+	.sensor		= &beltino_sensor_cb,
 	.smbios		= &smbios_sysinfo_cb,
-	.sys 		= &slippy_sys_cb,
-	.eventlog	= &slippy_eventlog_cb,
+	.sys 		= &beltino_sys_cb,
+	.eventlog	= &beltino_eventlog_cb,
 };
 
-struct platform_intf platform_slippy = {
+struct platform_intf platform_beltino = {
 	.type		= PLATFORM_X86_64,
-	.name		= "Slippy",
-	.sub		= slippy_sub,
-	.cb		= &slippy_cb,
-	.probe		= &slippy_probe,
-	.setup_post	= &slippy_setup_post,
-	.destroy	= &slippy_destroy,
+	.name		= "Beltino",
+	.sub		= beltino_sub,
+	.cb		= &beltino_cb,
+	.probe		= &beltino_probe,
+	.destroy	= &beltino_destroy,
 };

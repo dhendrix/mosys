@@ -1,5 +1,6 @@
 obj-$(CONFIG_EXPERIMENTAL_AEBL)		+= aebl/
 obj-$(CONFIG_EXPERIMENTAL_ASYMPTOTE)	+= asymptote/
+obj-$(CONFIG_EXPERIMENTAL_BELTINO)	+= beltino/
 obj-$(CONFIG_EXPERIMENTAL_KAEN)		+= kaen/
 obj-$(CONFIG_EXPERIMENTAL_KIEV)		+= kiev/
 obj-$(CONFIG_EXPERIMENTAL_NYAN)		+= nyan/

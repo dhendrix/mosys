@@ -159,7 +159,7 @@ static int slippy_dimm_count(struct platform_intf *intf)
 		/* Samus has 2 DIMM config */
 		return 2;
 	}
-	/* FIXME: Add Beltino, Leon and Wolf handling (if needed) */
+	/* FIXME: Add Leon and Wolf handling (if needed) */
 	else
 		return SLIPPY_DIMM_COUNT;
 }

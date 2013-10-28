@@ -205,7 +205,7 @@ done:
 static int cros_ec_probe_i2c_sysfs(struct platform_intf *intf)
 {
 	const char *path, *s;
-	int ret = -1, bus;
+	int ret = -1, bus = -1, address;
 	struct ll_node *list = NULL, *head;
 
 	lprintf(LOG_DEBUG, "%s: probing for CrOS EC on I2C...\n", __func__);
@@ -226,23 +226,31 @@ static int cros_ec_probe_i2c_sysfs(struct platform_intf *intf)
 		goto cros_ec_probe_sysfs_exit;
 	}
 
-	head = list_head(list);
-	path = (char *)head->data;
-
 	/*
 	 * i2c-* may show up more than once in the path (especially in the
 	 * case of the MFD with passthru I2C adapter), so use whichever
 	 * instance shows up last.
 	 */
-	for (s = path + strlen(path) - 4; s > path; s--) {
-		if (!strncmp(s, "i2c-", 4))
-			break;
-	}
+	head = list_head(list);
+	path = (char *)head->data;
 
-	if ((s == path) || (sscanf(s, "i2c-%u", &bus) != 1)) {
-		lprintf(LOG_ERR, "Unable to parse I2C bus number\n");
-		goto cros_ec_probe_sysfs_exit;
-	}
+	/*
+	 * Extract the bus number from the matching sysfs node path. There
+	 * are two forms that we need to look for:
+	 *
+	 * /path/to/devices/i2c-B/name, where B is the bus number
+	 * /path/to/devices/B-A/name, where B is bus and A is address (in hex)
+	 */
+	s = path + strlen(SYSFS_I2C_DEV_ROOT);
+	if (s[0] == '/')
+		s++;
+
+	if (sscanf(s, "i2c-%u", &bus) == 1)
+		lprintf(LOG_DEBUG, "Found CrOS EC on i2c-%u\n", bus);
+	else if (sscanf(s, "%u-%x", &bus, &address) == 2)
+		lprintf(LOG_DEBUG, "Found CrOS EC on %u-%04x\n", bus, address);
+	else
+		lprintf(LOG_DEBUG, "CrOS EC not found.\n");
 
 	if ((bus >= 0) && (bus <= 255))
 		ret = bus;

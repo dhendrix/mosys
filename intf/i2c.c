@@ -85,11 +85,6 @@ static int i2c_open_dev(struct platform_intf *intf, int bus, int address)
 	char devf[512];
 	int handle, fd;
 
-	if (bus < 0 || bus > 32) {
-		lprintf(LOG_NOTICE, "Invalid I2C bus %d\n", bus);
-		return -1;
-	}
-
 	if (i2c_handle_num >= I2C_HANDLE_MAX) {
 		lprintf(LOG_NOTICE, "Out of I2C handles\n");
 		return -1;

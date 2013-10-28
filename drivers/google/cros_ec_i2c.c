@@ -48,8 +48,7 @@
 
 #include "intf/i2c.h"
 
-#define SYSFS_I2C_DEV_ROOT	"/sys/bus/i2c/devices"
-#define CROS_EC_I2C_ADAPTER_NAME	"cros_ec_i2c"
+#define SYSFS_I2C_DEV_ROOT		"/sys/bus/i2c/devices"
 
 /* protocol bytes (command/response code + checksum byte) */
 #define CROS_EC_PROTO_BYTES		2
@@ -205,8 +204,13 @@ done:
 static int cros_ec_probe_i2c_sysfs(struct platform_intf *intf)
 {
 	const char *path, *s;
-	int ret = -1, bus = -1, address;
+	int i, ret = -1;
+	unsigned int bus, address;
 	struct ll_node *list = NULL, *head;
+	char *cros_ec_names[] = {
+		"cros_ec_i2c",
+		"cros-ec-i2c",
+	};
 
 	lprintf(LOG_DEBUG, "%s: probing for CrOS EC on I2C...\n", __func__);
 
@@ -219,9 +223,16 @@ static int cros_ec_probe_i2c_sysfs(struct platform_intf *intf)
 	 * So for the purposes of finding the correct bus, use the name of
 	 * the I2C adapter and not the MFD itself.
 	 */
-	list = scanft(&list, SYSFS_I2C_DEV_ROOT,
-		      "name", CROS_EC_I2C_ADAPTER_NAME, 2, 1);
-	if (!list_count(list)) {
+	for (i = 0; i < ARRAY_SIZE(cros_ec_names); i++) {
+		list = scanft(&list, SYSFS_I2C_DEV_ROOT,
+				"name", cros_ec_names[i], 2, 1);
+		if (list_count(list)) {
+			lprintf(LOG_DEBUG, "CrOS EC adapter \"%s\" found\n",
+					cros_ec_names[i]);
+			break;
+		}
+	}
+	if (i == ARRAY_SIZE(cros_ec_names)) {
 		lprintf(LOG_DEBUG, "CrOS EC I2C adapter not found\n");
 		goto cros_ec_probe_sysfs_exit;
 	}

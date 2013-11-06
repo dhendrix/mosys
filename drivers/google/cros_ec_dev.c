@@ -30,6 +30,7 @@
  * cros_ec_dev.c: Chrome EC interface via /dev
  */
 
+#include <fcntl.h>
 #include <inttypes.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
@@ -150,7 +151,7 @@ int cros_ec_probe_dev(struct platform_intf *intf)
 	priv = intf->cb->ec->priv;
 
 	sprintf(filename, "%s/%s", mosys_get_root_prefix(), CROS_EC_DEV_NAME);
-	cros_ec_fd = file_open(filename, FILE_WRITE);
+	cros_ec_fd = open(filename, O_RDWR);
 	if (cros_ec_fd < 0) {
 		lprintf(LOG_DEBUG, "%s: unable to open \"%s\"\n",
 				__func__, filename);

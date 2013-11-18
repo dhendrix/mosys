@@ -48,6 +48,8 @@
 
 const char *nyan_id_list[] = {
 	"NVIDIA Tegra124 Venice2",
+	"Google Nyan Rev 0",
+	"Google Nyan Rev 1",
 	NULL
 };
 

@@ -47,10 +47,8 @@
 #include "nyan.h"
 
 const char *nyan_id_list[] = {
-	"NVIDIA Tegra124 Venice2",
-	"Google Nyan Rev 0",
-	"Google Nyan Rev 1",
-	NULL
+	"google,nyan",
+	NULL,
 };
 
 struct platform_cmd *nyan_sub[] = {
@@ -64,58 +62,19 @@ struct platform_cmd *nyan_sub[] = {
 	NULL
 };
 
-/* TODO: replace this with proper FDT parsing */
-#define FDT_MODEL_NODE	"/proc/device-tree/model"
-static char *model_from_fdt(void)
-{
-	int fd;
-	static char model[32];
-	int len;
-
-	fd = file_open(FDT_MODEL_NODE, FILE_READ);
-	if (fd < 0) {
-		lperror(LOG_DEBUG, "Unable to open %s", FDT_MODEL_NODE);
-		return NULL;
-	}
-
-	memset(model, 0, sizeof(model));
-	len = read(fd, &model, sizeof(model));
-	if (len < 0) {
-		lprintf(LOG_DEBUG, "%s: Could not read FDT\n", __func__);
-		return NULL;
-	}
-
-	return model;
-}
-
 int nyan_probe(struct platform_intf *intf)
 {
-	const char **id;
-	char *model = NULL;
-	int found = 0;
+	int index;
 
-	model = model_from_fdt();
-	if (!model)
-		return -1;
-
-	for (id = nyan_id_list; id && *id; id++) {
-		lprintf(LOG_DEBUG, "\"%s\" == \"%s\" ? ", model, *id);
-		/*
-		 * Allow for partial match since FDT-provided model may
-		 * include extra revision info at the end.
-		 */
-		if (!strncmp(*id, model, strlen(*id))) {
-			lprintf(LOG_DEBUG, "yes\n");
-			found = 1;
-			break;
-		} else {
-			lprintf(LOG_DEBUG, "no\n");
-		}
+	index = probe_fdt_compatible(&nyan_id_list[0],
+					ARRAY_SIZE(nyan_id_list));
+	if (index >= 0) {
+		lprintf(LOG_DEBUG, "Found platform \"%s\" via FDT compatible "
+				"node.\n", nyan_id_list[index]);
 	}
 
-	return found;
+	return index >= 0 ? 1 : 0;
 }
-
 
 static int nyan_setup_post(struct platform_intf *intf)
 {

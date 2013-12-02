@@ -54,7 +54,7 @@ struct probe_id {
 	const char *canonical_name;
 };
 
-char *peach_id_list_old[] = {
+const char *peach_id_list_old[] = {
 	/* old style list for certain rarely-used commands (-S, -p) */
 	"Google Peach Pit",
 	"Google Peach Kirby",

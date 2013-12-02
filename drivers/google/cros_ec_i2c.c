@@ -93,7 +93,8 @@ static int cros_ec_command_i2c(struct platform_intf *intf,
 
 			/* copy message payload and compute checksum */
 			memcpy(&req_buf[1], outdata, outsize);
-			req_buf[req_len - 1] = rolling8_csum(outdata, outsize);
+			req_buf[req_len - 1] =
+				rolling8_csum((void *)outdata, outsize);
 		} else {
 			/* request buffer will hold command code only */
 			req_len = 1;

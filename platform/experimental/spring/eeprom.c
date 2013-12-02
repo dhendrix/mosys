@@ -155,7 +155,7 @@ static struct eeprom spring_eeproms[] = {
 		.flags		= EEPROM_FLAG_RDWR |
 				  EEPROM_FLAG_FMAP | EEPROM_FLAG_EVENTLOG,
 		.device		= &spring_host_firmware,
-		.regions	= &spring_host_firmware_regions,
+		.regions	= &spring_host_firmware_regions[0],
 	},
 	{
 		.name		= "ec_firmware",

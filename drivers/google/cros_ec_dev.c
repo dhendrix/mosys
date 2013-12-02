@@ -135,9 +135,9 @@ static int cros_ec_command_dev(struct platform_intf *intf, int command,
 	return 0; /* Should we return ret here? */
 }
 
-void cros_ec_close_dev(void)
+static int cros_ec_close_dev(struct platform_intf *intf)
 {
-	close(cros_ec_fd);
+	return close(cros_ec_fd);
 }
 
 /* returns 1 if EC detected, 0 if not, <0 to indicate failure */

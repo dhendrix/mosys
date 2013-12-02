@@ -153,8 +153,6 @@ static int snow_get_board_config(struct platform_intf *intf)
 
 static int daisy_setup_post(struct platform_intf *intf)
 {
-	const char *name;
-
 	if (daisy_ec_setup(intf) <= 0)
 		return -1;
 

@@ -1,2 +1,0 @@
-obj-$(CONFIG_EXPERIMENTAL_ASYMPTOTE)	+= sys.o
-obj-$(CONFIG_EXPERIMENTAL_ASYMPTOTE)	+= asymptote.o

@@ -8,35 +8,10 @@ config PLATFORM_EXPERIMENTAL
 	bool "Experimental platform support"
 	default n
 
-config EXPERIMENTAL_AEBL
-	depends on PLATFORM_ARCH_ARMEL && PLATFORM_EXPERIMENTAL
-	select SOC_NVIDIA_TEGRA2
-	bool "aebl tegra2 reference board"
-	default n
-
-config EXPERIMENTAL_ASYMPTOTE
-	depends on PLATFORM_ARCH_ARMEL && PLATFORM_EXPERIMENTAL
-	select SOC_NVIDIA_TEGRA2
-	bool "asymptote tegra2"
-	default n
-
 config EXPERIMENTAL_BELTINO
 	depends on PLATFORM_ARCH_X86 && PLATFORM_EXPERIMENTAL
 	select CHIPSET_INTEL_LYNXPOINT_LP
 	bool "beltino"
-	default n
-
-config EXPERIMENTAL_KAEN
-	depends on PLATFORM_ARCH_ARMEL && PLATFORM_EXPERIMENTAL
-	select SOC_NVIDIA_TEGRA2
-	select TRACKPAD_CYPRESS_APA
-	bool "kaen tegra2 reference board"
-	default n
-
-config EXPERIMENTAL_SEABOARD
-	depends on PLATFORM_ARCH_ARMEL && PLATFORM_EXPERIMENTAL
-	select SOC_NVIDIA_TEGRA2
-	bool "seaboard tegra2 reference board"
 	default n
 
 config EXPERIMENTAL_KIEV

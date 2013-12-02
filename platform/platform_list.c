@@ -37,15 +37,11 @@
 extern struct platform_intf platform_default_x86;
 
 /* experimental */
-extern struct platform_intf platform_aebl_tegra2;
-extern struct platform_intf platform_asymptote_tegra2;
 extern struct platform_intf platform_beltino;
-extern struct platform_intf platform_kaen_tegra2;
 extern struct platform_intf platform_kiev;
 extern struct platform_intf platform_nyan;
 extern struct platform_intf platform_peach;
 extern struct platform_intf platform_rambi;
-extern struct platform_intf platform_seaboard_tegra2;
 extern struct platform_intf platform_slippy;
 extern struct platform_intf platform_spring;
 
@@ -98,17 +94,8 @@ struct platform_intf *platform_intf_list[] = {
 #endif
 
 /* experimental platforms */
-#ifdef CONFIG_EXPERIMENTAL_AEBL
-	&platform_aebl_tegra2,
-#endif
-#ifdef CONFIG_EXPERIMENTAL_ASYMPTOTE
-	&platform_asymptote_tegra2,
-#endif
 #ifdef CONFIG_EXPERIMENTAL_BELTINO
 	&platform_beltino,
-#endif
-#ifdef CONFIG_EXPERIMENTAL_KAEN
-	&platform_kaen_tegra2,
 #endif
 #ifdef CONFIG_EXPERIMENTAL_KIEV
 	&platform_kiev,
@@ -121,9 +108,6 @@ struct platform_intf *platform_intf_list[] = {
 #endif
 #ifdef CONFIG_EXPERIMENTAL_RAMBI
 	&platform_rambi,
-#endif
-#ifdef CONFIG_EXPERIMENTAL_SEABOARD
-	&platform_seaboard_tegra2,
 #endif
 #ifdef CONFIG_EXPERIMENTAL_SLIPPY
 	&platform_slippy,

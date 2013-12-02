@@ -1,2 +1,0 @@
-obj-$(CONFIG_EXPERIMENTAL_SEABOARD)	+= sys.o
-obj-$(CONFIG_EXPERIMENTAL_SEABOARD)	+= seaboard.o

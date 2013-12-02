@@ -1,2 +1,0 @@
-obj-$(CONFIG_EXPERIMENTAL_AEBL)	+= sys.o
-obj-$(CONFIG_EXPERIMENTAL_AEBL)	+= aebl.o

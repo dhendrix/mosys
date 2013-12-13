@@ -108,6 +108,7 @@ int beltino_set_fantach_off(struct platform_intf *intf, const char *fan_name)
 
 struct it8772_priv beltino_fan_priv = {
 	.fan_poles = 2,
+	.force_read_tach = 1,
 };
 
 static struct sensor beltino_onboard_sensors[] = {

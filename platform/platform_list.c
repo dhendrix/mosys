@@ -33,9 +33,6 @@
 
 #include "mosys/platform.h"
 
-/* default */
-extern struct platform_intf platform_default_x86;
-
 /* experimental */
 extern struct platform_intf platform_beltino;
 extern struct platform_intf platform_kiev;
@@ -114,11 +111,6 @@ struct platform_intf *platform_intf_list[] = {
 #endif
 #ifdef CONFIG_PLATFORM_SPRING
 	&platform_spring,
-#endif
-
-/* place default platform last */
-#ifdef CONFIG_DEFAULT_X86
-	&platform_default_x86,
 #endif
 	NULL
 };

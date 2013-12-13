@@ -93,7 +93,7 @@ struct platform_intf *mosys_platform_setup(const char *p_opt)
 		}
 	}
 
-	if (!intf_found && p_opt)
+	if (!intf_found)
 		goto mosys_platform_setup_exit;
 
 	/* call platform-specific setup if found */
@@ -116,11 +116,6 @@ struct platform_intf *mosys_platform_setup(const char *p_opt)
 		goto mosys_platform_setup_exit;
 	}
 
-	if (!intf_found) {
-		/* default platform will be used */
-		lprintf(LOG_WARNING, "Unable to auto-detect platform. Limited "
-		                     "functionality only.\n");
-	}
 	ret = intf;
 
 mosys_platform_setup_exit:

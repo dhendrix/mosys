@@ -21,11 +21,6 @@ CONFIG_PLATFORM_ARCH_ARMEL=y
 # CONFIG_PLATFORM_ARCH_X86 is not set
 
 #
-# Default Platform Support
-#
-CONFIG_PLATFORM_DEFAULT=y
-
-#
 # Acer Platform Support
 #
 

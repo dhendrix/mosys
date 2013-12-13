@@ -1,4 +1,3 @@
-obj-y	+= default/
 obj-y	+= experimental/
 
 obj-y	+= acer/

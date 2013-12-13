@@ -224,8 +224,8 @@ int it8772_read_voltage(struct platform_intf *intf,
 	return 0;
 }
 
-static int it8772_read_fantach_manual(struct platform_intf *intf,
-                                      struct sensor *sensor, double *rpm)
+static int it8772_read_fantach_tach(struct platform_intf *intf,
+                                    struct sensor *sensor, double *rpm)
 {
 	struct it8772_priv *priv = sensor->priv;
 	uint16_t raw;
@@ -264,8 +264,8 @@ static int it8772_read_fantach_manual(struct platform_intf *intf,
 	return 0;
 }
 
-static int it8772_read_fantach_auto(struct platform_intf *intf,
-                                    struct sensor *sensor, double *rpm)
+static int it8772_read_fantach_pwm(struct platform_intf *intf,
+                                   struct sensor *sensor, double *rpm)
 {
 	uint8_t tmp8;
 	uint8_t pwm_reg;
@@ -287,7 +287,7 @@ static int it8772_read_fantach_auto(struct platform_intf *intf,
 	if (io_read8(intf, ec_data, &tmp8) < 0)
 		return -1;
 
-	/* In any automatic mode, RPM = 16 * PWM value */
+	/* In any automatic mode, RPM =~ 16 * PWM value */
 	*rpm = tmp8 * 16;
 
 	return 0;
@@ -297,8 +297,14 @@ int it8772_read_fantach(struct platform_intf *intf,
                         struct sensor *sensor,
                         struct sensor_reading *reading)
 {
-	uint8_t tmp8;
+	struct it8772_priv *priv = sensor->priv;
+	uint8_t tmp8, force_read_tach, auto_mode_mask;
 	int rc = 0;
+
+	if (priv)
+		force_read_tach = priv->force_read_tach;
+	else
+		force_read_tach = 0;
 
 	if (!ec_idx) {
 		if (it8772_setup_iobars(intf) < 0)
@@ -313,6 +319,8 @@ int it8772_read_fantach(struct platform_intf *intf,
 		lprintf(LOG_DEBUG, "\tFAN_TAC2 Enabled: %s, FAN_TAC3 Enabled: "
 		                   "%s\n", tmp8 & 6 ? "yes" : "no",
 		                   tmp8 & 5 ? "yes" : "no");
+		lprintf(LOG_DEBUG, "\tforce_read_tach Enabled: %s\n",
+		                   force_read_tach ? "yes" : "no");
 
 		io_write8(intf, ec_idx, IT8772_EC_FANCTL);
 		io_read8(intf, ec_data, &tmp8);
@@ -335,24 +343,18 @@ int it8772_read_fantach(struct platform_intf *intf,
 	io_read8(intf, ec_data, &tmp8);
 	switch(sensor->addr.reg) {
 	case IT8772_EC_FANTACH2_READING:
-		if (tmp8 & (1 << 1))
-			rc = it8772_read_fantach_auto(intf, sensor,
-			                              &reading->value);
-		else
-			rc = it8772_read_fantach_manual(intf, sensor,
-			                                &reading->value);
+		auto_mode_mask = 1 << 1;
 		break;
 	case IT8772_EC_FANTACH3_READING:
-		if (tmp8 & (1 << 2))
-			rc = it8772_read_fantach_auto(intf, sensor,
-			                              &reading->value);
-		else
-			rc = it8772_read_fantach_manual(intf, sensor,
-			                                &reading->value);
+		auto_mode_mask = 1 << 2;
 		break;
 	default:
 		return -1;
 	}
+	if (!force_read_tach && (tmp8 & auto_mode_mask))
+		rc = it8772_read_fantach_pwm(intf, sensor, &reading->value);
+	else
+		rc = it8772_read_fantach_tach(intf, sensor, &reading->value);
 
 	io_write8(intf, ec_idx, IT8772_EC_INTERFACE);
 	io_read8(intf, ec_data, &tmp8);

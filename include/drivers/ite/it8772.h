@@ -104,6 +104,7 @@
 struct it8772_priv {
 	uint8_t fan_poles;
 	double voltage_scaler;
+	uint8_t force_read_tach;
 };
 
 extern int it8772_enter(struct platform_intf *intf, uint16_t *port);

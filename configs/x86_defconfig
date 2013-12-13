@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Mosys version: 1.2.03
-# Thu Sep  5 16:46:56 2013
+# Fri Dec 13 14:29:47 2013
 #
 
 #
@@ -63,9 +63,9 @@ CONFIG_EXPERIMENTAL_SLIPPY=y
 # Device Drivers
 #
 # CONFIG_TRACKPAD_CYPRESS_APA is not set
-CONFIG_GOOGLE_EC=y
-# CONFIG_GOOGLE_EC_I2C is not set
-CONFIG_GOOGLE_EC_LPC=y
+CONFIG_CROS_EC=y
+# CONFIG_CROS_EC_I2C is not set
+CONFIG_CROS_EC_LPC=y
 CONFIG_CHIPSET_INTEL=y
 CONFIG_CHIPSET_INTEL_NM10=y
 CONFIG_CHIPSET_INTEL_SERIES6=y

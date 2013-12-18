@@ -65,6 +65,15 @@ enum peach_board_config {
 	PEACH_KIRBY_CONFIG_DVT,
 	PEACH_KIRBY_CONFIG_PVT,
 	PEACH_KIRBY_CONFIG_MP,
+
+        PEACH_PI_CONFIG_RSVD,
+        PEACH_PI_CONFIG_REV_8_4,
+        PEACH_PI_CONFIG_REV_9_4,
+        PEACH_PI_CONFIG_REV_A_6,
+        PEACH_PI_CONFIG_REV_B_6,
+        PEACH_PI_CONFIG_REV_C_6,
+        PEACH_PI_CONFIG_REV_D_6,
+	PEACH_PI_CONFIG_REV_E_6,
 };
 
 extern enum peach_board_config peach_board_config;

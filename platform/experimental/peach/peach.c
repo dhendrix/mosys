@@ -58,12 +58,14 @@ const char *peach_id_list_old[] = {
 	/* old style list for certain rarely-used commands (-S, -p) */
 	"Google Peach Pit",
 	"Google Peach Kirby",
+	"Google Peach Pi",
 	NULL,
 };
 
 struct probe_id peach_id_list[] = {
 	{ "Google Peach Pit", "Pit" },
 	{ "Google Peach Kirby", "Kirby" },
+	{ "Google Peach Pi", "Pi" },
 	{ NULL, NULL },
 };
 
@@ -151,6 +153,16 @@ struct id_map peach_kirby_id_map[] = {
 	{ LOGIC_0, LOGIC_0, LOGIC_Z, LOGIC_1, PEACH_KIRBY_CONFIG_RSVD },
 	{ LOGIC_0, LOGIC_0, LOGIC_Z, LOGIC_Z, PEACH_KIRBY_CONFIG_RSVD },
 };
+struct id_map peach_pi_id_map[] = {
+       /*  REV3     REV3     REV1     REV0       config */
+       { LOGIC_1, LOGIC_1, LOGIC_Z, LOGIC_0, PEACH_PI_CONFIG_REV_8_4 },
+       { LOGIC_1, LOGIC_Z, LOGIC_1, LOGIC_Z, PEACH_PI_CONFIG_REV_9_4 },
+       { LOGIC_Z, LOGIC_0, LOGIC_0, LOGIC_1, PEACH_PI_CONFIG_REV_A_6 },
+       { LOGIC_Z, LOGIC_1, LOGIC_1, LOGIC_0, PEACH_PI_CONFIG_REV_B_6 },
+       { LOGIC_Z, LOGIC_Z, LOGIC_0, LOGIC_Z, PEACH_PI_CONFIG_REV_C_6 },
+       { LOGIC_0, LOGIC_0, LOGIC_0, LOGIC_1, PEACH_PI_CONFIG_REV_D_6 },
+       { LOGIC_0, LOGIC_1, LOGIC_0, LOGIC_1, PEACH_PI_CONFIG_REV_E_6 },
+};
 
 static int get_peach_board_config(struct platform_intf *intf)
 {
@@ -171,6 +183,9 @@ static int get_peach_board_config(struct platform_intf *intf)
 	} else if (!strcmp(intf->name, "Kirby")) {
 		map = peach_kirby_id_map;
 		count = ARRAY_SIZE(peach_kirby_id_map);
+	} else if (!strcmp(intf->name, "Pi")) {
+		map = peach_pi_id_map;
+		count = ARRAY_SIZE(peach_pi_id_map);
 	} else {
 		return PEACH_CONFIG_UNKNOWN;
 	}

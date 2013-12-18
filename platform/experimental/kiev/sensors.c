@@ -82,6 +82,10 @@ int kiev_set_fantach_auto(struct platform_intf *intf, const char *fan_name)
 
 	if (!strcmp(fan_name, "system") || !strcmp(fan_name, "all")) {
 		rc = it8772_set_fan_peci(intf, 3);
+		if (!rc)
+			rc = it8772_set_fan_control_mode(intf,
+			                     3,
+			                     IT8772_FAN_CONTROL_PWM_AUTOMATIC);
 	} else {
 		lprintf(LOG_ERR, "Invalid fan \"%s\"\n", fan_name);
 		rc = -1;

@@ -367,11 +367,72 @@ int it8772_read_fantach(struct platform_intf *intf,
 	return rc;
 }
 
+int it8772_set_fan_control_mode(struct platform_intf *intf,
+                                unsigned int fan_num,
+                                enum it8772_fan_control_mode fan_mode)
+{
+	uint8_t auto_ctl, pwm_ctl;
+	uint8_t tmp8;
+
+	lprintf(LOG_DEBUG, "Setting fan %d to control mode %d\n",
+	        fan_num, fan_mode);
+	if (!ec_idx) {
+		if (it8772_setup_iobars(intf) < 0)
+			return -1;
+	}
+
+	switch(fan_num) {
+	case 2:
+		auto_ctl = IT8772_EC_FANCTL2_AUTO_CTL;
+		pwm_ctl = IT8772_EC_FANCTL2_PWM_CTL;
+		break;
+	case 3:
+		auto_ctl = IT8772_EC_FANCTL3_AUTO_CTL;
+		pwm_ctl = IT8772_EC_FANCTL3_PWM_CTL;
+		break;
+	default:
+		return -1;
+	}
+
+	switch(fan_mode) {
+	case IT8772_FAN_CONTROL_PWM_SOFTWARE:
+		/* set PWM controls to "software operation" */
+		io_write8(intf, ec_idx, pwm_ctl);
+		io_read8(intf, ec_data, &tmp8);
+		tmp8 &= ~(1 << 7);
+		io_write8(intf, ec_data, tmp8);
+
+		/* disable smoothing (make fan react to changes immediately) */
+		io_write8(intf, ec_idx, auto_ctl);
+		io_read8(intf, ec_data, &tmp8);
+		tmp8 &= ~(1 << 7);
+		io_write8(intf, ec_data, tmp8);
+		break;
+	case IT8772_FAN_CONTROL_PWM_AUTOMATIC:
+		/* set PWM controls to "automatic operation" */
+		io_write8(intf, ec_idx, pwm_ctl);
+		io_read8(intf, ec_data, &tmp8);
+		tmp8 |= 1 << 7;
+		io_write8(intf, ec_data, tmp8);
+
+		/* enable smoothing */
+		io_write8(intf, ec_idx, auto_ctl);
+		io_read8(intf, ec_data, &tmp8);
+		tmp8 |= 1 << 7;
+		io_write8(intf, ec_data, tmp8);
+		break;
+	default:
+		return -1;
+	}
+
+	return 0;
+}
+
 int it8772_set_pwm(struct platform_intf *intf,
                    unsigned int fan_num, unsigned int percent)
 {
 	uint8_t tmp8;
-	uint8_t pwm_reg, pwm_ctl, auto_ctl;
+	uint8_t pwm_reg;
 
 	if (!ec_idx) {
 		if (it8772_setup_iobars(intf) < 0)
@@ -380,14 +441,10 @@ int it8772_set_pwm(struct platform_intf *intf,
 
 	switch(fan_num) {
 	case 2:
-		pwm_ctl = IT8772_EC_FANCTL2_PWM_CTL;
 		pwm_reg = IT8772_EC_FANCTL2_PWM_VAL;
-		auto_ctl = IT8772_EC_FANCTL2_AUTO_CTL;
 		break;
 	case 3:
-		pwm_ctl = IT8772_EC_FANCTL3_PWM_CTL;
 		pwm_reg = IT8772_EC_FANCTL3_PWM_VAL;
-		auto_ctl = IT8772_EC_FANCTL3_AUTO_CTL;
 		break;
 	default:
 		return -1;
@@ -409,16 +466,8 @@ int it8772_set_pwm(struct platform_intf *intf,
 	io_write8(intf, ec_data, tmp8);
 
 	/* set PWM controls to "software operation" */
-	io_write8(intf, ec_idx, pwm_ctl);
-	io_read8(intf, ec_data, &tmp8);
-	tmp8 &= ~(1 << 7);
-	io_write8(intf, ec_data, tmp8);
-
-	/* disable smoothing (make fan respond to changes immediately) */
-	io_write8(intf, ec_idx, auto_ctl);
-	io_read8(intf, ec_data, &tmp8);
-	tmp8 &= ~(1 << 7);
-	io_write8(intf, ec_data, tmp8);
+	it8772_set_fan_control_mode(intf, fan_num,
+	                            IT8772_FAN_CONTROL_PWM_SOFTWARE);
 
 	/* set PWM (256 steps) */
 	tmp8 = (percent * 255) / 100;
@@ -433,25 +482,11 @@ int it8772_set_pwm(struct platform_intf *intf,
 int it8772_set_fan_peci(struct platform_intf *intf, unsigned int fan_num)
 {
 	uint8_t tmp8;
-	uint8_t auto_ctl, pwm_ctl;
 
 	lprintf(LOG_DEBUG, "Setting fan %d to PECI mode\n", fan_num);
 	if (!ec_idx) {
 		if (it8772_setup_iobars(intf) < 0)
 			return -1;
-	}
-
-	switch(fan_num) {
-	case 2:
-		auto_ctl = IT8772_EC_FANCTL2_AUTO_CTL;
-		pwm_ctl = IT8772_EC_FANCTL2_PWM_CTL;
-		break;
-	case 3:
-		auto_ctl = IT8772_EC_FANCTL3_AUTO_CTL;
-		pwm_ctl = IT8772_EC_FANCTL3_PWM_CTL;
-		break;
-	default:
-		return -1;
 	}
 
 	/* set external interface to PECI */
@@ -468,18 +503,6 @@ int it8772_set_fan_peci(struct platform_intf *intf, unsigned int fan_num)
 		tmp8 |= 1 << 2;
 	else if (fan_num == 2)
 		tmp8 |= 1 << 1;
-	io_write8(intf, ec_data, tmp8);
-
-	/* set PWM controls to "automatic operation" */
-	io_write8(intf, ec_idx, pwm_ctl);
-	io_read8(intf, ec_data, &tmp8);
-	tmp8 |= 1 << 7;
-	io_write8(intf, ec_data, tmp8);
-
-	/* enable smoothing */
-	io_write8(intf, ec_idx, auto_ctl);
-	io_read8(intf, ec_data, &tmp8);
-	tmp8 |= ~(1 << 7);
 	io_write8(intf, ec_data, tmp8);
 
 	return 0;

@@ -101,6 +101,19 @@
 #define IT8772_EC_TMPIN3_LIMIT_HIGH	0x44
 #define IT8772_EC_TMPIN3_LIMIT_LOW	0x45
 
+/*
+ * Define three modes for fan control:
+ *   ON_OFF: 0% / 100% fan control from user space / kernel. NOT SUPPORTED.
+ *   PWM_SOFTWARE: PWM control from user space (incl. mosys) / kernel.
+ *   PWM_AUTOMATIC: PWM control entirely from SuperIO, based upon thermal
+ *                  register settings that have been pre-programmed in FW.
+ */
+enum it8772_fan_control_mode {
+	IT8772_FAN_CONTROL_ON_OFF,
+	IT8772_FAN_CONTROL_PWM_SOFTWARE,
+	IT8772_FAN_CONTROL_PWM_AUTOMATIC,
+};
+
 struct it8772_priv {
 	uint8_t fan_poles;
 	double voltage_scaler;
@@ -161,6 +174,20 @@ extern int it8772_read_fantach(struct platform_intf *intf,
 extern int it8772_read_voltage(struct platform_intf *intf,
                                struct sensor *sensor,
                                struct sensor_reading *reading);
+
+/*
+ * it8772_set_fan_control_mode - set control mode for a given fan
+ *
+ * @intf:	platform interface
+ * @fan_num:	fan number
+ * @fan_mode	new fan mode
+ *
+ * returns 0 to indicate success
+ * returns <0 to indicate error
+ */
+extern int it8772_set_fan_control_mode(struct platform_intf *intf,
+                                       unsigned int fan_num,
+                                       enum it8772_fan_control_mode fan_mode);
 
 /*
  * it8772_set_fan_pwm - set PWM for a given fan

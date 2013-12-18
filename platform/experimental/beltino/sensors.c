@@ -84,6 +84,11 @@ int beltino_set_fantach_auto(struct platform_intf *intf, const char *fan_name)
 
 	if (!strcmp(fan_name, "system") || !strcmp(fan_name, "all")) {
 		rc = it8772_set_fan_peci(intf, BELTINO_SIO_FAN_NUM);
+		/* "Auto" mode on Beltino means kernel thermal control */
+		if (!rc)
+			rc = it8772_set_fan_control_mode(intf,
+			                     BELTINO_SIO_FAN_NUM,
+			                     IT8772_FAN_CONTROL_PWM_SOFTWARE);
 	} else {
 		lprintf(LOG_ERR, "Invalid fan \"%s\"\n", fan_name);
 		rc = -1;

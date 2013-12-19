@@ -115,22 +115,35 @@ static int spd_read(struct platform_intf *intf,
 	int rc = 0;
 
 	switch (peach_board_config) {
-	case PEACH_PIT_CONFIG_PROTO:
-	case PEACH_PIT_CONFIG_EVT_2GB:
-	case PEACH_PIT_CONFIG_DVT1_2GB:
-	case PEACH_PIT_CONFIG_DVT2_2GB:
-	case PEACH_PIT_CONFIG_PVT1_2GB:
-	case PEACH_PIT_CONFIG_PVT2_2GB:
-	case PEACH_PIT_CONFIG_MP_2GB:
+	case PEACH_PIT_CONFIG_REV_0_0:
+	case PEACH_PIT_CONFIG_REV_3_0:
+	case PEACH_PIT_CONFIG_REV_4_0:
+	case PEACH_PIT_CONFIG_REV_5_0:
+	case PEACH_PIT_CONFIG_REV_6_0:
+	case PEACH_PIT_CONFIG_REV_7_0:
+	case PEACH_PIT_CONFIG_REV_9_0:
+	case PEACH_PIT_CONFIG_REV_A_0:
+	case PEACH_PIT_CONFIG_REV_B_0:
+	case PEACH_PIT_CONFIG_REV_C_0:
+	case PEACH_PIT_CONFIG_REV_D_0:
+	case PEACH_PIT_CONFIG_REV_E_0:
+	case PEACH_PI_CONFIG_REV_8_4:
+	case PEACH_PI_CONFIG_REV_9_4:
 		memcpy(buf, &samsung_ddr3_1600_1rank_spd[reg], len);
 		rc = len;
 		break;
-	case PEACH_PIT_CONFIG_EVT_4GB:
-	case PEACH_PIT_CONFIG_DVT1_4GB:
-	case PEACH_PIT_CONFIG_DVT2_4GB:
-	case PEACH_PIT_CONFIG_PVT1_4GB:
-	case PEACH_PIT_CONFIG_PVT2_4GB:
-	case PEACH_PIT_CONFIG_MP_4GB:
+	case PEACH_PIT_CONFIG_REV_7_2:
+	case PEACH_PIT_CONFIG_REV_9_2:
+	case PEACH_PIT_CONFIG_REV_A_2:
+	case PEACH_PIT_CONFIG_REV_B_2:
+	case PEACH_PIT_CONFIG_REV_C_2:
+	case PEACH_PIT_CONFIG_REV_D_2:
+	case PEACH_PIT_CONFIG_REV_E_2:
+	case PEACH_PI_CONFIG_REV_A_6:
+	case PEACH_PI_CONFIG_REV_B_6:
+	case PEACH_PI_CONFIG_REV_C_6:
+	case PEACH_PI_CONFIG_REV_D_6:
+	case PEACH_PI_CONFIG_REV_E_6:
 		/* 4GB models have the second rank populated */
 		memcpy(buf, &samsung_ddr3_1600_1rank_spd[reg], len);
 		buf[DDR3_SPD_REG_MODULE_ORG] &= ~__mask(5, 3);

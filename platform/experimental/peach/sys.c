@@ -55,30 +55,54 @@ static const char *get_version(struct platform_intf *intf)
 	char *ret = NULL;
 
 	switch (peach_board_config) {
-	case PEACH_PIT_CONFIG_PROTO:
-		ret = mosys_strdup("PROTO");
+	case PEACH_PIT_CONFIG_REV_0_0:
+		ret = mosys_strdup("EVT_OLD");
 		break;
-	case PEACH_PIT_CONFIG_EVT_2GB:
-	case PEACH_PIT_CONFIG_EVT_4GB:
+	case PEACH_PIT_CONFIG_REV_3_0:
+	case PEACH_PIT_CONFIG_REV_4_0:
+		ret = mosys_strdup("DVT_OLD");
+		break;
+	case PEACH_PIT_CONFIG_REV_5_0:
+	case PEACH_PIT_CONFIG_REV_6_0:
+	case PEACH_PIT_CONFIG_REV_7_0:
+	case PEACH_PIT_CONFIG_REV_7_2:
+		ret = mosys_strdup("PVT_OLD");
+		break;
+	case PEACH_PI_CONFIG_REV_8_4:
 		ret = mosys_strdup("EVT");
 		break;
-	case PEACH_PIT_CONFIG_DVT1_2GB:
-	case PEACH_PIT_CONFIG_DVT1_4GB:
-	case PEACH_PIT_CONFIG_DVT2_2GB:
-	case PEACH_PIT_CONFIG_DVT2_4GB:
-		ret = mosys_strdup("DVT");
+	case PEACH_PIT_CONFIG_REV_9_0:
+	case PEACH_PIT_CONFIG_REV_9_2:
+	case PEACH_PI_CONFIG_REV_9_4:
+		ret = mosys_strdup("DVT1");
 		break;
-	case PEACH_PIT_CONFIG_PVT1_2GB:
-	case PEACH_PIT_CONFIG_PVT1_4GB:
-	case PEACH_PIT_CONFIG_PVT2_2GB:
-	case PEACH_PIT_CONFIG_PVT2_4GB:
-		ret = mosys_strdup("PVT");
+	case PEACH_PIT_CONFIG_REV_A_0:
+	case PEACH_PIT_CONFIG_REV_A_2:
+	case PEACH_PI_CONFIG_REV_A_6:
+		ret = mosys_strdup("DVT2");
 		break;
-	case PEACH_PIT_CONFIG_MP_2GB:
-	case PEACH_PIT_CONFIG_MP_4GB:
+	case PEACH_PIT_CONFIG_REV_B_0:
+	case PEACH_PIT_CONFIG_REV_B_2:
+	case PEACH_PI_CONFIG_REV_B_6:
+		ret = mosys_strdup("PVT1");
+		break;
+	case PEACH_PIT_CONFIG_REV_C_0:
+	case PEACH_PIT_CONFIG_REV_C_2:
+	case PEACH_PI_CONFIG_REV_C_6:
+		ret = mosys_strdup("PVT2");
+		break;
+	case PEACH_PIT_CONFIG_REV_D_0:
+	case PEACH_PIT_CONFIG_REV_D_2:
+	case PEACH_PI_CONFIG_REV_D_6:
+		ret = mosys_strdup("PVT3");
+		break;
+	case PEACH_PIT_CONFIG_REV_E_0:
+	case PEACH_PIT_CONFIG_REV_E_2:
+	case PEACH_PI_CONFIG_REV_E_6:
 		ret = mosys_strdup("MP");
 		break;
 	case PEACH_PIT_CONFIG_RSVD:
+	case PEACH_PI_CONFIG_RSVD:
 		ret = mosys_strdup("RSVD");
 		break;
 	default:

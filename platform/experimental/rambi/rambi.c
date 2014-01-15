@@ -53,9 +53,25 @@ struct probe_ids {
 };
 
 static const struct probe_ids probe_id_list[] = {
+	{ { "Clapper", NULL },
+	  { "X86 CLAPPER", NULL },
+	  { "Google_Clapper", NULL },
+	},
+	{ { "Glimmer", NULL },
+	  { "X86 GLIMMER", NULL },
+	  { "Google_Glimmer", NULL },
+	},
 	{ { "Rambi", NULL },
 	  { "X86 RAMBI", NULL },
 	  { "Google_Rambi", NULL },
+	},
+	{ { "Squawks", NULL },
+	  { "X86 SQUAWKS", NULL },
+	  { "Google_Squawks", NULL },
+	},
+	{ { "Winky", NULL },
+	  { "X86 WINKY", NULL },
+	  { "Google_Winky", NULL },
 	},
 	{ { NULL } }
 };

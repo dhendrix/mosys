@@ -63,7 +63,7 @@ static int host_firmware_read(struct platform_intf *intf, struct eeprom *eeprom,
 	rom_size = eeprom->device->size(intf, eeprom);
 	buf = mosys_malloc(rom_size);
 
-	if (flashrom_read(buf, rom_size, INTERNAL_BUS_SPI, NULL) < 0)
+	if (flashrom_read(buf, rom_size, HOST_FIRMWARE, NULL) < 0)
 		return -1;
 
 	memcpy(data, &buf[offset], len);
@@ -75,7 +75,7 @@ static int host_firmware_read_by_name(struct platform_intf *intf,
 				struct eeprom *eeprom, const char *name,
 				uint8_t **data)
 {
-	return flashrom_read_by_name(data, INTERNAL_BUS_SPI, name);
+	return flashrom_read_by_name(data, HOST_FIRMWARE, name);
 }
 
 static int host_firmware_write_by_name(struct platform_intf *intf,
@@ -84,7 +84,7 @@ static int host_firmware_write_by_name(struct platform_intf *intf,
 				       unsigned int len,
 				       uint8_t *data)
 {
-	return flashrom_write_by_name(len, data, INTERNAL_BUS_SPI, name);
+	return flashrom_write_by_name(len, data, HOST_FIRMWARE, name);
 }
 
 static struct eeprom_dev host_firmware = {
@@ -125,7 +125,7 @@ static int ec_firmware_read(struct platform_intf *intf, struct eeprom *eeprom,
 	rom_size = eeprom->device->size(intf, eeprom);
 	buf = mosys_malloc(rom_size);
 
-	if (flashrom_read(buf, rom_size, INTERNAL_BUS_I2C, NULL) < 0)
+	if (flashrom_read(buf, rom_size, EC_FIRMWARE, NULL) < 0)
 		return -1;
 
 	memcpy(data, &buf[offset], len);

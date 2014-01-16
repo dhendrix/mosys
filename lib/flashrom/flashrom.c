@@ -107,7 +107,7 @@ static int do_flashrom(const char *cmd)
 }
 
 static int append_programmer_arg(struct string_builder *sb,
-		enum target_bus target)
+		enum programmer_target target)
 {
 	int ret = 0;
 
@@ -121,6 +121,12 @@ static int append_programmer_arg(struct string_builder *sb,
 	case INTERNAL_BUS_LPC:
 		string_builder_strcat(sb, " -p internal:bus=lpc");
 		break;
+	case HOST_FIRMWARE:
+		string_builder_strcat(sb, " -p host");
+		break;
+	case EC_FIRMWARE:
+		string_builder_strcat(sb, " -p ec");
+		break;
 	default:
 		lprintf(LOG_DEBUG, "Unsupported target: %d\n", target);
 		ret = -1;
@@ -131,7 +137,7 @@ static int append_programmer_arg(struct string_builder *sb,
 
 /* TODO: add arbitrary range support */
 int flashrom_read(uint8_t *buf, size_t size,
-                  enum target_bus target, const char *region)
+                  enum programmer_target target, const char *region)
 {
 	int fd, rc = -1;
 	struct string_builder *sb = new_string_builder();
@@ -193,7 +199,7 @@ flashrom_read_exit_1:
 }
 
 int flashrom_read_by_name(uint8_t **buf,
-                  enum target_bus target, const char *region)
+                  enum programmer_target target, const char *region)
 {
 	int fd, rc = -1;
 	struct string_builder *sb = new_string_builder();
@@ -256,7 +262,7 @@ flashrom_read_exit_0:
 }
 
 int flashrom_write_by_name(size_t size, uint8_t *buf,
-                  enum target_bus target, const char *region)
+                  enum programmer_target target, const char *region)
 {
 	int fd, written, rc = -1;
 	struct string_builder *sb = new_string_builder();

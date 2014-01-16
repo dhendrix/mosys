@@ -32,10 +32,12 @@
 #ifndef MOSYS_LIB_FLASHROM_H__
 #define MOSYS_LIB_FLASHROM_H__
 
-enum target_bus {
+enum programmer_target {
 	INTERNAL_BUS_I2C,
 	INTERNAL_BUS_LPC,
 	INTERNAL_BUS_SPI,
+	HOST_FIRMWARE,
+	EC_FIRMWARE,
 };
 
 /*
@@ -51,7 +53,7 @@ enum target_bus {
  * file into the provided buffer.
  */
 extern int flashrom_read(uint8_t *buf, size_t size,
-                         enum target_bus target, const char *region);
+                         enum programmer_target target, const char *region);
 
 /*
  * flashrom_read_by_name - Partial read using Flashrom utility
@@ -67,7 +69,7 @@ extern int flashrom_read(uint8_t *buf, size_t size,
  * returns <0 to indicate failure
  */
 extern int flashrom_read_by_name(uint8_t **buf,
-                         enum target_bus target, const char *region);
+                         enum programmer_target target, const char *region);
 
 /*
  * flashrom_write_by_name - Partial write using Flashrom utility
@@ -84,6 +86,6 @@ extern int flashrom_read_by_name(uint8_t **buf,
  * returns <0 to indicate failure
  */
 extern int flashrom_write_by_name(size_t size, uint8_t *buf,
-                         enum target_bus target, const char *region);
+                         enum programmer_target target, const char *region);
 
 #endif /* MOSYS_LIB_FLASHROM_H__ */

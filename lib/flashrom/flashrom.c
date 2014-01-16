@@ -106,6 +106,29 @@ static int do_flashrom(const char *cmd)
 	return rc;
 }
 
+static int append_programmer_arg(struct string_builder *sb,
+		enum target_bus target)
+{
+	int ret = 0;
+
+	switch(target) {
+	case INTERNAL_BUS_SPI:
+		string_builder_strcat(sb, " -p internal:bus=spi");
+		break;
+	case INTERNAL_BUS_I2C:
+		string_builder_strcat(sb, " -p internal:bus=i2c");
+		break;
+	case INTERNAL_BUS_LPC:
+		string_builder_strcat(sb, " -p internal:bus=lpc");
+		break;
+	default:
+		lprintf(LOG_DEBUG, "Unsupported target: %d\n", target);
+		ret = -1;
+	}
+
+	return ret;
+}
+
 /* TODO: add arbitrary range support */
 int flashrom_read(uint8_t *buf, size_t size,
                   enum target_bus target, const char *region)
@@ -121,21 +144,8 @@ int flashrom_read(uint8_t *buf, size_t size,
 		goto flashrom_read_exit_1;
 
 	string_builder_sprintf(sb, path);
-
-	switch(target) {
-	case INTERNAL_BUS_SPI:
-		string_builder_strcat(sb, " -p internal:bus=spi");
-		break;
-	case INTERNAL_BUS_I2C:
-		string_builder_strcat(sb, " -p internal:bus=i2c");
-		break;
-	case INTERNAL_BUS_LPC:
-		string_builder_strcat(sb, " -p internal:bus=lpc");
-		break;
-	default:
-		lprintf(LOG_DEBUG, "Unsupported target: %d\n", target);
+	if (append_programmer_arg(sb, target) < 0)
 		goto flashrom_read_exit_1;
-	}
 
 	if (!mkstemp(filename)) {
 		lperror(LOG_DEBUG, "Unable to make temporary file for flashrom");
@@ -199,21 +209,8 @@ int flashrom_read_by_name(uint8_t **buf,
 		goto flashrom_read_exit_0;
 
 	string_builder_sprintf(sb, path);
-
-	switch(target) {
-	case INTERNAL_BUS_SPI:
-		string_builder_strcat(sb, " -p internal:bus=spi");
-		break;
-	case INTERNAL_BUS_I2C:
-		string_builder_strcat(sb, " -p internal:bus=i2c");
-		break;
-	case INTERNAL_BUS_LPC:
-		string_builder_strcat(sb, " -p internal:bus=lpc");
-		break;
-	default:
-		lprintf(LOG_DEBUG, "Unsupported target: %d\n", target);
+	if (append_programmer_arg(sb, target) < 0)
 		goto flashrom_read_exit_1;
-	}
 
 	if (!mkstemp(filename)) {
 		lperror(LOG_DEBUG, "Unable to make temporary file for flashrom");
@@ -274,21 +271,8 @@ int flashrom_write_by_name(size_t size, uint8_t *buf,
 		goto flashrom_write_exit_0;
 
 	string_builder_sprintf(sb, path);
-
-	switch(target) {
-	case INTERNAL_BUS_SPI:
-		string_builder_strcat(sb, " -p internal:bus=spi");
-		break;
-	case INTERNAL_BUS_I2C:
-		string_builder_strcat(sb, " -p internal:bus=i2c");
-		break;
-	case INTERNAL_BUS_LPC:
-		string_builder_strcat(sb, " -p internal:bus=lpc");
-		break;
-	default:
-		lprintf(LOG_DEBUG, "Unsupported target: %d\n", target);
+	if (append_programmer_arg(sb, target) < 0)
 		goto flashrom_write_exit_0;
-	}
 
 	if (!mkstemp(filename)) {
 		lperror(LOG_DEBUG,

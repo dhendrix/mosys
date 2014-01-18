@@ -20,3 +20,7 @@ config CHIPSET_INTEL_LYNXPOINT_LP
 	bool "Intel LynxPoint Low Power Chipset"
 	select CHIPSET_INTEL
 	default n
+
+config SOC_INTEL_BAYTRAIL
+	bool "Intel Baytrail SOC"
+	default n

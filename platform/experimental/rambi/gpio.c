@@ -1,5 +1,5 @@
 /*
- * Copyright 2013, Google Inc.
+ * Copyright 2014, Google Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,23 +29,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef EXPERIMENTAL_RAMBI_H__
-#define EXPERIMENTAL_RAMBI_H__
-
-#include <inttypes.h>
+#include "rambi.h"
+#include "drivers/gpio.h"
+#include "drivers/intel/baytrail.h"
 #include "mosys/platform.h"
 
-#define RAMBI_HOST_FIRMWARE_ROM_SIZE		(8192 * 1024)
+/*
+ * rambi_gpio_read  -  read level for one GPIO
+ *
+ * @intf:       platform interface
+ * @name:       name of GPIO to get state for
+ *
+ * returns GPIO level (0 or 1) to indicate success
+ * returns <0 to indicate failure
+ */
+static int rambi_gpio_read(struct platform_intf *intf, struct gpio_map *gpio)
+{
+	return baytrail_read_gpio(intf, gpio);
+}
 
-/* platform callbacks */
-extern struct eeprom_cb rambi_eeprom_cb;	/* eeprom.c */
-extern struct gpio_cb rambi_gpio_cb;		/* gpio.c */
-extern struct memory_cb rambi_memory_cb;	/* memory.c */
-extern struct nvram_cb rambi_nvram_cb;		/* nvram.c */
-extern struct sys_cb rambi_sys_cb;		/* sys.c */
-
-/* functions called by setup routines */
-extern int rambi_vpd_setup(struct platform_intf *intf);
-extern int rambi_ec_setup(struct platform_intf *intf);
-
-#endif /* EXPERIMENTAL_RAMBI_H_ */
+struct gpio_cb rambi_gpio_cb = {
+	.read	= rambi_gpio_read,
+};

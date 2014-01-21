@@ -31,6 +31,7 @@ config PLATFORM_PEACH
 config EXPERIMENTAL_RAMBI
 	depends on PLATFORM_ARCH_X86 && PLATFORM_EXPERIMENTAL
 	select CROS_EC_LPC
+	select SOC_INTEL_BAYTRAIL
 	bool "rambi"
 	default n
 

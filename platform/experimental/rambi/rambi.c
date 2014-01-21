@@ -79,6 +79,7 @@ static const struct probe_ids probe_id_list[] = {
 struct platform_cmd *rambi_sub[] = {
 	&cmd_ec,
 	&cmd_eeprom,
+	&cmd_gpio,
 	&cmd_memory,
 	&cmd_nvram,
 	&cmd_platform,
@@ -151,6 +152,7 @@ struct eventlog_cb rambi_eventlog_cb = {
 struct platform_cb rambi_cb = {
 	.ec		= &cros_ec_cb,
 	.eeprom		= &rambi_eeprom_cb,
+	.gpio		= &rambi_gpio_cb,
 	.memory		= &rambi_memory_cb,
 	.nvram		= &rambi_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,

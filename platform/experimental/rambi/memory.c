@@ -41,6 +41,7 @@
 #include "mosys/platform.h"
 
 #include "drivers/gpio.h"
+#include "drivers/intel/baytrail.h"
 
 #include "lib/cbfs_core.h"
 #include "lib/file.h"
@@ -58,7 +59,25 @@
  */
 static int rambi_get_spd_index(struct platform_intf *intf)
 {
-	return 0; /* TODO: needs BYT GPIO interface */
+	int spd_index = 0;
+	int val;
+	struct gpio_map ram_id0 = { 37, GPIO_IN, 0, BAYTRAIL_GPSSUS_PORT };
+	struct gpio_map ram_id1 = { 38, GPIO_IN, 0, BAYTRAIL_GPSSUS_PORT };
+	struct gpio_map ram_id2 = { 39, GPIO_IN, 0, BAYTRAIL_GPSSUS_PORT };
+
+	if ((val = intf->cb->gpio->read(intf, &ram_id0)) < 0)
+		return -1;
+	spd_index |= val;
+
+	if ((val = intf->cb->gpio->read(intf, &ram_id1)) < 0)
+		return -1;
+	spd_index |= val << 1;
+
+	if ((val = intf->cb->gpio->read(intf, &ram_id2)) < 0)
+		return -1;
+	spd_index |= val << 2;
+
+	return spd_index;
 }
 
 /*

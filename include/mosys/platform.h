@@ -422,6 +422,17 @@ struct battery_cb {
 	int (*update)(struct platform_intf *intf);
 };
 
+enum psu_types {
+	PSU_TYPE_UNKNOWN,
+	PSU_TYPE_BATTERY,
+	PSU_TYPE_AC_ONLY,
+};
+
+/* power supply related callbacks */
+struct psu_cb {
+	enum psu_types (*type)(struct platform_intf *intf);
+};
+
 /* storage device callbacks */
 struct storage_cb {
 	const char *(*get_model_name)(struct platform_intf *intf);
@@ -449,6 +460,7 @@ struct platform_cb {
 	struct hid_cb *hid;		/* hid callbacks */
 	struct battery_cb *battery;	/* battery callbacks */
 	struct storage_cb *storage;	/* storage callbacks */
+	struct psu_cb *psu;		/* power supply callbacks */
 };
 
 /*

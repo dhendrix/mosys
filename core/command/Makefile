@@ -9,6 +9,7 @@ obj-y		+= memory.o
 obj-y		+= memory_spd.o
 obj-y		+= nvram.o
 obj-y		+= platform.o
+obj-y		+= psu.o
 obj-y		+= sensor.o
 obj-y		+= smbios.o
 obj-y		+= storage.o

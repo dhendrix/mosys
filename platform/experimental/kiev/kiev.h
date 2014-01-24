@@ -42,6 +42,7 @@ extern struct eeprom_cb kiev_eeprom_cb;	/* eeprom.c */
 //extern struct gpio_cb kiev_gpio_cb;		/* gpio.c */
 extern struct memory_cb kiev_memory_cb;	/* memory.c */
 extern struct nvram_cb kiev_nvram_cb;		/* nvram.c */
+extern struct psu_cb kiev_psu_cb;		/* psu.c */
 extern struct sensor_cb kiev_sensor_cb;	/* sensors.c */
 extern struct sys_cb kiev_sys_cb;		/* sys.c */
 extern struct vpd_cb kiev_vpd_cb;		/* vpd.c */

@@ -43,6 +43,7 @@ extern struct eeprom_cb beltino_eeprom_cb;	/* eeprom.c */
 extern struct gpio_cb beltino_gpio_cb;		/* gpio.c */
 extern struct memory_cb beltino_memory_cb;	/* memory.c */
 extern struct nvram_cb beltino_nvram_cb;	/* nvram.c */
+extern struct psu_cb beltino_psu_cb;		/* psu.c */
 extern struct sensor_cb beltino_sensor_cb;	/* sensors.c */
 extern struct sys_cb beltino_sys_cb;		/* sys.c */
 

@@ -3,6 +3,7 @@ obj-$(CONFIG_EXPERIMENTAL_KIEV)	+= eeprom.o
 #obj-$(CONFIG_EXPERIMENTAL_KIEV)	+= gpio.o
 obj-$(CONFIG_EXPERIMENTAL_KIEV)	+= memory.o
 obj-$(CONFIG_EXPERIMENTAL_KIEV)	+= nvram.o
+obj-$(CONFIG_EXPERIMENTAL_KIEV)	+= psu.o
 obj-$(CONFIG_EXPERIMENTAL_KIEV)	+= sensors.o
 obj-$(CONFIG_EXPERIMENTAL_KIEV)	+= kiev.o
 obj-$(CONFIG_EXPERIMENTAL_KIEV)	+= sys.o

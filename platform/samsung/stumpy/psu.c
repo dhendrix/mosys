@@ -1,5 +1,5 @@
 /*
- * Copyright 2012, Google Inc.
+ * Copyright 2014, Google Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,28 +29,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PLATFORM_STUMPY_H__
-#define PLATFORM_STUMPY_H__
-
-#include <inttypes.h>
 #include "mosys/platform.h"
 
-#define STUMPY_HOST_FIRMWARE_ROM_SIZE		(8192 * 1024)
+static enum psu_types psu_type(struct platform_intf *intf)
+{
+	return PSU_TYPE_AC_ONLY;
+}
 
-/* platform callbacks */
-extern struct eeprom_cb stumpy_eeprom_cb;	/* eeprom.c */
-//extern struct gpio_cb stumpy_gpio_cb;		/* gpio.c */
-extern struct memory_cb stumpy_memory_cb;	/* memory.c */
-extern struct nvram_cb stumpy_nvram_cb;		/* nvram.c */
-extern struct psu_cb stumpy_psu_cb;		/* psu.c */
-extern struct sensor_cb stumpy_sensor_cb;	/* sensors.c */
-extern struct sys_cb stumpy_sys_cb;		/* sys.c */
-extern struct vpd_cb stumpy_vpd_cb;		/* vpd.c */
-
-/* functions called by setup routines */
-extern int stumpy_superio_setup(struct platform_intf *intf);
-extern void stumpy_superio_destroy(struct platform_intf *intf);
-extern int stumpy_vpd_setup(struct platform_intf *intf);
-extern int stumpy_eeprom_setup(struct platform_intf *intf);
-
-#endif /* PLATFORM_STUMPY_H_ */
+struct psu_cb stumpy_psu_cb = {
+	.type		= &psu_type,
+};

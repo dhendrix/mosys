@@ -40,6 +40,7 @@ extern struct platform_intf platform_nyan;
 extern struct platform_intf platform_peach;
 extern struct platform_intf platform_rambi;
 extern struct platform_intf platform_slippy;
+extern struct platform_intf platform_skate;
 extern struct platform_intf platform_spring;
 
 /* production platforms */
@@ -111,6 +112,9 @@ struct platform_intf *platform_intf_list[] = {
 #endif
 #ifdef CONFIG_PLATFORM_SPRING
 	&platform_spring,
+#endif
+#ifdef CONFIG_PLATFORM_SKATE
+	&platform_skate,
 #endif
 	NULL
 };

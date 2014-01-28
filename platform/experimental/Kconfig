@@ -55,4 +55,11 @@ config PLATFORM_SPRING
         bool "spring"
         default n
 
+config PLATFORM_SKATE
+        depends on PLATFORM_ARCH_ARMEL && PLATFORM_EXPERIMENTAL
+        select CROS_EC_I2C
+        select SOC_SAMSUNG_EXYNOS5250
+        bool "skate"
+        default n
+
 endmenu

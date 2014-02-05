@@ -51,6 +51,11 @@ const char *nyan_id_list[] = {
 	NULL,
 };
 
+const char *nyan_big_id_list[] = {
+	"google,nyan-big",
+	NULL,
+};
+
 struct platform_cmd *nyan_sub[] = {
 	&cmd_ec,
 	&cmd_eeprom,
@@ -66,14 +71,26 @@ int nyan_probe(struct platform_intf *intf)
 {
 	int index;
 
+	/* nyan-big is listed before google,nyan, so search for it first */
+	index = probe_fdt_compatible(&nyan_big_id_list[0],
+					ARRAY_SIZE(nyan_big_id_list));
+	if (index >= 0) {
+		lprintf(LOG_DEBUG, "Found platform \"%s\" via FDT compatible "
+				"node.\n", nyan_big_id_list[index]);
+		intf->name = "Big";
+		return 1;
+	}
+
+
 	index = probe_fdt_compatible(&nyan_id_list[0],
 					ARRAY_SIZE(nyan_id_list));
 	if (index >= 0) {
 		lprintf(LOG_DEBUG, "Found platform \"%s\" via FDT compatible "
 				"node.\n", nyan_id_list[index]);
+		return 1;
 	}
 
-	return index >= 0 ? 1 : 0;
+	return 0;
 }
 
 static int nyan_setup_post(struct platform_intf *intf)

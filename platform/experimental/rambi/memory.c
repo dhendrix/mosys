@@ -54,28 +54,42 @@
 #define RAMBI_DIMM_COUNT	2
 
 /*
+ * Return the number of RAM_ID strap GPIOs. These GPIOs are standardized
+ * across all Rambi-class platforms, but some platforms have four GPIOs
+ * instead of three because they must support > 8 DRAM SKUs.
+ */
+static int rambi_ramid_gpio_count(struct platform_intf *intf)
+{
+	int gpio_count;
+
+	if (!strncmp(intf->name, "Glimmer", 7))
+		gpio_count = 4;
+	else
+		gpio_count = 3;
+
+	return gpio_count;
+}
+
+/*
  * SPD blob contains up to eight entries which are selected by
  * board strappings.
  */
 static int rambi_get_spd_index(struct platform_intf *intf)
 {
 	int spd_index = 0;
+	int gpio_count = rambi_ramid_gpio_count(intf);
 	int val;
-	struct gpio_map ram_id0 = { 37, GPIO_IN, 0, BAYTRAIL_GPSSUS_PORT };
-	struct gpio_map ram_id1 = { 38, GPIO_IN, 0, BAYTRAIL_GPSSUS_PORT };
-	struct gpio_map ram_id2 = { 39, GPIO_IN, 0, BAYTRAIL_GPSSUS_PORT };
+	int i;
+	struct gpio_map ram_id[] = { { 37, GPIO_IN, 0, BAYTRAIL_GPSSUS_PORT },
+				     { 38, GPIO_IN, 0, BAYTRAIL_GPSSUS_PORT },
+				     { 39, GPIO_IN, 0, BAYTRAIL_GPSSUS_PORT },
+				     { 40, GPIO_IN, 0, BAYTRAIL_GPSSUS_PORT } };
 
-	if ((val = intf->cb->gpio->read(intf, &ram_id0)) < 0)
-		return -1;
-	spd_index |= val;
-
-	if ((val = intf->cb->gpio->read(intf, &ram_id1)) < 0)
-		return -1;
-	spd_index |= val << 1;
-
-	if ((val = intf->cb->gpio->read(intf, &ram_id2)) < 0)
-		return -1;
-	spd_index |= val << 2;
+	for (i = 0; i < gpio_count; i++) {
+		if ((val = intf->cb->gpio->read(intf, &ram_id[i])) < 0)
+			return -1;
+		spd_index |= val << i;
+	}
 
 	return spd_index;
 }

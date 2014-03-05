@@ -103,6 +103,39 @@ static int rambi_get_spd_index(struct platform_intf *intf)
  */
 static int rambi_dimm_count(struct platform_intf *intf)
 {
+	/* TODO(kevin.cheng): Find a programatic way to do this detection */
+	if (!strncmp(intf->name, "Glimmer", 7)) {
+		/* Glimmer has 1 or 2 DIMM config base on RAM_ID.
+		 * {0,0,0,0} = 2 x 2GiB Micron
+		 * {0,0,0,1} = 2 x 2GiB Hynix
+		 * {0,0,1,0} = 2 x 1GiB Micron
+		 * {0,0,1,1} = 2 x 1GiB Hynix
+		 * {0,1,0,0} = 2 x 1GiB Samsung
+		 * {0,1,0,1} = 1 x 2GiB Hynix
+		 * {0,1,1,0} = 2 x 2GiB Samsung
+		 * {0,1,1,1} = 2 x 2GiB Elpida
+		 * {1,0,0,0} = 1 x 2GiB Micron
+		 * {1,0,0,1} = 1 x 2GiB Elpida
+		 * {1,0,1,0} = 1 x 2GiB Samsung
+		 */
+		int index = rambi_get_spd_index(intf);
+		switch (index) {
+		case 5: case 8: case 9: case 10:
+			return 1;
+		default:
+			return 2;
+		}
+	} else if (!strncmp(intf->name, "Clapper", 7)) {
+		/* Clapper has 1 or 2 DIMM config base on RAM_ID.
+		 * {0,0,0} = 2 x 2GiB Micron
+		 * {0,0,1} = 2 x 2GiB Hynix
+		 * {0,1,0} = 2 x 1GiB Micron
+		 * {0,1,1} = 2 x 1GiB Hynix
+		 * {1,0,0} = 1 x 2GiB Micron
+		 * {1,0,1} = 1 x 2GiB Hynix
+		 */
+		return rambi_get_spd_index(intf) >= 4 ? 1 : 2;
+	}
 	return RAMBI_DIMM_COUNT;
 }
 

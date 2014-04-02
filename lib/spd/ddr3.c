@@ -40,6 +40,7 @@
 
 #include "mosys/platform.h"
 #include "mosys/kv_pair.h"
+#include "mosys/log.h"
 
 #include "lib/string.h"
 
@@ -47,6 +48,7 @@
 #include "lib/spd.h"
 
 #include "jedec_id.h"
+
 
 static const struct valstr ddr3_module_type_lut[] = {
 	{ 0x00, "Undefined" },
@@ -248,9 +250,7 @@ int spd_print_field_ddr3(struct platform_intf *intf, struct kv_pair *kv,
 
 	case SPD_GET_SPEEDS:
 	{
-		int i;
-		int mhz;
-		int one_added;
+		int i, mhz, first_entry;
 		char speeds[128];
 		const struct valstr possible_mhz[] = {
 			{ 400,  "DDR3-800" },
@@ -261,21 +261,48 @@ int spd_print_field_ddr3(struct platform_intf *intf, struct kv_pair *kv,
 			{ 1067, "DDR3-2133" },
 			{ 0 }
 		};
+		int tck_mtb = byte[DDR3_SPD_REG_TCK_MIN];
+		int mtb_dividend = byte[DDR3_SPD_REG_MTB_DIVIDEND];
+		int mtb_divisor = byte[DDR3_SPD_REG_MTB_DIVISOR];
+		int ftb_dividend = byte[DDR3_SPD_REG_FTB_DIVIDEND_DIVSOR] >> 4;
+		int ftb_divisor = byte[DDR3_SPD_REG_FTB_DIVIDEND_DIVSOR] & 0xf;
+		double tck_ns, mtb = 0.0, ftb_ns = 0.0;
+		/* fine offset is encoded in 2's complement format */
+		int8_t ftb_offset = byte[DDR3_SPD_REG_FINE_OFFSET_TCK_MIN];
 
-		mhz = 1000 * byte[DDR3_SPD_REG_MTB_DIVISOR];
-		mhz /= byte[DDR3_SPD_REG_MTB_DIVIDEND];
-		mhz /= byte[DDR3_SPD_REG_TCK_MIN];
+		/* Sanity check that MTB and FTB values are >=1 (as per spec) */
+		ret = -1;
+		if (!mtb_dividend)
+			lprintf(LOG_ERR, "Invalid MTB dividend from SPD\n");
+		else if (!mtb_divisor)
+			lprintf(LOG_ERR, "Invalid MTB divisor from SPD\n");
+		else if (!ftb_dividend)
+			lprintf(LOG_ERR, "Invalid FTB dividend from SPD\n");
+		else if (!ftb_divisor)
+			lprintf(LOG_ERR, "Invalid FTB divisor from SPD\n");
+		else
+			ret = 0;
+		if (ret)
+			break;
+
+		mtb = (double)mtb_dividend / mtb_divisor;
+		ftb_ns = ((double)(ftb_dividend) / ftb_divisor) / 1000;
+		tck_ns = tck_mtb * mtb + (ftb_offset * ftb_ns);
+		mhz = (int)((double)1000/tck_ns);
+
+		lprintf(LOG_DEBUG, "%s: %d * %.03fns + %d * %.03fns = %.02fns,"
+				" mhz = %d\n", __func__,
+				tck_mtb, mtb, ftb_offset, ftb_ns, tck_ns, mhz);
 
 		memset(speeds, 0, sizeof(speeds));
-		one_added = 0;
+		first_entry = 1;
 		for (i = 0; possible_mhz[i].val != 0; i++) {
 			double min = possible_mhz[i].val * 0.99;
 
 			if (min <= mhz) {
-				if (one_added) {
+				if (!first_entry)
 					strcat(speeds, ", ");
-				}
-				one_added = 1;
+				first_entry = 0;
 				strcat(speeds, possible_mhz[i].str);
 			}
 		}

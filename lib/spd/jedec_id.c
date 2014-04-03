@@ -42,8 +42,7 @@
 
 /*
  * JEDEC Standard Manufacturer's Identification Code
- * from JEP106U, October 2006
- * http://www.jedec.org/download/search/jep106U-01.pdf
+ * from JEP106. Download the latest revision from jedec.org.
  */
 static const char *jedec_id1[] = {
 	[1] = "AMD",

@@ -136,6 +136,7 @@ struct eventlog_cb nyan_eventlog_cb = {
 struct platform_cb nyan_cb = {
 	.ec 		= &cros_ec_cb,
 	.eeprom 	= &nyan_eeprom_cb,
+	.memory		= &nyan_memory_cb,
 	.nvram		= &cros_ec_nvram_cb,
 	.sys 		= &nyan_sys_cb,
 	.eventlog	= &nyan_eventlog_cb,

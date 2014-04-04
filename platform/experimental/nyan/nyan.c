@@ -93,6 +93,20 @@ int nyan_probe(struct platform_intf *intf)
 	return 0;
 }
 
+enum nyan_type get_nyan_type(struct platform_intf *intf)
+{
+	enum nyan_type ret = NYAN_UNKNOWN;
+
+	if (!strncmp(intf->name, "Big", strlen(intf->name)))
+		ret = NYAN_BIG;
+	else if (!strncmp(intf->name, "Blaze", strlen(intf->name)))
+		ret = NYAN_BLAZE;
+	else if (!strncmp(intf->name, "Nyan", strlen(intf->name)))
+		ret = NYAN;
+
+	return ret;
+}
+
 static int nyan_setup_post(struct platform_intf *intf)
 {
 	if (nyan_ec_setup(intf) <= 0)

@@ -35,6 +35,14 @@
 #include <inttypes.h>
 #include "mosys/platform.h"
 
+enum nyan_type {
+	NYAN,
+	NYAN_BIG,
+	NYAN_BLAZE,
+	NYAN_UNKNOWN,
+};
+
+extern enum nyan_type get_nyan_type(struct platform_intf *intf);
 extern int nyan_ec_setup(struct platform_intf *intf);
 
 /* platform callbacks */

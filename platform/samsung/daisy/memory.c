@@ -52,9 +52,10 @@ const uint8_t elpida_ddr3_1600_spd[SPD_MAX_LENGTH] = {
 	[DDR3_SPD_REG_MODULE_BUS_WIDTH]	= 0x03,
 
 	/* DDR3-1666 = (1/8)ns * 10 = 1.25ns */
-	[DDR3_SPD_REG_MTB_DIVIDEND]	= 1,
-	[DDR3_SPD_REG_MTB_DIVISOR]	= 8,
-	[DDR3_SPD_REG_TCK_MIN]		= 10,
+	[DDR3_SPD_REG_FTB_DIVIDEND_DIVSOR]	= 0x11,	/* granularity of 1ps */
+	[DDR3_SPD_REG_MTB_DIVIDEND]		= 1,
+	[DDR3_SPD_REG_MTB_DIVISOR]		= 8,
+	[DDR3_SPD_REG_TCK_MIN]			= 10,
 
 	/* 6, 7, 8, 9, 10, 11 */
 	[DDR3_SPD_REG_CAS_LAT_LSB]	= 0xfc,
@@ -106,6 +107,7 @@ const uint8_t samsung_ddr3_1600_spd[SPD_MAX_LENGTH] = {
 	[DDR3_SPD_REG_MODULE_BUS_WIDTH]	= 0x03,
 
 	/* DDR3-1666 = (1/8)ns * 10 = 1.25ns */
+	[DDR3_SPD_REG_FTB_DIVIDEND_DIVSOR]	= 0x11,	/* granularity of 1ps */
 	[DDR3_SPD_REG_MTB_DIVIDEND]	= 1,
 	[DDR3_SPD_REG_MTB_DIVISOR]	= 8,
 	[DDR3_SPD_REG_TCK_MIN]		= 10,
@@ -160,9 +162,10 @@ const uint8_t samsung_ddr3x16_1600_spd[SPD_MAX_LENGTH] = {
 	[DDR3_SPD_REG_MODULE_BUS_WIDTH]	= 0x03,
 
 	/* DDR3-1666 = (1/8)ns * 10 = 1.25ns */
-	[DDR3_SPD_REG_MTB_DIVIDEND]	= 1,
-	[DDR3_SPD_REG_MTB_DIVISOR]	= 8,
-	[DDR3_SPD_REG_TCK_MIN]		= 10,
+	[DDR3_SPD_REG_FTB_DIVIDEND_DIVSOR]	= 0x11,	/* granularity of 1ps */
+	[DDR3_SPD_REG_MTB_DIVIDEND]		= 1,
+	[DDR3_SPD_REG_MTB_DIVISOR]		= 8,
+	[DDR3_SPD_REG_TCK_MIN]			= 10,
 
 	/* 5, 6, 7, 8, 9, 10, 11 */
 	[DDR3_SPD_REG_CAS_LAT_LSB]	= 0xfe,

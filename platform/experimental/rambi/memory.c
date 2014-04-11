@@ -133,8 +133,16 @@ static int rambi_dimm_count(struct platform_intf *intf)
 		 * {0,1,1} = 2 x 1GiB Hynix
 		 * {1,0,0} = 1 x 2GiB Micron
 		 * {1,0,1} = 1 x 2GiB Hynix
+		 * {1,1,0} = 2 x 2GiB Samsung
+		 * {1,1,1} = 1 x 2GiB Samsung
 		 */
-		return rambi_get_spd_index(intf) >= 4 ? 1 : 2;
+		int index = rambi_get_spd_index(intf);
+		switch (index) {
+		case 4: case 5: case 7:
+			return 1;
+		default:
+			return 2;
+		}
 	}
 	return RAMBI_DIMM_COUNT;
 }

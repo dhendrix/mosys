@@ -51,7 +51,7 @@ static const uint8_t samsung_ddr3_1600_1rank_spd[SPD_MAX_LENGTH] = {
 	[DDR3_SPD_REG_ADDRESSING]	= 0x19,	/* 15 rows, 10 cols */
 	[DDR3_SPD_REG_VOLTAGE]		= 0x02,	/* 1.35V */
 	[DDR3_SPD_REG_MODULE_ORG]	= 0x02,	/* 1 ranks, x16 */
-	[DDR3_SPD_REG_MODULE_BUS_WIDTH]	= 0x03,	/* 64-bit channel */
+	[DDR3_SPD_REG_MODULE_BUS_WIDTH]	= 0x02,	/* 32-bit channel */
 
 	/* DDR3-1600 = (1/8)ns * 10 = 1.25ns */
 	[DDR3_SPD_REG_FTB_DIVIDEND_DIVSOR]	= 0x11,	/* granularity of 1ps */

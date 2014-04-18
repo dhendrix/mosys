@@ -103,9 +103,47 @@ static int rambi_get_spd_index(struct platform_intf *intf)
  */
 static int rambi_dimm_count(struct platform_intf *intf)
 {
-	/* TODO(kevin.cheng): Find a programatic way to do this detection */
-	if (!strncmp(intf->name, "Glimmer", 7)) {
-		/* Glimmer has 1 or 2 DIMM config base on RAM_ID.
+	/*
+	 * TODO(shawnn): Find a programatic way to do this detection.
+	 * Platforms have 1 or 2 DIMM config based on RAM_ID.
+	 */
+	if (!strncmp(intf->name, "Clapper", 7)) {
+		/*
+		 * {0,0,0} = 2 x 2GiB Micron
+		 * {0,0,1} = 2 x 2GiB Hynix
+		 * {0,1,0} = 2 x 1GiB Micron
+		 * {0,1,1} = 2 x 1GiB Hynix
+		 * {1,0,0} = 1 x 2GiB Micron
+		 * {1,0,1} = 1 x 2GiB Hynix
+		 * {1,1,0} = 2 x 2GiB Samsung
+		 * {1,1,1} = 1 x 2GiB Samsung
+		 */
+		int index = rambi_get_spd_index(intf);
+		switch (index) {
+		case 4: case 5: case 7:
+			return 1;
+		default:
+			return 2;
+		}
+	} else if (!strncmp(intf->name, "Enguarde", 8) ||
+		   !strncmp(intf->name, "Rambi", 5)) {
+		/*
+		 * {0,0,0} = 2 x 2GiB Micron
+		 * {0,0,1} = 2 x 2GiB Hynix
+		 * {0,1,0} = 2 x 1GiB Micron
+		 * {0,1,1} = 2 x 1GiB Hynix
+		 * {1,0,0} = 1 x 2GiB Micron
+		 * {1,0,1} = 1 x 2GiB Hynix
+		 */
+		int index = rambi_get_spd_index(intf);
+		switch (index) {
+		case 4: case 5:
+			return 1;
+		default:
+			return 2;
+		}
+	} else if (!strncmp(intf->name, "Glimmer", 7)) {
+		/*
 		 * {0,0,0,0} = 2 x 2GiB Micron
 		 * {0,0,0,1} = 2 x 2GiB Hynix
 		 * {0,0,1,0} = 2 x 1GiB Micron
@@ -125,20 +163,19 @@ static int rambi_dimm_count(struct platform_intf *intf)
 		default:
 			return 2;
 		}
-	} else if (!strncmp(intf->name, "Clapper", 7)) {
-		/* Clapper has 1 or 2 DIMM config base on RAM_ID.
-		 * {0,0,0} = 2 x 2GiB Micron
+	} else if (!strncmp(intf->name, "Squawks", 7)) {
+		/*
+		 * {0,0,0} = 2 x 2GiB Elpida
 		 * {0,0,1} = 2 x 2GiB Hynix
 		 * {0,1,0} = 2 x 1GiB Micron
-		 * {0,1,1} = 2 x 1GiB Hynix
-		 * {1,0,0} = 1 x 2GiB Micron
+		 * {0,1,1} = 2 x 2GiB Hynix
+		 * {1,0,0} = 1 x 2GiB Elpida
 		 * {1,0,1} = 1 x 2GiB Hynix
-		 * {1,1,0} = 2 x 2GiB Samsung
-		 * {1,1,1} = 1 x 2GiB Samsung
+		 * {1,1,0} = 1 x 2GiB Hynix
 		 */
 		int index = rambi_get_spd_index(intf);
 		switch (index) {
-		case 4: case 5: case 7:
+		case 4: case 5: case 6:
 			return 1;
 		default:
 			return 2;

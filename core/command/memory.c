@@ -66,6 +66,34 @@ static int memory_dump_cmd(struct platform_intf *intf,
 	return 0;
 }
 
+static int memory_print_speed(struct platform_intf *intf,
+			      struct platform_cmd *cmd, int argc, char **argv)
+{
+	unsigned long dimm;
+	struct kv_pair *kv;
+	int rc;
+
+	if (argc != 1) {
+		platform_cmd_usage(cmd);
+		errno = EINVAL;
+		return -1;
+	}
+
+	dimm = strtoul(argv[0], NULL, 0);
+
+	if (!intf->cb->memory || !intf->cb->memory->dimm_speed) {
+		errno = ENOSYS;
+		return -1;
+	}
+
+	kv = kv_pair_new();
+	intf->cb->memory->dimm_speed(intf, dimm, kv);
+	rc = kv_pair_print(kv);
+	kv_pair_free(kv);
+
+	return rc;
+}
+
 /* SMBIOS-based DIMM information */
 //extern struct platform_cmd smbios_memory_dimm_cmds[];
 
@@ -106,6 +134,13 @@ struct platform_cmd memory_print_cmds[] = {
 		.arg	= { .sub = print_memory_population }
 	},
 #endif
+	{
+		.name	= "speed",
+		.desc	= "Print Memory Speed",
+		.usage	= "print speed <dimmN>",
+		.type	= ARG_TYPE_GETTER,
+		.arg 	= { .func = memory_print_speed }
+	},
 };
 
 struct platform_cmd memory_cmds[] = {
@@ -148,17 +183,15 @@ struct platform_cmd memory_cmds[] = {
 		.type	= ARG_TYPE_GETTER,
 		.arg	= { .func = memory_dump_cmd }
 	},
-#if 0
 	{
 		.name	= "print",
 		.desc	= "Print generic information",
 		.type	= ARG_TYPE_SUB,
 		.arg	= { .sub = memory_print_cmds }
 	},
-#endif
 	{
 		.name	= "spd",
-		.desc	= "Information form SPD",
+		.desc	= "Information from SPD",
 		.type	= ARG_TYPE_SUB,
 		.arg	= { .sub = memory_spd_cmds }
 	},

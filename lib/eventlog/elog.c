@@ -39,7 +39,7 @@
 #include "lib/coreboot.h"
 #include "lib/eeprom.h"
 #include "lib/elog.h"
-#include "lib/eventlog.h"
+#include "lib/elog_smbios.h"
 #include "lib/math.h"
 #include "lib/smbios.h"
 #include "lib/string.h"

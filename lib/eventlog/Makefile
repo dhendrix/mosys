@@ -1,2 +1,2 @@
-obj-y		+= eventlog.o
 obj-y		+= elog.o
+obj-y		+= elog_smbios.o

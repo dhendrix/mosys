@@ -56,6 +56,16 @@ const char *nyan_big_id_list[] = {
 	NULL,
 };
 
+const char *nyan_blaze_id_list[] = {
+	"google,nyan-blaze-rev5",
+	"google,nyan-blaze-rev4",
+	"google,nyan-blaze-rev3",
+	"google,nyan-blaze-rev2",
+	"google,nyan-blaze-rev1",
+	"google,nyan-blaze-rev0",
+	NULL,
+};
+
 struct platform_cmd *nyan_sub[] = {
 	&cmd_ec,
 	&cmd_eeprom,
@@ -81,6 +91,16 @@ int nyan_probe(struct platform_intf *intf)
 		return 1;
 	}
 
+
+	/* nyan-blaze is listed before google,nyan, so search for it first */
+	index = probe_fdt_compatible(&nyan_blaze_id_list[0],
+					ARRAY_SIZE(nyan_blaze_id_list));
+	if (index >= 0) {
+		lprintf(LOG_DEBUG, "Found platform \"%s\" via FDT compatible "
+				"node.\n", nyan_blaze_id_list[index]);
+		intf->name = "Blaze";
+		return 1;
+	}
 
 	index = probe_fdt_compatible(&nyan_id_list[0],
 					ARRAY_SIZE(nyan_id_list));

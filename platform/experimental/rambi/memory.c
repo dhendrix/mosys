@@ -181,7 +181,8 @@ static int rambi_dimm_count(struct platform_intf *intf)
 		default:
 			return 2;
 		}
-	} else if (!strncmp(intf->name, "Squawks", 7)) {
+	} else if (!strncmp(intf->name, "Squawks", 7) ||
+		   !strncmp(intf->name, "Quawks", 6)) {
 		/*
 		 * {0,0,0} = 2 x 2GiB Elpida
 		 * {0,0,1} = 2 x 2GiB Hynix

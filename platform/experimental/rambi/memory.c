@@ -37,6 +37,7 @@
 #include "mosys/callbacks.h"
 #include "mosys/globals.h"
 #include "mosys/globals.h"
+#include "mosys/kv_pair.h"
 #include "mosys/log.h"
 #include "mosys/platform.h"
 
@@ -52,6 +53,7 @@
 #include "rambi.h"
 
 #define RAMBI_DIMM_COUNT	2
+#define RAMBI_DIMM_SPEED	1333
 
 /*
  * Return the number of RAM_ID strap GPIOs. These GPIOs are standardized
@@ -203,6 +205,24 @@ static int rambi_dimm_count(struct platform_intf *intf)
 	return RAMBI_DIMM_COUNT;
 }
 
+/*
+ * rambi_dimm_speed - Write actual DDR speed in MHz to kv
+ *
+ * @intf:	platform interface
+ * @dimm:	DIMM number
+ * @kv:		kv_pair structure
+ *
+ * returns actual DDR speed in MHz
+ */
+static int rambi_dimm_speed(struct platform_intf *intf,
+			    int dimm,
+			    struct kv_pair *kv) {
+	int speed = RAMBI_DIMM_SPEED;
+	if (kv)
+		kv_pair_fmt(kv, "speed", "%d MHz", speed);
+	return speed;
+}
+
 static int rambi_spd_read_cbfs(struct platform_intf *intf,
 				int dimm, int reg, int len, uint8_t *buf)
 {
@@ -255,5 +275,6 @@ static struct memory_spd_cb rambi_spd_cb = {
 
 struct memory_cb rambi_memory_cb = {
 	.dimm_count	= rambi_dimm_count,
+	.dimm_speed	= rambi_dimm_speed,
 	.spd		= &rambi_spd_cb,
 };

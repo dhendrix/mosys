@@ -219,6 +219,20 @@ static int rambi_dimm_count(struct platform_intf *intf)
 		default:
 			return 2;
 		}
+	} else if (!strncmp(intf->name, "Swanky", 6)) {
+		/*
+		 * {0,0,0} = 1 x 2GiB Samsung
+		 * {0,0,1} = 1 x 2GiB Hynix
+		 * {0,1,0} = 2 x 2GiB Samsung
+		 * {0,1,1} = 2 x 2GiB Hynix
+		 */
+		int index = rambi_get_spd_index(intf);
+		switch (index) {
+		case 2: case 3:
+			return 2;
+		default:
+			return 1;
+		}
 	}
 	return RAMBI_DIMM_COUNT;
 }

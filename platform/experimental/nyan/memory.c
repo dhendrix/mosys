@@ -217,7 +217,7 @@ static uint8_t samsung_ddr3_1600_256x16_spd[SPD_MAX_LENGTH] = {
 	[DDR3_SPD_REG_DENSITY_BANKS]	= 0x04,	/* 8 banks * 512Mbits = 4Gb */
 	[DDR3_SPD_REG_ADDRESSING]	= 0x19,	/* 15 rows, 10 cols */
 	[DDR3_SPD_REG_VOLTAGE]		= 0x02,	/* 1.35V */
-	[DDR3_SPD_REG_MODULE_ORG]	= 0x0A,	/* 1 ranks, x16 */
+	[DDR3_SPD_REG_MODULE_ORG]	= 0x02,	/* 1 ranks, x16 */
 	[DDR3_SPD_REG_MODULE_BUS_WIDTH]	= 0x03,	/* 64-bit channel */
 
 	/* DDR3-1600 = (1/8)ns * 10 = 1.25ns */
@@ -461,6 +461,7 @@ static int spd_read(struct platform_intf *intf,
 	case SAMSUNG_DDR3_1600_4G:
 		p = samsung_ddr3_1600_256x16_spd;
 		p[DDR3_SPD_REG_REVISION] = 0x12;
+		p[DDR3_SPD_REG_MODULE_ORG] = 0xA;
 		p[DDR3_SPD_REG_MODULE_PART_NUM_3] = '8';
 		p[DDR3_SPD_REG_MODULE_PART_NUM_11] = 'M';
 		break;

@@ -163,7 +163,7 @@ static uint8_t micron_ddr3_1600_256x16_spd[SPD_MAX_LENGTH] = {
 	[DDR3_SPD_REG_ADDRESSING]	= 0x19,	/* 15 rows, 10 cols */
 	[DDR3_SPD_REG_VOLTAGE]		= 0x02,	/* 1.35V */
 	[DDR3_SPD_REG_MODULE_ORG]	= 0x02,	/* 1 rank, x16 */
-	[DDR3_SPD_REG_MODULE_BUS_WIDTH]	= 0x03,	/* 32-bits */
+	[DDR3_SPD_REG_MODULE_BUS_WIDTH]	= 0x01,	/* 32-bits */
 
 	/* DDR3-1600 = (1/8)ns * 10 = 1.25ns */
 	[DDR3_SPD_REG_FTB_DIVIDEND_DIVSOR]	= 0x11,	/* granularity of 1ps */
@@ -189,7 +189,7 @@ static uint8_t micron_ddr3_1600_256x16_spd[SPD_MAX_LENGTH] = {
 	[DDR3_SPD_REG_MODULE_MANUF_SERIAL_2] = 0x00000000,
 	[DDR3_SPD_REG_MODULE_MANUF_SERIAL_3] = 0x00000000,
 
-	[DDR3_SPD_REG_MODULE_PART_NUM_0] = '5',
+	[DDR3_SPD_REG_MODULE_PART_NUM_0] = '4',
 	[DDR3_SPD_REG_MODULE_PART_NUM_1] = 'K',
 	[DDR3_SPD_REG_MODULE_PART_NUM_2] = 'T',
 	[DDR3_SPD_REG_MODULE_PART_NUM_3] = 'F',
@@ -218,7 +218,7 @@ static uint8_t samsung_ddr3_1600_256x16_spd[SPD_MAX_LENGTH] = {
 	[DDR3_SPD_REG_ADDRESSING]	= 0x19,	/* 15 rows, 10 cols */
 	[DDR3_SPD_REG_VOLTAGE]		= 0x02,	/* 1.35V */
 	[DDR3_SPD_REG_MODULE_ORG]	= 0x02,	/* 1 ranks, x16 */
-	[DDR3_SPD_REG_MODULE_BUS_WIDTH]	= 0x03,	/* 64-bit channel */
+	[DDR3_SPD_REG_MODULE_BUS_WIDTH]	= 0x01,	/* 64-bit channel */
 
 	/* DDR3-1600 = (1/8)ns * 10 = 1.25ns */
 	[DDR3_SPD_REG_FTB_DIVIDEND_DIVSOR]	= 0x11,	/* granularity of 1ps */
@@ -273,7 +273,7 @@ static uint8_t elpida_ddr3_1600_256x16_spd[SPD_MAX_LENGTH] = {
 	[DDR3_SPD_REG_ADDRESSING]	= 0x19,	/* 15 rows, 10 cols */
 	[DDR3_SPD_REG_VOLTAGE]		= 0x02,	/* 1.35V */
 	[DDR3_SPD_REG_MODULE_ORG]	= 0x02,	/* 1 rank, x8 */
-	[DDR3_SPD_REG_MODULE_BUS_WIDTH]	= 0x03,
+	[DDR3_SPD_REG_MODULE_BUS_WIDTH]	= 0x01,
 
 	/* DDR3-1666 = (1/8)ns * 10 = 1.25ns */
 	[DDR3_SPD_REG_FTB_DIVIDEND_DIVSOR]	= 0x11,	/* granularity of 1ps */
@@ -421,11 +421,65 @@ static int spd_read(struct platform_intf *intf,
 	switch (get_memory_config(intf)) {
 	case HYNIX_DDR3_1600_2G:
 		p = hynix_ddr3_1600_256x16_spd;
+		if (get_nyan_type(intf) == NYAN_BLAZE) {
+			p[DDR3_SPD_REG_MODULE_TYPE]	= 0x03;
+			p[DDR3_SPD_REG_ADDRESSING] = 0x19;
+			p[DDR3_SPD_REG_FTB_DIVIDEND_DIVSOR]	= 0x52;
+			p[DDR3_SPD_REG_TCK_MIN] = 0x0a;
+			p[DDR3_SPD_REG_TAA_MIN] = 0x69;
+			p[DDR3_SPD_REG_TRCD_MIN] = 0x69;
+			p[DDR3_SPD_REG_MODULE_PART_NUM_0] = 'H';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_1] = 'M';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_2] = 'T';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_3] = '4';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_4] = '2';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_5] = '5';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_6] = 'S';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_7] = '6';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_8] = 'A';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_9] = 'F';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_10] = 'R';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_11] = '6';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_12] = 'A';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_13] = '-';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_14] = 'P';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_15] = 'B';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_16] = 0;
+			p[DDR3_SPD_REG_MODULE_PART_NUM_17] = 0;
+		}
 		break;
 	case HYNIX_DDR3_1600_4G:
 		p = hynix_ddr3_1600_256x16_spd;
-		p[DDR3_SPD_REG_DENSITY_BANKS]	= 0x05;	/* 8 banks, 8Gb */
-		p[DDR3_SPD_REG_MODULE_PART_NUM_4] = '8';
+		if (get_nyan_type(intf) == NYAN_BLAZE) {
+			p[DDR3_SPD_REG_MODULE_TYPE]	= 0x03;
+			p[DDR3_SPD_REG_ADDRESSING] = 0x19;
+			p[DDR3_SPD_REG_MODULE_ORG]	= 0x0A;
+			p[DDR3_SPD_REG_FTB_DIVIDEND_DIVSOR]	= 0x52;
+			p[DDR3_SPD_REG_TCK_MIN] = 0x0a;
+			p[DDR3_SPD_REG_TAA_MIN] = 0x69;
+			p[DDR3_SPD_REG_TRCD_MIN] = 0x69;
+			p[DDR3_SPD_REG_MODULE_PART_NUM_0] = 'H';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_1] = 'M';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_2] = 'T';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_3] = '8';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_4] = '5';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_5] = '1';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_6] = 'S';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_7] = '6';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_8] = 'A';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_9] = 'M';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_10] = 'R';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_11] = '6';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_12] = 'R';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_13] = '-';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_14] = 'P';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_15] = 'B';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_16] = 0;
+			p[DDR3_SPD_REG_MODULE_PART_NUM_17] = 0;
+		} else {
+			p[DDR3_SPD_REG_DENSITY_BANKS]	= 0x05;	/* 8 banks, 8Gb */
+			p[DDR3_SPD_REG_MODULE_PART_NUM_4] = '8';
+		}
 		break;
 	case HYNIX_DDR3_1866_2G:
 		p = hynix_ddr3_1866_256x16_spd;

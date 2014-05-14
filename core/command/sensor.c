@@ -44,7 +44,8 @@
 #include "lib/sensors.h"
 #include "lib/string.h"
 
-#define MONITOR_DELAY_DEFAULT	10
+#define MONITOR_DELAY_DEFAULT		1
+#define MONITOR_ITERATIONS_DEFAULT	30
 
 static const char *sensor_type_names[] = {
 	[SENSOR_TYPE_THERMAL_DEGREES]	= "thermal",
@@ -266,7 +267,7 @@ static int sensor_monitor_cmd(struct platform_intf *intf,
                               int argc, char **argv)
 {
 	int delay = MONITOR_DELAY_DEFAULT;
-	int iterations = 0;
+	int iterations = MONITOR_ITERATIONS_DEFAULT;
 	unsigned type_mask = 0;
 	int i;
 

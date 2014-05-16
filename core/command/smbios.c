@@ -144,33 +144,6 @@ static int smbios_info_system_cmd(struct platform_intf *intf,
 	return rc;
 }
 
-static int smbios_info_baseboard_cmd(struct platform_intf *intf,
-                                     struct platform_cmd *cmd,
-                                     int argc, char **argv)
-{
-	struct smbios_table table;
-	struct kv_pair *kv;
-	int rc;
-
-	if (smbios_find_table(intf, SMBIOS_TYPE_BASEBOARD, 0, &table,
-	                      SMBIOS_LEGACY_ENTRY_BASE,
-	                      SMBIOS_LEGACY_ENTRY_LEN) < 0)
-		return -1;
-
-	kv = kv_pair_new();
-	kv_pair_add(kv, "manufacturer",
-		    table.string[table.data.baseboard.manufacturer]);
-	kv_pair_add(kv, "product_name", table.string[table.data.baseboard.name]);
-	kv_pair_add(kv, "version", table.string[table.data.baseboard.version]);
-	kv_pair_add(kv, "serial_number",
-		    table.string[table.data.baseboard.serial_number]);
-
-	rc = kv_pair_print(kv);
-	kv_pair_free(kv);
-
-	return rc;
-}
-
 static int smbios_info_log_cmd(struct platform_intf *intf,
 			       struct platform_cmd *cmd, int argc, char **argv)
 {
@@ -232,12 +205,6 @@ struct platform_cmd smbios_info_cmds[] = {
 		.desc	= "System Information Table",
 		.type	= ARG_TYPE_GETTER,
 		.arg	= { .func = smbios_info_system_cmd }
-	},
-	{
-		.name	= "baseboard",
-		.desc	= "Baseboard Information Table",
-		.type	= ARG_TYPE_GETTER,
-		.arg	= { .func = smbios_info_baseboard_cmd }
 	},
 	{
 		.name	= "log",

@@ -71,6 +71,10 @@ static const struct probe_ids probe_id_list[] = {
 	  { "X86 TRICKY", NULL },
 	  { "Google_Tricky", NULL },
 	},
+        { { "Mccloud", NULL },
+	  { "X86 MCCLOUD", NULL },
+	  { "Google_Mccloud", NULL },
+	},
 	{ { NULL } }
 };
 

@@ -90,6 +90,7 @@ static int slippy_get_spd_index(struct platform_intf *intf)
  * GPIO67: Bit 0
  * GPIO68: Bit 1
  * GPIO69: Bit 2
+ * GPIO65: Bit 3
  */
 static int samus_get_spd_index(struct platform_intf *intf)
 {
@@ -98,6 +99,7 @@ static int samus_get_spd_index(struct platform_intf *intf)
 	struct gpio_map ram_id0 = { 67, GPIO_IN, 0, 2, 3 };
 	struct gpio_map ram_id1 = { 68, GPIO_IN, 0, 2, 4 };
 	struct gpio_map ram_id2 = { 69, GPIO_IN, 0, 2, 5 };
+	struct gpio_map ram_id3 = { 65, GPIO_IN, 0, 2, 2 };
 
 	if ((val = intf->cb->gpio->read(intf, &ram_id0)) < 0)
 		return -1;
@@ -110,6 +112,10 @@ static int samus_get_spd_index(struct platform_intf *intf)
 	if ((val = intf->cb->gpio->read(intf, &ram_id2)) < 0)
 		return -1;
 	spd_index |= val << 2;
+
+	if ((val = intf->cb->gpio->read(intf, &ram_id3)) < 0)
+		return -1;
+	spd_index |= val << 3;
 
 	return spd_index;
 }
@@ -152,9 +158,6 @@ static int slippy_dimm_count(struct platform_intf *intf)
 		 * {1,1,0} = 2GB Elpida
 		 */
 		return slippy_get_spd_index(intf) >= 4 ? 1 : 2;
-	} else if (!strncmp(intf->name, "Bolt", 4)) {
-		/* Bolt has 2 DIMM config */
-		return 2;
 	} else if (!strncmp(intf->name, "Samus", 5)) {
 		/* Samus has 2 DIMM config */
 		return 2;
@@ -211,9 +214,8 @@ static int slippy_spd_read_cbfs(struct platform_intf *intf,
 	if ((file = cbfs_find("spd.bin", bootblock, size)) == NULL)
 		return -1;
 
-	/* Special case for Samus/Bolt */
-	if (!strncmp(intf->name, "Samus", 5) ||
-	    !strncmp(intf->name, "Bolt", 4))
+	/* Special case for Samus */
+	if (!strncmp(intf->name, "Samus", 5))
 		spd_index = samus_get_spd_index(intf);
 	else
 		spd_index = slippy_get_spd_index(intf);

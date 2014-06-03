@@ -53,10 +53,6 @@ struct probe_ids {
 };
 
 static const struct probe_ids probe_id_list[] = {
-	{ { "Bolt", NULL },
-	  { "X86 BOLT", NULL },
-	  { "Google_Bolt", NULL },
-	},
 	{ { "Falco", NULL },
 	  { "X86 FALCO", NULL },
 	  { "Google_Falco", NULL },

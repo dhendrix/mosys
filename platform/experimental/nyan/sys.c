@@ -34,7 +34,7 @@
 
 #include "nyan.h"
 
-static const char *get_name(struct platform_intf *intf)
+static const char *nyan_get_name(struct platform_intf *intf)
 {
 	char *ret = NULL;
 
@@ -43,6 +43,19 @@ static const char *get_name(struct platform_intf *intf)
 	return (const char *)ret;
 }
 
+static const char *nyan_get_vendor(struct platform_intf *intf)
+{
+	char *ret = NULL;
+
+	if (!strncmp(intf->name, "Big", strlen(intf->name)))
+		ret = mosys_strdup("Google");
+	else if (!strncmp(intf->name, "Blaze", strlen(intf->name)))
+		ret = mosys_strdup("Google");
+
+	return ret;
+}
+
 struct sys_cb nyan_sys_cb = {
-	.name		= &get_name,
+	.name		= &nyan_get_name,
+	.vendor		= &nyan_get_vendor,
 };

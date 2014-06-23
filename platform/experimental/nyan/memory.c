@@ -395,10 +395,20 @@ static enum nyan_memory_config get_memory_config(struct platform_intf *intf)
 			memory_config = HYNIX_DDR3_1600_4G;
 		break;
 	case NYAN_BIG:
-		if (ramcode == 0x1)
+		if (ramcode == 0x0)
+			memory_config = MICRON_DDR3_1600_2G;
+		else if (ramcode == 0x1)
 			memory_config = HYNIX_DDR3_1600_2G;
+		else if (ramcode == 0x2)
+			memory_config = ELPIDA_DDR3_1600_2G;
+		else if (ramcode == 0x3)
+			memory_config = MICRON_DDR3_1600_4G;
 		else if (ramcode == 0x4)
 			memory_config = HYNIX_DDR3_1600_4G;
+		else if (ramcode == 0x5)
+			memory_config = ELPIDA_DDR3_1600_4G;
+		else
+			memory_config = MEM_UNKNOWN;
 		break;
 	case NYAN_BLAZE:
 		if ((ramcode & 0x8) >> 3)

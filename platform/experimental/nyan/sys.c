@@ -31,7 +31,6 @@
 
 #include "mosys/alloc.h"
 #include "mosys/platform.h"
-
 #include "nyan.h"
 
 static const char *nyan_get_name(struct platform_intf *intf)
@@ -55,7 +54,17 @@ static const char *nyan_get_vendor(struct platform_intf *intf)
 	return ret;
 }
 
+static const char *nyan_get_version(struct platform_intf *intf)
+{
+	char *ret = NULL;
+
+	ret = mosys_strdup(intf->version_id);
+
+	return (const char *)ret;
+}
+
 struct sys_cb nyan_sys_cb = {
 	.name		= &nyan_get_name,
 	.vendor		= &nyan_get_vendor,
+	.version	= &nyan_get_version,
 };

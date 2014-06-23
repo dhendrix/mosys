@@ -480,11 +480,10 @@ struct platform_intf {
 	 * returns 0 otherwise
 	 */
 	int (*probe)(struct platform_intf *intf);
-
 	int (*setup)(struct platform_intf *intf);
 	int (*setup_post)(struct platform_intf *intf);
 	int (*destroy)(struct platform_intf *intf);
-
+    const char *version_id;		/*platform board id */
 };
 
 /* The global list of all platforms. */

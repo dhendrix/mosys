@@ -318,6 +318,55 @@ static uint8_t elpida_ddr3_1600_256x16_spd[SPD_MAX_LENGTH] = {
 	[DDR3_SPD_REG_MODULE_PART_NUM_17] = 0,
 };
 
+static uint8_t kingston_ddr3_1600_256x16_spd[SPD_MAX_LENGTH] = {
+	[DDR3_SPD_REG_SIZE_CRC]		= 0x92,
+	[DDR3_SPD_REG_REVISION]		= 0x12,
+	[DDR3_SPD_REG_DEVICE_TYPE]	= 0x0b,
+	[DDR3_SPD_REG_MODULE_TYPE]	= 0x03,
+	[DDR3_SPD_REG_DENSITY_BANKS]	= 0x04,	/* 8 banks * 256MB = 2GBytes */
+	[DDR3_SPD_REG_ADDRESSING]	= 0x19,	/* 15 rows, 10 cols */
+	[DDR3_SPD_REG_VOLTAGE]		= 0x02,	/* 1.35V */
+	[DDR3_SPD_REG_MODULE_ORG]	= 0x02,	/* 1 rank, x8 */
+	[DDR3_SPD_REG_MODULE_BUS_WIDTH]	= 0x01,
+
+	/* DDR3-1600 = (1/8)ns * 10 = 1.25ns */
+	[DDR3_SPD_REG_FTB_DIVIDEND_DIVSOR]	= 0x11,	/* granularity of 1ps */
+	[DDR3_SPD_REG_MTB_DIVIDEND]		= 1,
+	[DDR3_SPD_REG_MTB_DIVISOR]		= 8,
+	[DDR3_SPD_REG_TCK_MIN]			= 10,
+
+	/* 5, 6, 7, 8, 9, 10, 11 */
+	[DDR3_SPD_REG_CAS_LAT_LSB]	= 0xfe,
+	[DDR3_SPD_REG_CAS_LAT_MSB]	= 0x00,
+
+	[DDR3_SPD_REG_TAA_MIN]		= 0x69,	/* 13.125ns */
+	[DDR3_SPD_REG_TWR_MIN]		= 0x78,	/* 15ns */
+	[DDR3_SPD_REG_TRCD_MIN]		= 0x69,	/* 13.125ns */
+
+	/* Kingston is bank 2, number 24 (JEP-106) */
+	[DDR3_SPD_REG_MODULE_MANUF_JEDEC_ID_LSB] = 1,
+	[DDR3_SPD_REG_MODULE_MANUF_JEDEC_ID_MSB] = 0x98,
+
+	[DDR3_SPD_REG_MODULE_MANUF_SERIAL_0] = 0x00000000,
+	[DDR3_SPD_REG_MODULE_MANUF_SERIAL_1] = 0x00000000,
+	[DDR3_SPD_REG_MODULE_MANUF_SERIAL_2] = 0x00000000,
+	[DDR3_SPD_REG_MODULE_MANUF_SERIAL_3] = 0x00000000,
+
+	[DDR3_SPD_REG_MODULE_PART_NUM_0] = 'D',
+	[DDR3_SPD_REG_MODULE_PART_NUM_1] = '2',
+	[DDR3_SPD_REG_MODULE_PART_NUM_2] = '5',
+	[DDR3_SPD_REG_MODULE_PART_NUM_3] = '1',
+	[DDR3_SPD_REG_MODULE_PART_NUM_4] = '6',
+	[DDR3_SPD_REG_MODULE_PART_NUM_5] = 'E',
+	[DDR3_SPD_REG_MODULE_PART_NUM_6] = 'C',
+	[DDR3_SPD_REG_MODULE_PART_NUM_7] = '4',
+	[DDR3_SPD_REG_MODULE_PART_NUM_8] = 'B',
+	[DDR3_SPD_REG_MODULE_PART_NUM_9] = 'X',
+	[DDR3_SPD_REG_MODULE_PART_NUM_10] = 'G',
+	[DDR3_SPD_REG_MODULE_PART_NUM_11] = 'G',
+	[DDR3_SPD_REG_MODULE_PART_NUM_12] = 'B',
+};
+
 /*
  * dimm_count  -  return total number of dimm slots
  *
@@ -364,6 +413,8 @@ enum nyan_memory_config {
 	SAMSUNG_DDR3_1600_4G,
 	ELPIDA_DDR3_1600_2G,
 	ELPIDA_DDR3_1600_4G,
+	KINGSTON_DDR3_1600_2G,
+	KINGSTON_DDR3_1600_4G,
 	MEM_UNKNOWN,
 };
 
@@ -407,6 +458,8 @@ static enum nyan_memory_config get_memory_config(struct platform_intf *intf)
 			memory_config = HYNIX_DDR3_1600_4G;
 		else if (ramcode == 0x5)
 			memory_config = ELPIDA_DDR3_1600_4G;
+		else if (ramcode == 0x6)
+			memory_config = KINGSTON_DDR3_1600_2G;
 		else
 			memory_config = MEM_UNKNOWN;
 		break;
@@ -538,6 +591,9 @@ static int spd_read(struct platform_intf *intf,
 		p[DDR3_SPD_REG_MODULE_PART_NUM_8] = '6';
 		p[DDR3_SPD_REG_MODULE_PART_NUM_9] = 'M';
 		p[DDR3_SPD_REG_MODULE_PART_NUM_10] = 'B';
+		break;
+	case KINGSTON_DDR3_1600_2G:
+		p = kingston_ddr3_1600_256x16_spd;
 		break;
 	default:
 		return -1;

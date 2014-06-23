@@ -46,7 +46,7 @@ static uint8_t hynix_ddr3_1866_256x16_spd[SPD_MAX_LENGTH] = {
 	[DDR3_SPD_REG_SIZE_CRC]		= 0x92,
 	[DDR3_SPD_REG_REVISION]		= 0x12,
 	[DDR3_SPD_REG_DEVICE_TYPE]	= 0x0b,
-	[DDR3_SPD_REG_MODULE_TYPE]	= 0x00,	/* undefined */
+	[DDR3_SPD_REG_MODULE_TYPE]	= 0x03,
 	[DDR3_SPD_REG_DENSITY_BANKS]	= 0x04,	/* 8 banks, 4Gb */
 	[DDR3_SPD_REG_ADDRESSING]	= 0x32,	/* 15 rows, 10 cols */
 	[DDR3_SPD_REG_VOLTAGE]		= 0x02,	/* 1.35V */
@@ -103,7 +103,7 @@ static uint8_t hynix_ddr3_1600_256x16_spd[SPD_MAX_LENGTH] = {
 	[DDR3_SPD_REG_SIZE_CRC]		= 0x92,
 	[DDR3_SPD_REG_REVISION]		= 0x12,
 	[DDR3_SPD_REG_DEVICE_TYPE]	= 0x0b,
-	[DDR3_SPD_REG_MODULE_TYPE]	= 0x00,	/* undefined */
+	[DDR3_SPD_REG_MODULE_TYPE]	= 0x03,
 	[DDR3_SPD_REG_DENSITY_BANKS]	= 0x04,	/* 8 banks, 4Gb */
 	[DDR3_SPD_REG_ADDRESSING]	= 0x32,	/* 15 rows, 10 cols */
 	[DDR3_SPD_REG_VOLTAGE]		= 0x02,	/* 1.35V */
@@ -422,7 +422,6 @@ static int spd_read(struct platform_intf *intf,
 	case HYNIX_DDR3_1600_2G:
 		p = hynix_ddr3_1600_256x16_spd;
 		if (get_nyan_type(intf) == NYAN_BLAZE) {
-			p[DDR3_SPD_REG_MODULE_TYPE]	= 0x03;
 			p[DDR3_SPD_REG_ADDRESSING] = 0x19;
 			p[DDR3_SPD_REG_FTB_DIVIDEND_DIVSOR]	= 0x52;
 			p[DDR3_SPD_REG_TCK_MIN] = 0x0a;
@@ -451,7 +450,6 @@ static int spd_read(struct platform_intf *intf,
 	case HYNIX_DDR3_1600_4G:
 		p = hynix_ddr3_1600_256x16_spd;
 		if (get_nyan_type(intf) == NYAN_BLAZE) {
-			p[DDR3_SPD_REG_MODULE_TYPE]	= 0x03;
 			p[DDR3_SPD_REG_ADDRESSING] = 0x19;
 			p[DDR3_SPD_REG_MODULE_ORG]	= 0x0A;
 			p[DDR3_SPD_REG_FTB_DIVIDEND_DIVSOR]	= 0x52;

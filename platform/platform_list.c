@@ -40,7 +40,6 @@ extern struct platform_intf platform_nyan;
 extern struct platform_intf platform_rambi;
 extern struct platform_intf platform_slippy;
 extern struct platform_intf platform_skate;
-extern struct platform_intf platform_spring;
 extern struct platform_intf platform_storm;
 
 /* production platforms */
@@ -56,6 +55,7 @@ extern struct platform_intf platform_peach;
 extern struct platform_intf platform_pinky;
 extern struct platform_intf platform_rush;
 extern struct platform_intf platform_samus;
+extern struct platform_intf platform_spring;
 extern struct platform_intf platform_stout;
 extern struct platform_intf platform_stumpy;
 extern struct platform_intf platform_z600;
@@ -98,6 +98,9 @@ struct platform_intf *platform_intf_list[] = {
 #ifdef CONFIG_PLATFORM_SAMUS
 	&platform_samus,
 #endif
+#ifdef CONFIG_PLATFORM_SPRING
+	&platform_spring,
+#endif
 #ifdef CONFIG_PLATFORM_STOUT
 	&platform_stout,
 #endif
@@ -126,9 +129,6 @@ struct platform_intf *platform_intf_list[] = {
 #endif
 #ifdef CONFIG_EXPERIMENTAL_SLIPPY
 	&platform_slippy,
-#endif
-#ifdef CONFIG_PLATFORM_SPRING
-	&platform_spring,
 #endif
 #ifdef CONFIG_PLATFORM_SKATE
 	&platform_skate,

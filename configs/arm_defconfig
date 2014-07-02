@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Mosys version: 1.2.03
-# Fri Dec 13 14:34:32 2013
+# Wed Jul  2 11:55:57 2014
 #
 
 #
@@ -61,6 +61,7 @@ CONFIG_CROS_EC_I2C=y
 # CONFIG_CHIPSET_INTEL_NM10 is not set
 # CONFIG_CHIPSET_INTEL_SERIES6 is not set
 # CONFIG_CHIPSET_INTEL_LYNXPOINT_LP is not set
+# CONFIG_SOC_INTEL_BAYTRAIL is not set
 # CONFIG_EC_ITE_IT8500 is not set
 # CONFIG_SUPERIO_ITE_IT8772 is not set
 # CONFIG_EC_NUVOTON_NPCE781 is not set

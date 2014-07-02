@@ -1,5 +1,4 @@
 obj-$(CONFIG_EXPERIMENTAL_KIEV)		+= kiev/
 obj-$(CONFIG_EXPERIMENTAL_NYAN)		+= nyan/
 obj-$(CONFIG_EXPERIMENTAL_RAMBI)	+= rambi/
-obj-$(CONFIG_EXPERIMENTAL_SLIPPY)	+= slippy/
 obj-$(CONFIG_PLATFORM_SKATE)		+= skate/

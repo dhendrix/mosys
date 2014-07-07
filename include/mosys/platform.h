@@ -424,8 +424,8 @@ struct battery_cb {
 
 enum psu_types {
 	PSU_TYPE_UNKNOWN,
-	PSU_TYPE_BATTERY,
-	PSU_TYPE_AC_ONLY,
+	PSU_TYPE_BATTERY,	/* AC + rechargeable battery */
+	PSU_TYPE_AC_ONLY,	/* No battery in system */
 };
 
 /* power supply related callbacks */

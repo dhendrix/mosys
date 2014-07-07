@@ -36,8 +36,8 @@
 
 const char *psu_type_names[] = {
 	[PSU_TYPE_UNKNOWN]	= "unknown",
-	[PSU_TYPE_BATTERY]	= "battery",	/* AC + rechargeable battery */
-	[PSU_TYPE_AC_ONLY]	= "AC_only",	/* No battery in system */
+	[PSU_TYPE_BATTERY]	= "battery",
+	[PSU_TYPE_AC_ONLY]	= "AC_only",
 };
 
 static int psu_print_type(struct platform_intf *intf,

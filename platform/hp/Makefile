@@ -1,3 +1,2 @@
 obj-$(CONFIG_PLATFORM_BUTTERFLY)	+= butterfly/
-obj-$(CONFIG_PLATFORM_SPRING)		+= spring/
 obj-$(CONFIG_PLATFORM_Z600)		+= z600/

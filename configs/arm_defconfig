@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Mosys version: 1.2.03
-# Wed Jul  2 12:06:38 2014
+# Wed Jul  2 11:52:56 2014
 #
 
 #
@@ -31,7 +31,6 @@ CONFIG_PLATFORM_ARCH_ARMEL=y
 #
 # HP Platform Support
 #
-CONFIG_PLATFORM_SPRING=y
 
 #
 # Lenovo Platform Support
@@ -48,6 +47,7 @@ CONFIG_PLATFORM_PEACH=y
 #
 CONFIG_PLATFORM_EXPERIMENTAL=y
 CONFIG_EXPERIMENTAL_NYAN=y
+CONFIG_PLATFORM_SPRING=y
 CONFIG_PLATFORM_SKATE=y
 
 #

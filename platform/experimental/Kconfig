@@ -8,6 +8,12 @@ config PLATFORM_EXPERIMENTAL
 	bool "Experimental platform support"
 	default n
 
+config EXPERIMENTAL_BELTINO
+	depends on PLATFORM_ARCH_X86 && PLATFORM_EXPERIMENTAL
+	select CHIPSET_INTEL_LYNXPOINT_LP
+	bool "beltino"
+	default n
+
 config EXPERIMENTAL_KIEV
 	depends on PLATFORM_ARCH_X86 && PLATFORM_EXPERIMENTAL
 	select CHIPSET_INTEL_SERIES6

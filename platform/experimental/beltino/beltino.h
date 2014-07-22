@@ -29,8 +29,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PLATFORM_BELTINO_H__
-#define PLATFORM_BELTINO_H__
+#ifndef EXPERIMENTAL_BELTINO_H__
+#define EXPERIMENTAL_BELTINO_H__
 
 #include <inttypes.h>
 #include "mosys/platform.h"
@@ -50,4 +50,4 @@ extern struct sys_cb beltino_sys_cb;		/* sys.c */
 /* functions called by setup routines */
 extern int beltino_vpd_setup(struct platform_intf *intf);
 
-#endif /* PLATFORM_BELTINO_H_ */
+#endif /* EXPERIMENTAL_BELTINO_H_ */

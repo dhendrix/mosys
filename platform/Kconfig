@@ -25,11 +25,9 @@ config PLATFORM_ARCH_X86
 endchoice
 
 source "platform/acer/Kconfig"
-source "platform/asus/Kconfig"
 source "platform/google/Kconfig"
 source "platform/hp/Kconfig"
 source "platform/lenovo/Kconfig"
-source "platform/lg/Kconfig"
 source "platform/samsung/Kconfig"
 source "platform/experimental/Kconfig"
 

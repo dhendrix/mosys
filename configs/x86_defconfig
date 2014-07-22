@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Mosys version: 1.2.03
-# Wed Jul  2 12:28:33 2014
+# Wed Jul  2 11:58:09 2014
 #
 
 #
@@ -27,14 +27,8 @@ CONFIG_PLATFORM_PARROT=y
 CONFIG_PLATFORM_ZGB=y
 
 #
-# Asus Platform Support
-#
-CONFIG_PLATFORM_PANTHER=y
-
-#
 # Google Platform Support
 #
-CONFIG_PLATFORM_BELTINO=y
 CONFIG_PLATFORM_LINK=y
 CONFIG_PLATFORM_MARIO=y
 
@@ -50,11 +44,6 @@ CONFIG_PLATFORM_BUTTERFLY=y
 CONFIG_PLATFORM_STOUT=y
 
 #
-# LG Platform Support
-#
-CONFIG_PLATFORM_MONROE=y
-
-#
 # Samsung Platform Support
 #
 CONFIG_PLATFORM_ALEX=y
@@ -65,6 +54,7 @@ CONFIG_PLATFORM_STUMPY=y
 # Experimental Platform Support
 #
 CONFIG_PLATFORM_EXPERIMENTAL=y
+CONFIG_EXPERIMENTAL_BELTINO=y
 CONFIG_EXPERIMENTAL_KIEV=y
 CONFIG_EXPERIMENTAL_RAMBI=y
 CONFIG_EXPERIMENTAL_SLIPPY=y

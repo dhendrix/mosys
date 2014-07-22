@@ -4,12 +4,6 @@
 
 menu "Google Platform Support"
 
-config PLATFORM_BELTINO
-	depends on PLATFORM_ARCH_X86
-	select CHIPSET_INTEL_LYNXPOINT_LP
-	bool "beltino"
-	default n
-
 config PLATFORM_LINK
 	depends on PLATFORM_ARCH_X86
 	select CHIPSET_INTEL_SERIES6

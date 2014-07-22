@@ -21,6 +21,13 @@ config EXPERIMENTAL_KIEV
 	bool "kiev"
 	default n
 
+config PLATFORM_PEACH
+        depends on PLATFORM_ARCH_ARMEL && PLATFORM_EXPERIMENTAL
+        select CROS_EC_SPI
+        select SOC_SAMSUNG_EXYNOS5420
+        bool "peach"
+        default n
+
 config EXPERIMENTAL_RAMBI
 	depends on PLATFORM_ARCH_X86 && PLATFORM_EXPERIMENTAL
 	select CROS_EC_LPC

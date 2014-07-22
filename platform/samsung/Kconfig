@@ -24,13 +24,6 @@ config PLATFORM_LUMPY
 	bool "Samsung XE550 Chromebook"
 	default n
 
-config PLATFORM_PEACH
-        depends on PLATFORM_ARCH_ARMEL
-        select CROS_EC_SPI
-        select SOC_SAMSUNG_EXYNOS5420
-        bool "Samsung Chromebook 2 (XE50312)"
-        default n
-
 config PLATFORM_STUMPY
 	depends on PLATFORM_ARCH_X86
 	select CHIPSET_INTEL_SERIES6

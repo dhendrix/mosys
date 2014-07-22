@@ -28,6 +28,13 @@ config EXPERIMENTAL_NYAN
         bool "nyan"
         default n
 
+config EXPERIMENTAL_SLIPPY
+	depends on PLATFORM_ARCH_X86 && PLATFORM_EXPERIMENTAL
+	select CHIPSET_INTEL_LYNXPOINT_LP
+	select CROS_EC_LPC
+	bool "slippy"
+	default n
+
 config PLATFORM_SKATE
         depends on PLATFORM_ARCH_ARMEL && PLATFORM_EXPERIMENTAL
         select CROS_EC_I2C

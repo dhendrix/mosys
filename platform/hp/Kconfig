@@ -12,12 +12,6 @@ config PLATFORM_BUTTERFLY
 	bool "HP Pavilion 14-c010us Chromebook"
 	default n
 
-config PLATFORM_FALCO
-	depends on PLATFORM_ARCH_X86
-	select PLATFORM_SLIPPY
-	bool "HP Chromebook 14"
-	default y
-
 config PLATFORM_SPRING
         depends on PLATFORM_ARCH_ARMEL
         select CROS_EC_I2C

@@ -10,12 +10,6 @@ config PLATFORM_PARROT
 	bool "Acer C7 Chromebook"
 	default n
 
-config PLATFORM_PEPPY
-	depends on PLATFORM_ARCH_X86
-	select PLATFORM_SLIPPY
-	bool "Acer C720 Chromebook"
-	default y
-
 config PLATFORM_ZGB
 	depends on PLATFORM_ARCH_X86
 	select CHIPSET_INTEL_NM10

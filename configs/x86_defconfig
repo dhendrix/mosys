@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Mosys version: 1.2.03
-# Wed Jul  2 12:51:17 2014
+# Wed Jul  2 12:28:33 2014
 #
 
 #
@@ -24,7 +24,6 @@ CONFIG_PLATFORM_ARCH_X86=y
 # Acer Platform Support
 #
 CONFIG_PLATFORM_PARROT=y
-CONFIG_PLATFORM_PEPPY=y
 CONFIG_PLATFORM_ZGB=y
 
 #
@@ -33,23 +32,16 @@ CONFIG_PLATFORM_ZGB=y
 CONFIG_PLATFORM_PANTHER=y
 
 #
-# Dell Platform Support
-#
-CONFIG_PLATFORM_WOLF=y
-
-#
 # Google Platform Support
 #
 CONFIG_PLATFORM_BELTINO=y
 CONFIG_PLATFORM_LINK=y
 CONFIG_PLATFORM_MARIO=y
-CONFIG_PLATFORM_SLIPPY=y
 
 #
 # HP Platform Support
 #
 CONFIG_PLATFORM_BUTTERFLY=y
-CONFIG_PLATFORM_FALCO=y
 # CONFIG_PLATFORM_Z600 is not set
 
 #
@@ -70,16 +62,12 @@ CONFIG_PLATFORM_LUMPY=y
 CONFIG_PLATFORM_STUMPY=y
 
 #
-# Toshiba Platform Support
-#
-CONFIG_PLATFORM_LEON=y
-
-#
 # Experimental Platform Support
 #
 CONFIG_PLATFORM_EXPERIMENTAL=y
 CONFIG_EXPERIMENTAL_KIEV=y
 CONFIG_EXPERIMENTAL_RAMBI=y
+CONFIG_EXPERIMENTAL_SLIPPY=y
 
 #
 # Device Drivers

@@ -26,13 +26,11 @@ endchoice
 
 source "platform/acer/Kconfig"
 source "platform/asus/Kconfig"
-source "platform/dell/Kconfig"
 source "platform/google/Kconfig"
 source "platform/hp/Kconfig"
 source "platform/lenovo/Kconfig"
 source "platform/lg/Kconfig"
 source "platform/samsung/Kconfig"
-source "platform/toshiba/Kconfig"
 source "platform/experimental/Kconfig"
 
 endmenu

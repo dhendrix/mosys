@@ -29,8 +29,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PLATFORM_SLIPPY_H__
-#define PLATFORM_SLIPPY_H__
+#ifndef EXPERIMENTAL_SLIPPY_H__
+#define EXPERIMENTAL_SLIPPY_H__
 
 #include <inttypes.h>
 #include "mosys/platform.h"
@@ -48,4 +48,4 @@ extern struct sys_cb slippy_sys_cb;		/* sys.c */
 extern int slippy_vpd_setup(struct platform_intf *intf);
 extern int slippy_ec_setup(struct platform_intf *intf);
 
-#endif /* PLATFORM_SLIPPY_H_ */
+#endif /* EXPERIMENTAL_SLIPPY_H_ */

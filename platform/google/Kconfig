@@ -24,11 +24,4 @@ config PLATFORM_MARIO
 	bool "Google Cr-48 Chromebook"
 	default n
 
-config PLATFORM_SLIPPY
-	depends on PLATFORM_ARCH_X86
-	select CHIPSET_INTEL_LYNXPOINT_LP
-	select CROS_EC_LPC
-	bool "slippy"
-	default n
-
 endmenu

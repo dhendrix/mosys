@@ -20,7 +20,7 @@ config PLATFORM_ARCH_ARMEL
 
 config PLATFORM_ARCH_X86
 	bool "x86 platforms"
-	select BIG_ENDIAN
+	select LITTLE_ENDIAN
 
 endchoice
 

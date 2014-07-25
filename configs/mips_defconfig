@@ -1,0 +1,75 @@
+#
+# Automatically generated make config: don't edit
+# Mosys version: 1.2.03
+# Fri Jul 25 15:38:26 2014
+#
+
+#
+# General setup
+#
+# CONFIG_ADVANCED_OPTIONS is not set
+CONFIG_LOGLEVEL=4
+CONFIG_USE_IPC_LOCK=y
+# CONFIG_DEBUG_INFO is not set
+
+#
+# Platforms
+#
+# CONFIG_BIG_ENDIAN is not set
+CONFIG_LITTLE_ENDIAN=y
+# CONFIG_PLATFORM_ARCH_ARMEL is not set
+CONFIG_PLATFORM_ARCH_MIPSEL=y
+# CONFIG_PLATFORM_ARCH_X86 is not set
+
+#
+# Acer Platform Support
+#
+
+#
+# Google Platform Support
+#
+
+#
+# HP Platform Support
+#
+
+#
+# Lenovo Platform Support
+#
+
+#
+# Samsung Platform Support
+#
+
+#
+# Experimental Platform Support
+#
+CONFIG_PLATFORM_EXPERIMENTAL=y
+
+#
+# Device Drivers
+#
+# CONFIG_TRACKPAD_CYPRESS_APA is not set
+# CONFIG_CROS_EC is not set
+# CONFIG_CROS_EC_I2C is not set
+# CONFIG_CROS_EC_LPC is not set
+# CONFIG_CHIPSET_INTEL is not set
+# CONFIG_CHIPSET_INTEL_NM10 is not set
+# CONFIG_CHIPSET_INTEL_SERIES6 is not set
+# CONFIG_CHIPSET_INTEL_LYNXPOINT_LP is not set
+# CONFIG_SOC_INTEL_BAYTRAIL is not set
+# CONFIG_EC_ITE_IT8500 is not set
+# CONFIG_SUPERIO_ITE_IT8772 is not set
+# CONFIG_EC_NUVOTON_NPCE781 is not set
+# CONFIG_SOC_SAMSUNG is not set
+# CONFIG_SOC_SAMSUNG_EXYNOS5250 is not set
+# CONFIG_SOC_SAMSUNG_EXYNOS5420 is not set
+# CONFIG_EC_SMSC_MEC1308 is not set
+# CONFIG_EC_ENE_KB932 is not set
+# CONFIG_STORAGE_SANDISK_U100 is not set
+
+#
+# Tools
+#
+# CONFIG_ADD_TOOL_LIBRARIES is not set
+# CONFIG_BUILD_VPD is not set

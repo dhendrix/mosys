@@ -18,6 +18,10 @@ config PLATFORM_ARCH_ARMEL
 	bool "ARM endian-little platforms"
 	select LITTLE_ENDIAN
 
+config PLATFORM_ARCH_MIPSEL
+	bool "MIPS endian-little platforms"
+	select LITTLE_ENDIAN
+
 config PLATFORM_ARCH_X86
 	bool "x86 platforms"
 	select LITTLE_ENDIAN

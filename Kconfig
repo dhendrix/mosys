@@ -53,6 +53,7 @@ config DEBUG_INFO
 
 endmenu
 
+source "intf/Kconfig"
 source "platform/Kconfig"
 source "drivers/Kconfig"
 source "tools/Kconfig"

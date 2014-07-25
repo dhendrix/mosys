@@ -49,9 +49,22 @@
 
 #include "intf/io.h"
 
-#define IOPORT_DEV		"/dev/port"
+/* Stuff needed for port IO */
+#if defined(CONFIG_INTF_PORT_IO)
+#if defined(__DARWIN__)
+/* Header is part of the DirectHW library. */
+#include <DirectHW/DirectHW.h>
+#define off64_t off_t
+#define lseek64 lseek
+#else
+#include <sys/io.h>
+#endif
 
 static struct io_intf io_raw_intf;
+#endif
+
+#define IOPORT_DEV		"/dev/port"
+
 static struct io_intf io_sys_intf;
 
 static int setup_done;
@@ -76,8 +89,10 @@ static int io_setup(struct platform_intf *intf)
 	int ret = 0;
 
 	if (stat(IOPORT_DEV, &s) < 0) {
+#if defined(CONFIG_INTF_PORT_IO)
 		lprintf(LOG_DEBUG, "%s: using raw port IO\n", __func__);
 		intf->op->io = &io_raw_intf;
+#endif
 #if defined(CONFIG_PLATFORM_ARCH_X86)
 		if (iopl(3) != 0) {
 			lprintf(LOG_ERR, "%s: cannot set IO permissions\n",
@@ -236,6 +251,8 @@ static struct io_intf io_sys_intf = {
 	.write		= io_write_dev,
 };
 
+#if defined(CONFIG_INTF_PORT_IO)
+
 /*
  * io_destroy_raw - destroy interface (for raw access)
  *
@@ -326,6 +343,7 @@ static struct io_intf io_raw_intf = {
 	.read		= io_read_raw,
 	.write		= io_write_raw,
 };
+#endif	/* CONFIG_INTF_PORT_IO */
 
 struct io_intf io_intf = {
 	.setup		= io_setup,

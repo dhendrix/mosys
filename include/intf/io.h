@@ -36,15 +36,6 @@
 
 #include <inttypes.h>
 
-#if defined(__DARWIN__)
-/* Header is part of the DirectHW library. */
-#include <DirectHW/DirectHW.h>
-#define off64_t off_t
-#define lseek64 lseek
-#else
-#include <sys/io.h>
-#endif
-
 enum io_access_width {
 	IO_ACCESS_8	= 1,
 	IO_ACCESS_16	= 2,

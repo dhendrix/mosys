@@ -34,6 +34,7 @@
 
 struct platform_intf;
 struct gpio_map;
+struct gpio_reg;
 
 /*
  * LynxPoint-LP has one SMBus interface, so for the purpose of matching with
@@ -110,5 +111,31 @@ int lynxpoint_lp_gpio_list(struct platform_intf *intf);
  * returns <0 if failure
  */
 int lynxpoint_lp_global_reset(struct platform_intf *intf);
+
+/*
+ * lynxpoint_lp_list_gpio_attributes - list GPIO's attributes
+ *
+ * @reg:        GPIO's attributes
+ *
+ * returns 0 if successful
+ * returns <0 if failure
+ */
+int lynxpoint_lp_list_gpio_attributes(struct gpio_map *gpio,
+				      struct gpio_reg *reg);
+
+/*
+ * lynxpoint_lp_get_gpio_attributes - get GPIO's attributes
+ *
+ * @intf:	platform interface
+ * @gen: 	ich_generation
+ * @gpio:	gpio map
+ * @reg: 	GPIO's attributes
+ *
+ * returns 0 if successful
+ * returns <0 if failure
+ */
+int lynxpoint_lp_read_gpio_attributes(struct platform_intf *intf,
+				      struct gpio_map *gpio,
+				      struct gpio_reg *reg);
 
 #endif /* MOSYS_DRIVERS_INTEL_LYNXPOINT_LP_H__ */

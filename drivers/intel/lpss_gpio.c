@@ -43,6 +43,7 @@
 #include "drivers/gpio.h"
 #include "drivers/intel/ich_generic.h"
 #include "drivers/intel/lpss_generic.h"
+#include "mosys/kv_pair.h"
 
 int lpss_get_gpio_base(struct platform_intf *intf, uint32_t *val)
 {
@@ -84,6 +85,135 @@ static int lpss_gpio_valid(enum ich_generation gen, struct gpio_map *gpio)
 	}
 
 	return 1;
+}
+
+static int check_pirq_gpio_valid(int gpio)
+{
+	switch (gpio) {
+		case 8:  return 0;	/* PIRQI */
+		case 9:  return 1;	/* PIRQJ */
+		case 10: return 2;	/* PIRQK */
+		case 13: return 3;	/* PIRQL */
+		case 14: return 4;	/* PIRQM */
+		case 45: return 5;	/* PIRQN */
+		case 46: return 6;	/* PIRQO */
+		case 47: return 7;	/* PIRQP */
+		case 48: return 8;	/* PIRQQ */
+		case 49: return 9;	/* PIRQR */
+		case 50: return 10;	/* PIRQS */
+		case 51: return 11;	/* PIRQT */
+		case 52: return 12;	/* PIRQU */
+		case 53: return 13;	/* PIRQV */
+		case 54: return 14;	/* PIRQW */
+		case 55: return 15;	/* PIRQX */
+		default: return -1;
+	};
+}
+
+int lpss_list_gpio_attributes(struct gpio_map *gpio, struct gpio_reg *reg)
+{
+	struct kv_pair *kv;
+	int rc;
+
+	kv = kv_pair_new();
+	kv_pair_add(kv, "device", gpio->devname);
+	kv_pair_fmt(kv, "id", "GPIO%02u", gpio->id);
+
+	/* The following strings will be alligned */
+	switch (gpio->type) {
+		case GPIO_IN:
+			kv_pair_add(kv, "type", "IN    ");
+			break;
+		case GPIO_OUT:
+			kv_pair_add(kv, "type", "OUT   ");
+			break;
+		case GPIO_ALT:
+			kv_pair_add(kv, "type", "NATIVE");
+			break;
+		default:
+			lprintf(LOG_DEBUG, "Invalid GPIO type %d\n",
+				gpio->type);
+			kv_pair_free(kv);
+	}
+
+	kv_pair_fmt(kv, "state", "%d", reg->state);
+
+	if (reg->ownership)
+		kv_pair_add(kv, "owner", "GPIO");
+	else
+		kv_pair_add(kv, "owner", "ACPI");
+
+	if (reg->rout)
+		kv_pair_add(kv, "owner", "SMI");
+	else
+		kv_pair_add(kv, "owner", "SCI");
+
+	if (gpio->neg)
+		kv_pair_add(kv, "neg", "NEG ON ");
+	else
+		kv_pair_add(kv, "neg", "NEG OFF");
+
+	if (reg->pirq == 1)
+		kv_pair_add(kv, "pirq", "PIRQ ON ");
+	else
+		kv_pair_add(kv, "pirq", "PIRQ OFF");
+
+	rc = kv_pair_print(kv);
+	kv_pair_free(kv);
+	return rc;
+}
+
+
+int lpss_read_gpio_attributes(struct platform_intf *intf,
+			      enum ich_generation gen, struct gpio_map *gpio,
+			      struct gpio_reg *reg)
+{
+	uint32_t base, val;
+	int pirq;
+
+	if (!lpss_gpio_valid(gen, gpio))
+		return -1;
+	if (lpss_get_gpio_base(intf, &base) < 0)
+		return -1;
+
+	if (io_read32(intf, base + LPSS_GPIO_CONF0(gpio->id), &val) < 0)
+		return -1;
+
+	if (val & (1 << LPSS_GPIO_CONF0_DIR_BIT)) {
+		gpio->type = GPIO_IN;
+		reg->state = (val >> LPSS_GPIO_CONF0_GPI_BIT) & 1;
+	} else {
+		gpio->type = GPIO_OUT;
+		reg->state = (val >> LPSS_GPIO_CONF0_GPO_BIT) & 1;
+	}
+
+	if (!(val & (1 << LPSS_GPIO_CONF0_MODE_BIT)))
+		gpio->type = GPIO_ALT;
+
+	gpio->neg = (val >> LPSS_GPIO_CONF0_INV_BIT) & 1;
+
+	if (io_read32(intf, base + LPSS_GPIO_OWN(gpio->id), &val) < 0)
+		return -1;
+	reg->ownership = ((val >> (gpio->id % 32)) & 1);
+
+	if (io_read32(intf, base + LPSS_GPIO_IE(gpio->id), &val) < 0)
+		return -1;
+	reg->interrupt_en = ((val >> (gpio->id % 32)) & 1);
+
+	if (io_read32(intf, base + LPSS_GPIO_ROUT(gpio->id), &val) < 0)
+		return -1;
+	reg->rout = ((val >> (gpio->id % 32)) & 1);
+
+	pirq = check_pirq_gpio_valid(gpio->id);
+	reg->pirq = 0xff;
+	if ( pirq > -1) {
+		if (io_read32(intf, base + 0x10, &val) < 0)
+			return -1;
+		val &= 0x0ffff;
+		reg->pirq = (val >> pirq) & 1;
+	}
+
+	return 0;
 }
 
 int lpss_read_gpio(struct platform_intf *intf,
@@ -147,7 +277,7 @@ int lpss_set_gpio(struct platform_intf *intf, enum ich_generation gen,
 		if (!(val & (1 << LPSS_GPIO_CONF0_GPO_BIT))) {
 			lprintf(LOG_DEBUG, "GPIO '%s' already 0\n", gpio->name);
 		} else {
-			val &= ~LPSS_GPIO_CONF0_GPO_BIT;
+			val &= ~(1 << LPSS_GPIO_CONF0_GPO_BIT);
 			if (io_write32(intf, addr, val) < 0)
 				return -1;
 		}

@@ -32,6 +32,9 @@
 #ifndef MOSYS_DRIVERS_INTEL_LPSS_GENERIC_H__
 #define MOSYS_DRIVERS_INTEL_LPSS_GENERIC_H__
 
+#define LPSS_GPIO_OWN(num)		((num / 32) * 4)
+#define LPSS_GPIO_ROUT(num)		(0x30 + (num / 32) * 4)
+#define LPSS_GPIO_IE(num)		(0x90 + (num / 32) * 4)
 #define LPSS_GPIO_CONF0(num)		(0x100 + ((num) * 8))
 #define  LPSS_GPIO_CONF0_MODE_BIT	0
 #define  LPSS_GPIO_CONF0_DIR_BIT	2
@@ -49,6 +52,16 @@ enum ich_lpss_bbs {
 	LPSS_BBS_UNKNOWN	= -1,
 	LPSS_BBS_SPI		= 0,
 	LPSS_BBS_LPC		= 1,
+};
+
+struct gpio_reg {
+	uint8_t type;
+	uint8_t state;
+	uint8_t pirq;
+	uint8_t ownership;
+	uint8_t smi_en;
+	uint8_t rout;
+	uint8_t interrupt_en;
 };
 
 /*
@@ -130,5 +143,36 @@ int lpss_set_gpio(struct platform_intf *intf, enum ich_generation gen,
  */
 int lpss_gpio_list(struct platform_intf *intf, enum ich_generation gen,
 		   int gpio_ids[], int num_gpios);
+/*
+ * llpss_list_gpio_attributes -  list GPIOs attributes
+ *
+ * @gpio:	gpio map
+ * @reg: 	contains GPIO's attributes
+ *
+ * Note: Some chipsets do not implement certain GPIOs. Use the gpios
+ * array to specify which GPIOs should be listed by default.
+ *
+ * returns 0 if successful
+ * returns <0 if failure
+ */
+int lpss_list_gpio_attributes(struct gpio_map *gpio, struct gpio_reg *reg);
+
+/*
+ * lpss_read_gpio_attributes  -  list GPIOs
+ *
+ * @intf:	platform interface
+ * @gen: 	chipset generation
+ * @gpio:	gpio map
+ * @reg: 	contains GPIO's attributes
+ *
+ * Note: Some chipsets do not implement certain GPIOs. Use the gpios
+ * array to specify which GPIOs should be listed by default.
+ *
+ * returns 0 if successful
+ * returns <0 if failure
+ */
+int lpss_read_gpio_attributes(struct platform_intf *intf,
+			      enum ich_generation gen, struct gpio_map *gpio,
+			      struct gpio_reg *reg);
 
 #endif /* MOSYS_DRIVERS_INTEL_LPSS_GENERIC_H__ */

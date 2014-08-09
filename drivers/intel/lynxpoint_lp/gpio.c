@@ -39,6 +39,7 @@
 #include "drivers/intel/lpss_generic.h"
 
 #include "lib/math.h"
+#include "mosys/kv_pair.h"
 
 int lynxpoint_lp_read_gpio(struct platform_intf *intf, struct gpio_map *gpio)
 {
@@ -69,4 +70,36 @@ int lynxpoint_lp_gpio_list(struct platform_intf *intf)
 
 	return lpss_gpio_list(intf, ICH_8_LPSS, gpio_ids,
 			      ARRAY_SIZE(gpio_ids));
+}
+
+/*
+ * lynxpoint_lp_list_gpio_attributes - list GPIO's attributes
+ *
+ * @gpio:	 gpio map
+ * @reg: 	 GPIO's attributes
+ *
+ * returns 0 if successful
+ * returns <0 if failure
+ */
+int lynxpoint_lp_list_gpio_attributes(struct gpio_map *gpio,
+				      struct gpio_reg *reg)
+{
+	return lpss_list_gpio_attributes(gpio, reg);
+}
+
+/*
+ * lynxpoint_lp_read_gpio_attributes - list GPIO's attributes
+ *
+ * @intf:	platform interface
+ * @gpio:	gpio map
+ * @reg: 	GPIO's attributes
+ *
+ * returns 0 if successful
+ * returns <0 if failure
+ */
+int lynxpoint_lp_read_gpio_attributes(struct platform_intf *intf,
+				      struct gpio_map *gpio,
+				      struct gpio_reg *reg)
+{
+	return lpss_read_gpio_attributes(intf, ICH_8_LPSS, gpio, reg);
 }

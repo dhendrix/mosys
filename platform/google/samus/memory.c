@@ -47,47 +47,12 @@
 #include "lib/flashrom.h"
 #include "lib/math.h"
 #include "lib/spd.h"
+#include "lib/smbios.h"
+#include "lib/smbios_tables.h"
+#include "mosys/output.h"
+#include "mosys/kv_pair.h"
 
 #include "samus.h"
-
-#define SAMUS_DIMM_COUNT	2
-
-/*
- * SPD blob contains up to eight entries which are selected by
- * board strappings.
- *
- * GPIO69: Bit 0
- * GPIO68: Bit 1
- * GPIO67: Bit 2
- * GPIO65: Bit 3
- */
-static int samus_get_spd_index(struct platform_intf *intf)
-{
-	int spd_index = 0;
-	int val;
-	struct gpio_map ram_id0 = { 69, GPIO_IN, 0, 2, 3 };
-	struct gpio_map ram_id1 = { 68, GPIO_IN, 0, 2, 4 };
-	struct gpio_map ram_id2 = { 67, GPIO_IN, 0, 2, 5 };
-	struct gpio_map ram_id3 = { 65, GPIO_IN, 0, 2, 2 };
-
-	if ((val = intf->cb->gpio->read(intf, &ram_id0)) < 0)
-		return -1;
-	spd_index |= val;
-
-	if ((val = intf->cb->gpio->read(intf, &ram_id1)) < 0)
-		return -1;
-	spd_index |= val << 1;
-
-	if ((val = intf->cb->gpio->read(intf, &ram_id2)) < 0)
-		return -1;
-	spd_index |= val << 2;
-
-	if ((val = intf->cb->gpio->read(intf, &ram_id3)) < 0)
-		return -1;
-	spd_index |= val << 3;
-
-	return spd_index;
-}
 
 /*
  * samus_dimm_count  -  return total number of dimm slots
@@ -98,9 +63,48 @@ static int samus_get_spd_index(struct platform_intf *intf)
  */
 static int samus_dimm_count(struct platform_intf *intf)
 {
-	return SAMUS_DIMM_COUNT;
+	int status = 0, dimm_cnt = 0;
+	struct smbios_table table;
+
+	while (status == 0) {
+		status = smbios_find_table(intf, SMBIOS_TYPE_MEMORY, dimm_cnt,
+					   &table,
+					   SMBIOS_LEGACY_ENTRY_BASE,
+					   SMBIOS_LEGACY_ENTRY_LEN);
+		if(status == 0)
+			dimm_cnt++;
+	}
+	return dimm_cnt;
 }
 
+static int find_spd_by_part_number(struct platform_intf *intf, int dimm,
+				   uint8_t *spd, uint32_t num_spd)
+{
+	char *smbios_part_num;
+	char spd_part_num[19];
+	uint8_t i;
+	uint8_t *ptr;
+	struct smbios_table table;
+
+	lprintf(LOG_DEBUG, "Use SMBIOS type 17 to get memory information\n");
+	if (smbios_find_table(intf, SMBIOS_TYPE_MEMORY, dimm, &table,
+			      SMBIOS_LEGACY_ENTRY_BASE,
+			      SMBIOS_LEGACY_ENTRY_LEN) < 0) {
+		lprintf(LOG_DEBUG, "Can't find smbios type17\n");
+		return -1;
+	}
+	smbios_part_num = table.string[table.data.mem_device.part_number];
+
+	for (i = 0; i < num_spd; i++) {
+		ptr = (spd + i * 256);
+		memcpy(spd_part_num, ptr + 128, 18);
+		if (!memcmp(smbios_part_num, spd_part_num, 18)) {
+			lprintf(LOG_DEBUG, "found %x\n", i);
+			return i;
+		}
+	}
+	return -1;
+}
 static int samus_spd_read_cbfs(struct platform_intf *intf,
 				int dimm, int reg, int len, uint8_t *buf)
 {
@@ -109,9 +113,11 @@ static int samus_spd_read_cbfs(struct platform_intf *intf,
 	size_t size = SAMUS_HOST_FIRMWARE_ROM_SIZE;
 	struct cbfs_file *file;
 	int spd_index = 0;
-	uint32_t spd_offset;
+	uint32_t spd_offset, num_spd;
+	uint8_t *ptr;
 
-	if (dimm > samus_dimm_count(intf)) {
+	/* dimm cnt is 0 based */
+	if (dimm >= samus_dimm_count(intf)) {
 		lprintf(LOG_DEBUG, "%s: Invalid DIMM specified\n", __func__);
 		return -1;
 	}
@@ -130,7 +136,9 @@ static int samus_spd_read_cbfs(struct platform_intf *intf,
 	if ((file = cbfs_find("spd.bin", bootblock, size)) == NULL)
 		return -1;
 
-	spd_index = samus_get_spd_index(intf);
+	ptr = (uint8_t *)file + ntohl(file->offset);
+	num_spd = ntohl(file->len) / 256;
+	spd_index = find_spd_by_part_number(intf, dimm, ptr, num_spd);
 	if (spd_index < 0)
 		return -1;
 
@@ -147,6 +155,22 @@ static int samus_spd_read(struct platform_intf *intf,
 	return samus_spd_read_cbfs(intf, dimm, reg, len, buf);
 }
 
+int samus_dimm_speed(struct platform_intf *intf,
+		     int dimm, struct kv_pair *kv)
+{
+	struct smbios_table table;
+	char speed[10];
+	if (smbios_find_table(intf, SMBIOS_TYPE_MEMORY, dimm, &table,
+			      SMBIOS_LEGACY_ENTRY_BASE,
+			      SMBIOS_LEGACY_ENTRY_LEN) < 0) {
+		return -1;
+	}
+	sprintf(speed, "%d", table.data.mem_device.speed);
+	kv_pair_add(kv, "speed: ", speed);
+
+	return 0;
+}
+
 static struct memory_spd_cb samus_spd_cb = {
 	.read		= samus_spd_read,
 };
@@ -154,4 +178,5 @@ static struct memory_spd_cb samus_spd_cb = {
 struct memory_cb samus_memory_cb = {
 	.dimm_count	= samus_dimm_count,
 	.spd		= &samus_spd_cb,
+	.dimm_speed	= &samus_dimm_speed,
 };

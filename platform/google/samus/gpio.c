@@ -34,24 +34,52 @@
 
 #include "drivers/gpio.h"
 #include "drivers/intel/lynxpoint_lp.h"
+#include "mosys/kv_pair.h"
 
 #include "intf/io.h"
 
 #include "lib/string.h"
 
 #include "samus.h"
+#include "drivers/intel/lpss_generic.h"
+#include "mosys/alloc.h"
+
+#define num_of_gpio 95
 
 /* gpio number, in/out, device, port, pin, negate, devname, name */
-static struct gpio_map platform_gpio_map[] = {
-	{  13,  GPIO_IN,    0,    0,    13,   0, "PCH", "GPIO13" },
-	{   9,  GPIO_IN,    0,    0,     9,   0, "PCH", "GPIO09" },
-	{  47,  GPIO_IN,    0,    1,    15,   0, "PCH", "GPIO47" },
-	{  67,  GPIO_IN,    0,    2,     3,   0, "PCH", "GPIO67" },
-	{  68,  GPIO_IN,    0,    2,     4,   0, "PCH", "GPIO68" },
-	{  69,  GPIO_IN,    0,    2,     5,   0, "PCH", "GPIO69" },
-	{   0,        0,    0,    0,     0,   0,  NULL, NULL     } /* end */
-};
+/* The last data in this array is NULL */
+static struct gpio_map platform_gpio_map[num_of_gpio + 1];
+static char pch_str[4] = "PCH";
 
+static void setup_gpio(struct platform_intf *intf, struct gpio_reg *reg)
+{
+	uint8_t i = 0;
+	char *tmp;
+
+	for (i = 0; i < num_of_gpio; i++) {
+		platform_gpio_map[i].id = i;
+		platform_gpio_map[i].type = GPIO_IN;
+		platform_gpio_map[i].dev = 0;
+		platform_gpio_map[i].port = 0;
+		platform_gpio_map[i].pin = i % 32;
+		platform_gpio_map[i].neg = 0;
+		platform_gpio_map[i].devname = pch_str;
+		tmp = mosys_malloc(7);
+		sprintf(tmp, "GPIO%02d", i);
+		platform_gpio_map[i].name = tmp;
+		lynxpoint_lp_read_gpio_attributes(intf, &platform_gpio_map[i],
+						  &reg[i]);
+	}
+	platform_gpio_map[num_of_gpio + 1].name = NULL;
+}
+
+static void free_resource_for_string_in_gpio_map()
+{
+	int i;
+	for (i = 0; platform_gpio_map[i].name != NULL; i++) {
+		free((void *)platform_gpio_map[i].name);
+	}
+}
 /*
  * samus_gpio_read  -  read level for one GPIO
  *
@@ -105,18 +133,17 @@ struct gpio_map *samus_gpio_map(struct platform_intf *intf, const char *name)
  */
 static int samus_gpio_list(struct platform_intf *intf)
 {
-	int i;
+	int i, ret;
+	struct gpio_reg reg[num_of_gpio];
+	setup_gpio(intf, reg);
 
 	for (i = 0; platform_gpio_map[i].name != NULL; i++) {
-		int state = 0;
-
-		state = lynxpoint_lp_read_gpio(intf, &platform_gpio_map[i]);
-		if (state < 0)
-			continue;
-
-		kv_pair_print_gpio(&platform_gpio_map[i], state);
+		ret = lynxpoint_lp_list_gpio_attributes(&platform_gpio_map[i],
+							&reg[i]);
+		if(ret < 0)
+			return -1;
 	}
-
+	free_resource_for_string_in_gpio_map();
 	return 0;
 }
 
@@ -136,6 +163,9 @@ static int samus_gpio_set(struct platform_intf *intf,
 	int i;
 	int ret = 0;
 	struct gpio_map *gpio;
+	struct gpio_reg reg[num_of_gpio];
+
+	setup_gpio(intf, reg);
 
 	for (i = 0; platform_gpio_map[i].name != NULL; i++) {
 		gpio = &platform_gpio_map[i];
@@ -144,16 +174,10 @@ static int samus_gpio_set(struct platform_intf *intf,
 		if (strncmp(name, gpio->name, __minlen(name, gpio->name)))
 			continue;
 
-		/* can only set output GPIO */
-		if (gpio->type != GPIO_OUT) {
-			lprintf(LOG_ERR, "Unable to set input GPIO\n");
-			return -1;
-		}
-
 		ret = lynxpoint_lp_set_gpio(intf, gpio, state);
 		break;
 	}
-
+	free_resource_for_string_in_gpio_map();
 	return ret;
 }
 

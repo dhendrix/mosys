@@ -104,6 +104,22 @@ const char *cros_ec_version(struct platform_intf *intf)
 	return ret;
 }
 
+int cros_ec_board_version(struct platform_intf *intf)
+{
+	struct cros_ec_priv *priv = intf->cb->ec->priv;
+	struct ec_response_board_version r;
+	int rc = 0;
+
+	rc = priv->cmd(intf, EC_CMD_GET_BOARD_VERSION, 0,
+		       &r, sizeof(r), NULL, 0);
+	if (rc)
+		return 0;
+
+	lprintf(LOG_DEBUG, "CrOS EC Board Version: %d\n", r.board_version);
+
+	return r.board_version;
+}
+
 int cros_ec_chip_info(struct platform_intf *intf,
 		  struct ec_response_get_chip_info *info)
 {

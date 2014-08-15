@@ -64,6 +64,7 @@ extern int cros_ec_detect(struct platform_intf *intf);
 extern int cros_ec_probe_dev(struct platform_intf *intf);
 extern int cros_ec_probe_i2c(struct platform_intf *intf);
 extern int cros_ec_probe_lpc(struct platform_intf *intf);
+extern int cros_ec_board_version(struct platform_intf *intf);
 
 extern int cros_ec_vbnvcontext_read(struct platform_intf *intf, uint8_t *block);
 extern int cros_ec_vbnvcontext_write(struct platform_intf *intf,

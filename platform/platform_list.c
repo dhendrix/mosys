@@ -51,6 +51,7 @@ extern struct platform_intf platform_link;
 extern struct platform_intf platform_lumpy;
 extern struct platform_intf platform_mario;
 extern struct platform_intf platform_parrot;
+extern struct platform_intf platform_samus;
 extern struct platform_intf platform_stout;
 extern struct platform_intf platform_stumpy;
 extern struct platform_intf platform_z600;
@@ -77,6 +78,9 @@ struct platform_intf *platform_intf_list[] = {
 #endif
 #ifdef CONFIG_PLATFORM_PARROT
 	&platform_parrot,
+#endif
+#ifdef CONFIG_PLATFORM_SAMUS
+	&platform_samus,
 #endif
 #ifdef CONFIG_PLATFORM_STOUT
 	&platform_stout,

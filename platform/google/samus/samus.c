@@ -44,7 +44,7 @@
 #include "lib/smbios.h"
 #include "lib/elog.h"
 
-#include "slippy.h"
+#include "samus.h"
 
 struct probe_ids {
 	const char *names[2];
@@ -53,30 +53,14 @@ struct probe_ids {
 };
 
 static const struct probe_ids probe_id_list[] = {
-	{ { "Falco", NULL },
-	  { "X86 FALCO", NULL },
-	  { "Google_Falco", NULL },
-	},
-	{ { "Leon", NULL },
-	  { "X86 LEON", NULL },
-	  { "Google_Leon", NULL },
-	},
-	{ { "Peppy", NULL },
-	  { "X86 PEPPY", NULL },
-	  { "Google_Peppy", NULL },
-	},
-	{ { "Slippy", NULL },
-	  { "X86 SLIPPY", NULL },
-	  { "Google_Slippy", NULL },
-	},
-	{ { "Wolf", NULL },
-	  { "X86 WOLF", NULL },
-	  { "Google_Wolf", NULL },
+	{ { "Samus", NULL },
+	  { "X86 SAMUS", NULL },
+	  { "Google_Samus", NULL },
 	},
 	{ { NULL } }
 };
 
-struct platform_cmd *slippy_sub[] = {
+struct platform_cmd *samus_sub[] = {
 	&cmd_ec,
 	&cmd_eeprom,
 	&cmd_gpio,
@@ -88,7 +72,7 @@ struct platform_cmd *slippy_sub[] = {
 	NULL
 };
 
-int slippy_probe(struct platform_intf *intf)
+int samus_probe(struct platform_intf *intf)
 {
 	static int status = 0, probed = 0;
 	const struct probe_ids *pid;
@@ -100,24 +84,24 @@ int slippy_probe(struct platform_intf *intf)
 		/* HWID */
 		if (probe_hwid((const char **)pid->hwids)) {
 			status = 1;
-			goto slippy_probe_exit;
+			goto samus_probe_exit;
 		}
 
 		/* FRID */
 		if (probe_frid((const char **)pid->frids)) {
 			status = 1;
-			goto slippy_probe_exit;
+			goto samus_probe_exit;
 		}
 
 		/* SMBIOS */
 		if (probe_smbios(intf, (const char **)pid->names)) {
 			status = 1;
-			goto slippy_probe_exit;
+			goto samus_probe_exit;
 		}
 	}
 	return 0;
 
-slippy_probe_exit:
+samus_probe_exit:
 	probed = 1;
 	/* Update canonical platform name */
 	intf->name = pid->names[0];
@@ -125,22 +109,22 @@ slippy_probe_exit:
 }
 
 /* late setup routine; not critical to core functionality */
-static int slippy_setup_post(struct platform_intf *intf)
+static int samus_setup_post(struct platform_intf *intf)
 {
 	int rc = 0;
 
-	rc |= slippy_ec_setup(intf);
+	rc |= samus_ec_setup(intf);
 	if (rc)
 		lprintf(LOG_DEBUG, "%s: failed\n", __func__);
 	return rc;
 }
 
-static int slippy_destroy(struct platform_intf *intf)
+static int samus_destroy(struct platform_intf *intf)
 {
 	return 0;
 }
 
-struct eventlog_cb slippy_eventlog_cb = {
+struct eventlog_cb samus_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
 	.print_multi	= &elog_print_multi,
@@ -149,23 +133,23 @@ struct eventlog_cb slippy_eventlog_cb = {
 	.fetch		= &elog_fetch_from_smbios,
 };
 
-struct platform_cb slippy_cb = {
+struct platform_cb samus_cb = {
 	.ec		= &cros_ec_cb,
-	.eeprom		= &slippy_eeprom_cb,
-	.gpio		= &slippy_gpio_cb,
-	.memory		= &slippy_memory_cb,
-	.nvram		= &slippy_nvram_cb,
+	.eeprom		= &samus_eeprom_cb,
+	.gpio		= &samus_gpio_cb,
+	.memory		= &samus_memory_cb,
+	.nvram		= &samus_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,
-	.sys 		= &slippy_sys_cb,
-	.eventlog	= &slippy_eventlog_cb,
+	.sys 		= &samus_sys_cb,
+	.eventlog	= &samus_eventlog_cb,
 };
 
-struct platform_intf platform_slippy = {
+struct platform_intf platform_samus = {
 	.type		= PLATFORM_X86_64,
-	.name		= "Slippy",
-	.sub		= slippy_sub,
-	.cb		= &slippy_cb,
-	.probe		= &slippy_probe,
-	.setup_post	= &slippy_setup_post,
-	.destroy	= &slippy_destroy,
+	.name		= "Samus",
+	.sub		= samus_sub,
+	.cb		= &samus_cb,
+	.probe		= &samus_probe,
+	.setup_post	= &samus_setup_post,
+	.destroy	= &samus_destroy,
 };

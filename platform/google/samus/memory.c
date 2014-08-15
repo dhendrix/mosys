@@ -56,18 +56,18 @@
  * SPD blob contains up to eight entries which are selected by
  * board strappings.
  *
- * GPIO67: Bit 0
+ * GPIO69: Bit 0
  * GPIO68: Bit 1
- * GPIO69: Bit 2
+ * GPIO67: Bit 2
  * GPIO65: Bit 3
  */
 static int samus_get_spd_index(struct platform_intf *intf)
 {
 	int spd_index = 0;
 	int val;
-	struct gpio_map ram_id0 = { 67, GPIO_IN, 0, 2, 3 };
+	struct gpio_map ram_id0 = { 69, GPIO_IN, 0, 2, 3 };
 	struct gpio_map ram_id1 = { 68, GPIO_IN, 0, 2, 4 };
-	struct gpio_map ram_id2 = { 69, GPIO_IN, 0, 2, 5 };
+	struct gpio_map ram_id2 = { 67, GPIO_IN, 0, 2, 5 };
 	struct gpio_map ram_id3 = { 65, GPIO_IN, 0, 2, 2 };
 
 	if ((val = intf->cb->gpio->read(intf, &ram_id0)) < 0)

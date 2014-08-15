@@ -29,10 +29,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <valstr.h>
+
 #include "mosys/alloc.h"
 #include "mosys/platform.h"
 
 #include "lib/smbios.h"
+
+#include "drivers/google/cros_ec.h"
+
+static struct valstr samus_board_version[] = {
+	{ 2, "Proto2B" },
+	{ 3, "EVT" },
+	{ }
+};
+
+static const char *samus_get_version(struct platform_intf *intf)
+{
+	return mosys_strdup(val2str(cros_ec_board_version(intf),
+				    samus_board_version));
+}
 
 static const char *samus_get_vendor(struct platform_intf *intf)
 {
@@ -68,4 +84,5 @@ struct sys_cb samus_sys_cb = {
 	.name			= &samus_get_name,
 	.family			= &samus_get_family,
 	.firmware_vendor	= &samus_get_firmware_vendor,
+	.version		= &samus_get_version,
 };

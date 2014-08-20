@@ -41,8 +41,13 @@ struct ec_response_get_chip_info;
 struct ec_response_flash_info;
 
 struct cros_ec_priv {
-	/* the low-level command function depends on bus */
+	/* Wrapped with EC lock */
 	int (*cmd)(struct platform_intf *intf,
+		   int command, int command_version,
+		   const void *indata, int insize,
+		   const void *outdata, int outsize);
+	/* Low level command function, bus and version specific */
+	int (*raw)(struct platform_intf *intf,
 		   int command, int command_version,
 		   const void *indata, int insize,
 		   const void *outdata, int outsize);
@@ -51,6 +56,7 @@ struct cros_ec_priv {
 		struct i2c_addr i2c;
 		uint16_t io;
 	} addr;
+	int device_index;
 };
 
 extern struct ec_cb cros_ec_cb;

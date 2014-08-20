@@ -85,30 +85,112 @@ static int wait_for_ec(struct platform_intf *intf,
 	return -1;  /* Timeout */
 }
 
-/* Check to see if versioned commands are supported by the EC */
-static int cros_ec_command_lpc_cmd_args_supported(struct platform_intf *intf)
+/*
+ **************************** EC API v3 ****************************
+ */
+static int cros_ec_command_lpc_v3(struct platform_intf *intf,
+				  int command, int command_version,
+				  const void *indata, int insize,
+				  const void *outdata, int outsize)
 {
-	uint8_t id1, id2, flags;
+	struct cros_ec_priv *priv = intf->cb->ec->priv;
+	struct ec_host_request rq;
+	struct ec_host_response rs;
+	const uint8_t *d;
+	uint8_t *dout;
+	uint8_t out;
+	int csum = 0;
+	int i;
 
-	if (io_read8(intf, EC_LPC_ADDR_MEMMAP + EC_MEMMAP_ID, &id1))
-		return -1;
-	if (io_read8(intf, EC_LPC_ADDR_MEMMAP + EC_MEMMAP_ID + 1, &id2))
-		return -1;
-	if (io_read8(intf, EC_LPC_ADDR_MEMMAP + EC_MEMMAP_HOST_CMD_FLAGS,
-		     &flags))
+	/* Fail if output size is too big */
+	if (outsize + sizeof(rq) > EC_LPC_HOST_PACKET_SIZE)
 		return -1;
 
-	/* Check for support of versioned commands */
-	if (id1 == 'E' && id2 == 'C' &&
-	    (flags & EC_HOST_CMD_FLAG_LPC_ARGS_SUPPORTED))
-		return 1;
+	/* Fill in request packet */
+	/* TODO(crosbug.com/p/23825): This should be common to all protocols */
+	rq.struct_version = EC_HOST_REQUEST_VERSION;
+	rq.checksum = 0;
+	rq.command = command | EC_CMD_PASSTHRU_OFFSET(priv->device_index);
+	rq.command_version = command_version;
+	rq.reserved = 0;
+	rq.data_len = outsize;
 
+	/* Copy data and start checksum */
+	for (i = 0, d = (const uint8_t *)outdata; i < outsize; i++, d++) {
+		io_write8(intf, EC_LPC_ADDR_HOST_PACKET + sizeof(rq) + i, *d);
+		csum += *d;
+	}
+
+	/* Finish checksum */
+	for (i = 0, d = (const uint8_t *)&rq; i < sizeof(rq); i++, d++)
+		csum += *d;
+
+	/* Write checksum field so the entire packet sums to 0 */
+	rq.checksum = (uint8_t)(-csum);
+
+	/* Copy header */
+	for (i = 0, d = (const uint8_t *)&rq; i < sizeof(rq); i++, d++)
+		io_write8(intf, EC_LPC_ADDR_HOST_PACKET + i, *d);
+
+	/* Start the command */
+	io_write8(intf, EC_LPC_ADDR_HOST_CMD, EC_COMMAND_PROTOCOL_3);
+
+	if (wait_for_ec(intf, EC_LPC_ADDR_HOST_CMD, 1000000)) {
+		lprintf(LOG_ERR, "Timeout waiting for EC response\n");
+		return -1;
+	}
+
+	/* Check result */
+	if (io_read8(intf, EC_LPC_ADDR_HOST_DATA, &out))
+		return -1;
+	if (out) {
+		lprintf(LOG_ERR, "EC returned error result code %d\n", i);
+		return -i;
+	}
+
+	/* Read back response header and start checksum */
+	csum = 0;
+	for (i = 0, dout = (uint8_t *)&rs; i < sizeof(rs); i++, dout++) {
+		if (io_read8(intf, EC_LPC_ADDR_HOST_PACKET + i, dout))
+			return -1;
+		csum += *dout;
+	}
+
+	if (rs.struct_version != EC_HOST_RESPONSE_VERSION) {
+		lprintf(LOG_ERR, "EC response version mismatch\n");
+		return -1;
+	}
+
+	if (rs.reserved) {
+		lprintf(LOG_ERR, "EC response reserved != 0\n");
+		return -1;
+	}
+
+	if (rs.data_len > insize) {
+		lprintf(LOG_ERR, "EC returned too much data\n");
+		return -1;
+	}
+
+	/* Read back data and update checksum */
+	for (i = 0, dout = (uint8_t *)indata; i < rs.data_len; i++, dout++) {
+		if (io_read8(intf, EC_LPC_ADDR_HOST_PACKET + sizeof(rs) + i, dout))
+			return -1;
+		csum += *dout;
+	}
+
+	/* Verify checksum */
+	if ((uint8_t)csum) {
+		lprintf(LOG_ERR, "EC response has invalid checksum\n");
+		return -1;
+	}
+
+	/* Return actual amount of data received */
 	return 0;
 }
 
 /* Sends a versioned command to the EC.  Returns the command status code,
  * or -1 if other error. */
-static int cros_ec_command_lpc_new(struct platform_intf *intf,
+static int cros_ec_command_lpc_v1(struct platform_intf *intf,
 			       int command, int command_version,
 			       const void *indata, int insize,
 			       const void *outdata, int outsize)
@@ -209,7 +291,7 @@ static int cros_ec_command_lpc_new(struct platform_intf *intf,
 
 /* Sends a command to the EC.  Returns the command status code, or
  * -1 if other error. */
-static int cros_ec_command_lpc_old(struct platform_intf *intf,
+static int cros_ec_command_lpc_v0(struct platform_intf *intf,
 			       int command, int command_version,
 			       const void *indata, int insize,
 			       const void *outdata, int outsize)
@@ -258,6 +340,44 @@ static int cros_ec_command_lpc_old(struct platform_intf *intf,
 	return ec_response;
 }
 
+/* Check to see if versioned commands are supported by the EC */
+static int cros_ec_command_lpc_detect(struct platform_intf *intf)
+{
+	struct cros_ec_priv *priv = intf->cb->ec->priv;
+	uint8_t id1, id2, flags;
+
+	if (priv->raw)
+		return 0;
+
+	if (io_read8(intf, EC_LPC_ADDR_MEMMAP + EC_MEMMAP_ID, &id1))
+		return -1;
+	if (io_read8(intf, EC_LPC_ADDR_MEMMAP + EC_MEMMAP_ID + 1, &id2))
+		return -1;
+	if (io_read8(intf, EC_LPC_ADDR_MEMMAP + EC_MEMMAP_HOST_CMD_FLAGS,
+		     &flags))
+		return -1;
+
+	/* Check for basic support */
+	if (id1 != 'E' || id2 != 'C') {
+		lprintf(LOG_ERR, "Missing Chromium EC memory map.\n");
+		return -1;
+	}
+
+	if (flags & EC_HOST_CMD_FLAG_VERSION_3) {
+		lprintf(LOG_DEBUG, "Chromium EC LPC command version 3.\n");
+		priv->raw = &cros_ec_command_lpc_v3;
+		return 3;
+	} else if (flags & EC_HOST_CMD_FLAG_LPC_ARGS_SUPPORTED) {
+		lprintf(LOG_DEBUG, "Chromium EC LPC command version 1.\n");
+		priv->raw = &cros_ec_command_lpc_v1;
+		return 2;
+	} else {
+		lprintf(LOG_DEBUG, "Chromium EC LPC command version 0.\n");
+		priv->raw = &cros_ec_command_lpc_v0;
+		return 1;
+	}
+}
+
 /* Sends a command to the EC.  Returns the command status code, or
  * -1 if other error. */
 static int cros_ec_command_lpc(struct platform_intf *intf,
@@ -265,7 +385,12 @@ static int cros_ec_command_lpc(struct platform_intf *intf,
 			   const void *indata, int insize,
 			   const void *outdata, int outsize)
 {
+	struct cros_ec_priv *priv;
 	int rc = -1;
+
+	if (!intf->cb || !intf->cb->ec || !intf->cb->ec->priv)
+		return -1;
+	priv = intf->cb->ec->priv;
 
 	if (insize > EC_HOST_PARAM_SIZE || outsize > EC_HOST_PARAM_SIZE) {
 		lprintf(LOG_DEBUG, "%s: data size too big\n", __func__);
@@ -279,15 +404,15 @@ static int cros_ec_command_lpc(struct platform_intf *intf,
 		return -1;
 	}
 
-	if (cros_ec_command_lpc_cmd_args_supported(intf)) {
-		rc = cros_ec_command_lpc_new(
-			intf, command, command_version,
-			indata, insize, outdata, outsize);
-	} else {
-		rc = cros_ec_command_lpc_old(
-			intf, command, command_version,
-			indata, insize, outdata, outsize);
+	if (cros_ec_command_lpc_detect(intf) < 0) {
+		lprintf(LOG_ERR, "Unable to identify LPC "
+			"protocol version.\n");
+		return -1;
 	}
+
+	if (priv && priv->raw)
+		rc = priv->raw(intf, command, command_version,
+			       indata, insize, outdata, outsize);
 
 	release_cros_ec_lock();
 	return rc;

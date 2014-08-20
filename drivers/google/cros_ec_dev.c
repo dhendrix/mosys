@@ -114,11 +114,15 @@ static int cros_ec_command_dev(struct platform_intf *intf, int command,
 			   int version, const void *indata, int insize,
 			   const void *outdata, int outsize)
 {
+	struct cros_ec_priv *priv;
 	struct cros_ec_command cmd;
 	int ret;
 
+	MOSYS_DCHECK(intf->cb->ec && intf->cb->ec->priv);
+	priv = intf->cb->ec->priv;
+
 	cmd.version = version;
-	cmd.command = command;
+	cmd.command = command | EC_CMD_PASSTHRU_OFFSET(priv->device_index);
 	cmd.outdata = outdata;
 	cmd.outsize = outsize;
 	cmd.indata = (uint8_t *)indata;

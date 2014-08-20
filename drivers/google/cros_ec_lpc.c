@@ -421,6 +421,13 @@ static int cros_ec_command_lpc(struct platform_intf *intf,
 struct cros_ec_priv cros_ec_priv_lpc = {
 	.cmd		= &cros_ec_command_lpc,
 	.addr.io	= EC_LPC_ADDR_HOST_CMD,
+	.device_index	= 0,
+};
+
+struct cros_ec_priv cros_pd_priv_lpc = {
+	.cmd		= &cros_ec_command_lpc,
+	.addr.io	= EC_LPC_ADDR_HOST_CMD,
+	.device_index	= 1,
 };
 
 /* returns 1 if EC detected, 0 if not, <0 to indicate failure */
@@ -434,6 +441,22 @@ int cros_ec_probe_lpc(struct platform_intf *intf)
 	ret = cros_ec_detect(intf);
 	if (ret == 1) {
 		lprintf(LOG_DEBUG, "CrOS EC detected on LPC bus\n");
+	}
+
+	return ret;
+}
+
+/* returns 1 if EC detected, 0 if not, <0 to indicate failure */
+int cros_pd_probe_lpc(struct platform_intf *intf)
+{
+	int ret = -1;
+
+	lprintf(LOG_DEBUG, "%s: probing for CrOS PD on LPC...\n", __func__);
+
+	intf->cb->pd->priv = &cros_pd_priv_lpc;
+	ret = cros_ec_detect(intf);
+	if (ret == 1) {
+		lprintf(LOG_DEBUG, "CrOS PD detected on LPC bus\n");
 	}
 
 	return ret;

@@ -60,6 +60,9 @@ struct cros_ec_priv {
 };
 
 extern struct ec_cb cros_ec_cb;
+extern struct ec_cb cros_pd_cb;
+
+/* EC commands */
 extern int cros_ec_hello(struct platform_intf *intf);
 const char *cros_ec_version(struct platform_intf *intf);
 extern int cros_ec_chip_info(struct platform_intf *intf,
@@ -75,5 +78,15 @@ extern int cros_ec_board_version(struct platform_intf *intf);
 extern int cros_ec_vbnvcontext_read(struct platform_intf *intf, uint8_t *block);
 extern int cros_ec_vbnvcontext_write(struct platform_intf *intf,
 				 const uint8_t *block);
+
+/* PD commands */
+extern int cros_pd_probe_lpc(struct platform_intf *intf);
+extern int cros_pd_hello(struct platform_intf *intf);
+const char *cros_pd_version(struct platform_intf *intf);
+extern int cros_pd_chip_info(struct platform_intf *intf,
+		         struct ec_response_get_chip_info *info);
+extern int cros_pd_flash_info(struct platform_intf *intf,
+		         struct ec_response_flash_info *info);
+extern int cros_pd_detect(struct platform_intf *intf);
 
 #endif	/* MOSYS_DRIVERS_EC_GOOGLE__ */

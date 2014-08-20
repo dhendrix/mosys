@@ -458,6 +458,7 @@ struct platform_cb {
 	struct pci_cb *pci;		/* pci callbacks */
 	struct vpd_cb *vpd;		/* vpd callbacks */
 	struct ec_cb *ec;		/* ec callbacks */
+	struct ec_cb *pd;		/* pd callbacks */
 	struct hid_cb *hid;		/* hid callbacks */
 	struct battery_cb *battery;	/* battery callbacks */
 	struct storage_cb *storage;	/* storage callbacks */

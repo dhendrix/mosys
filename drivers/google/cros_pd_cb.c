@@ -1,6 +1,5 @@
 /*
- * Copyright 2012, Google Inc.
- * All rights reserved.
+ * Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,35 +27,64 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
+ * cros_pd_cb.c: PD accessor functions / callbacks for use in platform_intf
  */
 
-#ifndef MOSYS_COMMAND_LIST_H__
-#define MOSYS_COMMAND_LIST_H__
+#include "mosys/alloc.h"
+#include "mosys/callbacks.h"
+#include "mosys/log.h"
+#include "mosys/platform.h"
 
-struct platform_cmd;
+#include "drivers/google/cros_ec.h"
+#include "drivers/google/cros_ec_commands.h"
 
-extern struct platform_cmd cmd_platform;
-extern struct platform_cmd cmd_i2c;
-extern struct platform_cmd cmd_gpio;
-extern struct platform_cmd cmd_hid;
-extern struct platform_cmd cmd_smbios;
-extern struct platform_cmd cmd_memory;
-extern struct platform_cmd cmd_cpu;
-extern struct platform_cmd cmd_sensor;
-extern struct platform_cmd cmd_eventlog;
-extern struct platform_cmd cmd_bootnum;
-extern struct platform_cmd cmd_flash;
-extern struct platform_cmd cmd_nvram;
-extern struct platform_cmd cmd_mce;
-extern struct platform_cmd cmd_ht;
-extern struct platform_cmd cmd_edac;
-extern struct platform_cmd cmd_eeprom;
-extern struct platform_cmd cmd_vpd;
-extern struct platform_cmd cmd_ec;
-extern struct platform_cmd cmd_pd;
-extern struct platform_cmd cmd_battery;
-extern struct platform_cmd cmd_storage;
-extern struct platform_cmd cmd_psu;
-//extern struct platform_cmd cmd_fru;
+static const char *cros_pd_name(struct platform_intf *intf)
+{
+	static const char *name = NULL;
+	struct ec_response_get_chip_info chip_info;
 
-#endif /* MOSYS_COMMAND_LIST_H__ */
+	if (name)
+		return name;
+
+	if (cros_pd_chip_info(intf, &chip_info))
+		return NULL;
+
+	name = mosys_strdup(chip_info.name);
+	add_destroy_callback(free, (void *)name);
+	return name;
+}
+
+static const char *cros_pd_vendor(struct platform_intf *intf)
+{
+	static const char *vendor = NULL;
+	struct ec_response_get_chip_info chip_info;
+
+	if (vendor)
+		return vendor;
+
+	if (cros_pd_chip_info(intf, &chip_info))
+		return NULL;
+
+	vendor = mosys_strdup(chip_info.vendor);
+	add_destroy_callback(free, (void *)vendor);
+	return vendor;
+}
+
+static const char *cros_pd_fw_version(struct platform_intf *intf)
+{
+	static const char *version = NULL;
+
+	if (version)
+		return version;
+
+	version = cros_pd_version(intf);
+	if (version)
+		add_destroy_callback(free, (void *)version);
+	return version;
+}
+
+struct ec_cb cros_pd_cb = {
+	.vendor		= cros_pd_vendor,
+	.name		= cros_pd_name,
+	.fw_version	= cros_pd_fw_version,
+};

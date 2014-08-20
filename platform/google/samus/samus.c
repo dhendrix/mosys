@@ -66,6 +66,7 @@ struct platform_cmd *samus_sub[] = {
 	&cmd_gpio,
 	&cmd_memory,
 	&cmd_nvram,
+	&cmd_pd,
 	&cmd_platform,
 	&cmd_smbios,
 	&cmd_eventlog,
@@ -111,12 +112,13 @@ samus_probe_exit:
 /* late setup routine; not critical to core functionality */
 static int samus_setup_post(struct platform_intf *intf)
 {
-	int rc = 0;
+	if (samus_ec_setup(intf) <= 0)
+		return -1;
 
-	rc |= samus_ec_setup(intf);
-	if (rc)
-		lprintf(LOG_DEBUG, "%s: failed\n", __func__);
-	return rc;
+	if (samus_pd_setup(intf) <= 0)
+		return -1;
+
+	return 0;
 }
 
 static int samus_destroy(struct platform_intf *intf)
@@ -135,6 +137,7 @@ struct eventlog_cb samus_eventlog_cb = {
 
 struct platform_cb samus_cb = {
 	.ec		= &cros_ec_cb,
+	.pd		= &cros_pd_cb,
 	.eeprom		= &samus_eeprom_cb,
 	.gpio		= &samus_gpio_cb,
 	.memory		= &samus_memory_cb,

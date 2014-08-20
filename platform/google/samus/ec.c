@@ -50,3 +50,20 @@ int samus_ec_setup(struct platform_intf *intf)
 
 	return ret;
 }
+
+int samus_pd_setup(struct platform_intf *intf)
+{
+	int ret;
+
+	MOSYS_CHECK(intf->cb && intf->cb->pd);
+
+	ret = cros_pd_probe_lpc(intf);
+	if (ret == 1)
+		lprintf(LOG_DEBUG, "CrOS PD found on LPC bus\n");
+	else if (ret == 0)
+		lprintf(LOG_DEBUG, "CrOS PD not found on LPC bus\n");
+	else
+		lprintf(LOG_ERR, "Error when probing CrOS PD on LPC bus\n");
+
+	return ret;
+}

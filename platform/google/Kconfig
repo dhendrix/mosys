@@ -32,4 +32,9 @@ config PLATFORM_SAMUS
 	bool "Samus"
 	default n
 
+config PLATFORM_STORM
+	depends on PLATFORM_ARCH_ARMEL
+	bool "Storm"
+	default n
+
 endmenu

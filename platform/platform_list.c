@@ -41,6 +41,7 @@ extern struct platform_intf platform_rambi;
 extern struct platform_intf platform_slippy;
 extern struct platform_intf platform_skate;
 extern struct platform_intf platform_spring;
+extern struct platform_intf platform_storm;
 
 /* production platforms */
 extern struct platform_intf platform_alex;
@@ -123,6 +124,9 @@ struct platform_intf *platform_intf_list[] = {
 #endif
 #ifdef CONFIG_PLATFORM_SKATE
 	&platform_skate,
+#endif
+#ifdef CONFIG_PLATFORM_STORM
+	&platform_storm,
 #endif
 	NULL
 };

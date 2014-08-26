@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Mosys version: 1.2.03
-# Wed Jul  2 11:52:56 2014
+# Tue Aug 26 16:18:04 2014
 #
 
 #
@@ -11,6 +11,7 @@
 CONFIG_LOGLEVEL=4
 CONFIG_USE_IPC_LOCK=y
 # CONFIG_DEBUG_INFO is not set
+# CONFIG_INTF_PORT_IO is not set
 
 #
 # Platforms
@@ -18,6 +19,7 @@ CONFIG_USE_IPC_LOCK=y
 # CONFIG_BIG_ENDIAN is not set
 CONFIG_LITTLE_ENDIAN=y
 CONFIG_PLATFORM_ARCH_ARMEL=y
+# CONFIG_PLATFORM_ARCH_MIPSEL is not set
 # CONFIG_PLATFORM_ARCH_X86 is not set
 
 #
@@ -27,6 +29,7 @@ CONFIG_PLATFORM_ARCH_ARMEL=y
 #
 # Google Platform Support
 #
+CONFIG_PLATFORM_STORM=y
 
 #
 # HP Platform Support

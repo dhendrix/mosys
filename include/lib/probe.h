@@ -131,12 +131,14 @@ extern char *fdt_model(void);
 /*
  * probe_fdt_compatible - Probe platform using device tree "compatible" node
  *
- * @id_list:	Known platform IDs to compare with
- * @num_ids:	Number of known platform IDs
+ * @id_list:		Known platform IDs to compare with
+ * @num_ids:		Number of known platform IDs
+ * @allow_partial:	Allow partial match (0=no, 1=yes)
  *
  * returns the index of the platform ID if found
  * returns <0 to indicate error
  */
-extern int probe_fdt_compatible(const char *id_list[], int num_ids);
+extern int probe_fdt_compatible(const char *id_list[],
+				int num_ids, int allow_partial);
 
 #endif /* MOSYS_LIB_PROBE_H__ */

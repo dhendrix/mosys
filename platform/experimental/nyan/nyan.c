@@ -237,7 +237,7 @@ int nyan_probe(struct platform_intf *intf)
 
 	/* nyan-big is listed before google,nyan, so search for it first */
 	index = probe_fdt_compatible(&nyan_big_id_list[0],
-					ARRAY_SIZE(nyan_big_id_list));
+					ARRAY_SIZE(nyan_big_id_list), 0);
 	if (index >= 0) {
 		lprintf(LOG_DEBUG, "Found platform \"%s\" via FDT compatible "
 				"node.\n", nyan_big_id_list[index]);
@@ -262,7 +262,7 @@ int nyan_probe(struct platform_intf *intf)
 
 	/* nyan-blaze is listed before google,nyan, so search for it first */
 	index = probe_fdt_compatible(&nyan_blaze_id_list[0],
-					ARRAY_SIZE(nyan_blaze_id_list));
+					ARRAY_SIZE(nyan_blaze_id_list), 0);
 	if (index >= 0) {
 		lprintf(LOG_DEBUG, "Found platform \"%s\" via FDT compatible "
 				"node.\n", nyan_blaze_id_list[index]);
@@ -272,7 +272,7 @@ int nyan_probe(struct platform_intf *intf)
 
 	/* nyan-kitty is listed before google,nyan, so search for it first */
 	index = probe_fdt_compatible(&nyan_kitty_id_list[0],
-					ARRAY_SIZE(nyan_kitty_id_list));
+					ARRAY_SIZE(nyan_kitty_id_list), 0);
 	if (index >= 0) {
 		lprintf(LOG_DEBUG, "Found platform \"%s\" via FDT compatible "
 				"node.\n", nyan_kitty_id_list[index]);
@@ -281,7 +281,7 @@ int nyan_probe(struct platform_intf *intf)
 	}
 
 	index = probe_fdt_compatible(&nyan_id_list[0],
-					ARRAY_SIZE(nyan_id_list));
+					ARRAY_SIZE(nyan_id_list), 0);
 	if (index >= 0) {
 		lprintf(LOG_DEBUG, "Found platform \"%s\" via FDT compatible "
 				"node.\n", nyan_id_list[index]);

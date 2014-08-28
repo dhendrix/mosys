@@ -317,7 +317,7 @@ char *fdt_model(void)
 }
 
 #define FDT_COMPATIBLE	"/proc/device-tree/compatible"
-int probe_fdt_compatible(const char *id_list[], int num_ids)
+int probe_fdt_compatible(const char *id_list[], int num_ids, int allow_partial)
 {
 	int ret = -1, i, fd;
 	char path[PATH_MAX];
@@ -352,9 +352,19 @@ int probe_fdt_compatible(const char *id_list[], int num_ids)
 		}
 
 		for (i = 0; (i < num_ids) && id_list[i]; i++) {
+			int cmp = 0;
+
 			lprintf(LOG_DEBUG, "\t\"%s\" == \"%s\" ? ",
 					&compat[0], id_list[i]);
-			if (!strcmp(&compat[0], id_list[i])) {
+
+			if (allow_partial) {
+				cmp = strncmp(&compat[0],
+					id_list[i], strlen(id_list[i]));
+			} else {
+				cmp = strcmp(&compat[0], id_list[i]);
+			}
+
+			if (!cmp) {
 				lprintf(LOG_DEBUG, "yes\n");
 				ret = i;
 				goto probe_fdt_compatible_exit;

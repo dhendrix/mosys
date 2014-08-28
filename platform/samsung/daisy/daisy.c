@@ -84,7 +84,7 @@ int daisy_probe(struct platform_intf *intf)
 		return status;
 
 	index = probe_fdt_compatible(&snow_id_list[0],
-					ARRAY_SIZE(snow_id_list));
+				ARRAY_SIZE(snow_id_list), 0);
 	if (index >= 0) {
 		lprintf(LOG_DEBUG, "Found platform \"%s\" via FDT compatible "
 				"node.\n", snow_id_list[index]);
@@ -96,7 +96,7 @@ int daisy_probe(struct platform_intf *intf)
 	}
 
 	index = probe_fdt_compatible(&daisy_id_list[0],
-					ARRAY_SIZE(daisy_id_list));
+				ARRAY_SIZE(daisy_id_list), 0);
 	if (index >= 0) {
 		lprintf(LOG_DEBUG, "Found platform \"%s\" via FDT compatible "
 				"node.\n", daisy_id_list[index]);

@@ -39,6 +39,7 @@ enum nyan_type {
 	NYAN,
 	NYAN_BIG,
 	NYAN_BLAZE,
+	NYAN_KITTY,
 	NYAN_UNKNOWN,
 };
 

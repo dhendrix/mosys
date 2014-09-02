@@ -279,6 +279,8 @@ enum nyan_type get_nyan_type(struct platform_intf *intf)
 		ret = NYAN_BIG;
 	else if (!strncmp(intf->name, "Blaze", strlen(intf->name)))
 		ret = NYAN_BLAZE;
+	else if (!strncmp(intf->name, "Kitty", strlen(intf->name)))
+		ret = NYAN_KITTY;
 	else if (!strncmp(intf->name, "Nyan", strlen(intf->name)))
 		ret = NYAN;
 

@@ -25,6 +25,11 @@ config PLATFORM_MARIO
 	bool "Google Cr-48 Chromebook"
 	default n
 
+config PLATFORM_PINKY
+	depends on PLATFORM_ARCH_ARMEL
+	bool "Pinky"
+	default n
+
 config PLATFORM_SAMUS
 	depends on PLATFORM_ARCH_X86
 	select CHIPSET_INTEL_LYNXPOINT_LP

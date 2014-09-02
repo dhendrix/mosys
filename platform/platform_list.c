@@ -53,6 +53,7 @@ extern struct platform_intf platform_lumpy;
 extern struct platform_intf platform_mario;
 extern struct platform_intf platform_parrot;
 extern struct platform_intf platform_peach;
+extern struct platform_intf platform_pinky;
 extern struct platform_intf platform_samus;
 extern struct platform_intf platform_stout;
 extern struct platform_intf platform_stumpy;
@@ -86,6 +87,9 @@ struct platform_intf *platform_intf_list[] = {
 #endif
 #ifdef CONFIG_PLATFORM_PEACH
 	&platform_peach,
+#endif
+#ifdef CONFIG_PLATFORM_PINKY
+	&platform_pinky,
 #endif
 #ifdef CONFIG_PLATFORM_SAMUS
 	&platform_samus,

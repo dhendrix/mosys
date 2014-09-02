@@ -468,6 +468,12 @@ static enum nyan_memory_config get_memory_config(struct platform_intf *intf)
 			ramcode -= 4;
 		memory_config =  blaze_sdram_configs[ramcode];
 		break;
+	case NYAN_KITTY:
+		if (ramcode == 0x0)
+			memory_config = HYNIX_DDR3_1600_2G;
+		else if (ramcode == 0x1)
+			memory_config = HYNIX_DDR3_1600_4G;
+		break;
 	default:
 		memory_config = MEM_UNKNOWN;
 		break;

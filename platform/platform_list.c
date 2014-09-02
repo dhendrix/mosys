@@ -45,6 +45,7 @@ extern struct platform_intf platform_spring;
 
 /* production platforms */
 extern struct platform_intf platform_alex;
+extern struct platform_intf platform_auron;
 extern struct platform_intf platform_butterfly;
 extern struct platform_intf platform_daisy;
 extern struct platform_intf platform_link;
@@ -60,6 +61,9 @@ extern struct platform_intf platform_zgb;
 struct platform_intf *platform_intf_list[] = {
 #ifdef CONFIG_PLATFORM_ALEX
 	&platform_alex,
+#endif
+#ifdef CONFIG_PLATFORM_AURON
+	&platform_auron,
 #endif
 #ifdef CONFIG_PLATFORM_BUTTERFLY
 	&platform_butterfly,

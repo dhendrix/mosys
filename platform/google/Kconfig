@@ -4,6 +4,13 @@
 
 menu "Google Platform Support"
 
+config PLATFORM_AURON
+	depends on PLATFORM_ARCH_X86
+	select CHIPSET_INTEL_LYNXPOINT_LP
+	select CROS_EC_LPC
+	bool "Auron"
+	default n
+
 config PLATFORM_LINK
 	depends on PLATFORM_ARCH_X86
 	select CHIPSET_INTEL_SERIES6

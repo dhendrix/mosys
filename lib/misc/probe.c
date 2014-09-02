@@ -45,6 +45,7 @@
 
 #include "lib/acpi.h"
 #include "lib/file.h"
+#include "lib/probe.h"
 #include "lib/smbios.h"
 #include "lib/string.h"
 
@@ -377,6 +378,93 @@ int probe_fdt_compatible(const char *id_list[], int num_ids, int allow_partial)
 	}
 
 probe_fdt_compatible_exit:
+	close(fd);
+	return ret;
+}
+
+struct cros_compat_tuple *cros_fdt_tuple(void)
+{
+	struct cros_compat_tuple *ret = NULL;
+	int fd;
+	char path[PATH_MAX];
+	char compat[64];	/* arbitrarily chosen max size */
+	char family[32];
+	char name[32];
+	char revision[8];
+	char *endptr;		/* end of current compat string */
+	char *p0, *p1;		/* placeholders for detokenizing string */
+
+	snprintf(path, PATH_MAX, "%s/%s",
+			mosys_get_root_prefix(), FDT_COMPATIBLE);
+	fd = file_open(path, FILE_READ);
+	if (fd < 0) {
+		lprintf(LOG_DEBUG, "Cannot open %s\n", path);
+		return NULL;
+	}
+
+	/*
+	 * Device tree "compatible" data consists of a list of comma-separated
+	 * pairs with a NULL after each pair. For example, "foo,bar\0bam,baz\0"
+	 * is foo,bar and bam,baz.
+	 */
+	endptr = &compat[0];
+	while (read(fd, endptr, 1) == 1) {
+		if (*endptr != 0) {
+			endptr++;
+			if (endptr - &compat[0] > sizeof(compat)) {
+				lprintf(LOG_ERR,
+					"FDT compatible identifier too long\n");
+				break;
+			}
+			continue;
+		}
+
+		p0 = &compat[0];
+		if (strncmp(p0, "google,", strlen("google,"))) {
+			endptr = &compat[0];
+			continue;
+		}
+		p0 += strlen("google,");
+
+		/* family */
+		p1 = strchr(p0, '-');
+		if (p1 == NULL) {
+			endptr = &compat[0];
+			continue;
+		}
+		snprintf(family, p1 - p0 + 1, p0);
+
+		/* name */
+		p0 = p1 + 1;
+		p1 = strchr(p0, '-');
+		if (p1 == NULL) {
+			endptr = &compat[0];
+			continue;
+		}
+		snprintf(name, p1 - p0 + 1, p0);
+
+		/* revision */
+		p0 = p1 + 1;
+		if (sscanf(p0, "%s", revision) != 1) {
+			endptr = &compat[0];
+			continue;
+		}
+
+		lprintf(LOG_DEBUG, "%s: family: %s, name: %s, revision: %s\n",
+				__func__, family, name, revision);
+
+		ret = mosys_malloc(sizeof(*ret));
+		ret->family = mosys_strdup(family);
+		ret->name = mosys_strdup(name);
+		ret->revision = mosys_strdup(revision);
+		add_destroy_callback(free, (void *)ret->family);
+		add_destroy_callback(free, (void *)ret->name);
+		add_destroy_callback(free, (void *)ret->revision);
+		add_destroy_callback(free, (void *)ret);
+
+		break;
+	}
+
 	close(fd);
 	return ret;
 }

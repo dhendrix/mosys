@@ -34,6 +34,12 @@
 
 struct platform_intf;
 
+struct cros_compat_tuple {
+	char *family;
+	char *name;
+	char *revision;
+};
+
 /*
  * probe_hwid - attempt to match chromeos hardware id
  *
@@ -140,5 +146,22 @@ extern char *fdt_model(void);
  */
 extern int probe_fdt_compatible(const char *id_list[],
 				int num_ids, int allow_partial);
+
+
+/*
+ * cros_fdt_tuple - Split tuple from FDT
+ *
+ * This function will look at the FDT "compatible" node and attempt to split
+ * out the tuple used on ChromeOS platforms, "google,<family>-<name>-<revN>",
+ * into constituent parts. The first viable match will be used.
+ *
+ * Memory which is allocated for the struct and strings is automatically freed
+ * using destroy callbacks. The caller does not need to explicitly free() the
+ * returned pointer or any members of the struct.
+ *
+ * returns pointer to cros_compat_tuple if successful
+ * returns NULL to indicate failure
+ */
+extern struct cros_compat_tuple *cros_fdt_tuple(void);
 
 #endif /* MOSYS_LIB_PROBE_H__ */

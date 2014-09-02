@@ -254,22 +254,22 @@ struct elog_event_data_me_extended {
  * Recovery reason is VBNV_RECOVERY_RO_INVALID_RW_CHECK_MIN + the check value
  * for the slot which came closest to validating; see VBSD_LF_CHECK_* in
  * vboot_struct.h. */
-#define VBNV_RECOVERY_RO_INVALID_RW_CHECK_0  0x10
-#define VBNV_RECOVERY_RO_INVALID_RW_CHECK_1  0x11
-#define VBNV_RECOVERY_RO_INVALID_RW_CHECK_2  0x12
-#define VBNV_RECOVERY_RO_INVALID_RW_CHECK_3  0x13
-#define VBNV_RECOVERY_RO_INVALID_RW_CHECK_4  0x14
-#define VBNV_RECOVERY_RO_INVALID_RW_CHECK_5  0x15
-#define VBNV_RECOVERY_RO_INVALID_RW_CHECK_6  0x16
-#define VBNV_RECOVERY_RO_INVALID_RW_CHECK_7  0x17
-#define VBNV_RECOVERY_RO_INVALID_RW_CHECK_8  0x18
-#define VBNV_RECOVERY_RO_INVALID_RW_CHECK_9  0x19
-#define VBNV_RECOVERY_RO_INVALID_RW_CHECK_A  0x1A
-#define VBNV_RECOVERY_RO_INVALID_RW_CHECK_B  0x1B
-#define VBNV_RECOVERY_RO_INVALID_RW_CHECK_C  0x1C
-#define VBNV_RECOVERY_RO_INVALID_RW_CHECK_D  0x1D
-#define VBNV_RECOVERY_RO_INVALID_RW_CHECK_E  0x1E
-#define VBNV_RECOVERY_RO_INVALID_RW_CHECK_F  0x1F
+#define VBNV_RECOVERY_RO_INVALID_RW_CHECK_NOT_DONE         0x10
+#define VBNV_RECOVERY_RO_INVALID_RW_CHECK_DEV_MISMATCH     0x11
+#define VBNV_RECOVERY_RO_INVALID_RW_CHECK_REC_MISMATCH     0x12
+#define VBNV_RECOVERY_RO_INVALID_RW_CHECK_VERIFY_KEYBLOCK  0x13
+#define VBNV_RECOVERY_RO_INVALID_RW_CHECK_KEY_ROLLBACK     0x14
+#define VBNV_RECOVERY_RO_INVALID_RW_CHECK_DATA_KEY_PARSE   0x15
+#define VBNV_RECOVERY_RO_INVALID_RW_CHECK_VERIFY_PREAMBLE  0x16
+#define VBNV_RECOVERY_RO_INVALID_RW_CHECK_FW_ROLLBACK      0x17
+#define VBNV_RECOVERY_RO_INVALID_RW_CHECK_HEADER_VALID     0x18
+#define VBNV_RECOVERY_RO_INVALID_RW_CHECK_GET_FW_BODY      0x19
+#define VBNV_RECOVERY_RO_INVALID_RW_CHECK_HASH_WRONG_SIZE  0x1A
+#define VBNV_RECOVERY_RO_INVALID_RW_CHECK_VERIFY_BODY      0x1B
+#define VBNV_RECOVERY_RO_INVALID_RW_CHECK_VALID            0x1C
+#define VBNV_RECOVERY_RO_INVALID_RW_CHECK_NO_RO_NORMAL     0x1D
+#define VBNV_RECOVERY_RO_INVALID_RW_CHECK_E                0x1E
+#define VBNV_RECOVERY_RO_INVALID_RW_CHECK_F                0x1F
 /* Firmware boot failure outside of verified boot (RAM init, missing SSD,
  * etc.). */
 #define VBNV_RECOVERY_RO_FIRMWARE     0x20
@@ -280,6 +280,20 @@ struct elog_event_data_me_extended {
 #define VBNV_RECOVERY_EC_SOFTWARE_SYNC 0x22
 /* Unable to determine active EC image */
 #define VBNV_RECOVERY_EC_UNKNOWN_IMAGE 0x23
+/* EC software sync - error obtaining EC image hash (deprecated) */
+#define VBNV_RECOVERY_DEP_EC_HASH         0x24
+/* EC software sync - error obtaining expected EC image */
+#define VBNV_RECOVERY_EC_EXPECTED_IMAGE 0x25
+/* EC software sync - error updating EC */
+#define VBNV_RECOVERY_EC_UPDATE       0x26
+/* EC software sync - unable to jump to EC-RW */
+#define VBNV_RECOVERY_EC_JUMP_RW      0x27
+/* EC software sync - unable to protect / unprotect EC-RW */
+#define VBNV_RECOVERY_EC_PROTECT      0x28
+/* EC software sync - error obtaining expected EC hash */
+#define VBNV_RECOVERY_EC_EXPECTED_HASH 0x29
+/* EC software sync - expected EC image doesn't match hash */
+#define VBNV_RECOVERY_EC_HASH_MISMATCH 0x2A
 /* Unspecified/unknown error in read-only firmware */
 #define VBNV_RECOVERY_RO_UNSPECIFIED  0x3F
 /* User manually requested recovery by pressing a key at developer

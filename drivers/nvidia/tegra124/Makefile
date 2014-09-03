@@ -1,0 +1,1 @@
+obj-$(CONFIG_SOC_NVIDIA_TEGRA124)	+= gpio.o

@@ -1,0 +1,10 @@
+# nvidia config variables
+
+config SOC_NVIDIA
+	bool
+	default n
+
+config SOC_NVIDIA_TEGRA124
+	bool "Tegra 124"
+	select SOC_NVIDIA
+	default n

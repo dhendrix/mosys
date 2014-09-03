@@ -30,6 +30,7 @@ config EXPERIMENTAL_RAMBI
 
 config EXPERIMENTAL_NYAN
         depends on PLATFORM_ARCH_ARMEL && PLATFORM_EXPERIMENTAL
+	select SOC_NVIDIA_TEGRA124
         select CROS_EC_SPI
         bool "nyan"
         default n

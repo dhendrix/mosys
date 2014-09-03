@@ -4,6 +4,7 @@ obj-y	+= google/
 obj-y	+= intel/
 obj-y	+= ite/
 obj-y	+= nuvoton/
+obj-y	+= nvidia/
 obj-y	+= samsung/
 obj-y	+= smsc/
 obj-y	+= ene/

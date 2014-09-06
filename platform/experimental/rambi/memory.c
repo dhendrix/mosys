@@ -145,6 +145,7 @@ static int rambi_dimm_count(struct platform_intf *intf)
 			return 2;
 		}
 	} else if (!strncmp(intf->name, "Enguarde", 8) ||
+		   !strncmp(intf->name, "Expresso", 8) ||
 		   !strncmp(intf->name, "Rambi", 5)) {
 		int index = rambi_get_spd_index(intf);
 		if (cros_ec_board_version(intf) < 1) {

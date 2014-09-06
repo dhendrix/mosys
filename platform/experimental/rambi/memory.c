@@ -42,6 +42,7 @@
 #include "mosys/platform.h"
 
 #include "drivers/gpio.h"
+#include "drivers/google/cros_ec.h"
 #include "drivers/intel/baytrail.h"
 
 #include "lib/cbfs_core.h"
@@ -145,20 +146,37 @@ static int rambi_dimm_count(struct platform_intf *intf)
 		}
 	} else if (!strncmp(intf->name, "Enguarde", 8) ||
 		   !strncmp(intf->name, "Rambi", 5)) {
-		/*
-		 * {0,0,0} = 2 x 2GiB Micron
-		 * {0,0,1} = 2 x 2GiB Hynix
-		 * {0,1,0} = 2 x 1GiB Micron
-		 * {0,1,1} = 2 x 1GiB Hynix
-		 * {1,0,0} = 1 x 2GiB Micron
-		 * {1,0,1} = 1 x 2GiB Hynix
-		 */
 		int index = rambi_get_spd_index(intf);
-		switch (index) {
-		case 4: case 5:
-			return 1;
-		default:
-			return 2;
+		if (cros_ec_board_version(intf) < 1) {
+			/*
+			 * {0,0,0} = 2 x 2GiB Micron
+			 * {0,0,1} = 2 x 2GiB Hynix
+			 * {0,1,0} = 2 x 1GiB Micron
+			 * {0,1,1} = 2 x 1GiB Hynix
+			 * {1,0,0} = 1 x 2GiB Micron
+			 * {1,0,1} = 1 x 2GiB Hynix
+			 */
+			switch (index) {
+			case 4: case 5:
+				return 1;
+			default:
+				return 2;
+			}
+		} else {
+			/*
+			 * {0,0,0} = 1 x 4GiB Micron
+			 * {0,0,1} = 1 x 4GiB Hynix
+			 * {0,1,0} = 1 x 2GiB Micron
+			 * {0,1,1} = 1 x 2GiB Hynix
+			 * {1,0,0} = 2 x 2GiB Micron
+			 * {1,0,1} = 2 x 2GiB Hynix
+			 */
+			switch (index) {
+			case 4: case 5:
+				return 2;
+			default:
+				return 1;
+			}
 		}
 	} else if (!strncmp(intf->name, "Glimmer", 7)) {
 		/*

@@ -29,10 +29,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <valstr.h>
+
 #include "mosys/alloc.h"
 #include "mosys/platform.h"
 
 #include "lib/smbios.h"
+
+#include "drivers/google/cros_ec.h"
+
+static struct valstr rambi_board_version[] = {
+	{ 0, "Proto1/1.5" },
+	{ 1, "Proto2" },
+	{ },
+};
+
+static const char *rambi_get_version(struct platform_intf *intf)
+{
+	return mosys_strdup(val2str(cros_ec_board_version(intf),
+				    rambi_board_version));
+}
 
 static const char *rambi_get_vendor(struct platform_intf *intf)
 {
@@ -64,6 +80,7 @@ static const char *rambi_get_firmware_vendor(struct platform_intf *intf)
 }
 
 struct sys_cb rambi_sys_cb = {
+	.version		= &rambi_get_version,
 	.vendor			= &rambi_get_vendor,
 	.name			= &rambi_get_name,
 	.family			= &rambi_get_family,

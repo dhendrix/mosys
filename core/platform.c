@@ -85,11 +85,19 @@ struct platform_intf *mosys_platform_setup(const char *p_opt)
 		}
 
 		/* auto-detect */
-		if (intf->probe && intf->probe(intf)) {
-			lprintf(LOG_DEBUG, "Platform %s found (via "
+		if (intf->probe) {
+			int rc = intf->probe(intf);
+
+			if (rc < 0) {
+				lprintf(LOG_DEBUG, "Error encountered when "
+					"probing %s\n", intf->name);
+				continue;
+			} else if (rc > 0) {
+				lprintf(LOG_DEBUG, "Platform %s found (via "
 				"probing)\n", intf->name);
-			intf_found = 1;
-			break;
+				intf_found = 1;
+				break;
+			}
 		}
 	}
 

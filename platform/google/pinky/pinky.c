@@ -103,7 +103,7 @@ struct platform_cb pinky_cb = {
 	.eeprom 	= &pinky_eeprom_cb,
 //	.gpio		= &pinky_gpio_cb,
 //	.memory		= &pinky_memory_cb,
-//	.nvram		= &cros_spi_flash_nvram_cb,
+	.nvram		= &cros_ec_nvram_cb,
 	.sys 		= &pinky_sys_cb,
 	.eventlog	= &pinky_eventlog_cb,
 };

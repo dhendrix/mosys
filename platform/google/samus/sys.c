@@ -41,6 +41,7 @@
 static struct valstr samus_board_version[] = {
 	{ 2, "Proto2B" },
 	{ 3, "EVT" },
+	{ 4, "EVT2" },
 	{ }
 };
 

@@ -68,18 +68,49 @@ static int storm_host_firmware_read(struct platform_intf *intf,
 	return 0;
 }
 
+static int host_firmware_read_by_name(struct platform_intf *intf,
+				struct eeprom *eeprom, const char *name,
+				uint8_t **data)
+{
+	return flashrom_read_by_name(data, HOST_FIRMWARE, name);
+}
+
+static int host_firmware_write_by_name(struct platform_intf *intf,
+				       struct eeprom *eeprom,
+				       const char *name,
+				       unsigned int len,
+				       uint8_t *data)
+{
+	return flashrom_write_by_name(len, data, HOST_FIRMWARE, name);
+}
+
 static struct eeprom_dev storm_host_firmware = {
 	.size		= storm_host_firmware_size,
 	.read		= storm_host_firmware_read,
+	.write_by_name  = host_firmware_write_by_name,
+	.read_by_name	= host_firmware_read_by_name,
 	.get_map	= eeprom_get_fmap,
+};
+
+static struct eeprom_region host_firmware_regions[] = {
+	{
+		.name	= "RW_ELOG",
+		.flag	= EEPROM_FLAG_EVENTLOG,
+	},
+	{
+		.name	= "RW_NVRAM",
+		.flag	= EEPROM_FLAG_VBNV,
+	},
+	{ NULL },
 };
 
 static struct eeprom storm_eeproms[] = {
 	{
 		.name		= "host_firmware",
 		.type		= EEPROM_TYPE_FW,
-		.flags		= EEPROM_FLAG_RDWR,
+		.flags		= EEPROM_FLAG_RDWR | EEPROM_FLAG_FMAP,
 		.device		= &storm_host_firmware,
+		.regions	= &host_firmware_regions[0],
 	},
 	{ 0 },
 };

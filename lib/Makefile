@@ -12,4 +12,5 @@ obj-y		+= sensors/
 obj-y		+= smbios/
 obj-y		+= spd/
 obj-y		+= string/
+obj-y		+= vbnv/
 obj-y		+= vpd/

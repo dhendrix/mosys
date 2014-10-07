@@ -30,6 +30,13 @@ config PLATFORM_PINKY
 	bool "Pinky"
 	default n
 
+config PLATFORM_RUSH
+	depends on PLATFORM_ARCH_ARMEL
+	select SOC_NVIDIA_TEGRA124
+	select CROS_EC_I2C
+	bool "rush"
+	default n
+
 config PLATFORM_SAMUS
 	depends on PLATFORM_ARCH_X86
 	select CHIPSET_INTEL_LYNXPOINT_LP

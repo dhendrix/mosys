@@ -56,6 +56,7 @@ enum platform_type {
 	PLATFORM_X86,
 	PLATFORM_X86_64,
 	PLATFORM_ARMV7,
+	PLATFORM_ARMV8,
 };
 
 /*

@@ -38,17 +38,12 @@
 
 #include "drivers/google/cros_ec.h"
 
-static struct valstr samus_board_version[] = {
-	{ 2, "Proto2B" },
-	{ 3, "EVT" },
-	{ 4, "EVT2" },
-	{ }
-};
-
 static const char *samus_get_version(struct platform_intf *intf)
 {
-	return mosys_strdup(val2str(cros_ec_board_version(intf),
-				    samus_board_version));
+	if (intf->cb && intf->cb->smbios)
+		return intf->cb->smbios->system_version(intf);
+	else
+		return NULL;
 }
 
 static const char *samus_get_vendor(struct platform_intf *intf)

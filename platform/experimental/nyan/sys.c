@@ -50,6 +50,8 @@ static const char *nyan_get_vendor(struct platform_intf *intf)
 		ret = mosys_strdup("Google");
 	else if (!strncmp(intf->name, "Blaze", strlen(intf->name)))
 		ret = mosys_strdup("Google");
+	else if (!strncmp(intf->name, "Kitty", strlen(intf->name)))
+		ret = mosys_strdup("Google");
 
 	return ret;
 }

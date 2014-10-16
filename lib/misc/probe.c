@@ -121,11 +121,11 @@ int probe_smbios(struct platform_intf *intf, const char *ids[])
 	if (intf->cb->smbios && intf->cb->smbios->system_name) {
 		id = intf->cb->smbios->system_name(intf);
 	} else {
-		id = smbios_find_string(intf,
-		                       SMBIOS_TYPE_SYSTEM,
-		                       1,
-		                       SMBIOS_LEGACY_ENTRY_BASE,
-		                       SMBIOS_LEGACY_ENTRY_LEN);
+		struct smbios_table table;
+		if (smbios_find_table(intf, SMBIOS_TYPE_SYSTEM, 0, &table,
+				      SMBIOS_LEGACY_ENTRY_BASE,
+				      SMBIOS_LEGACY_ENTRY_LEN) == 0)
+			id = table.string[table.data.system.name];
 	}
 
 probe_smbios_cmp:

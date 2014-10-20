@@ -73,7 +73,7 @@ static void setup_gpio(struct platform_intf *intf, struct gpio_reg *reg)
 	platform_gpio_map[num_of_gpio + 1].name = NULL;
 }
 
-static void free_resource_for_string_in_gpio_map()
+static void free_resource_for_string_in_gpio_map(void)
 {
 	int i;
 	for (i = 0; platform_gpio_map[i].name != NULL; i++) {

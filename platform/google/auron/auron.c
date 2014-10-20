@@ -53,8 +53,16 @@ struct probe_ids {
 };
 
 static const struct probe_ids probe_id_list[] = {
+	{ { "Paine", NULL },
+	  { "PAINE", NULL },
+	  { "Google_Auron_Paine", NULL },
+	},
+	/*
+	 * Leave this entry last in the table -- otherwise it will break
+	 * frid matching, since Google_Auron is a prefix of Google_Auron_VAR
+	 */
 	{ { "Auron", NULL },
-	  { "X86 AURON", NULL },
+	  { "AURON", NULL },
 	  { "Google_Auron", NULL },
 	},
 	{ { NULL } }

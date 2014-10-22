@@ -1,5 +1,6 @@
 obj-$(CONFIG_EXPERIMENTAL_NYAN)	+= ec.o
 obj-$(CONFIG_EXPERIMENTAL_NYAN)	+= eeprom.o
 obj-$(CONFIG_EXPERIMENTAL_NYAN)	+= memory.o
+obj-$(CONFIG_EXPERIMENTAL_NYAN)	+= psu.o
 obj-$(CONFIG_EXPERIMENTAL_NYAN)	+= sys.o
 obj-$(CONFIG_EXPERIMENTAL_NYAN)	+= nyan.o

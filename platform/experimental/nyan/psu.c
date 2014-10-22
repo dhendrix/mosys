@@ -1,5 +1,5 @@
 /*
- * Copyright 2012, Google Inc.
+ * Copyright 2014, Google Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,27 +29,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PLATFORM_NYAN_H__
-#define PLATFORM_NYAN_H__
-
 #include "mosys/platform.h"
 
-enum nyan_type {
-	NYAN,
-	NYAN_BIG,
-	NYAN_BLAZE,
-	NYAN_KITTY,
-	NYAN_UNKNOWN,
+static enum psu_types psu_type(struct platform_intf *intf)
+{
+	if (!strncmp(intf->name, "Kitty", strlen(intf->name)))
+		return PSU_TYPE_AC_ONLY;
+	else
+		return PSU_TYPE_BATTERY;
+}
+
+struct psu_cb nyan_psu_cb = {
+	.type		= &psu_type,
 };
-
-extern enum nyan_type get_nyan_type(struct platform_intf *intf);
-extern int nyan_ec_setup(struct platform_intf *intf);
-
-/* platform callbacks */
-extern struct eeprom_cb nyan_eeprom_cb;	        /* eeprom.c */
-extern struct sys_cb nyan_sys_cb;		/* sys.c */
-extern struct memory_cb nyan_memory_cb;	        /* memory.c */
-extern struct nvram_cb cros_ec_nvram_cb;	/* drivers/google/cros_ec.c */
-extern struct psu_cb nyan_psu_cb;            /* psu.c */
-
-#endif /* PLATFORM_NYAN_H_ */

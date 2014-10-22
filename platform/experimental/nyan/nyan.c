@@ -84,6 +84,7 @@ struct platform_cmd *nyan_sub[] = {
 	&cmd_memory,
 	&cmd_nvram,
 	&cmd_platform,
+	&cmd_psu,
 	&cmd_eventlog,
 	NULL
 };
@@ -203,6 +204,7 @@ struct platform_cb nyan_cb = {
 	.eeprom 	= &nyan_eeprom_cb,
 	.memory		= &nyan_memory_cb,
 	.nvram		= &cros_ec_nvram_cb,
+	.psu		= &nyan_psu_cb,
 	.sys 		= &nyan_sys_cb,
 	.eventlog	= &nyan_eventlog_cb,
 };

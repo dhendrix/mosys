@@ -32,6 +32,7 @@
 #ifndef NVIDIA_TEGRA124_GPIO_H
 #define NVIDIA_TEGRA124_GPIO_H
 
+#include <stddef.h>
 #include <stdint.h>
 #include "mosys/platform.h"
 
@@ -47,8 +48,6 @@ typedef uint32_t gpio_t;
 #define GPIO_PINMUX_SHIFT 16
 #define GPIO(name) ((gpio_t)(GPIO_##name##_INDEX | \
 			     (PINMUX_GPIO_##name << GPIO_PINMUX_SHIFT)))
-
-#define offsetof(TYPE, MEMBER)  ((size_t) &((TYPE *) 0)->MEMBER)
 
 #define GPIO_PORT_CONSTANTS(port) \
 	GPIO_##port##0_INDEX, GPIO_##port##1_INDEX, GPIO_##port##2_INDEX, \

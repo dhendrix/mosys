@@ -234,6 +234,7 @@ struct i2c_data {
 };
 
 #if defined(__linux__)
+#include <stddef.h>
 #include "intf/linux-i2c-dev.h"
 #else
 static inline int32_t i2c_smbus_write_quick(int file, uint8_t value)

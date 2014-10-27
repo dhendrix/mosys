@@ -38,6 +38,7 @@
 #include <inttypes.h>
 #include <unistd.h>
 #include <stdarg.h>
+#include <stddef.h>
 #include <string.h>
 #include <stdio.h>
 #include <time.h>
@@ -52,7 +53,6 @@
 
 #include "intf/mmio.h"
 
-#include "lib/common.h"
 #include "lib/elog_smbios.h"
 #include "lib/smbios.h"
 

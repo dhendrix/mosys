@@ -34,7 +34,6 @@
 #include <inttypes.h>
 #include <errno.h>
 
-#include "lib/common.h"
 #include "lib/elog_smbios.h"
 
 #include "mosys/alloc.h"

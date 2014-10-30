@@ -56,13 +56,7 @@ static const char *pinky_get_vendor(struct platform_intf *intf)
 
 static const char *pinky_get_name(struct platform_intf *intf)
 {
-	struct cros_compat_tuple *tuple;
-
-	tuple = cros_fdt_tuple();
-	if (!tuple)
-		return NULL;
-
-	return mosys_strdup(tuple->name);
+	return mosys_strdup(intf->name);
 }
 
 struct sys_cb pinky_sys_cb = {

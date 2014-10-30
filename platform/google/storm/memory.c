@@ -1,5 +1,5 @@
 /*
- * Copyright 2013, Google Inc.
+ * Copyright 2014, Google Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,81 +29,72 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <stdlib.h>
-#include <unistd.h>
+#include "lib/nonspd.h"
 
-#include "mosys/command_list.h"
-#include "mosys/platform.h"
-#include "mosys/intf_list.h"
 #include "mosys/log.h"
-
-#include "lib/file.h"
-#include "lib/math.h"
-#include "lib/probe.h"
+#include "mosys/platform.h"
 
 #include "storm.h"
 
-const char *storm_id_list[] = {
-	"google,storm",
-	NULL,
+const struct nonspd_mem_info samsung_k4b4g1646d = {
+	.dram_type		= SPD_DRAM_TYPE_DDR3,
+	.module_type.ddr3_type	= DDR3_MODULE_TYPE_UNDEFINED,
+
+	.module_size_mbits	= 4096,
+	.num_ranks		= 1,
+	.device_width		= 16,
+	.ddr_freq 		= { DDR_400, DDR_533, DDR_667, DDR_800 },
+
+	.module_mfg_id		= { .msb = 0xce, .lsb = 0x00 },
+	.dram_mfg_id		= { .msb = 0xce, .lsb = 0x00 },
+
+	.serial_num 		= { 0, 0, 0, 0 },
+	.part_num		=
+		{ 'K', '4', 'B', '4', 'G', '1', '6', '4', '6', 'D',
+		  '-', 'B', 'Y', 'K', '0' },
 };
 
-struct platform_cmd *storm_sub[] = {
-	&cmd_eeprom,
-//	&cmd_gpio,
-	&cmd_memory,
-	&cmd_nvram,
-	&cmd_platform,
-	&cmd_eventlog,
-	NULL
+/* Treat each module as a logical "DIMM" */
+#define STORM_DIMM_COUNT	2
+
+enum storm_memory_config {
+	SAMSUNG_DDR3_1600_1G,
+	MEM_UNKNOWN,
 };
 
-int storm_probe(struct platform_intf *intf)
+/*
+ * dimm_count  -  return total number of dimm slots
+ *
+ * @intf:       platform interface
+ *
+ * returns dimm slot count
+ */
+static int dimm_count(struct platform_intf *intf)
 {
-	int index;
-
-	index = probe_fdt_compatible(&storm_id_list[0],
-					ARRAY_SIZE(storm_id_list), 1);
-	if (index >= 0) {
-		lprintf(LOG_DEBUG, "Found platform \"%s\" via FDT compatible "
-				"node.\n", storm_id_list[index]);
-	}
-
-
-	return index >= 0 ? 1 : 0;
+	return STORM_DIMM_COUNT;
 }
 
-static int storm_destroy(struct platform_intf *intf)
+static enum storm_memory_config get_memory_config(struct platform_intf *intf)
 {
+	/* for now there is only one supported memory config */
+	return SAMSUNG_DDR3_1600_1G;
+}
+
+static int get_mem_info(struct platform_intf *intf,
+			const struct nonspd_mem_info **info)
+{
+	switch (get_memory_config(intf)) {
+	case SAMSUNG_DDR3_1600_1G:
+		*info = &samsung_k4b4g1646d;
+		break;
+	default:
+		return -1;
+	}
+
 	return 0;
 }
 
-struct eventlog_cb storm_eventlog_cb = {
-	.print_type	= &elog_print_type,
-	.print_data	= &elog_print_data,
-	.print_multi	= &elog_print_multi,
-	.verify		= &elog_verify,
-	.verify_header	= &elog_verify_header,
-	.add		= &elog_add_event_manually,
-	.clear		= &elog_clear_manually,
-	.fetch		= &elog_fetch_from_flash,
-	.write		= &elog_write_to_flash,
-};
-
-struct platform_cb storm_cb = {
-	.eeprom 	= &storm_eeprom_cb,
-//	.gpio		= &storm_gpio_cb,
-	.memory		= &storm_memory_cb,
-	.nvram		= &cros_spi_flash_nvram_cb,
-	.sys 		= &storm_sys_cb,
-	.eventlog	= &storm_eventlog_cb,
-};
-
-struct platform_intf platform_storm = {
-	.type		= PLATFORM_ARMV7,
-	.name		= "Storm",
-	.sub		= storm_sub,
-	.cb		= &storm_cb,
-	.probe		= &storm_probe,
-	.destroy	= &storm_destroy,
+struct memory_cb storm_memory_cb = {
+	.dimm_count		= dimm_count,
+	.nonspd_mem_info	= &get_mem_info,
 };

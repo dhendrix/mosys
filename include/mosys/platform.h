@@ -40,6 +40,7 @@
 
 struct kv_pair;
 struct gpio_map;
+struct nonspd_mem_info;
 
 #if 0
 /* disabled via build option for mosys standalone binary */
@@ -210,6 +211,10 @@ struct memory_cb {
 	                         size_t *num_components);
 
 	struct memory_spd_cb *spd;
+
+	/* for systems where SPD-formatted memory info is not available */
+	int (*nonspd_mem_info)(struct platform_intf *intf,
+				const struct nonspd_mem_info **info);
 };
 
 /* eventlog related callbacks */

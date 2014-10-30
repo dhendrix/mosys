@@ -49,22 +49,6 @@
 
 #include "jedec_id.h"
 
-
-static const struct valstr ddr3_module_type_lut[] = {
-	{ 0x00, "Undefined" },
-	{ 0x01, "RDIMM" },
-	{ 0x02, "UDIMM" },
-	{ 0x03, "SO-DIMM" },
-	{ 0x04, "MICRO-DIMM" },
-	{ 0x05, "MINI-RDIMM" },
-	{ 0x06, "MINI-UDIMM" },
-	{ 0x07, "MINI-CDIMM" },
-	{ 0x08, "72b-SO-UDIMM" },
-	{ 0x09, "72b-SO-RDIMM" },
-	{ 0x0a, "72b-SO-CDIMM" },
-	{ 0x0b, "LRDIMM" },
-};
-
 /*
  * spd_print_field_ddr3  -  add common DDR SPD fields into key=value pair
  *

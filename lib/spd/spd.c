@@ -51,6 +51,16 @@
 
 static spd_raw_override spd_raw_access_override;
 
+const char *ddr_freq_prettyprint[] = {
+	[DDR_FREQ_UNKNOWN] = "Unknown",
+	[DDR_400] = "800",
+	[DDR_533] = "1066",
+	[DDR_667] = "1333",
+	[DDR_800] = "1600",
+	[DDR_933] = "1866",
+	[DDR_1067] = "2133",
+};
+
 /*
  * spd_raw_i2c  -  Read/write to/from SPD via I2C
  *

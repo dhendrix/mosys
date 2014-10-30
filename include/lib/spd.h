@@ -35,6 +35,7 @@
 #define LIB_SPD_H__
 
 #include <inttypes.h>
+#include <valstr.h>
 
 #include "intf/i2c.h"
 
@@ -55,6 +56,48 @@ enum spd_dram_type {
 	SPD_DRAM_TYPE_DDR3	= 0x0b,
 	SPD_DRAM_TYPE_LPDDR3	= 0xf1,
 };
+
+enum ddr3_module_type {
+	DDR3_MODULE_TYPE_UNDEFINED = 0,
+	DDR3_MODULE_TYPE_RDIMM,
+	DDR3_MODULE_TYPE_UDIMM,
+	DDR3_MODULE_TYPE_SO_DIMM,
+	DDR3_MODULE_TYPE_MICRO_DIMM,
+	DDR3_MODULE_TYPE_MINI_RDIMM,
+	DDR3_MODULE_TYPE_MINI_UDIMM,
+	DDR3_MODULE_TYPE_MINI_CDIMM,
+	DDR3_MODULE_TYPE_72b_SO_UDIMM,
+	DDR3_MODULE_TYPE_72b_SO_RDIMM,
+	DDR3_MODULE_TYPE_72b_SO_CDIMM,
+	DDR3_MODULE_TYPE_LRDIMM,
+};
+
+static const struct valstr ddr3_module_type_lut[] = {
+	{ DDR3_MODULE_TYPE_UNDEFINED, "Undefined" },
+	{ DDR3_MODULE_TYPE_RDIMM, "RDIMM" },
+	{ DDR3_MODULE_TYPE_UDIMM, "UDIMM" },
+	{ DDR3_MODULE_TYPE_SO_DIMM, "SO-DIMM" },
+	{ DDR3_MODULE_TYPE_MICRO_DIMM, "MICRO-DIMM" },
+	{ DDR3_MODULE_TYPE_MINI_RDIMM, "MINI-RDIMM" },
+	{ DDR3_MODULE_TYPE_MINI_UDIMM, "MINI-UDIMM" },
+	{ DDR3_MODULE_TYPE_MINI_CDIMM, "MINI-CDIMM" },
+	{ DDR3_MODULE_TYPE_72b_SO_UDIMM, "72b-SO-UDIMM" },
+	{ DDR3_MODULE_TYPE_72b_SO_RDIMM, "72b-SO-RDIMM" },
+	{ DDR3_MODULE_TYPE_72b_SO_CDIMM, "72b-SO-CDIMM" },
+	{ DDR3_MODULE_TYPE_LRDIMM, "LRDIMM" },
+};
+
+enum ddr_freq {
+	DDR_FREQ_UNKNOWN = 0,	/* uninitialized value */
+	DDR_400,
+	DDR_533,
+	DDR_667,
+	DDR_800,
+	DDR_933,
+	DDR_1067,
+};
+
+extern const char *ddr_freq_prettyprint[];
 
 /* spd register handlers */
 struct spd_reg {

@@ -40,6 +40,7 @@
 #include "mosys/output.h"
 #include "mosys/platform.h"
 
+#include "lib/nonspd.h"
 #include "lib/spd.h"
 
 static int memory_spd_dump_cmd(struct platform_intf *intf,
@@ -219,6 +220,32 @@ static int memory_spd_print_geometry(struct platform_intf *intf, int dimm)
 	return rc;
 }
 
+static int memory_nonspd_print_geometry(struct platform_intf *intf, int dimm)
+{
+	struct kv_pair *kv;
+	const struct nonspd_mem_info *info;
+	int rc;
+
+	if (!intf->cb->memory->nonspd_mem_info) {
+		errno = ENOSYS;
+		return -1;
+	}
+
+	if (intf->cb->memory->nonspd_mem_info(intf, &info) < 0)
+		return -1;
+
+	kv = kv_pair_new();
+
+	nonspd_print_field(kv, info, SPD_GET_SIZE);
+	nonspd_print_field(kv, info, SPD_GET_RANKS);
+	nonspd_print_field(kv, info, SPD_GET_WIDTH);
+
+	rc = kv_pair_print(kv);
+	kv_pair_free(kv);
+
+	return rc;
+}
+
 static int memory_spd_print_geometry_cmd(struct platform_intf *intf,
                                          struct platform_cmd *cmd,
                                          int argc, char **argv)
@@ -239,10 +266,16 @@ static int memory_spd_print_geometry_cmd(struct platform_intf *intf,
 			errno = EINVAL;
 			return -1;
 		}
-		memory_spd_print_geometry(intf, dimm);
+		if (intf->cb->memory->spd)
+			memory_spd_print_geometry(intf, dimm);
+		else
+			memory_nonspd_print_geometry(intf, dimm);
 	} else {
 		do {
-			memory_spd_print_geometry(intf, dimm);
+			if (intf->cb->memory->spd)
+				memory_spd_print_geometry(intf, dimm);
+			else
+				memory_nonspd_print_geometry(intf, dimm);
 			dimm++;
 		} while (dimm < last_dimm);
 	}
@@ -285,6 +318,33 @@ static int memory_spd_print_id(struct platform_intf *intf, int dimm)
 	return rc;
 }
 
+static int memory_nonspd_print_id(struct platform_intf *intf, int dimm)
+{
+	struct kv_pair *kv;
+	const struct nonspd_mem_info *info;
+	int rc;
+
+	if (!intf->cb->memory->nonspd_mem_info) {
+		errno = ENOSYS;
+		return -1;
+	}
+
+	if (intf->cb->memory->nonspd_mem_info(intf, &info) < 0)
+		return -1;
+
+	kv = kv_pair_new();
+
+	kv_pair_fmt(kv, "dimm", "%u", dimm);
+	nonspd_print_field(kv, info, SPD_GET_MFG_ID);
+	nonspd_print_field(kv, info, SPD_GET_SERIAL_NUMBER);
+	nonspd_print_field(kv, info, SPD_GET_PART_NUMBER);
+
+	rc = kv_pair_print(kv);
+	kv_pair_free(kv);
+
+	return rc;
+}
+
 static int memory_spd_print_id_cmd(struct platform_intf *intf,
                                    struct platform_cmd *cmd,
                                    int argc, char **argv)
@@ -305,10 +365,16 @@ static int memory_spd_print_id_cmd(struct platform_intf *intf,
 			errno = EINVAL;
 			return -1;
 		}
-		memory_spd_print_id(intf, dimm);
+		if (intf->cb->memory->spd)
+			memory_spd_print_id(intf, dimm);
+		else
+			memory_nonspd_print_id(intf, dimm);
 	} else {
 		do {
-			memory_spd_print_id(intf, dimm);
+			if (intf->cb->memory->spd)
+				memory_spd_print_id(intf, dimm);
+			else
+				memory_nonspd_print_id(intf, dimm);
 			dimm++;
 		} while (dimm < last_dimm);
 	}
@@ -349,6 +415,31 @@ static int memory_spd_print_timings(struct platform_intf *intf, int dimm)
 	return rc;
 }
 
+static int memory_nonspd_print_timings(struct platform_intf *intf, int dimm)
+{
+	struct kv_pair *kv;
+	const struct nonspd_mem_info *info;
+	int rc;
+
+	if (!intf->cb->memory->nonspd_mem_info) {
+		errno = ENOSYS;
+		return -1;
+	}
+
+	if (intf->cb->memory->nonspd_mem_info(intf, &info) < 0)
+		return -1;
+
+	kv = kv_pair_new();
+
+	kv_pair_fmt(kv, "dimm", "%u", dimm);
+	nonspd_print_field(kv, info, SPD_GET_SPEEDS);
+
+	rc = kv_pair_print(kv);
+	kv_pair_free(kv);
+
+	return rc;
+}
+
 static int memory_spd_print_timings_cmd(struct platform_intf *intf,
                                    struct platform_cmd *cmd,
                                    int argc, char **argv)
@@ -369,10 +460,16 @@ static int memory_spd_print_timings_cmd(struct platform_intf *intf,
 			errno = EINVAL;
 			return -1;
 		}
-		memory_spd_print_timings(intf, dimm);
+		if (intf->cb->memory->spd)
+			memory_spd_print_timings(intf, dimm);
+		else
+			memory_nonspd_print_timings(intf, dimm);
 	} else {
 		do {
-			memory_spd_print_timings(intf, dimm);
+			if (intf->cb->memory->spd)
+				memory_spd_print_timings(intf, dimm);
+			else
+				memory_nonspd_print_timings(intf, dimm);
 			dimm++;
 		} while (dimm < last_dimm);
 	}
@@ -414,6 +511,31 @@ static int memory_spd_print_type(struct platform_intf *intf, int dimm)
 	return rc;
 }
 
+static int memory_nonspd_print_type(struct platform_intf *intf, int dimm)
+{
+	struct kv_pair *kv;
+	const struct nonspd_mem_info *info;
+	int rc;
+
+	if (!intf->cb->memory->nonspd_mem_info) {
+		errno = ENOSYS;
+		return -1;
+	}
+
+	if (intf->cb->memory->nonspd_mem_info(intf, &info) < 0)
+		return -1;
+
+	kv = kv_pair_new();
+	kv_pair_fmt(kv, "dimm", "%u", dimm);
+	nonspd_print_field(kv, info, SPD_GET_DRAM_TYPE);
+	nonspd_print_field(kv, info, SPD_GET_MODULE_TYPE);
+
+	rc = kv_pair_print(kv);
+	kv_pair_free(kv);
+
+	return rc;
+}
+
 static int memory_spd_print_type_cmd(struct platform_intf *intf,
                                      struct platform_cmd *cmd,
                                      int argc, char **argv)
@@ -434,10 +556,16 @@ static int memory_spd_print_type_cmd(struct platform_intf *intf,
 			errno = EINVAL;
 			return -1;
 		}
-		memory_spd_print_type(intf, dimm);
+		if (intf->cb->memory->spd)
+			memory_spd_print_type(intf, dimm);
+		else
+			memory_nonspd_print_type(intf, dimm);
 	} else {
 		do {
-			memory_spd_print_type(intf, dimm);
+			if (intf->cb->memory->spd)
+				memory_spd_print_type(intf, dimm);
+			else
+				memory_nonspd_print_type(intf, dimm);
 			dimm++;
 		} while (dimm < last_dimm);
 	}

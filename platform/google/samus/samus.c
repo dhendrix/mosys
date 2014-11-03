@@ -123,6 +123,8 @@ static int samus_setup_post(struct platform_intf *intf)
 
 static int samus_destroy(struct platform_intf *intf)
 {
+	intf->cb->ec->destroy(intf, intf->cb->ec);
+	intf->cb->pd->destroy(intf, intf->cb->pd);
 	return 0;
 }
 
@@ -143,7 +145,7 @@ struct platform_cb samus_cb = {
 	.memory		= &samus_memory_cb,
 	.nvram		= &samus_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,
-	.sys 		= &samus_sys_cb,
+	.sys		= &samus_sys_cb,
 	.eventlog	= &samus_eventlog_cb,
 };
 

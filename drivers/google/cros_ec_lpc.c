@@ -89,11 +89,12 @@ static int wait_for_ec(struct platform_intf *intf,
  **************************** EC API v3 ****************************
  */
 static int cros_ec_command_lpc_v3(struct platform_intf *intf,
+				  struct ec_cb *ec,
 				  int command, int command_version,
 				  const void *indata, int insize,
 				  const void *outdata, int outsize)
 {
-	struct cros_ec_priv *priv = intf->cb->ec->priv;
+	struct cros_ec_priv *priv = ec->priv;
 	struct ec_host_request rq;
 	struct ec_host_response rs;
 	const uint8_t *d;
@@ -191,9 +192,10 @@ static int cros_ec_command_lpc_v3(struct platform_intf *intf,
 /* Sends a versioned command to the EC.  Returns the command status code,
  * or -1 if other error. */
 static int cros_ec_command_lpc_v1(struct platform_intf *intf,
-			       int command, int command_version,
-			       const void *indata, int insize,
-			       const void *outdata, int outsize)
+				  struct ec_cb *ec_unused,
+			          int command, int command_version,
+			          const void *indata, int insize,
+			          const void *outdata, int outsize)
 {
 	struct ec_lpc_host_args args = {
 		.flags = EC_HOST_ARGS_FLAG_FROM_HOST,
@@ -292,9 +294,10 @@ static int cros_ec_command_lpc_v1(struct platform_intf *intf,
 /* Sends a command to the EC.  Returns the command status code, or
  * -1 if other error. */
 static int cros_ec_command_lpc_v0(struct platform_intf *intf,
-			       int command, int command_version,
-			       const void *indata, int insize,
-			       const void *outdata, int outsize)
+				  struct ec_cb *ec_unused,
+			          int command, int command_version,
+			          const void *indata, int insize,
+			          const void *outdata, int outsize)
 {
 	uint8_t *d;
 	int i;
@@ -381,6 +384,7 @@ static int cros_ec_command_lpc_detect(struct platform_intf *intf)
 /* Sends a command to the EC.  Returns the command status code, or
  * -1 if other error. */
 static int cros_ec_command_lpc(struct platform_intf *intf,
+			   struct ec_cb *ec,
 			   int command, int command_version,
 			   const void *indata, int insize,
 			   const void *outdata, int outsize)
@@ -388,7 +392,7 @@ static int cros_ec_command_lpc(struct platform_intf *intf,
 	struct cros_ec_priv *priv;
 	int rc = -1;
 
-	if (!intf->cb || !intf->cb->ec || !intf->cb->ec->priv)
+	if (!intf->cb || !ec || !ec->priv)
 		return -1;
 	priv = intf->cb->ec->priv;
 
@@ -411,7 +415,7 @@ static int cros_ec_command_lpc(struct platform_intf *intf,
 	}
 
 	if (priv && priv->raw)
-		rc = priv->raw(intf, command, command_version,
+		rc = priv->raw(intf, ec, command, command_version,
 			       indata, insize, outdata, outsize);
 
 	release_cros_ec_lock();
@@ -424,12 +428,6 @@ struct cros_ec_priv cros_ec_priv_lpc = {
 	.device_index	= 0,
 };
 
-struct cros_ec_priv cros_pd_priv_lpc = {
-	.cmd		= &cros_ec_command_lpc,
-	.addr.io	= EC_LPC_ADDR_HOST_CMD,
-	.device_index	= 1,
-};
-
 /* returns 1 if EC detected, 0 if not, <0 to indicate failure */
 int cros_ec_probe_lpc(struct platform_intf *intf)
 {
@@ -438,13 +436,19 @@ int cros_ec_probe_lpc(struct platform_intf *intf)
 	lprintf(LOG_DEBUG, "%s: probing for CrOS EC on LPC...\n", __func__);
 
 	intf->cb->ec->priv = &cros_ec_priv_lpc;
-	ret = cros_ec_detect(intf);
+	ret = cros_ec_detect(intf, intf->cb->ec);
 	if (ret == 1) {
 		lprintf(LOG_DEBUG, "CrOS EC detected on LPC bus\n");
 	}
 
 	return ret;
 }
+
+struct cros_ec_priv cros_pd_priv_lpc = {
+	.cmd            = &cros_ec_command_lpc,
+	.addr.io        = EC_LPC_ADDR_HOST_CMD,
+	.device_index   = 1,
+};
 
 /* returns 1 if EC detected, 0 if not, <0 to indicate failure */
 int cros_pd_probe_lpc(struct platform_intf *intf)
@@ -454,7 +458,7 @@ int cros_pd_probe_lpc(struct platform_intf *intf)
 	lprintf(LOG_DEBUG, "%s: probing for CrOS PD on LPC...\n", __func__);
 
 	intf->cb->pd->priv = &cros_pd_priv_lpc;
-	ret = cros_ec_detect(intf);
+	ret = cros_ec_detect(intf, intf->cb->pd);
 	if (ret == 1) {
 		lprintf(LOG_DEBUG, "CrOS PD detected on LPC bus\n");
 	}

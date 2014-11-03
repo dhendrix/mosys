@@ -41,6 +41,7 @@ enum rush_type {
 
 extern enum rush_type get_rush_type(struct platform_intf *intf);
 extern int rush_ec_setup(struct platform_intf *intf);
+extern int rush_sh_setup(struct platform_intf *intf);
 
 /* platform callbacks */
 extern struct eeprom_cb rush_eeprom_cb;	        /* eeprom.c */

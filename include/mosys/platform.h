@@ -401,12 +401,12 @@ struct legacy_ec_cb {
 };
 
 struct ec_cb {
-	const char *(*vendor)(struct platform_intf *intf);
-	const char *(*name)(struct platform_intf *intf);
-	const char *(*fw_version)(struct platform_intf *intf);
+	const char *(*vendor)(struct platform_intf *intf, struct ec_cb *ec);
+	const char *(*name)(struct platform_intf *intf, struct ec_cb *ec);
+	const char *(*fw_version)(struct platform_intf *intf, struct ec_cb *ec);
 
-	int (*setup)(struct platform_intf *intf);
-	int (*destroy)(struct platform_intf *intf);
+	int (*setup)(struct platform_intf *intf, struct ec_cb *ec);
+	int (*destroy)(struct platform_intf *intf, struct ec_cb *ec);
 
 	void *priv;	/* private data for EC */
 };
@@ -461,14 +461,14 @@ struct storage_cb {
 
 /* platform-specific callbacks */
 struct platform_cb {
-	struct sensor_cb *sensor; 	/* sensor callbacks */
-	struct memory_cb *memory; 	/* memory callbacks */
-	struct eventlog_cb *eventlog; 	/* eventlog callbacks */
-	struct bootnum_cb *bootnum; 	/* boot number callbacks */
+	struct sensor_cb *sensor;	/* sensor callbacks */
+	struct memory_cb *memory;	/* memory callbacks */
+	struct eventlog_cb *eventlog;	/* eventlog callbacks */
+	struct bootnum_cb *bootnum;	/* boot number callbacks */
 	struct smbios_cb *smbios;	/* smbios related callbacks */
-	struct sys_cb *sys;	 	/* system callbacks */
-	struct flash_cb *flash; 	/* flash related callbacks */
-	struct nvram_cb *nvram; 	/* nvram related callbacks */
+	struct sys_cb *sys;		/* system callbacks */
+	struct flash_cb *flash;		/* flash related callbacks */
+	struct nvram_cb *nvram;		/* nvram related callbacks */
 	struct gpio_cb *gpio;		/* gpio callbacks */
 	struct eeprom_cb *eeprom;	/* eeprom callbacks */
 	struct fru_cb *fru;		/* fru callbacks */
@@ -504,7 +504,7 @@ struct platform_intf {
 	int (*setup)(struct platform_intf *intf);
 	int (*setup_post)(struct platform_intf *intf);
 	int (*destroy)(struct platform_intf *intf);
-    const char *version_id;		/*platform board id */
+	const char *version_id;		/*platform board id */
 };
 
 /* The global list of all platforms. */

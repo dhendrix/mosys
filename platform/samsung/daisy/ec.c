@@ -40,6 +40,7 @@
 struct cros_ec_priv daisy_ec_priv = {
 	.addr.i2c.bus	= DAISY_EC_BUS,		/* may be overridden */
 	.addr.i2c.addr	= DAISY_EC_ADDRESS,
+	.device_name	= CROS_EC_DEV_NAME,
 };
 
 int daisy_ec_setup(struct platform_intf *intf)
@@ -48,14 +49,14 @@ int daisy_ec_setup(struct platform_intf *intf)
 	intf->cb->ec->priv = &daisy_ec_priv;
 
 	/* Use cros_ec device if available, fall back on raw I2C if needed. */
-	if ((cros_ec_probe_dev(intf) == 1) && (cros_ec_detect(intf) == 1)) {
+	if (cros_ec_probe_dev(intf, intf->cb->ec) == 1) {
 		lprintf(LOG_DEBUG, "CrOS EC found using /dev interface\n");
 		return 1;
 	} else {
 		lprintf(LOG_DEBUG, "CrOS EC not found with cros_ec driver\n");
 	}
 
-	if ((cros_ec_probe_i2c(intf) == 1) && (cros_ec_detect(intf) == 1)) {
+	if (cros_ec_probe_i2c(intf) == 1) {
 		lprintf(LOG_DEBUG, "CrOS EC found using raw I2C interface\n");
 		return 1;
 	} else {

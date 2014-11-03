@@ -54,6 +54,7 @@ const char *rush_ryu_id_list[] = {
 
 struct platform_cmd *rush_sub[] = {
 	&cmd_ec,
+	&cmd_sh,
 	&cmd_eeprom,
 	&cmd_gpio,
 	&cmd_nvram,
@@ -92,12 +93,16 @@ static int rush_setup_post(struct platform_intf *intf)
 	if (rush_ec_setup(intf) <= 0)
 		return -1;
 
+	if (rush_sh_setup(intf) <= 0)
+		return -1;
+
 	return 0;
 }
 
 static int rush_destroy(struct platform_intf *intf)
 {
-	intf->cb->ec->destroy(intf);
+	intf->cb->ec->destroy(intf, intf->cb->ec);
+	intf->cb->sh->destroy(intf, intf->cb->sh);
 	return 0;
 }
 
@@ -114,10 +119,11 @@ struct eventlog_cb rush_eventlog_cb = {
 };
 
 struct platform_cb rush_cb = {
-	.ec 		= &cros_ec_cb,
-	.eeprom 	= &rush_eeprom_cb,
+	.ec		= &cros_ec_cb,
+	.sh		= &cros_sh_cb,
+	.eeprom		= &rush_eeprom_cb,
 	.nvram		= &cros_ec_nvram_cb,
-	.sys 		= &rush_sys_cb,
+	.sys		= &rush_sys_cb,
 	.eventlog	= &rush_eventlog_cb,
 };
 

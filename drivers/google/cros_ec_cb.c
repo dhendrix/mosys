@@ -38,7 +38,7 @@
 #include "drivers/google/cros_ec.h"
 #include "drivers/google/cros_ec_commands.h"
 
-static const char *cros_ec_name(struct platform_intf *intf)
+static const char *cros_ec_name(struct platform_intf *intf, struct ec_cb *ec)
 {
 	static const char *name = NULL;
 	struct ec_response_get_chip_info chip_info;
@@ -46,7 +46,7 @@ static const char *cros_ec_name(struct platform_intf *intf)
 	if (name)
 		return name;
 
-	if (cros_ec_chip_info(intf, &chip_info))
+	if (cros_ec_chip_info(intf, ec, &chip_info))
 		return NULL;
 
 	name = mosys_strdup(chip_info.name);
@@ -54,7 +54,7 @@ static const char *cros_ec_name(struct platform_intf *intf)
 	return name;
 }
 
-static const char *cros_ec_vendor(struct platform_intf *intf)
+static const char *cros_ec_vendor(struct platform_intf *intf, struct ec_cb *ec)
 {
 	static const char *vendor = NULL;
 	struct ec_response_get_chip_info chip_info;
@@ -62,7 +62,7 @@ static const char *cros_ec_vendor(struct platform_intf *intf)
 	if (vendor)
 		return vendor;
 
-	if (cros_ec_chip_info(intf, &chip_info))
+	if (cros_ec_chip_info(intf, ec, &chip_info))
 		return NULL;
 
 	vendor = mosys_strdup(chip_info.vendor);
@@ -70,20 +70,33 @@ static const char *cros_ec_vendor(struct platform_intf *intf)
 	return vendor;
 }
 
-static const char *cros_ec_fw_version(struct platform_intf *intf)
+static const char *cros_ec_fw_version(struct platform_intf *intf,
+		struct ec_cb *ec)
 {
 	static const char *version = NULL;
 
 	if (version)
 		return version;
 
-	version = cros_ec_version(intf);
+	version = cros_ec_version(intf, ec);
 	if (version)
 		add_destroy_callback(free, (void *)version);
 	return version;
 }
 
 struct ec_cb cros_ec_cb = {
+	.vendor		= cros_ec_vendor,
+	.name		= cros_ec_name,
+	.fw_version	= cros_ec_fw_version,
+};
+
+struct ec_cb cros_pd_cb = {
+	.vendor		= cros_ec_vendor,
+	.name		= cros_ec_name,
+	.fw_version	= cros_ec_fw_version,
+};
+
+struct ec_cb cros_sh_cb = {
 	.vendor		= cros_ec_vendor,
 	.name		= cros_ec_name,
 	.fw_version	= cros_ec_fw_version,

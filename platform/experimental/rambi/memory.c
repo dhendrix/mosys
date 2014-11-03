@@ -147,7 +147,7 @@ static int rambi_dimm_count(struct platform_intf *intf)
 	} else if (!strncmp(intf->name, "Expresso", 8) ||
 		   !strncmp(intf->name, "Rambi", 5)) {
 		int index = rambi_get_spd_index(intf);
-		if (cros_ec_board_version(intf) < 1) {
+		if (cros_ec_board_version(intf, intf->cb->ec) < 1) {
 			/*
 			 * {0,0,0} = 2 x 2GiB Micron
 			 * {0,0,1} = 2 x 2GiB Hynix

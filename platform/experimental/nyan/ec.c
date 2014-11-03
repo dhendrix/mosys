@@ -34,7 +34,9 @@
 
 #include "drivers/google/cros_ec.h"
 
-struct cros_ec_priv nyan_ec_priv;
+struct cros_ec_priv nyan_ec_priv = {
+	.device_name	= CROS_EC_DEV_NAME,
+};
 
 int nyan_ec_setup(struct platform_intf *intf)
 {
@@ -43,7 +45,7 @@ int nyan_ec_setup(struct platform_intf *intf)
 	MOSYS_CHECK(intf->cb && intf->cb->ec);
 	intf->cb->ec->priv = &nyan_ec_priv;
 
-	ret = cros_ec_probe_dev(intf);
+	ret = cros_ec_probe_dev(intf, intf->cb->ec);
 	if (ret == 1)
 		lprintf(LOG_DEBUG, "CrOS EC found using /dev interface\n");
 	else if (ret == 0)

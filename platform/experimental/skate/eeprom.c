@@ -113,7 +113,7 @@ static size_t skate_ec_firmware_size(struct platform_intf *intf,
 {
 	struct ec_response_flash_info info;
 
-	if (cros_ec_flash_info(intf, &info) < 0) {
+	if (cros_ec_flash_info(intf, intf->cb->ec, &info) < 0) {
 		lprintf(LOG_ERR, "%s: Failed to obtain flash info\n", __func__);
 		return 0;
 	}

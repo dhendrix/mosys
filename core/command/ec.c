@@ -71,9 +71,11 @@ static int ec_info(struct platform_intf *intf,
 			goto ec_info_done;
 		}
 
-		kv_pair_add(kv, "vendor", intf->cb->ec->vendor(intf));
-		kv_pair_add(kv, "name", intf->cb->ec->name(intf));
-		kv_pair_add(kv, "fw_version", intf->cb->ec->fw_version(intf));
+		kv_pair_add(kv, "vendor",
+				intf->cb->ec->vendor(intf, intf->cb->ec));
+		kv_pair_add(kv, "name", intf->cb->ec->name(intf, intf->cb->ec));
+		kv_pair_add(kv, "fw_version",
+				intf->cb->ec->fw_version(intf, intf->cb->ec));
 	}
 
 	rc = kv_pair_print(kv);

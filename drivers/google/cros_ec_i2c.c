@@ -56,6 +56,7 @@
 /* Sends a command to the EC.  Returns the command status code, or
  * -1 if other error. */
 static int cros_ec_command_i2c(struct platform_intf *intf,
+			   struct ec_cb *ec,
 			   int command, int command_version,
 			   const void *indata, int insize,
 			   const void *outdata, int outsize) {
@@ -63,7 +64,7 @@ static int cros_ec_command_i2c(struct platform_intf *intf,
 	uint8_t *req_buf = NULL, *resp_buf = NULL;
 	int req_len = 0, resp_len = 0;
 	int i, len, csum;
-	struct cros_ec_priv *priv = intf->cb->ec->priv;
+	struct cros_ec_priv *priv = ec->priv;
 	struct i2c_addr *addr = &(priv->addr.i2c);
 
 	if (insize > EC_HOST_PARAM_SIZE || outsize > EC_HOST_PARAM_SIZE) {
@@ -289,7 +290,7 @@ int cros_ec_probe_i2c(struct platform_intf *intf)
 	}
 
 	priv->cmd = cros_ec_command_i2c;
-	ret = cros_ec_detect(intf);
+	ret = cros_ec_detect(intf, intf->cb->ec);
 	if (ret == 1)
 		lprintf(LOG_DEBUG, "CrOS EC detected on I2C bus\n");
 

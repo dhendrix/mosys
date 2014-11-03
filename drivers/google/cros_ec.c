@@ -44,16 +44,16 @@
 
 #include "lib/math.h"
 
-int cros_ec_hello(struct platform_intf *intf)
+int cros_ec_hello(struct platform_intf *intf, struct ec_cb *ec)
 {
 	struct ec_params_hello p;
 	struct ec_response_hello r;
 	int rv;
-	struct cros_ec_priv *priv = intf->cb->ec->priv;
+	struct cros_ec_priv *priv = ec->priv;
 
 	p.in_data = 0xa0b0c0d0;
 
-	rv = priv->cmd(intf, EC_CMD_HELLO, 0, &p,
+	rv = priv->cmd(intf, ec, EC_CMD_HELLO, 0, &p,
 		       sizeof(p), &r, sizeof(r));
 	if (rv)
 		return rv;
@@ -68,14 +68,14 @@ int cros_ec_hello(struct platform_intf *intf)
 	return rv;
 }
 
-const char *cros_ec_version(struct platform_intf *intf)
+const char *cros_ec_version(struct platform_intf *intf, struct ec_cb *ec)
 {
 	static const char *const fw_copies[] = { "unknown", "RO", "RW" };
 	struct ec_response_get_version r;
 	const char *ret = NULL;
-	struct cros_ec_priv *priv = intf->cb->ec->priv;
+	struct cros_ec_priv *priv = ec->priv;
 
-	if (priv->cmd(intf, EC_CMD_GET_VERSION, 0, &r, sizeof(r), NULL, 0))
+	if (priv->cmd(intf, ec, EC_CMD_GET_VERSION, 0, &r, sizeof(r), NULL, 0))
 		return NULL;
 
 	/* Ensure versions are null-terminated before we print them */
@@ -104,13 +104,13 @@ const char *cros_ec_version(struct platform_intf *intf)
 	return ret;
 }
 
-int cros_ec_board_version(struct platform_intf *intf)
+int cros_ec_board_version(struct platform_intf *intf, struct ec_cb *ec)
 {
-	struct cros_ec_priv *priv = intf->cb->ec->priv;
+	struct cros_ec_priv *priv = ec->priv;
 	struct ec_response_board_version r;
 	int rc = 0;
 
-	rc = priv->cmd(intf, EC_CMD_GET_BOARD_VERSION, 0,
+	rc = priv->cmd(intf, ec, EC_CMD_GET_BOARD_VERSION, 0,
 		       &r, sizeof(r), NULL, 0);
 	if (rc)
 		return 0;
@@ -120,13 +120,13 @@ int cros_ec_board_version(struct platform_intf *intf)
 	return r.board_version;
 }
 
-int cros_ec_chip_info(struct platform_intf *intf,
+int cros_ec_chip_info(struct platform_intf *intf, struct ec_cb *ec,
 		  struct ec_response_get_chip_info *info)
 {
 	int rc = 0;
-	struct cros_ec_priv *priv = intf->cb->ec->priv;
+	struct cros_ec_priv *priv = ec->priv;
 
-	rc = priv->cmd(intf, EC_CMD_GET_CHIP_INFO, 0,
+	rc = priv->cmd(intf, ec,EC_CMD_GET_CHIP_INFO, 0,
 		       info, sizeof(*info), NULL, 0);
 	if (rc)
 		return rc;
@@ -138,13 +138,13 @@ int cros_ec_chip_info(struct platform_intf *intf,
 	return rc;
 }
 
-int cros_ec_flash_info(struct platform_intf *intf,
+int cros_ec_flash_info(struct platform_intf *intf, struct ec_cb *ec,
 		   struct ec_response_flash_info *info)
 {
 	int rc = 0;
-	struct cros_ec_priv *priv = intf->cb->ec->priv;
+	struct cros_ec_priv *priv = ec->priv;
 
-	rc = priv->cmd(intf, EC_CMD_FLASH_INFO, 0,
+	rc = priv->cmd(intf, ec, EC_CMD_FLASH_INFO, 0,
 		       info, sizeof(*info), NULL, 0);
 	if (rc)
 		return rc;
@@ -161,7 +161,7 @@ int cros_ec_flash_info(struct platform_intf *intf,
 }
 
 /* returns 1 if EC detected, 0 if not, <0 to indicate failure */
-int cros_ec_detect(struct platform_intf *intf)
+int cros_ec_detect(struct platform_intf *intf, struct ec_cb *ec)
 {
 	struct ec_params_hello request;
 	struct ec_response_hello response;
@@ -169,16 +169,16 @@ int cros_ec_detect(struct platform_intf *intf)
 	int ret = 0;
 	struct cros_ec_priv *priv;
 
-	if (!intf->cb || !intf->cb->ec || !intf->cb->ec->priv)
+	if (!intf->cb || !ec || !ec->priv)
 		return -1;
-	priv = intf->cb->ec->priv;
+	priv = ec->priv;
 
 	/* Say hello to EC. */
 	request.in_data = 0xf0e0d0c0;  /* Expect EC will add on 0x01020304. */
 
 	lprintf(LOG_DEBUG, "%s: sending HELLO request with 0x%08x\n",
 		__func__, request.in_data);
-	result  = priv->cmd(intf, EC_CMD_HELLO, 0,
+	result  = priv->cmd(intf, ec, EC_CMD_HELLO, 0,
 			    &response, sizeof(response),
 			    &request, sizeof(request));
 	lprintf(LOG_DEBUG, "%s: response: 0x%08x\n",
@@ -195,20 +195,21 @@ int cros_ec_detect(struct platform_intf *intf)
 	return ret;
 }
 
-int cros_ec_vbnvcontext_read(struct platform_intf *intf, uint8_t *block)
+int cros_ec_vbnvcontext_read(struct platform_intf *intf, struct ec_cb *ec,
+			     uint8_t *block)
 {
 	struct ec_params_vbnvcontext request;
 	struct cros_ec_priv *priv;
 	int result;
 
-	if (!intf->cb || !intf->cb->ec || !intf->cb->ec->priv)
+	if (!intf->cb || !ec || !ec->priv)
 		return -1;
 	priv = intf->cb->ec->priv;
 
 	lprintf(LOG_DEBUG, "%s: sending VBNV_CONTEXT read request\n",
 		__func__);
 	request.op = EC_VBNV_CONTEXT_OP_READ;
-	result = priv->cmd(intf, EC_CMD_VBNV_CONTEXT, EC_VER_VBNV_CONTEXT,
+	result = priv->cmd(intf, ec, EC_CMD_VBNV_CONTEXT, EC_VER_VBNV_CONTEXT,
 			   block, EC_VBNV_BLOCK_SIZE,
 			   &request, sizeof(request.op));
 	if (result) {
@@ -219,21 +220,22 @@ int cros_ec_vbnvcontext_read(struct platform_intf *intf, uint8_t *block)
 	return 0;
 }
 
-int cros_ec_vbnvcontext_write(struct platform_intf *intf, const uint8_t *block)
+int cros_ec_vbnvcontext_write(struct platform_intf *intf, struct ec_cb *ec,
+			      const uint8_t *block)
 {
 	struct ec_params_vbnvcontext request;
 	struct cros_ec_priv *priv;
 	int result;
 
-	if (!intf->cb || !intf->cb->ec || !intf->cb->ec->priv)
+	if (!intf->cb || !ec || !ec->priv)
 		return -1;
-	priv = intf->cb->ec->priv;
+	priv = ec->priv;
 
 	lprintf(LOG_DEBUG, "%s: sending VBNV_CONTEXT write request\n",
 		__func__);
 	request.op = EC_VBNV_CONTEXT_OP_WRITE;
 	memcpy(request.block, block, sizeof(request.block));
-	result = priv->cmd(intf, EC_CMD_VBNV_CONTEXT, EC_VER_VBNV_CONTEXT,
+	result = priv->cmd(intf, ec, EC_CMD_VBNV_CONTEXT, EC_VER_VBNV_CONTEXT,
 			   NULL, 0,
 			   &request, sizeof(request));
 	if (result) {
@@ -251,7 +253,7 @@ int cros_ec_vboot_read(struct platform_intf *intf)
 	char hexstring[EC_VBNV_BLOCK_SIZE * 2 + 1];
 	int i, rc;
 
-	if (cros_ec_vbnvcontext_read(intf, block))
+	if (cros_ec_vbnvcontext_read(intf, intf->cb->ec, block))
 		return -1;
 
 	for (i = 0; i < EC_VBNV_BLOCK_SIZE; i++)
@@ -287,7 +289,7 @@ int cros_ec_vboot_write(struct platform_intf *intf, const char *hexstring)
 		block[i] = strtol(hexdigit, NULL, 16);
 	}
 
-	return cros_ec_vbnvcontext_write(intf, block);
+	return cros_ec_vbnvcontext_write(intf, intf->cb->ec, block);
 }
 
 struct nvram_cb cros_ec_nvram_cb = {

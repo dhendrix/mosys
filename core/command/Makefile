@@ -12,6 +12,7 @@ obj-y		+= pd.o
 obj-y		+= platform.o
 obj-y		+= psu.o
 obj-y		+= sensor.o
+obj-y		+= sh.o
 obj-y		+= smbios.o
 obj-y		+= storage.o
 obj-y		+= vpd.o

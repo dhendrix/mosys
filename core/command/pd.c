@@ -53,9 +53,10 @@ static int pd_info(struct platform_intf *intf,
 
 	kv = kv_pair_new();
 
-	kv_pair_add(kv, "vendor", intf->cb->pd->vendor(intf));
-	kv_pair_add(kv, "name", intf->cb->pd->name(intf));
-	kv_pair_add(kv, "fw_version", intf->cb->pd->fw_version(intf));
+	kv_pair_add(kv, "vendor", intf->cb->pd->vendor(intf, intf->cb->pd));
+	kv_pair_add(kv, "name", intf->cb->pd->name(intf, intf->cb->pd));
+	kv_pair_add(kv, "fw_version", intf->cb->pd->fw_version(intf,
+				intf->cb->pd));
 
 	rc = kv_pair_print(kv);
 	kv_pair_free(kv);

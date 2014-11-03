@@ -34,13 +34,22 @@
 
 #include "drivers/google/cros_ec.h"
 
+struct cros_ec_priv samus_ec_priv = {
+	.device_name	= CROS_EC_DEV_NAME,
+};
+
+struct cros_ec_priv samus_pd_priv = {
+	.device_name	= CROS_PD_DEV_NAME,
+};
+
 int samus_ec_setup(struct platform_intf *intf)
 {
 	int ret;
 
 	MOSYS_CHECK(intf->cb && intf->cb->ec);
+	intf->cb->ec->priv = &samus_ec_priv;
 
-	ret = cros_ec_probe_lpc(intf);
+	ret = cros_ec_probe_dev(intf, intf->cb->ec);
 	if (ret == 1)
 		lprintf(LOG_DEBUG, "CrOS EC found on LPC bus\n");
 	else if (ret == 0)
@@ -56,8 +65,9 @@ int samus_pd_setup(struct platform_intf *intf)
 	int ret;
 
 	MOSYS_CHECK(intf->cb && intf->cb->pd);
+	intf->cb->pd->priv = &samus_pd_priv;
 
-	ret = cros_pd_probe_lpc(intf);
+	ret = cros_ec_probe_dev(intf, intf->cb->pd);
 	if (ret == 1)
 		lprintf(LOG_DEBUG, "CrOS PD found on LPC bus\n");
 	else if (ret == 0)

@@ -53,6 +53,7 @@ extern struct platform_cmd cmd_edac;
 extern struct platform_cmd cmd_eeprom;
 extern struct platform_cmd cmd_vpd;
 extern struct platform_cmd cmd_ec;
+extern struct platform_cmd cmd_sh;
 extern struct platform_cmd cmd_pd;
 extern struct platform_cmd cmd_battery;
 extern struct platform_cmd cmd_storage;

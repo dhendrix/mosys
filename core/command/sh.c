@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2014 The Chromium OS Authors. All rights reserved.
+ * Copyright 2014, Google Inc.
+ * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -26,65 +27,55 @@
  * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * cros_pd_cb.c: PD accessor functions / callbacks for use in platform_intf
  */
 
-#include "mosys/alloc.h"
-#include "mosys/callbacks.h"
+#include <stdio.h>
+#include <errno.h>
+
+#include "mosys/kv_pair.h"
 #include "mosys/log.h"
 #include "mosys/platform.h"
 
-#include "drivers/google/cros_ec.h"
-#include "drivers/google/cros_ec_commands.h"
-
-static const char *cros_pd_name(struct platform_intf *intf)
+static int sh_info(struct platform_intf *intf,
+                   struct platform_cmd *cmd, int argc, char **argv)
 {
-	static const char *name = NULL;
-	struct ec_response_get_chip_info chip_info;
+	struct kv_pair *kv;
+	int rc;
 
-	if (name)
-		return name;
+	/* put sh vendor, name, and firmware version in kv=pair format */
+	if (!intf->cb->sh ||
+	    !intf->cb->sh->vendor ||
+	    !intf->cb->sh->name ||
+	    !intf->cb->sh->fw_version) {
+		errno = ENOSYS;
+		return -1;
+	}
 
-	if (cros_pd_chip_info(intf, &chip_info))
-		return NULL;
+	kv = kv_pair_new();
 
-	name = mosys_strdup(chip_info.name);
-	add_destroy_callback(free, (void *)name);
-	return name;
+	kv_pair_add(kv, "vendor", intf->cb->sh->vendor(intf, intf->cb->sh));
+	kv_pair_add(kv, "name", intf->cb->sh->name(intf, intf->cb->sh));
+	kv_pair_add(kv, "fw_version", intf->cb->sh->fw_version(intf, intf->cb->sh));
+
+	rc = kv_pair_print(kv);
+	kv_pair_free(kv);
+	return rc;
 }
 
-static const char *cros_pd_vendor(struct platform_intf *intf)
-{
-	static const char *vendor = NULL;
-	struct ec_response_get_chip_info chip_info;
+struct platform_cmd sh_cmds[] = {
+	{
+		.name	= "info",
+		.desc	= "Print basic sh information",
+		.type	= ARG_TYPE_GETTER,
+		.arg	= { .func = sh_info}
+	},
+	/* TODO: add a sub-menu for sh commands */
+	{ NULL }
+};
 
-	if (vendor)
-		return vendor;
-
-	if (cros_pd_chip_info(intf, &chip_info))
-		return NULL;
-
-	vendor = mosys_strdup(chip_info.vendor);
-	add_destroy_callback(free, (void *)vendor);
-	return vendor;
-}
-
-static const char *cros_pd_fw_version(struct platform_intf *intf)
-{
-	static const char *version = NULL;
-
-	if (version)
-		return version;
-
-	version = cros_pd_version(intf);
-	if (version)
-		add_destroy_callback(free, (void *)version);
-	return version;
-}
-
-struct ec_cb cros_pd_cb = {
-	.vendor		= cros_pd_vendor,
-	.name		= cros_pd_name,
-	.fw_version	= cros_pd_fw_version,
+struct platform_cmd cmd_sh = {
+	.name	= "sh",
+	.desc	= "sensor hub information",
+	.type	= ARG_TYPE_SUB,
+	.arg	= { .sub = sh_cmds }
 };

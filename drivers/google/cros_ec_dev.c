@@ -45,10 +45,7 @@
 
 #include "lib/file.h"
 
-#define CROS_EC_DEV_NAME		"/dev/cros_ec"
 #define CROS_EC_COMMAND_RETRIES	50
-
-static int cros_ec_fd;		/* File descriptor of CROS_EC_DEV_NAME */
 
 /*
  * Wait for a command to complete, then return the response
@@ -59,7 +56,7 @@ static int cros_ec_fd;		/* File descriptor of CROS_EC_DEV_NAME */
  *
  * returns 0 if command is successful, <0 to indicate timeout or error
  */
-static int command_wait_for_response(void)
+static int command_wait_for_response(struct cros_ec_priv *priv)
 {
 	struct ec_response_get_comms_status status;
 	struct cros_ec_command cmd;
@@ -74,7 +71,8 @@ static int command_wait_for_response(void)
 	cmd.insize = sizeof(status);
 
 	for (i = 1; i <= CROS_EC_COMMAND_RETRIES; i++) {
-		ret = ioctl(cros_ec_fd, CROS_EC_DEV_IOCXCMD, &cmd, sizeof(cmd));
+		ret = ioctl(priv->addr.fd, CROS_EC_DEV_IOCXCMD, &cmd,
+			    sizeof(cmd));
 		if (ret) {
 			lprintf(LOG_ERR, "%s: CrOS EC command failed: %d\n",
 				 __func__, ret);
@@ -110,26 +108,26 @@ static int command_wait_for_response(void)
  *
  * Returns >=0 for success, or negative if other error.
  */
-static int cros_ec_command_dev(struct platform_intf *intf, int command,
-			   int version, const void *indata, int insize,
-			   const void *outdata, int outsize)
+static int cros_ec_command_dev(struct platform_intf *intf, struct ec_cb *ec,
+		int command, int version, const void *indata, int insize,
+		const void *outdata, int outsize)
 {
 	struct cros_ec_priv *priv;
 	struct cros_ec_command cmd;
 	int ret;
 
-	MOSYS_DCHECK(intf->cb->ec && intf->cb->ec->priv);
-	priv = intf->cb->ec->priv;
+	MOSYS_DCHECK(ec && ec->priv);
+	priv = ec->priv;
 
 	cmd.version = version;
-	cmd.command = command | EC_CMD_PASSTHRU_OFFSET(priv->device_index);
+	cmd.command = command;
 	cmd.outdata = outdata;
 	cmd.outsize = outsize;
 	cmd.indata = (uint8_t *)indata;
 	cmd.insize = insize;
-	ret = ioctl(cros_ec_fd, CROS_EC_DEV_IOCXCMD, &cmd, sizeof(cmd));
+	ret = ioctl(priv->addr.fd, CROS_EC_DEV_IOCXCMD, &cmd, sizeof(cmd));
 	if (ret < 0 && errno == -EAGAIN)
-		ret = command_wait_for_response();
+		ret = command_wait_for_response(priv);
 
 	if (ret < 0) {
 		lprintf(LOG_ERR, "%s: Transfer failed: %d\n", __func__, ret);
@@ -139,31 +137,33 @@ static int cros_ec_command_dev(struct platform_intf *intf, int command,
 	return 0; /* Should we return ret here? */
 }
 
-static int cros_ec_close_dev(struct platform_intf *intf)
+static int cros_ec_close_dev(struct platform_intf *intf, struct ec_cb *ec)
 {
-	return close(cros_ec_fd);
+	struct cros_ec_priv *priv;
+	priv = ec->priv;
+	return close(priv->addr.fd);
 }
 
 /* returns 1 if EC detected, 0 if not, <0 to indicate failure */
-int cros_ec_probe_dev(struct platform_intf *intf)
+int cros_ec_probe_dev(struct platform_intf *intf, struct ec_cb *ec)
 {
 	int ret = 0;
 	struct cros_ec_priv *priv;
 	char filename[PATH_MAX];
 
-	MOSYS_DCHECK(intf->cb->ec && intf->cb->ec->priv);
-	priv = intf->cb->ec->priv;
+	MOSYS_DCHECK(ec && ec->priv);
+	priv = ec->priv;
 
-	sprintf(filename, "%s/%s", mosys_get_root_prefix(), CROS_EC_DEV_NAME);
-	cros_ec_fd = open(filename, O_RDWR);
-	if (cros_ec_fd < 0) {
+	sprintf(filename, "%s/%s", mosys_get_root_prefix(), priv->device_name);
+	priv->addr.fd = open(filename, O_RDWR);
+	if (priv->addr.fd < 0) {
 		lprintf(LOG_DEBUG, "%s: unable to open \"%s\"\n",
 				__func__, filename);
 		ret = -1;
 	} else {
-		intf->cb->ec->destroy = cros_ec_close_dev;
+		ec->destroy = cros_ec_close_dev;
 		priv->cmd = cros_ec_command_dev;
-		ret = 1;
+		ret = cros_ec_detect(intf, ec);
 	}
 
 	return ret;

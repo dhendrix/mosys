@@ -90,7 +90,7 @@ static int pinky_setup_post(struct platform_intf *intf)
 
 static int pinky_destroy(struct platform_intf *intf)
 {
-	intf->cb->ec->destroy(intf);
+	intf->cb->ec->destroy(intf, intf->cb->ec);
 	return 0;
 }
 

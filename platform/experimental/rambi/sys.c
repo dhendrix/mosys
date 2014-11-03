@@ -46,7 +46,7 @@ static struct valstr rambi_board_version[] = {
 
 static const char *rambi_get_version(struct platform_intf *intf)
 {
-	return mosys_strdup(val2str(cros_ec_board_version(intf),
+	return mosys_strdup(val2str(cros_ec_board_version(intf, intf->cb->ec),
 				    rambi_board_version));
 }
 

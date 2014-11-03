@@ -42,12 +42,12 @@ struct ec_response_flash_info;
 
 struct cros_ec_priv {
 	/* Wrapped with EC lock */
-	int (*cmd)(struct platform_intf *intf,
+	int (*cmd)(struct platform_intf *intf, struct ec_cb *ec,
 		   int command, int command_version,
 		   const void *indata, int insize,
 		   const void *outdata, int outsize);
 	/* Low level command function, bus and version specific */
-	int (*raw)(struct platform_intf *intf,
+	int (*raw)(struct platform_intf *intf, struct ec_cb *ec,
 		   int command, int command_version,
 		   const void *indata, int insize,
 		   const void *outdata, int outsize);
@@ -55,29 +55,34 @@ struct cros_ec_priv {
 	union {
 		struct i2c_addr i2c;
 		uint16_t io;
+		int fd;
 	} addr;
 	int device_index;
+	char* device_name;
 };
 
 extern struct ec_cb cros_ec_cb;
 extern struct ec_cb cros_pd_cb;
+extern struct ec_cb cros_sh_cb;
 
 /* EC commands */
-extern int cros_ec_hello(struct platform_intf *intf);
-const char *cros_ec_version(struct platform_intf *intf);
-extern int cros_ec_chip_info(struct platform_intf *intf,
+extern int cros_ec_hello(struct platform_intf *intf, struct ec_cb *ec);
+const char *cros_ec_version(struct platform_intf *intf, struct ec_cb *ec);
+extern int cros_ec_chip_info(struct platform_intf *intf, struct ec_cb *ec,
 		         struct ec_response_get_chip_info *info);
-extern int cros_ec_flash_info(struct platform_intf *intf,
+extern int cros_ec_flash_info(struct platform_intf *intf, struct ec_cb *ec,
 		         struct ec_response_flash_info *info);
-extern int cros_ec_detect(struct platform_intf *intf);
-extern int cros_ec_probe_dev(struct platform_intf *intf);
+extern int cros_ec_detect(struct platform_intf *intf, struct ec_cb *ec);
+extern int cros_ec_board_version(struct platform_intf *intf, struct ec_cb *ec);
+
+extern int cros_ec_vbnvcontext_read(struct platform_intf *intf,
+		struct ec_cb *ec, uint8_t *block);
+extern int cros_ec_vbnvcontext_write(struct platform_intf *intf,
+		struct ec_cb *ec, const uint8_t *block);
+
+extern int cros_ec_probe_dev(struct platform_intf *intf, struct ec_cb *ec);
 extern int cros_ec_probe_i2c(struct platform_intf *intf);
 extern int cros_ec_probe_lpc(struct platform_intf *intf);
-extern int cros_ec_board_version(struct platform_intf *intf);
-
-extern int cros_ec_vbnvcontext_read(struct platform_intf *intf, uint8_t *block);
-extern int cros_ec_vbnvcontext_write(struct platform_intf *intf,
-				 const uint8_t *block);
 
 /* PD commands */
 extern int cros_pd_probe_lpc(struct platform_intf *intf);
@@ -88,5 +93,9 @@ extern int cros_pd_chip_info(struct platform_intf *intf,
 extern int cros_pd_flash_info(struct platform_intf *intf,
 		         struct ec_response_flash_info *info);
 extern int cros_pd_detect(struct platform_intf *intf);
+
+#define CROS_EC_DEV_NAME		"/dev/cros_ec"
+#define CROS_PD_DEV_NAME		"/dev/cros_pd"
+#define CROS_SH_DEV_NAME		"/dev/cros_sh"
 
 #endif	/* MOSYS_DRIVERS_EC_GOOGLE__ */

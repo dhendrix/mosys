@@ -42,8 +42,14 @@
 #include "mosys/intf_list.h"
 #include "mosys/log.h"
 
+enum pinky_boards {
+	JERRY,
+	PINKY,
+};
+
 const char *pinky_id_list[] = {
-	"google,veyron-pinky",
+	[JERRY] = "google,veyron-jerry",
+	[PINKY] = "google,veyron-pinky",
 	NULL,
 };
 
@@ -67,8 +73,10 @@ int pinky_probe(struct platform_intf *intf)
 	if (index >= 0) {
 		lprintf(LOG_DEBUG, "Found platform \"%s\" via FDT compatible "
 				"node.\n", pinky_id_list[index]);
-	}
 
+		if (index == JERRY)
+			intf->name = "Jerry";
+	}
 
 	return index >= 0 ? 1 : 0;
 }

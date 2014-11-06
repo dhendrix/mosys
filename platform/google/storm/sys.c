@@ -46,8 +46,7 @@ static const char *storm_get_vendor(struct platform_intf *intf)
 
 static const char *storm_get_name(struct platform_intf *intf)
 {
-	/* FIXME: implement this (properly) */
-	return mosys_strdup("Storm");
+	return mosys_strdup(intf->name);
 }
 
 struct sys_cb storm_sys_cb = {

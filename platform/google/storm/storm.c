@@ -43,8 +43,14 @@
 
 #include "storm.h"
 
-const char *storm_id_list[] = {
-	"google,storm",
+enum storm_boards {
+	STORM,
+	WHIRLWIND,
+};
+
+static const char *id_list[] = {
+	[STORM] = "google,storm",
+	[WHIRLWIND] = "google,whirlwind",
 	NULL,
 };
 
@@ -62,11 +68,13 @@ int storm_probe(struct platform_intf *intf)
 {
 	int index;
 
-	index = probe_fdt_compatible(&storm_id_list[0],
-					ARRAY_SIZE(storm_id_list), 1);
+	index = probe_fdt_compatible(&id_list[0], ARRAY_SIZE(id_list), 1);
 	if (index >= 0) {
 		lprintf(LOG_DEBUG, "Found platform \"%s\" via FDT compatible "
-				"node.\n", storm_id_list[index]);
+				"node.\n", id_list[index]);
+
+		if (index == WHIRLWIND)
+			intf->name = "Whirlwind";
 	}
 
 

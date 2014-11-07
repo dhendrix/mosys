@@ -54,11 +54,29 @@ const struct nonspd_mem_info samsung_k4b4g1646d = {
 		  '-', 'B', 'Y', 'K', '0' },
 };
 
+const struct nonspd_mem_info micron_mt41k256m16ha = {
+	.dram_type		= SPD_DRAM_TYPE_DDR3,
+	.module_type.ddr3_type	= DDR3_MODULE_TYPE_UNDEFINED,
+
+	.module_size_mbits	= 4096,
+	.num_ranks		= 1,
+	.device_width		= 16,
+	.ddr_freq 		= { DDR_533, DDR_667, DDR_800 },
+
+	.module_mfg_id		= { .msb = 0x2c, .lsb = 0x00 },
+	.dram_mfg_id		= { .msb = 0x2c, .lsb = 0x00 },
+
+	.serial_num 		= { 0, 0, 0, 0 },
+	.part_num		= { 'M', 'T', '4', '1', 'K', '2', '5', '6', 'M',
+				    '1', '6', 'H', 'A', '-', '1', '2', '5' },
+};
+
 /* Treat each module as a logical "DIMM" */
 #define STORM_DIMM_COUNT	2
 
 enum storm_memory_config {
 	SAMSUNG_DDR3_1600_1G,
+	MICRON_DDR3L_1600_1G,
 	MEM_UNKNOWN,
 };
 
@@ -71,13 +89,17 @@ enum storm_memory_config {
  */
 static int dimm_count(struct platform_intf *intf)
 {
+	/* same for whirlwind */
 	return STORM_DIMM_COUNT;
 }
 
 static enum storm_memory_config get_memory_config(struct platform_intf *intf)
 {
-	/* for now there is only one supported memory config */
-	return SAMSUNG_DDR3_1600_1G;
+	if (!strcmp(intf->name, "Storm"))
+		return SAMSUNG_DDR3_1600_1G;
+	else if (!strcmp(intf->name, "Whirlwind"))
+		return MICRON_DDR3L_1600_1G;
+	return MEM_UNKNOWN;
 }
 
 static int get_mem_info(struct platform_intf *intf,
@@ -86,6 +108,9 @@ static int get_mem_info(struct platform_intf *intf,
 	switch (get_memory_config(intf)) {
 	case SAMSUNG_DDR3_1600_1G:
 		*info = &samsung_k4b4g1646d;
+		break;
+	case MICRON_DDR3L_1600_1G:
+		*info = &micron_mt41k256m16ha;
 		break;
 	default:
 		return -1;

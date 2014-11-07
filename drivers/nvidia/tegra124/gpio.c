@@ -128,7 +128,7 @@ int gpio_get_in_value(struct platform_intf *intf, gpio_t gpio)
 }
 
 int gpio_get_in_tristate_values(struct platform_intf *intf,
-		gpio_t gpio[], int num_gpio, int value[])
+		gpio_t gpio[], int num_gpio)
 {
 	/*
 	 * GPIOs which are tied to stronger external pull up or pull down
@@ -141,6 +141,8 @@ int gpio_get_in_tristate_values(struct platform_intf *intf,
 
 	int temp;
 	int index;
+	int id = 0;
+	char value[num_gpio];
 
 	/* Enable internal pull up */
 	for (index = 0; index < num_gpio; ++index)
@@ -168,14 +170,15 @@ int gpio_get_in_tristate_values(struct platform_intf *intf,
 	 *  1: pull up
 	 *  2: floating
 	 */
-	for (index = 0; index < num_gpio; ++index) {
+	for (index = num_gpio - 1; index >= 0; --index) {
 		temp = gpio_get_in_value(intf, gpio[index]);
-		value[index] = ((value[index] ^ temp) << 1) | temp;
+		temp |= ((value[index] ^ temp) << 1);
+		id = (id * 3) + temp;
 	}
 
 	/* Disable pull up / pull down to conserve power */
 	for (index = 0; index < num_gpio; ++index)
 		gpio_input(intf, gpio[index], PINMUX_PULL_NONE);
 
-	return 0;
+	return id;
 }

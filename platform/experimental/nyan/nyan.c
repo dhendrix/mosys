@@ -98,30 +98,18 @@ int nyan_probe(struct platform_intf *intf)
 					ARRAY_SIZE(nyan_big_id_list), 0);
 	if (index >= 0) {
 		gpio_t gpio[] = {GPIO(Q3), GPIO(T1), GPIO(X1), GPIO(X4)};
-		int value[ARRAY_SIZE(gpio)];
+		int value;
+		char *str =strdup("google,nyan-big-rev%d");
 
 		lprintf(LOG_DEBUG, "Found platform \"%s\" via FDT compatible "
 				"node.\n", nyan_big_id_list[index]);
 		intf->name = "Big";
 
-		gpio_get_in_tristate_values(intf, gpio, ARRAY_SIZE(gpio), value);
+		gpio_get_in_tristate_values(intf, gpio, ARRAY_SIZE(gpio));
 
-		if (value[1] == 0 && value[0] == 1)
-			intf->version_id = "google,nyan-big-rev1";
-		else if (value[1] == 0 && value[0] == 2)
-			intf->version_id = "google,nyan-big-rev2";
-		else if (value[1] == 1 && value[0] == 0)
-			intf->version_id = "google,nyan-big-rev3";
-		else if (value[1] == 1 && value[0] == 1)
-			intf->version_id = "google,nyan-big-rev4";
-		else if (value[1] == 1 && value[0] == 2)
-			intf->version_id = "google,nyan-big-rev5";
-		else if (value[1] == 2 && value[0] == 0)
-			intf->version_id = "google,nyan-big-rev6";
-		else if (value[1] == 2 && value[0] == 1)
-			intf->version_id = "google,nyan-big-rev7";
-		else
-			intf->version_id = "google,nyan-big-rev0";
+		value = gpio_get_in_tristate_values(intf, gpio, ARRAY_SIZE(gpio));
+		sprintf(str, "google,nyan-big-rev%d", value);
+		intf->version_id = str;
 
 		return 1;
 	}

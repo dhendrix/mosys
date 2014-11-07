@@ -372,6 +372,6 @@ void gpio_input_pulldown(struct platform_intf *intf, gpio_t gpio);
 int gpio_get_in_value(struct platform_intf *intf, gpio_t gpio);
 
 int gpio_get_in_tristate_values(struct platform_intf *intf,
-		gpio_t gpio[], int num_gpio, int value[]);
+		gpio_t gpio[], int num_gpio);
 
 #endif	/* NVIDIA_TEGRA124_GPIO_H */

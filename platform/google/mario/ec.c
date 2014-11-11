@@ -219,7 +219,7 @@ static const char *google_cr48_ec_fw_version(struct platform_intf *intf)
 	return version;
 }
 
-struct ec_cb google_cr48_ec_cb = {
+struct legacy_ec_cb google_cr48_ec_cb = {
 	.vendor		= google_cr48_ec_vendor,
 	.name		= google_cr48_ec_name,
 	.fw_version	= google_cr48_ec_fw_version,

@@ -170,7 +170,7 @@ struct kb932_priv parrot_ec_priv = {
 	.cmd_timeout_ms	= EC_CMD_TIMEOUT_MS,
 };
 
-struct ec_cb parrot_ec_cb = {
+struct legacy_ec_cb parrot_ec_cb = {
 	.vendor		= parrot_ec_vendor,
 	.name		= parrot_ec_name,
 	.fw_version	= parrot_ec_fw_version,

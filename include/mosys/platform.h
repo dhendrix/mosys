@@ -388,7 +388,18 @@ struct fru_cb {
 	             struct eeprom *eeprom, const char *fname);
 };
 
-/* ec callbacks */
+/* "legacy" ec callbacks (before support for multiple ECs was introduced) */
+struct legacy_ec_cb {
+	const char *(*vendor)(struct platform_intf *intf);
+	const char *(*name)(struct platform_intf *intf);
+	const char *(*fw_version)(struct platform_intf *intf);
+
+	int (*setup)(struct platform_intf *intf);
+	int (*destroy)(struct platform_intf *intf);
+
+	void *priv;	/* private data for EC */
+};
+
 struct ec_cb {
 	const char *(*vendor)(struct platform_intf *intf);
 	const char *(*name)(struct platform_intf *intf);
@@ -465,6 +476,8 @@ struct platform_cb {
 	struct vpd_cb *vpd;		/* vpd callbacks */
 	struct ec_cb *ec;		/* ec callbacks */
 	struct ec_cb *pd;		/* pd callbacks */
+	struct ec_cb *sh;		/* sh callbacks */
+	struct legacy_ec_cb *legacy_ec;	/* legacy ec callbacks */
 	struct hid_cb *hid;		/* hid callbacks */
 	struct battery_cb *battery;	/* battery callbacks */
 	struct storage_cb *storage;	/* storage callbacks */

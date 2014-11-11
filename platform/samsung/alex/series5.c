@@ -136,9 +136,9 @@ static int samsung_series5_destroy(struct platform_intf *intf)
 }
 
 struct platform_cb samsung_series5_cb = {
-	.ec		= &samsung_series5_ec_cb,
 	.eeprom		= &samsung_series5_eeprom_cb,
 	.gpio		= &samsung_series5_gpio_cb,
+	.legacy_ec	= &samsung_series5_ec_cb,
 	.memory		= &samsung_series5_memory_cb,
 //	.nvram		= &samsung_series5_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,

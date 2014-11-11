@@ -129,9 +129,9 @@ static int lumpy_destroy(struct platform_intf *intf)
 }
 
 struct platform_cb lumpy_cb = {
-	.ec		= &lumpy_ec_cb,
 	.eeprom		= &lumpy_eeprom_cb,
 	.gpio		= &lumpy_gpio_cb,
+	.legacy_ec	= &lumpy_ec_cb,
 	.memory		= &lumpy_memory_cb,
 	.nvram		= &lumpy_nvram_cb,
 	.sensor		= &lumpy_sensor_cb,

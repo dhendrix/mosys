@@ -60,8 +60,8 @@ int kb932_wait_ibf_clear(struct platform_intf *intf)
 	struct kb932_priv *ec_priv;
 	struct i8042_host_intf i8042_intf;
 
-	MOSYS_DCHECK(intf->cb && intf->cb->ec && intf->cb->ec->priv);
-	ec_priv = intf->cb->ec->priv;
+	MOSYS_DCHECK(intf->cb->legacy_ec->priv);
+	ec_priv = intf->cb->legacy_ec->priv;
 
 	i8042_intf.csr = ec_priv->csr;
 	i8042_intf.data = ec_priv->data;
@@ -73,8 +73,8 @@ int kb932_wait_obf_set(struct platform_intf *intf)
 	struct kb932_priv *ec_priv;
 	struct i8042_host_intf i8042_intf;
 
-	MOSYS_DCHECK(intf->cb && intf->cb->ec && intf->cb->ec->priv);
-	ec_priv = intf->cb->ec->priv;
+	MOSYS_DCHECK(intf->cb->legacy_ec->priv);
+	ec_priv = intf->cb->legacy_ec->priv;
 
 	i8042_intf.csr = ec_priv->csr;
 	i8042_intf.data = ec_priv->data;

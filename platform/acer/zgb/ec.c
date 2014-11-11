@@ -184,7 +184,7 @@ static const char *acer_chromia700_ec_fw_version(struct platform_intf *intf)
 	return version;
 }
 
-struct ec_cb acer_chromia700_ec_cb = {
+struct legacy_ec_cb acer_chromia700_ec_cb = {
 	.vendor		= acer_chromia700_ec_vendor,
 	.name		= acer_chromia700_ec_name,
 	.fw_version	= acer_chromia700_ec_fw_version,

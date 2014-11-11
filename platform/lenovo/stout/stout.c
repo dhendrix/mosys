@@ -131,7 +131,7 @@ struct eventlog_cb stout_eventlog_cb = {
 };
 
 struct platform_cb stout_cb = {
-	.ec		= &stout_ec_cb,
+	.legacy_ec	= &stout_ec_cb,
 	.eeprom		= &stout_eeprom_cb,
 	.memory		= &stout_memory_cb,
 	.nvram		= &stout_nvram_cb,

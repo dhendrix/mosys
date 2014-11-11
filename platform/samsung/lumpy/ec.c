@@ -62,7 +62,7 @@ static const char *lumpy_ec_fw_version(struct platform_intf *intf)
 	return version;
 }
 
-struct ec_cb lumpy_ec_cb = {
+struct legacy_ec_cb lumpy_ec_cb = {
 	.vendor		= lumpy_ec_vendor,
 	.name		= lumpy_ec_name,
 	.fw_version	= lumpy_ec_fw_version,

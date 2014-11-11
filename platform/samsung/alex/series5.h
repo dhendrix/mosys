@@ -36,7 +36,7 @@
 #include "mosys/platform.h"
 
 /* platform callbacks */
-extern struct ec_cb samsung_series5_ec_cb;		/* ec.c */
+extern struct legacy_ec_cb samsung_series5_ec_cb;	/* ec.c */
 extern struct eeprom_cb samsung_series5_eeprom_cb;	/* eeprom.c */
 extern struct gpio_cb samsung_series5_gpio_cb;		/* gpio.c */
 extern struct memory_cb samsung_series5_memory_cb;	/* memory.c */

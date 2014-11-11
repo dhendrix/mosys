@@ -141,7 +141,7 @@ struct platform_cb parrot_cb = {
 	.smbios		= &smbios_sysinfo_cb,
 	.sys 		= &parrot_sys_cb,
 	.vpd		= &parrot_vpd_cb,
-	.ec		= &parrot_ec_cb,
+	.legacy_ec	= &parrot_ec_cb,
 	.eventlog	= &parrot_eventlog_cb,
 };
 

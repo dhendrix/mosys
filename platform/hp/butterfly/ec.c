@@ -62,8 +62,8 @@ static uint8_t read_ecram(struct platform_intf *intf,
 {
 	struct kb932_priv *ec_priv;
 
-	MOSYS_DCHECK(intf->cb && intf->cb->ec && intf->cb->ec->priv);
-	ec_priv = intf->cb->ec->priv;
+	MOSYS_DCHECK(intf->cb->legacy_ec->priv);
+	ec_priv = intf->cb->legacy_ec->priv;
 
 	if (kb932_wait_ibf_clear(intf) != 1)
 		return -1;
@@ -128,7 +128,7 @@ struct kb932_priv butterfly_ec_priv = {
 	.cmd_timeout_ms	= BUTTERFLY_EC_CMD_TIMEOUT,
 };
 
-struct ec_cb butterfly_ec_cb = {
+struct legacy_ec_cb butterfly_ec_cb = {
 	.vendor		= &butterfly_ec_vendor,
 	.name		= &butterfly_ec_name,
 	.fw_version	= &butterfly_ec_fw_version,

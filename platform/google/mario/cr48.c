@@ -124,9 +124,9 @@ static int google_cr48_destroy(struct platform_intf *intf)
 }
 
 struct platform_cb google_cr48_cb = {
-	.ec		= &google_cr48_ec_cb,
 	.eeprom		= &google_cr48_eeprom_cb,
 	.gpio		= &google_cr48_gpio_cb,
+	.legacy_ec	= &google_cr48_ec_cb,
 	.memory		= &google_cr48_memory_cb,
 //	.nvram		= &google_cr48_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,

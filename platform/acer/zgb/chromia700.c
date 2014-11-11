@@ -132,9 +132,9 @@ static int acer_chromia700_destroy(struct platform_intf *intf)
 }
 
 struct platform_cb acer_chromia700_cb = {
-	.ec		= &acer_chromia700_ec_cb,
 	.eeprom		= &acer_chromia700_eeprom_cb,
 	.gpio		= &acer_chromia700_gpio_cb,
+	.legacy_ec	= &acer_chromia700_ec_cb,
 	.memory		= &acer_chromia700_memory_cb,
 	.nvram		= &acer_chromia700_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,

@@ -235,7 +235,7 @@ int stout_ec_setup(struct platform_intf *intf)
 	return rc;
 }
 
-struct ec_cb stout_ec_cb = {
+struct legacy_ec_cb stout_ec_cb = {
 	.vendor		= stout_ec_vendor,
 	.name		= stout_ec_name,
 	.fw_version	= stout_ec_fw_version,

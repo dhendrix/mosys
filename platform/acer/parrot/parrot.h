@@ -43,7 +43,7 @@ extern struct memory_cb parrot_memory_cb;	/* memory.c */
 extern struct nvram_cb parrot_nvram_cb;		/* nvram.c */
 extern struct sys_cb parrot_sys_cb;		/* sys.c */
 extern struct vpd_cb parrot_vpd_cb;		/* vpd.c */
-extern struct ec_cb parrot_ec_cb;		/* ec.c */
+extern struct legacy_ec_cb parrot_ec_cb;	/* ec.c */
 
 /* functions called by setup routines */
 extern int parrot_vpd_setup(struct platform_intf *intf);

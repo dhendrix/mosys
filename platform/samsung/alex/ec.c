@@ -86,7 +86,7 @@ static const char *samsung_series5_ec_fw_version(struct platform_intf *intf)
 	return version;
 }
 
-struct ec_cb samsung_series5_ec_cb = {
+struct legacy_ec_cb samsung_series5_ec_cb = {
 	.vendor		= samsung_series5_ec_vendor,
 	.name		= samsung_series5_ec_name,
 	.fw_version	= samsung_series5_ec_fw_version,

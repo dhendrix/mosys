@@ -130,8 +130,8 @@ struct eventlog_cb butterfly_eventlog_cb = {
 };
 
 struct platform_cb butterfly_cb = {
-	.ec		= &butterfly_ec_cb,
 	.eeprom		= &butterfly_eeprom_cb,
+	.legacy_ec	= &butterfly_ec_cb,
 	.memory		= &butterfly_memory_cb,
 	.nvram		= &butterfly_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,

@@ -62,7 +62,7 @@ typedef enum stout_ec_mem_addr {
 
 /* platform callbacks */
 extern struct battery_cb stout_battery_cb;	/* battery.c */
-extern struct ec_cb stout_ec_cb;		/* ec.c */
+extern struct legacy_ec_cb stout_ec_cb;		/* ec.c */
 extern struct eeprom_cb stout_eeprom_cb;	/* eeprom.c */
 extern struct memory_cb stout_memory_cb;	/* memory.c */
 extern struct nvram_cb stout_nvram_cb;		/* nvram.c */

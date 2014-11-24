@@ -236,6 +236,7 @@ static int memory_nonspd_print_geometry(struct platform_intf *intf, int dimm)
 
 	kv = kv_pair_new();
 
+	kv_pair_fmt(kv, "dimm", "%u", dimm);
 	nonspd_print_field(kv, info, SPD_GET_SIZE);
 	nonspd_print_field(kv, info, SPD_GET_RANKS);
 	nonspd_print_field(kv, info, SPD_GET_WIDTH);

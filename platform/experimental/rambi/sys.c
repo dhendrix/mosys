@@ -44,10 +44,24 @@ static struct valstr rambi_board_version[] = {
 	{ },
 };
 
+static struct valstr cranky_board_version[] = {
+	{ 0, "Proto" },
+	{ 1, "EVT1" },
+	{ },
+};
+
 static const char *rambi_get_version(struct platform_intf *intf)
 {
-	return mosys_strdup(val2str(cros_ec_board_version(intf, intf->cb->ec),
-				    rambi_board_version));
+	const char *version = NULL;
+
+	if (!strcmp(intf->name, "Cranky"))
+		version = val2str(cros_ec_board_version(intf, intf->cb->ec),
+				  cranky_board_version);
+	else
+		version = val2str(cros_ec_board_version(intf, intf->cb->ec),
+				  rambi_board_version);
+
+	return mosys_strdup(version);
 }
 
 static const char *rambi_get_vendor(struct platform_intf *intf)

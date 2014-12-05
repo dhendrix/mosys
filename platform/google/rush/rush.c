@@ -32,6 +32,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include "mosys/alloc.h"
 #include "mosys/command_list.h"
 #include "mosys/platform.h"
 #include "mosys/intf_list.h"
@@ -47,9 +48,20 @@
 
 #include "rush.h"
 
+struct board_id_gpio {
+	int num;
+	gpio_t *gpios;
+};
+
 const char *rush_ryu_id_list[] = {
 	"google,ryu",
 	NULL,
+};
+
+static gpio_t rush_ryu_boardid_gpio[] = {GPIO(Q3), GPIO(Q4)};
+
+static struct board_id_gpio rush_ryu_gpio_list[] = {
+	{ARRAY_SIZE(rush_ryu_boardid_gpio), rush_ryu_boardid_gpio},
 };
 
 struct platform_cmd *rush_sub[] = {
@@ -63,6 +75,23 @@ struct platform_cmd *rush_sub[] = {
 	NULL
 };
 
+static void update_platform_version(struct platform_intf *intf,
+				    struct board_id_gpio *gpio,
+				    const char *str_id)
+{
+	char *str;
+	int value;
+
+	str = mosys_malloc(strlen(str_id) + strlen("-revXX") + 1);
+	if (str == NULL)
+		return;
+
+	value = gpio_get_in_tristate_values(intf, gpio->gpios, gpio->num);
+
+	sprintf(str, "%s-rev%d", str_id, value);
+	intf->version_id = str;
+}
+
 int rush_probe(struct platform_intf *intf)
 {
 	int index;
@@ -72,6 +101,14 @@ int rush_probe(struct platform_intf *intf)
 	if (index >= 0) {
 		lprintf(LOG_DEBUG, "Found platform \"%s\" via FDT compatible "
 				"node.\n", rush_ryu_id_list[index]);
+
+		/* This condition should never be true */
+		if (index >= ARRAY_SIZE(rush_ryu_gpio_list))
+			return 0;
+
+		update_platform_version(intf, &rush_ryu_gpio_list[index],
+					rush_ryu_id_list[index]);
+
 		return 1;
 	}
 

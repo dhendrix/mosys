@@ -138,8 +138,10 @@ static int rush_setup_post(struct platform_intf *intf)
 
 static int rush_destroy(struct platform_intf *intf)
 {
-	intf->cb->ec->destroy(intf, intf->cb->ec);
-	intf->cb->sh->destroy(intf, intf->cb->sh);
+	if (intf->cb->ec->destroy)
+		intf->cb->ec->destroy(intf, intf->cb->ec);
+	if (intf->cb->sh->destroy(intf, intf->cb->ec))
+		intf->cb->sh->destroy(intf, intf->cb->sh);
 	return 0;
 }
 

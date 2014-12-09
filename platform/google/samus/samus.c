@@ -123,8 +123,10 @@ static int samus_setup_post(struct platform_intf *intf)
 
 static int samus_destroy(struct platform_intf *intf)
 {
-	intf->cb->ec->destroy(intf, intf->cb->ec);
-	intf->cb->pd->destroy(intf, intf->cb->pd);
+	if (intf->cb->ec->destroy)
+		intf->cb->ec->destroy(intf, intf->cb->ec);
+	if (intf->cb->pd->destroy)
+		intf->cb->pd->destroy(intf, intf->cb->pd);
 	return 0;
 }
 

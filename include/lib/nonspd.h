@@ -58,7 +58,7 @@ struct nonspd_mem_info {
 
 	/* module frequency capabilities (allow multiple entries for various
 	 * de-rated frequency values) */
-	enum ddr_freq ddr_freq[5];
+	enum ddr_freq ddr_freq[10];
 
 	/* Module Manufacturer ID */
 	struct {

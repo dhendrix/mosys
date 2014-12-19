@@ -53,6 +53,7 @@ static spd_raw_override spd_raw_access_override;
 
 const char *ddr_freq_prettyprint[] = {
 	[DDR_FREQ_UNKNOWN] = "Unknown",
+	[DDR_333] = "667",
 	[DDR_400] = "800",
 	[DDR_533] = "1066",
 	[DDR_667] = "1333",

@@ -89,6 +89,7 @@ static const struct valstr ddr3_module_type_lut[] = {
 
 enum ddr_freq {
 	DDR_FREQ_UNKNOWN = 0,	/* uninitialized value */
+	DDR_333,
 	DDR_400,
 	DDR_533,
 	DDR_667,

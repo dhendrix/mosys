@@ -73,6 +73,24 @@ const struct nonspd_mem_info samsung_4gbit_ddr3l = {
 		  'B', 'Y', 'K', '0' },
 };
 
+const struct nonspd_mem_info hynix_4gbit_ddr3l = {
+        .dram_type              = SPD_DRAM_TYPE_DDR3,
+        .module_type.ddr3_type  = DDR3_MODULE_TYPE_UNDEFINED,
+
+        .module_size_mbits      = 4096,
+        .num_ranks              = 1,
+        .device_width           = 16,
+        .ddr_freq               = { DDR_333, DDR_400, DDR_533, DDR_667, DDR_800 },
+
+        .module_mfg_id          = { .msb = 0xad, .lsb = 0x80 },
+        .dram_mfg_id            = { .msb = 0xad, .lsb = 0x80 },
+
+        .serial_num             = { 0, 0, 0, 0 },
+        .part_num               =
+                { 'H', '5', 'T', 'C', '4', 'G', '6', '3', 'C', 'F', 'R', '-',
+                  'P', 'B', 'A'},
+};
+
 static int pinky_dimm_count;
 static const struct nonspd_mem_info *pinky_mem_info;
 
@@ -99,6 +117,10 @@ static int read_ram_code(struct platform_intf *intf)
 	case 4:
 		pinky_dimm_count = 4;
 		pinky_mem_info = &samsung_4gbit_ddr3l;
+		break;
+	case 5:
+		pinky_dimm_count = 4;
+		pinky_mem_info = &hynix_4gbit_ddr3l;
 		break;
 	default:
 		ret = -1;

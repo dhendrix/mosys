@@ -43,6 +43,8 @@
 #include "mosys/log.h"
 
 enum pinky_boards {
+	GUS,
+	JAQ,
 	JERRY,
 	MIGHTY,
 	PINKY,
@@ -50,6 +52,8 @@ enum pinky_boards {
 };
 
 const char *pinky_id_list[] = {
+	[GUS] = "google,veyron-gus",
+	[JAQ] = "google,veyron-jaq",
 	[JERRY] = "google,veyron-jerry",
 	[MIGHTY] = "google,veyron-mighty",
 	[PINKY] = "google,veyron-pinky",
@@ -78,6 +82,10 @@ int pinky_probe(struct platform_intf *intf)
 		lprintf(LOG_DEBUG, "Found platform \"%s\" via FDT compatible "
 				"node.\n", pinky_id_list[index]);
 
+		if (index == GUS)
+			intf->name = "Gus";
+		if (index == JAQ)
+			intf->name = "Jaq";
 		if (index == JERRY)
 			intf->name = "Jerry";
 		if (index == MIGHTY)

@@ -41,7 +41,7 @@ const struct nonspd_mem_info samsung_2gbit_lpddr3 = {
 	.dram_type		= SPD_DRAM_TYPE_LPDDR3,
 	.module_type.ddr3_type	= DDR3_MODULE_TYPE_UNDEFINED,
 
-	.module_size_mbits	= 2048,
+	.module_size_mbits	= 8192,
 	.num_ranks		= 2,
 	.device_width		= 32,
 	.ddr_freq 		= { DDR_400, DDR_533, DDR_667, DDR_800, DDR_933 },
@@ -58,7 +58,7 @@ const struct nonspd_mem_info hynix_2gbit_lpddr3 = {
         .dram_type              = SPD_DRAM_TYPE_LPDDR3,
         .module_type.ddr3_type  = DDR3_MODULE_TYPE_UNDEFINED,
 
-        .module_size_mbits      = 2048,
+        .module_size_mbits      = 8192,
         .num_ranks              = 1,
         .device_width           = 16,
         .ddr_freq               = { DDR_333, DDR_400, DDR_533, DDR_667, DDR_800 },
@@ -67,7 +67,7 @@ const struct nonspd_mem_info hynix_2gbit_lpddr3 = {
         .dram_mfg_id            = { .msb = 0xad, .lsb = 0x80 },
 
         .part_num               =
-                { 'H', '9', 'C', 'C', 'N', 'N', 'N', 'B', 'J', 'T', 'M', 'L',
+                { 'H', '9', 'C', 'C', 'N', 'N', 'N', '8', 'G', 'T', 'M', 'L',
                   'A', 'R', '-', 'N', 'U', 'D',},
 };
 
@@ -75,7 +75,7 @@ const struct nonspd_mem_info samsung_4gbit_lpddr3 = {
 	.dram_type		= SPD_DRAM_TYPE_LPDDR3,
 	.module_type.ddr3_type	= DDR3_MODULE_TYPE_UNDEFINED,
 
-	.module_size_mbits	= 4096,
+	.module_size_mbits	= 16384,
 	.num_ranks		= 2,
 	.device_width		= 32,
 	.ddr_freq 		= { DDR_400, DDR_533, DDR_667, DDR_800, DDR_933},
@@ -92,7 +92,7 @@ const struct nonspd_mem_info hynix_4gbit_lpddr3 = {
         .dram_type              = SPD_DRAM_TYPE_LPDDR3,
         .module_type.ddr3_type  = DDR3_MODULE_TYPE_UNDEFINED,
 
-        .module_size_mbits      = 4096,
+        .module_size_mbits      = 16384,
         .num_ranks              = 2,
         .device_width           = 32,
         .ddr_freq               = { DDR_333, DDR_400, DDR_533, DDR_667, DDR_800 },

@@ -141,6 +141,7 @@ struct platform_cmd memory_print_cmds[] = {
 		.type	= ARG_TYPE_GETTER,
 		.arg 	= { .func = memory_print_speed }
 	},
+	{ NULL },
 };
 
 struct platform_cmd memory_cmds[] = {

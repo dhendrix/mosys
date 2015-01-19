@@ -37,7 +37,7 @@
 
 #include "pinky.h"
 
-const struct nonspd_mem_info samsung_2gbit_lpddr3 = {
+const struct nonspd_mem_info samsung_2gbit_lpddr3_k4e8e304ee_egce = {
 	.dram_type		= SPD_DRAM_TYPE_LPDDR3,
 	.module_type.ddr3_type	= DDR3_MODULE_TYPE_UNDEFINED,
 
@@ -54,7 +54,7 @@ const struct nonspd_mem_info samsung_2gbit_lpddr3 = {
 		  'E', 'G', 'C', 'E' },
 };
 
-const struct nonspd_mem_info hynix_2gbit_lpddr3 = {
+const struct nonspd_mem_info hynix_2gbit_lpddr3_h9ccnnn8gtmlar_nud = {
         .dram_type              = SPD_DRAM_TYPE_LPDDR3,
         .module_type.ddr3_type  = DDR3_MODULE_TYPE_UNDEFINED,
 
@@ -71,7 +71,7 @@ const struct nonspd_mem_info hynix_2gbit_lpddr3 = {
                   'A', 'R', '-', 'N', 'U', 'D',},
 };
 
-const struct nonspd_mem_info samsung_4gbit_lpddr3 = {
+const struct nonspd_mem_info samsung_4gbit_lpddr3_k4e6e304ee_egce = {
 	.dram_type		= SPD_DRAM_TYPE_LPDDR3,
 	.module_type.ddr3_type	= DDR3_MODULE_TYPE_UNDEFINED,
 
@@ -88,7 +88,7 @@ const struct nonspd_mem_info samsung_4gbit_lpddr3 = {
 		  'E', 'G', 'C', 'E' },
 };
 
-const struct nonspd_mem_info hynix_4gbit_lpddr3 = {
+const struct nonspd_mem_info hynix_4gbit_lpddr3_h9ccnnnbjtmlar_nud = {
         .dram_type              = SPD_DRAM_TYPE_LPDDR3,
         .module_type.ddr3_type  = DDR3_MODULE_TYPE_UNDEFINED,
 
@@ -105,7 +105,7 @@ const struct nonspd_mem_info hynix_4gbit_lpddr3 = {
                   'A', 'R', '-', 'N', 'U', 'D',},
 };
 
-const struct nonspd_mem_info samsung_8gbit_lpddr3 = {
+const struct nonspd_mem_info samsung_8gbit_lpddr3_k4e8e304ed_egcc = {
 	.dram_type		= SPD_DRAM_TYPE_DDR3,
 	.module_type.ddr3_type	= DDR3_MODULE_TYPE_UNDEFINED,
 
@@ -123,7 +123,7 @@ const struct nonspd_mem_info samsung_8gbit_lpddr3 = {
 		  'E', 'G', 'C', 'C' },
 };
 
-const struct nonspd_mem_info samsung_4gbit_ddr3l = {
+const struct nonspd_mem_info samsung_4gbit_ddr3l_k4b4g1646d_byk0 = {
 	.dram_type		= SPD_DRAM_TYPE_DDR3,
 	.module_type.ddr3_type	= DDR3_MODULE_TYPE_UNDEFINED,
 
@@ -141,7 +141,25 @@ const struct nonspd_mem_info samsung_4gbit_ddr3l = {
 		  'B', 'Y', 'K', '0' },
 };
 
-const struct nonspd_mem_info hynix_4gbit_ddr3l = {
+const struct nonspd_mem_info samsung_4gbit_ddr3l_k4b4g1646q_hyk0 = {
+	.dram_type		= SPD_DRAM_TYPE_DDR3,
+	.module_type.ddr3_type	= DDR3_MODULE_TYPE_UNDEFINED,
+
+	.module_size_mbits	= 4096,
+	.num_ranks		= 1,
+	.device_width		= 16,
+	.ddr_freq 		= { DDR_400, DDR_533, DDR_667, DDR_800 },
+
+	.module_mfg_id		= { .msb = 0xce, .lsb = 0x00 },
+	.dram_mfg_id		= { .msb = 0xce, .lsb = 0x00 },
+
+	.serial_num 		= { 0, 0, 0, 0 },
+	.part_num		=
+		{ 'K', '4', 'B', '4', 'G', '1', '6', '4', '6', 'Q', '-',
+		  'H', 'Y', 'K', '0' },
+};
+
+const struct nonspd_mem_info hynix_4gbit_ddr3l_h5tc4g63cfr_pba = {
         .dram_type              = SPD_DRAM_TYPE_DDR3,
         .module_type.ddr3_type  = DDR3_MODULE_TYPE_UNDEFINED,
 
@@ -182,19 +200,19 @@ static int read_ram_code(struct platform_intf *intf)
 		switch (ram_code) {
 		case 0:
 			pinky_dimm_count = 2;
-			pinky_mem_info = &samsung_2gbit_lpddr3;
+			pinky_mem_info = &samsung_2gbit_lpddr3_k4e8e304ee_egce;
 			break;
 		case 1:
 			pinky_dimm_count = 2;
-			pinky_mem_info = &hynix_2gbit_lpddr3;
+			pinky_mem_info = &hynix_2gbit_lpddr3_h9ccnnn8gtmlar_nud;
 			break;
 		case 8:
 			pinky_dimm_count = 2;
-			pinky_mem_info = &samsung_4gbit_lpddr3;
+			pinky_mem_info = &samsung_4gbit_lpddr3_k4e6e304ee_egce;
 			break;
 		case 9:
 			pinky_dimm_count = 2;
-			pinky_mem_info = &hynix_4gbit_lpddr3;
+			pinky_mem_info = &hynix_4gbit_lpddr3_h9ccnnnbjtmlar_nud;
 			break;
 		default:
 			ret = -1;
@@ -204,15 +222,19 @@ static int read_ram_code(struct platform_intf *intf)
 		switch (ram_code) {
 		case 0:
 			pinky_dimm_count = 2;
-			pinky_mem_info = &samsung_8gbit_lpddr3;
+			pinky_mem_info = &samsung_8gbit_lpddr3_k4e8e304ed_egcc;
 			break;
 		case 4:
 			pinky_dimm_count = 4;
-			pinky_mem_info = &samsung_4gbit_ddr3l;
+			pinky_mem_info = &samsung_4gbit_ddr3l_k4b4g1646d_byk0;
 			break;
 		case 5:
 			pinky_dimm_count = 4;
-			pinky_mem_info = &hynix_4gbit_ddr3l;
+			pinky_mem_info = &hynix_4gbit_ddr3l_h5tc4g63cfr_pba;
+			break;
+		case 6:
+			pinky_dimm_count = 4;
+			pinky_mem_info = &samsung_4gbit_ddr3l_k4b4g1646q_hyk0;
 			break;
 		default:
 			ret = -1;

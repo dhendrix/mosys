@@ -47,6 +47,7 @@ enum pinky_boards {
 	JAQ,
 	JERRY,
 	MIGHTY,
+        MINNIE,
 	PINKY,
 	SPEEDY
 };
@@ -56,6 +57,7 @@ const char *pinky_id_list[] = {
 	[JAQ] = "google,veyron-jaq",
 	[JERRY] = "google,veyron-jerry",
 	[MIGHTY] = "google,veyron-mighty",
+        [MINNIE] = "google,veyron-minnie",
 	[PINKY] = "google,veyron-pinky",
 	[SPEEDY] = "google,veyron-speedy",
 	NULL,
@@ -90,6 +92,8 @@ int pinky_probe(struct platform_intf *intf)
 			intf->name = "Jerry";
 		if (index == MIGHTY)
 			intf->name = "Mighty";
+                if (index == MINNIE)
+                        intf->name = "Minnie";
 		if (index == SPEEDY)
 			intf->name = "Speedy";
 	}

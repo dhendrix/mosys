@@ -195,7 +195,8 @@ static int read_ram_code(struct platform_intf *intf)
 		return -1;
 	}
 
-	if(!strncmp(intf->name, "Speedy", 6))
+	if(!strncmp(intf->name, "Speedy", 6) ||
+	   !strncmp(intf->name, "Minnie", 6))
 	{
 		switch (ram_code) {
 		case 0:

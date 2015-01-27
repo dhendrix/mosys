@@ -53,6 +53,14 @@ struct probe_ids {
 };
 
 static const struct probe_ids probe_id_list[] = {
+	{ { "Cid", NULL },
+	  { "CID", NULL },
+	  { "Google_Cid", NULL },
+	},
+	{ { "Lulu", NULL },
+	  { "LULU", NULL },
+	  { "Google_Lulu", NULL },
+	},
 	{ { "Paine", NULL },
 	  { "PAINE", NULL },
 	  { "Google_Auron_Paine", NULL },

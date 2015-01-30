@@ -43,6 +43,7 @@
 #include "mosys/log.h"
 
 enum pinky_boards {
+	UNKNOWN = -1,
 	GUS,
 	JAQ,
 	JERRY,
@@ -52,15 +53,20 @@ enum pinky_boards {
 	SPEEDY
 };
 
-const char *pinky_id_list[] = {
-	[GUS] = "google,veyron-gus",
-	[JAQ] = "google,veyron-jaq",
-	[JERRY] = "google,veyron-jerry",
-	[MIGHTY] = "google,veyron-mighty",
-        [MINNIE] = "google,veyron-minnie",
-	[PINKY] = "google,veyron-pinky",
-	[SPEEDY] = "google,veyron-speedy",
-	NULL,
+static enum pinky_boards probed_board = UNKNOWN;
+
+struct veyron_probe_id {
+	const char *name;
+	const char *fdt_compat;
+	int has_ec;
+} veyron_id_list[] = {
+	[GUS]		= { "Gus", "google,veyron-gus", 1 },
+	[JAQ]		= { "Jaq", "google,veyron-jaq", 1 },
+	[JERRY]		= { "Jerry", "google,veyron-jerry", 1 },
+	[MIGHTY]	= { "Mighty", "google,veyron-mighty", 1 },
+        [MINNIE]	= { "Minnie", "google,veyron-minnie", 1 },
+	[PINKY]		= { "Pinky", "google,veyron-pinky", 1 },
+	[SPEEDY]	= { "Speedy", "google,veyron-speedy", 1 },
 };
 
 struct platform_cmd *pinky_sub[] = {
@@ -74,37 +80,32 @@ struct platform_cmd *pinky_sub[] = {
 	NULL
 };
 
-int pinky_probe(struct platform_intf *intf)
+static int pinky_probe(struct platform_intf *intf)
 {
-	int index;
+	int i;
 
-	index = probe_fdt_compatible(&pinky_id_list[0],
-					ARRAY_SIZE(pinky_id_list), 1);
-	if (index >= 0) {
-		lprintf(LOG_DEBUG, "Found platform \"%s\" via FDT compatible "
-				"node.\n", pinky_id_list[index]);
+	for (i = 0; i < ARRAY_SIZE(veyron_id_list); i++) {
+		const char **compat = &veyron_id_list[i].fdt_compat;
 
-		if (index == GUS)
-			intf->name = "Gus";
-		if (index == JAQ)
-			intf->name = "Jaq";
-		if (index == JERRY)
-			intf->name = "Jerry";
-		if (index == MIGHTY)
-			intf->name = "Mighty";
-                if (index == MINNIE)
-                        intf->name = "Minnie";
-		if (index == SPEEDY)
-			intf->name = "Speedy";
+		if (probe_fdt_compatible(compat, 1, 1) == 0) {
+			lprintf(LOG_DEBUG, "Found platform \"%s\" via FDT "
+				"compatible node.\n", veyron_id_list[i].name);
+			intf->name = veyron_id_list[i].name;
+			probed_board = i;
+			break;
+		}
 	}
 
-	return index >= 0 ? 1 : 0;
+	lprintf(LOG_DEBUG, "%s: probed_board: %d\n", __func__, probed_board);
+	return probed_board > UNKNOWN ? 1 : 0;
 }
 
 static int pinky_setup_post(struct platform_intf *intf)
 {
-	if (pinky_ec_setup(intf) <= 0)
-		return -1;
+	if (veyron_id_list[probed_board].has_ec) {
+		if (pinky_ec_setup(intf) <= 0)
+			return -1;
+	}
 	return 0;
 }
 

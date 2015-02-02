@@ -60,7 +60,7 @@ const struct nonspd_mem_info hynix_2gbit_lpddr3_h9ccnnn8gtmlar_nud = {
 
         .module_size_mbits      = 8192,
         .num_ranks              = 1,
-        .device_width           = 16,
+        .device_width           = 32,
         .ddr_freq               = { DDR_333, DDR_400, DDR_533, DDR_667, DDR_800 },
 
         .module_mfg_id          = { .msb = 0xad, .lsb = 0x80 },

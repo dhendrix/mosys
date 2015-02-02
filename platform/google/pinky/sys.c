@@ -33,19 +33,22 @@
 #include "mosys/platform.h"
 
 #include "lib/probe.h"
+#include "lib/fdt.h"
 
 /* Pinky uses device-tree compatible typle: google,<family>-<name>-rev<N>,
  * ie "google,veyron-pinky-rev0" */
 
 static const char *pinky_get_version(struct platform_intf *intf)
 {
-	struct cros_compat_tuple *tuple;
+	uint32_t board_id;
+	char board_id_str[16];
 
-	tuple = cros_fdt_tuple();
-	if (!tuple)
+	board_id = fdt_get_board_id();
+	if (board_id == 0xffffffff)
 		return NULL;
 
-	return mosys_strdup(tuple->revision);
+	snprintf(board_id_str, sizeof(board_id_str), "rev%u", board_id);
+	return mosys_strdup(board_id_str);
 }
 
 static const char *pinky_get_vendor(struct platform_intf *intf)

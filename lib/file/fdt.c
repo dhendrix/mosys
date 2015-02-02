@@ -45,6 +45,40 @@
 /* FIXME: assume coreboot for now */
 #define FDT_RAM_CODE_PATH	"firmware/coreboot/ram-code"
 
+static uint32_t fdt_get_uint32_val(const char *path)
+{
+	static uint32_t ret = ~0;	/* init to invalid value */
+	uint32_t tmp;
+	int fd;
+	struct string_builder *sb;
+
+	sb = new_string_builder();
+	string_builder_strcat(sb, mosys_get_root_prefix());
+	string_builder_strcat(sb, FDT_ROOT);
+	string_builder_strcat(sb, path);
+
+	fd = file_open(string_builder_get_string(sb), FILE_READ);
+	if (fd < 0) {
+		lprintf(LOG_ERR, "Unable to open %s.\n",
+				string_builder_get_string(sb));
+		goto out_1;
+	}
+
+	if (read(fd, &tmp, sizeof(tmp)) != sizeof(tmp)) {
+		lprintf(LOG_ERR, "Failed to read devicetree node.\n");
+		goto out_2;
+	}
+
+	tmp = ntohl(tmp);
+	ret = tmp;
+
+out_2:
+	close(fd);
+out_1:
+	free_string_builder(sb);
+	return ret;
+}
+
 /*
  * fdt_get_ram_code - Obtain RAM code from FDT ram-code node
  *
@@ -53,37 +87,17 @@
 uint32_t fdt_get_ram_code(void)
 {
 	static int done = 0;
-	static uint32_t ret = ~(0);	/* init to invalid value */
-	uint32_t tmp;
-	int fd;
-	struct string_builder *sb;
+	static uint32_t ret = 0;
 
 	if (done)
 		return ret;
 
-	sb = new_string_builder();
-	string_builder_strcat(sb, mosys_get_root_prefix());
-	string_builder_strcat(sb, FDT_ROOT);
-	string_builder_strcat(sb, FDT_RAM_CODE_PATH);
+	ret = fdt_get_uint32_val(FDT_RAM_CODE_PATH);
+	if (ret == 0xffffffff)
+		lprintf(LOG_ERR, "%s: ram_code is invalid.\n", __func__);
+	else
+		lprintf(LOG_DEBUG, "%s: ram_code: %u\n", __func__, ret);
 
-	fd = file_open(string_builder_get_string(sb), FILE_READ);
-	if (fd < 0) {
-		lprintf(LOG_ERR, "Unable to open RAM code devicetree node.\n");
-		goto fdt_ram_code_done;
-	}
-
-	if (read(fd, &tmp, sizeof(tmp)) != sizeof(tmp)) {
-		lprintf(LOG_ERR, "Failed to read ram-code.\n");
-		goto fdt_ram_code_done;
-	}
-
-	tmp = ntohl(tmp);
-	lprintf(LOG_DEBUG, "%s: ram_code: %u\n", __func__, tmp);
-	ret = tmp;
-
-fdt_ram_code_done:
-	close(fd);
-	free_string_builder(sb);
 	done = 1;
 	return ret;
 }

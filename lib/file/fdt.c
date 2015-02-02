@@ -44,6 +44,7 @@
 #define FDT_ROOT		"/proc/device-tree/"
 /* FIXME: assume coreboot for now */
 #define FDT_RAM_CODE_PATH	"firmware/coreboot/ram-code"
+#define FDT_BOARD_ID_PATH	"firmware/coreboot/board-id"
 
 static uint32_t fdt_get_uint32_val(const char *path)
 {
@@ -97,6 +98,29 @@ uint32_t fdt_get_ram_code(void)
 		lprintf(LOG_ERR, "%s: ram_code is invalid.\n", __func__);
 	else
 		lprintf(LOG_DEBUG, "%s: ram_code: %u\n", __func__, ret);
+
+	done = 1;
+	return ret;
+}
+
+/*
+ * fdt_get_board_id - Obtain board ID code from FDT board-id node
+ *
+ * returns board ID if successful, ~0 (invalid) to indicate failure
+ */
+uint32_t fdt_get_board_id(void)
+{
+	static int done = 0;
+	static uint32_t ret = 0;
+
+	if (done)
+		return ret;
+
+	ret = fdt_get_uint32_val(FDT_BOARD_ID_PATH);
+	if (ret == 0xffffffff)
+		lprintf(LOG_ERR, "%s: board_id is invalid.\n", __func__);
+	else
+		lprintf(LOG_DEBUG, "%s: board_id: %u\n", __func__, ret);
 
 	done = 1;
 	return ret;

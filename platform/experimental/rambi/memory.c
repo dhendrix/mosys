@@ -110,7 +110,25 @@ static int rambi_dimm_count(struct platform_intf *intf)
 	 * TODO(shawnn): Find a programatic way to do this detection.
 	 * Platforms have 1 or 2 DIMM config based on RAM_ID.
 	 */
-	if (!strncmp(intf->name, "Candy", 5)) {
+	if (!strncmp(intf->name, "Banjo", 5)) {
+		/*
+		* {0,0,0} = 2 x 2GiB Micron
+		* {0,0,1} = 2 x 2GiB Hynix
+		* {0,1,0} = 2 x 1GiB Micron
+		* {0,1,1} = 1 x 2GiB Hynix
+		* {1,0,0} = 1 x 2GiB Micron
+		* {1,0,1} = 1 x 2GiB Hynix
+		* {1,1,0} = 2 x 2GiB Kingston
+		* {1,1,1} = 2 x 2GiB Hynix
+		*/
+        int index = rambi_get_spd_index(intf);
+        switch (index) {
+        case 3: case 4: case 5:
+            return 1;
+        default:
+            return 2;
+        }
+    } else if (!strncmp(intf->name, "Candy", 5)) {
 		/*
 		 * {0,0,0} = 2 x 2GiB Micron
 		 * {0,0,1} = 2 x 2GiB Hynix

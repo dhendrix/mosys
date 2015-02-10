@@ -49,6 +49,12 @@ static int eventlog_smbios_list_callback(struct platform_intf *intf,
 	int rc;
 	struct kv_pair *kv;
 
+	if (entry->length == 0) {
+		lprintf(LOG_ERR, "Zero-length eventlog entry detected.\n");
+		*complete = 1;
+		return -1;
+	}
+
 	/* verify entry checksum on OEM types */
 	if (entry->type >= SMBIOS_EVENT_TYPE_OEM &&
 	    intf->cb->eventlog->verify &&

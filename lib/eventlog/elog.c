@@ -822,6 +822,12 @@ static int elog_copy_events(struct platform_intf *intf,
 	MOSYS_DCHECK(arg);
 	MOSYS_DCHECK(complete);
 
+	if (entry->length == 0) {
+		lprintf(LOG_WARNING, "Zero-length eventlog entry detected.\n");
+		*complete = 1;
+		return -1;
+	}
+
 	if (params->skipped < params->to_skip) {
 		params->skipped += entry->length;
 	} else {
@@ -837,6 +843,13 @@ static int elog_events_size(struct platform_intf *intf,
 			    void *arg, int *complete)
 {
 	size_t *events_size = (size_t *)arg;
+
+	if (entry->length == 0) {
+		lprintf(LOG_WARNING, "Zero-length eventlog entry detected.\n");
+		*complete = 1;
+		return -1;
+	}
+
 	*events_size += entry->length;
 	return 0;
 }
@@ -892,8 +905,11 @@ int elog_add_event_manually(struct platform_intf *intf,
 	/* Figure out how much space the existing events take up. */
 	events_size = 0;
 	if (smbios_eventlog_foreach_event(intf, NULL, &elog_events_size,
-					  &events_size))
+					  &events_size)) {
+		lprintf(LOG_ERR, "Eventlog is corrupt and must be cleared "
+				"before adding new events.\n");
 		return -1;
+	}
 
 	/* Shrink the log if it's going to exceed the full threshold. */
 	if (events_size + event_size > full_threshold) {
@@ -975,9 +991,9 @@ int elog_clear_manually(struct platform_intf *intf)
 	params.to_skip = data_size;
 	if (smbios_eventlog_foreach_event(intf, NULL, &elog_copy_events,
 					  &params)) {
-		free(new_data);
-		return -1;
+		lprintf(LOG_WARNING, "Eventlog corrupt, proceeding...\n");
 	}
+
 	skipped = params.skipped;
 	if (elog_prepare_entry(params.dest, SMBIOS_EVENT_TYPE_LOGCLEAR,
 			       &skipped, sizeof(skipped))) {

@@ -883,6 +883,14 @@ int elog_add_event_manually(struct platform_intf *intf,
 		return -1;
 	}
 
+  	/* Total event size must fit in length member of entry (1 byte) */
+	if (event_size > 0xff) {
+		lprintf(LOG_ERR, "Event data size %lu too large.\n",
+				event_data_size);
+		errno = EINVAL;
+		return -1;
+	}
+
 	if (intf->cb->eventlog->fetch(intf, &data, &length, &header_offset,
 				      &data_offset))
 		return -1;

@@ -113,7 +113,11 @@ static int pinky_setup_post(struct platform_intf *intf)
 	if (veyron_id_list[probed_board].has_ec) {
 		if (pinky_ec_setup(intf) <= 0)
 			return -1;
+		intf->cb->nvram = &cros_ec_nvram_cb;
+	} else {
+		intf->cb->nvram = &cros_spi_flash_nvram_cb;
 	}
+
 	return 0;
 }
 
@@ -141,7 +145,6 @@ struct platform_cb pinky_cb = {
 	.eeprom 	= &pinky_eeprom_cb,
 //	.gpio		= &pinky_gpio_cb,
 	.memory		= &pinky_memory_cb,
-	.nvram		= &cros_ec_nvram_cb,
 	.sys 		= &pinky_sys_cb,
 	.eventlog	= &pinky_eventlog_cb,
 };

@@ -128,6 +128,13 @@ struct elog_os_boot {
 #define EC_EVENT_KEYBOARD_RECOVERY         0x0f
 #define EC_EVENT_THERMAL_SHUTDOWN          0x10
 #define EC_EVENT_BATTERY_SHUTDOWN          0x11
+#define EC_EVENT_THROTTLE_START            0x12
+#define EC_EVENT_THROTTLE_STOP             0x13
+#define EC_EVENT_HANG_DETECT               0x14
+#define EC_EVENT_HANG_REBOOT               0x15
+#define EC_EVENT_PD_MCU                    0x16
+#define EC_EVENT_BATTERY_STATUS            0x17
+#define EC_EVENT_PANIC                     0x18
 struct elog_ec_event {
 	uint8_t event;
 	uint8_t checksum;

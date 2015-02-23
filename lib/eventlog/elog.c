@@ -247,6 +247,13 @@ int elog_print_data(struct platform_intf *intf, struct smbios_log_entry *entry,
 		  "Thermal Shutdown in previous boot" },
 		{ EC_EVENT_BATTERY_SHUTDOWN,
 		  "Battery Shutdown in previous boot" },
+		{ EC_EVENT_THROTTLE_START, "Throttle Requested" },
+		{ EC_EVENT_THROTTLE_STOP, "Throttle Request Removed" },
+		{ EC_EVENT_HANG_DETECT, "Host Event Hang" },
+		{ EC_EVENT_HANG_REBOOT, "Host Event Hang Reboot" },
+		{ EC_EVENT_PD_MCU, "PD MCU Request" },
+		{ EC_EVENT_BATTERY_STATUS, "Battery Status Request" },
+		{ EC_EVENT_PANIC, "Panic Reset in previous boot" },
 		{ 0, NULL },
 	};
 	static struct valstr cros_recovery_reasons[] = {

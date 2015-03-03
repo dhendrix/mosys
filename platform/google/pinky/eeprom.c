@@ -100,6 +100,19 @@ static struct eeprom_region host_firmware_regions[] = {
 		.name	= "RW_ELOG",
 		.flag	= EEPROM_FLAG_EVENTLOG,
 	},
+
+	/*
+	 * RW_NVRAM section might only be available on certain variants
+	 * of veyron (specifically, those without an EC). Since the nvram
+	 * callback will be set to use EC or SPI flash for NVRAM storage
+	 * during platform init, we can list RW_NVRAM here anyway so that
+	 * the region can be found in the latter case.
+	 */
+	{
+		.name	= "RW_NVRAM",
+		.flag	= EEPROM_FLAG_VBNV,
+	},
+
 	{ NULL },
 };
 

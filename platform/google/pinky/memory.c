@@ -177,6 +177,42 @@ const struct nonspd_mem_info hynix_4gbit_ddr3l_h5tc4g63cfr_pba = {
                   'P', 'B', 'A'},
 };
 
+const struct nonspd_mem_info hynix_8gbit_ddr3l_h5tc8g63amr_pba = {
+	.dram_type		= SPD_DRAM_TYPE_DDR3,
+	.module_type.ddr3_type	= DDR3_MODULE_TYPE_UNDEFINED,
+
+	.module_size_mbits	= 8192,
+	.num_ranks		= 2,
+	.device_width		= 16,
+	.ddr_freq 		= { DDR_333, DDR_400, DDR_533, DDR_667, DDR_800 },
+
+	.module_mfg_id		= { .msb = 0xad, .lsb = 0x80 },
+	.dram_mfg_id		= { .msb = 0xad, .lsb = 0x80 },
+
+	.serial_num 		= { 0, 0, 0, 0 },
+	.part_num		=
+		{ 'H', '5', 'T', 'C', '8', 'G', '6', '3', 'A', 'M', 'R', '-',
+		  'P', 'B', 'A' },
+};
+
+const struct nonspd_mem_info samsung_8gbit_ddr3l_k4b8g1646q_myk0 = {
+	.dram_type		= SPD_DRAM_TYPE_DDR3,
+	.module_type.ddr3_type	= DDR3_MODULE_TYPE_UNDEFINED,
+
+	.module_size_mbits	= 8192,
+	.num_ranks		= 2,
+	.device_width		= 16,
+	.ddr_freq 		= { DDR_333, DDR_400, DDR_533, DDR_667, DDR_800 },
+
+	.module_mfg_id		= { .msb = 0xce, .lsb = 0x00 },
+	.dram_mfg_id		= { .msb = 0xce, .lsb = 0x00 },
+
+	.serial_num 		= { 0, 0, 0, 0 },
+	.part_num		=
+		{ 'K', '4', 'B', '8', 'G', '1', '6', '4', '6', 'Q', '-',
+		  'M', 'Y', 'K', '0' },
+};
+
 static int pinky_dimm_count;
 static const struct nonspd_mem_info *pinky_mem_info;
 
@@ -236,6 +272,14 @@ static int read_ram_code(struct platform_intf *intf)
 		case 6:
 			pinky_dimm_count = 4;
 			pinky_mem_info = &samsung_4gbit_ddr3l_k4b4g1646q_hyk0;
+			break;
+		case 0x0e:
+			pinky_dimm_count = 4;
+			pinky_mem_info = &samsung_8gbit_ddr3l_k4b8g1646q_myk0;
+			break;
+		case 0x0f:
+			pinky_dimm_count = 4;
+			pinky_mem_info = &hynix_8gbit_ddr3l_h5tc8g63amr_pba;
 			break;
 		default:
 			ret = -1;

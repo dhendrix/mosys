@@ -39,7 +39,7 @@
 
 const struct nonspd_mem_info samsung_2gbit_lpddr3_k4e8e304ee_egce = {
 	.dram_type		= SPD_DRAM_TYPE_LPDDR3,
-	.module_type.ddr3_type	= DDR3_MODULE_TYPE_UNDEFINED,
+	.module_type.ddr3_type	= DDR3_MODULE_TYPE_SO_DIMM,
 
 	.module_size_mbits	= 8192,
 	.num_ranks		= 2,
@@ -56,7 +56,7 @@ const struct nonspd_mem_info samsung_2gbit_lpddr3_k4e8e304ee_egce = {
 
 const struct nonspd_mem_info hynix_2gbit_lpddr3_h9ccnnn8gtmlar_nud = {
         .dram_type              = SPD_DRAM_TYPE_LPDDR3,
-        .module_type.ddr3_type  = DDR3_MODULE_TYPE_UNDEFINED,
+        .module_type.ddr3_type  = DDR3_MODULE_TYPE_SO_DIMM,
 
         .module_size_mbits      = 8192,
         .num_ranks              = 1,
@@ -73,7 +73,7 @@ const struct nonspd_mem_info hynix_2gbit_lpddr3_h9ccnnn8gtmlar_nud = {
 
 const struct nonspd_mem_info samsung_4gbit_lpddr3_k4e6e304ee_egce = {
 	.dram_type		= SPD_DRAM_TYPE_LPDDR3,
-	.module_type.ddr3_type	= DDR3_MODULE_TYPE_UNDEFINED,
+	.module_type.ddr3_type	= DDR3_MODULE_TYPE_SO_DIMM,
 
 	.module_size_mbits	= 16384,
 	.num_ranks		= 2,
@@ -90,7 +90,7 @@ const struct nonspd_mem_info samsung_4gbit_lpddr3_k4e6e304ee_egce = {
 
 const struct nonspd_mem_info hynix_4gbit_lpddr3_h9ccnnnbjtmlar_nud = {
         .dram_type              = SPD_DRAM_TYPE_LPDDR3,
-        .module_type.ddr3_type  = DDR3_MODULE_TYPE_UNDEFINED,
+        .module_type.ddr3_type  = DDR3_MODULE_TYPE_SO_DIMM,
 
         .module_size_mbits      = 16384,
         .num_ranks              = 2,
@@ -107,7 +107,7 @@ const struct nonspd_mem_info hynix_4gbit_lpddr3_h9ccnnnbjtmlar_nud = {
 
 const struct nonspd_mem_info samsung_8gbit_lpddr3_k4e8e304ed_egcc = {
 	.dram_type		= SPD_DRAM_TYPE_DDR3,
-	.module_type.ddr3_type	= DDR3_MODULE_TYPE_UNDEFINED,
+	.module_type.ddr3_type	= DDR3_MODULE_TYPE_SO_DIMM,
 
 	.module_size_mbits	= 8192,
 	.num_ranks		= 2,
@@ -125,7 +125,7 @@ const struct nonspd_mem_info samsung_8gbit_lpddr3_k4e8e304ed_egcc = {
 
 const struct nonspd_mem_info samsung_4gbit_ddr3l_k4b4g1646d_byk0 = {
 	.dram_type		= SPD_DRAM_TYPE_DDR3,
-	.module_type.ddr3_type	= DDR3_MODULE_TYPE_UNDEFINED,
+	.module_type.ddr3_type	= DDR3_MODULE_TYPE_SO_DIMM,
 
 	.module_size_mbits	= 4096,
 	.num_ranks		= 1,
@@ -143,7 +143,7 @@ const struct nonspd_mem_info samsung_4gbit_ddr3l_k4b4g1646d_byk0 = {
 
 const struct nonspd_mem_info samsung_4gbit_ddr3l_k4b4g1646q_hyk0 = {
 	.dram_type		= SPD_DRAM_TYPE_DDR3,
-	.module_type.ddr3_type	= DDR3_MODULE_TYPE_UNDEFINED,
+	.module_type.ddr3_type	= DDR3_MODULE_TYPE_SO_DIMM,
 
 	.module_size_mbits	= 4096,
 	.num_ranks		= 1,
@@ -161,7 +161,7 @@ const struct nonspd_mem_info samsung_4gbit_ddr3l_k4b4g1646q_hyk0 = {
 
 const struct nonspd_mem_info hynix_4gbit_ddr3l_h5tc4g63cfr_pba = {
         .dram_type              = SPD_DRAM_TYPE_DDR3,
-        .module_type.ddr3_type  = DDR3_MODULE_TYPE_UNDEFINED,
+        .module_type.ddr3_type  = DDR3_MODULE_TYPE_SO_DIMM,
 
         .module_size_mbits      = 4096,
         .num_ranks              = 1,
@@ -178,9 +178,8 @@ const struct nonspd_mem_info hynix_4gbit_ddr3l_h5tc4g63cfr_pba = {
 };
 
 const struct nonspd_mem_info hynix_8gbit_ddr3l_h5tc8g63amr_pba = {
-	.dram_type		= SPD_DRAM_TYPE_DDR3,
-	.module_type.ddr3_type	= DDR3_MODULE_TYPE_UNDEFINED,
-
+	.dram_type              = SPD_DRAM_TYPE_DDR3,
+	.module_type.ddr3_type  = DDR3_MODULE_TYPE_SO_DIMM,
 	.module_size_mbits	= 8192,
 	.num_ranks		= 2,
 	.device_width		= 16,
@@ -196,9 +195,8 @@ const struct nonspd_mem_info hynix_8gbit_ddr3l_h5tc8g63amr_pba = {
 };
 
 const struct nonspd_mem_info samsung_8gbit_ddr3l_k4b8g1646q_myk0 = {
-	.dram_type		= SPD_DRAM_TYPE_DDR3,
-	.module_type.ddr3_type	= DDR3_MODULE_TYPE_UNDEFINED,
-
+	.dram_type              = SPD_DRAM_TYPE_DDR3,
+	.module_type.ddr3_type  = DDR3_MODULE_TYPE_SO_DIMM,
 	.module_size_mbits	= 8192,
 	.num_ranks		= 2,
 	.device_width		= 16,

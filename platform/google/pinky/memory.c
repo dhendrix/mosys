@@ -211,6 +211,24 @@ const struct nonspd_mem_info hynix_4gbit_ddr3l_h5tc4g63cfr_pba = {
                   'P', 'B', 'A'},
 };
 
+const struct nonspd_mem_info hynix_4gbit_ddr3l_h5tc4g63afr_pba = {
+        .dram_type              = SPD_DRAM_TYPE_DDR3,
+        .module_type.ddr3_type  = DDR3_MODULE_TYPE_SO_DIMM,
+
+        .module_size_mbits      = 4096,
+        .num_ranks              = 1,
+        .device_width           = 16,
+        .ddr_freq               = { DDR_333, DDR_400, DDR_533, DDR_667, DDR_800 },
+
+        .module_mfg_id          = { .msb = 0xad, .lsb = 0x80 },
+        .dram_mfg_id            = { .msb = 0xad, .lsb = 0x80 },
+
+        .serial_num             = { 0, 0, 0, 0 },
+        .part_num               =
+                { 'H', '5', 'T', 'C', '4', 'G', '6', '3', 'A', 'F', 'R', '-',
+                  'P', 'B', 'A'},
+};
+
 const struct nonspd_mem_info hynix_8gbit_ddr3l_h5tc8g63amr_pba = {
 	.dram_type              = SPD_DRAM_TYPE_DDR3,
 	.module_type.ddr3_type  = DDR3_MODULE_TYPE_SO_DIMM,
@@ -312,6 +330,10 @@ static int read_ram_code(struct platform_intf *intf)
 		case 6:
 			pinky_dimm_count = 4;
 			pinky_mem_info = &samsung_4gbit_ddr3l_k4b4g1646q_hyk0;
+			break;
+		case 0x0d:
+			pinky_dimm_count = 4;
+			pinky_mem_info = &hynix_4gbit_ddr3l_h5tc4g63afr_pba;
 			break;
 		case 0x0e:
 			pinky_dimm_count = 4;

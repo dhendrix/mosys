@@ -404,10 +404,12 @@ static int get_ramcode(struct platform_intf *intf)
 
 enum nyan_memory_config {
 	HYNIX_DDR3_1600_2G,
+	HYNIX_DDR3_1600_2G_1,
 	HYNIX_DDR3_1600_4G,
 	HYNIX_DDR3_1866_2G,
 	HYNIX_DDR3_1866_4G,
 	MICRON_DDR3_1600_2G,
+	MICRON_DDR3_1600_2G_1,
 	MICRON_DDR3_1600_4G,
 	SAMSUNG_DDR3_1600_2G,
 	SAMSUNG_DDR3_1600_4G,
@@ -416,17 +418,6 @@ enum nyan_memory_config {
 	KINGSTON_DDR3_1600_2G,
 	KINGSTON_DDR3_1600_4G,
 	MEM_UNKNOWN,
-};
-
-static int blaze_sdram_configs [] = {
-	HYNIX_DDR3_1600_2G,
-	MICRON_DDR3_1600_2G,
-	SAMSUNG_DDR3_1600_2G,
-	ELPIDA_DDR3_1600_2G,
-	HYNIX_DDR3_1600_4G,
-	MICRON_DDR3_1600_4G,
-	SAMSUNG_DDR3_1600_4G,
-	ELPIDA_DDR3_1600_4G,
 };
 
 static enum nyan_memory_config get_memory_config(struct platform_intf *intf)
@@ -464,15 +455,36 @@ static enum nyan_memory_config get_memory_config(struct platform_intf *intf)
 			memory_config = MEM_UNKNOWN;
 		break;
 	case NYAN_BLAZE:
-		if ((ramcode & 0x8) >> 3)
-			ramcode -= 4;
-		memory_config =  blaze_sdram_configs[ramcode];
+		if (ramcode == 0x0)
+			memory_config = HYNIX_DDR3_1600_2G;
+		else if (ramcode == 0x1)
+			memory_config = MICRON_DDR3_1600_2G;
+		else if (ramcode == 0x2)
+			memory_config = SAMSUNG_DDR3_1600_2G;
+		else if (ramcode == 0x3)
+			memory_config = ELPIDA_DDR3_1600_2G;
+		else if (ramcode == 0x4)
+			memory_config = MICRON_DDR3_1600_2G_1;
+		else if (ramcode == 0x5)
+			memory_config = HYNIX_DDR3_1600_2G_1;
+		else if (ramcode == 0x8)
+			memory_config = HYNIX_DDR3_1600_4G;
+		else if (ramcode == 0x9)
+			memory_config = MICRON_DDR3_1600_4G;
+		else if (ramcode == 0x10)
+			memory_config = SAMSUNG_DDR3_1600_4G;
+		else if (ramcode == 0x11)
+			memory_config = ELPIDA_DDR3_1600_4G;
+		else
+			memory_config = MEM_UNKNOWN;
 		break;
 	case NYAN_KITTY:
 		if (ramcode == 0x0)
 			memory_config = HYNIX_DDR3_1600_2G;
 		else if (ramcode == 0x1)
 			memory_config = HYNIX_DDR3_1600_4G;
+		else
+			memory_config = MEM_UNKNOWN;
 		break;
 	default:
 		memory_config = MEM_UNKNOWN;
@@ -505,6 +517,34 @@ static int spd_read(struct platform_intf *intf,
 			p[DDR3_SPD_REG_MODULE_PART_NUM_6] = 'S';
 			p[DDR3_SPD_REG_MODULE_PART_NUM_7] = '6';
 			p[DDR3_SPD_REG_MODULE_PART_NUM_8] = 'A';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_9] = 'F';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_10] = 'R';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_11] = '6';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_12] = 'A';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_13] = '-';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_14] = 'P';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_15] = 'B';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_16] = 0;
+			p[DDR3_SPD_REG_MODULE_PART_NUM_17] = 0;
+		}
+		break;
+	case HYNIX_DDR3_1600_2G_1:
+		p = hynix_ddr3_1600_256x16_spd;
+		if (get_nyan_type(intf) == NYAN_BLAZE) {
+			p[DDR3_SPD_REG_ADDRESSING] = 0x19;
+			p[DDR3_SPD_REG_FTB_DIVIDEND_DIVSOR]	= 0x52;
+			p[DDR3_SPD_REG_TCK_MIN] = 0x0a;
+			p[DDR3_SPD_REG_TAA_MIN] = 0x69;
+			p[DDR3_SPD_REG_TRCD_MIN] = 0x69;
+			p[DDR3_SPD_REG_MODULE_PART_NUM_0] = 'H';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_1] = 'M';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_2] = 'T';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_3] = '4';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_4] = '2';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_5] = '5';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_6] = 'S';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_7] = '6';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_8] = 'C';
 			p[DDR3_SPD_REG_MODULE_PART_NUM_9] = 'F';
 			p[DDR3_SPD_REG_MODULE_PART_NUM_10] = 'R';
 			p[DDR3_SPD_REG_MODULE_PART_NUM_11] = '6';
@@ -558,6 +598,11 @@ static int spd_read(struct platform_intf *intf,
 		break;
 	case MICRON_DDR3_1600_2G:
 		p = micron_ddr3_1600_256x16_spd;
+		break;
+	case MICRON_DDR3_1600_2G_1:
+		p = micron_ddr3_1600_256x16_spd;
+		p[DDR3_SPD_REG_MODULE_PART_NUM_15] = 'N';
+		p[DDR3_SPD_REG_MODULE_PART_NUM_16] = 'Z';
 		break;
 	case MICRON_DDR3_1600_4G:
 		p = micron_ddr3_1600_256x16_spd;

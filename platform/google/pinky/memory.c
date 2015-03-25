@@ -71,6 +71,23 @@ const struct nonspd_mem_info hynix_2gbit_lpddr3_h9ccnnn8gtmlar_nud = {
                   'A', 'R', '-', 'N', 'U', 'D',},
 };
 
+const struct nonspd_mem_info elpida_8gbit_lpddr3_f8132a3ma_gd_f = {
+        .dram_type              = SPD_DRAM_TYPE_LPDDR3,
+        .module_type.ddr3_type  = DDR3_MODULE_TYPE_UNDEFINED,
+
+        .module_size_mbits      = 8192,
+        .num_ranks              = 2,
+        .device_width           = 32,
+        .ddr_freq               = { DDR_333, DDR_400, DDR_533, DDR_667, DDR_800 },
+
+        .module_mfg_id          = { .msb = 0x2c, .lsb = 0x80 },
+        .dram_mfg_id            = { .msb = 0x2c, .lsb = 0x80 },
+
+        .part_num               =
+                { 'F', '8', '1', '3', '2', 'A', '3', 'M', 'A', '-', 'G', 'D',
+                  '-', 'F',},
+};
+
 const struct nonspd_mem_info samsung_4gbit_lpddr3_k4e6e304ee_egce = {
 	.dram_type		= SPD_DRAM_TYPE_LPDDR3,
 	.module_type.ddr3_type	= DDR3_MODULE_TYPE_SO_DIMM,
@@ -103,6 +120,23 @@ const struct nonspd_mem_info hynix_4gbit_lpddr3_h9ccnnnbjtmlar_nud = {
         .part_num               =
                 { 'H', '9', 'C', 'C', 'N', 'N', 'N', 'B', 'J', 'T', 'M', 'L',
                   'A', 'R', '-', 'N', 'U', 'D',},
+};
+
+const struct nonspd_mem_info elpida_16gbit_lpddr3_fa232a2ma_gc_f = {
+        .dram_type              = SPD_DRAM_TYPE_LPDDR3,
+        .module_type.ddr3_type  = DDR3_MODULE_TYPE_UNDEFINED,
+
+        .module_size_mbits      = 16384,
+        .num_ranks              = 2,
+        .device_width           = 32,
+        .ddr_freq               = { DDR_333, DDR_400, DDR_533, DDR_667, DDR_800 },
+
+        .module_mfg_id          = { .msb = 0x2c, .lsb = 0x80 },
+        .dram_mfg_id            = { .msb = 0x2c, .lsb = 0x80 },
+
+        .part_num               =
+                { 'F', 'A', '2', '3', '2', 'A', '2', 'M', 'A', '-', 'G', 'C',
+                  '-', 'F',},
 };
 
 const struct nonspd_mem_info samsung_8gbit_lpddr3_k4e8e304ed_egcc = {
@@ -241,6 +275,10 @@ static int read_ram_code(struct platform_intf *intf)
 			pinky_dimm_count = 2;
 			pinky_mem_info = &hynix_2gbit_lpddr3_h9ccnnn8gtmlar_nud;
 			break;
+		case 7:
+			pinky_dimm_count = 2;
+			pinky_mem_info = &elpida_8gbit_lpddr3_f8132a3ma_gd_f;
+			break;
 		case 8:
 			pinky_dimm_count = 2;
 			pinky_mem_info = &samsung_4gbit_lpddr3_k4e6e304ee_egce;
@@ -248,6 +286,10 @@ static int read_ram_code(struct platform_intf *intf)
 		case 9:
 			pinky_dimm_count = 2;
 			pinky_mem_info = &hynix_4gbit_lpddr3_h9ccnnnbjtmlar_nud;
+			break;
+		case 0x0b:
+			pinky_dimm_count = 2;
+			pinky_mem_info = &elpida_16gbit_lpddr3_fa232a2ma_gc_f;
 			break;
 		default:
 			ret = -1;

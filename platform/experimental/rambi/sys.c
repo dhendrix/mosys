@@ -47,7 +47,7 @@ static struct valstr rambi_board_version[] = {
 static struct valstr cranky_board_version[] = {
 	{ 0, "Proto" },
 	{ 1, "EVT1" },
-	{ },
+	{ 2, "DVT1" },
 };
 
 static const char *rambi_get_version(struct platform_intf *intf)

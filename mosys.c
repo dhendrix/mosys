@@ -194,7 +194,7 @@ static int intf_main(struct platform_intf *intf, int argc, char **argv)
 	return intf_main(intf, 0, NULL);	/* trigger a help listing */
 }
 
-#define LOCK_TIMEOUT_SECS 10
+#define LOCK_TIMEOUT_SECS 180
 
 int mosys_main(int argc, char **argv)
 {

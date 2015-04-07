@@ -269,8 +269,7 @@ static int rambi_dimm_count(struct platform_intf *intf)
 		default:
 			return 2;
 		}
-	} else if (!strncmp(intf->name, "Squawks", 7) ||
-		   !strncmp(intf->name, "Quawks", 6)) {
+	} else if (!strncmp(intf->name, "Quawks", 6)) {
 		/*
 		 * {0,0,0} = 2 x 2GiB Elpida
 		 * {0,0,1} = 2 x 2GiB Hynix
@@ -283,6 +282,24 @@ static int rambi_dimm_count(struct platform_intf *intf)
 		int index = rambi_get_spd_index(intf);
 		switch (index) {
 		case 4: case 5: case 6:
+			return 1;
+		default:
+			return 2;
+		}
+	} else if (!strncmp(intf->name, "Squawks", 7)) {
+		/*
+		 * {0,0,0} = 2 x 2GiB Elpida
+		 * {0,0,1} = 2 x 2GiB Hynix
+		 * {0,1,0} = 2 x 2GiB Hynix
+		 * {0,1,1} = 2 x 2GiB Hynix
+		 * {1,0,0} = 1 x 2GiB Elpida
+		 * {1,0,1} = 1 x 2GiB Hynix
+		 * {1,1,0} = 1 x 2GiB Hynix
+		 * {1,1,1} = 1 x 2GiB Hynix
+		 */
+		int index = rambi_get_spd_index(intf);
+		switch (index) {
+		case 4: case 5: case 6: case 7:
 			return 1;
 		default:
 			return 2;

@@ -432,7 +432,7 @@ int vpd_find_table(struct platform_intf *intf, enum vpd_types type,
                       int instance, struct vpd_table *table,
                       unsigned int baseaddr, unsigned int len)
 {
-	if (!table || type > 256)
+	if (!table)
 		return -1;
 
 	/* get the table as raw buffer */

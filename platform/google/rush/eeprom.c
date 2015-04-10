@@ -143,8 +143,7 @@ static struct eeprom eeproms[] = {
 	{
 		.name		= "host_firmware",
 		.type		= EEPROM_TYPE_FW,
-		.flags		= EEPROM_FLAG_RDWR |
-				  EEPROM_FLAG_FMAP | EEPROM_FLAG_EVENTLOG,
+		.flags		= EEPROM_FLAG_RDWR | EEPROM_FLAG_FMAP,
 		.device		= &host_firmware,
 		.regions	= &host_firmware_regions[0],
 	},

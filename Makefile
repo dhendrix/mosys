@@ -302,8 +302,7 @@ MOSYS_MACROS	:= -DPROGRAM=\"$(PROGRAM)\" \
 
 KBUILD_CPPFLAGS := 
 
-KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
-		   -fno-strict-aliasing -fno-common \
+KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes \
 		   -Werror-implicit-function-declaration \
 		   -Wno-format-security
 

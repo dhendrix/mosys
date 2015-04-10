@@ -432,7 +432,7 @@ struct cros_compat_tuple *cros_fdt_tuple(void)
 			endptr = &compat[0];
 			continue;
 		}
-		snprintf(family, p1 - p0 + 1, p0);
+		snprintf(family, p1 - p0 + 1, "%s", p0);
 
 		/* name */
 		p0 = p1 + 1;
@@ -441,7 +441,7 @@ struct cros_compat_tuple *cros_fdt_tuple(void)
 			endptr = &compat[0];
 			continue;
 		}
-		snprintf(name, p1 - p0 + 1, p0);
+		snprintf(name, p1 - p0 + 1, "%s", p0);
 
 		/* revision */
 		p0 = p1 + 1;

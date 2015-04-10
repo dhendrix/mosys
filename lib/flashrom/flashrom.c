@@ -149,7 +149,7 @@ int flashrom_read(uint8_t *buf, size_t size,
 	if ((path = flashrom_path()) == NULL)
 		goto flashrom_read_exit_1;
 
-	string_builder_sprintf(sb, path);
+	string_builder_sprintf(sb, "%s", path);
 	if (append_programmer_arg(sb, target) < 0)
 		goto flashrom_read_exit_1;
 
@@ -214,7 +214,7 @@ int flashrom_read_by_name(uint8_t **buf,
 	if ((path = flashrom_path()) == NULL)
 		goto flashrom_read_exit_0;
 
-	string_builder_sprintf(sb, path);
+	string_builder_sprintf(sb, "%s", path);
 	if (append_programmer_arg(sb, target) < 0)
 		goto flashrom_read_exit_1;
 
@@ -276,7 +276,7 @@ int flashrom_write_by_name(size_t size, uint8_t *buf,
 	if ((path = flashrom_path()) == NULL)
 		goto flashrom_write_exit_0;
 
-	string_builder_sprintf(sb, path);
+	string_builder_sprintf(sb, "%s", path);
 	if (append_programmer_arg(sb, target) < 0)
 		goto flashrom_write_exit_0;
 

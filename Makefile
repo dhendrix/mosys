@@ -304,7 +304,7 @@ KBUILD_CPPFLAGS :=
 
 KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes \
 		   -Werror-implicit-function-declaration \
-		   -Wno-format-security
+		   -Werror=format-security
 
 KBUILD_AFLAGS   := -D__ASSEMBLY__
 

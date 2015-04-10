@@ -440,14 +440,15 @@ static int sensor_set_fantach_cmd(struct platform_intf *intf,
 		lprintf(LOG_DEBUG, "Disabling fan %s\n", name);
 		ret = intf->cb->sensor->set_fantach_off(intf, name);
 	} else {
+		char *endptr;
+
 		if (!intf->cb->sensor->set_fantach) {
 			errno = ENOSYS;
 			return -1;
 		}
 
-		percent = strtoul(spec, NULL, 0);
-
-		if ((percent > 100) || (percent < 0)) {
+		percent = strtoul(spec, &endptr, 0);
+		if ((*endptr != '\0') || (percent > 100)) {
 			lprintf(LOG_ERR, "Invalid percentage %u%%\n",
 			        percent);
 			errno = EINVAL;

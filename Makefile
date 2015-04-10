@@ -305,8 +305,8 @@ KBUILD_CPPFLAGS :=
 KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -fno-strict-aliasing -fno-common \
 		   -Werror-implicit-function-declaration \
-		   -Wno-format-security \
-		   -fno-delete-null-pointer-checks
+		   -Wno-format-security
+
 KBUILD_AFLAGS   := -D__ASSEMBLY__
 
 export VERSION PATCHLEVEL SUBLEVEL KERNELRELEASE KERNELVERSION UNITTEST

@@ -110,16 +110,6 @@ struct spd_reg {
 	const char *table[256];
 };
 
-struct spd_callbacks {
-	enum spd_dram_type dram_type;
-	struct spd_reg *regs;
-	int num_regs;
-};
-
-//extern struct spd_callbacks ddr1_callbacks;
-extern struct spd_callbacks ddr2_callbacks;
-//extern struct spd_callbacks fbdimm_callbacks;
-
 struct spd_eeprom {
 	int length;
 	uint8_t data[SPD_MAX_LENGTH];

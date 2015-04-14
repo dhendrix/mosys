@@ -238,7 +238,7 @@ int spd_print_field_ddr2(struct platform_intf *intf, struct kv_pair *kv,
 		size_t len;
 
 		len = ddr2_part_number(byte, &part_num);
-		if ((len < 0) || (part_num == NULL)) {
+		if (part_num == NULL) {
 			ret = 0;
 			break;
 		}
@@ -343,7 +343,7 @@ int spd_print_field_ddr2(struct platform_intf *intf, struct kv_pair *kv,
 			clock = val2str(byte[23], ddr2_clock_lut);
 
 			snprintf(tmp, sizeof(speeds), " %s-%s", clock, cas);
-			strncat(speeds, tmp, sizeof(speeds) - strlen(speeds));
+			strncat(speeds, tmp, sizeof(speeds) - strlen(speeds) - 1);
 		}
 
 		/* Find the derated max cycle time at CLX - 2.0 */
@@ -353,7 +353,7 @@ int spd_print_field_ddr2(struct platform_intf *intf, struct kv_pair *kv,
 			clock = val2str(byte[25], ddr2_clock_lut);
 
 			snprintf(tmp, sizeof(speeds), " %s-%s", clock, cas);
-			strncat(speeds, tmp, sizeof(speeds) - strlen(speeds));
+			strncat(speeds, tmp, sizeof(speeds) - strlen(speeds) - 1);
 		}
 
 		kv_pair_add(kv, "speeds", speeds);

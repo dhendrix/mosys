@@ -51,10 +51,6 @@ static const int port_ene_data   = 3;
 static const uint16_t ene_hwver_addr = 0xff00;
 static const uint16_t ene_ediid_addr = 0xff24;
 
-/* KB932 uses i8042 OBF/IBF flag positions for all command/status interfaces */
-static const uint8_t kb932_obf	= I8042_OBF;
-static const uint8_t kb932_ibf	= I8042_IBF;
-
 int kb932_wait_ibf_clear(struct platform_intf *intf)
 {
 	struct kb932_priv *ec_priv;

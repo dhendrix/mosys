@@ -147,15 +147,15 @@ int flashrom_read(uint8_t *buf, size_t size,
 	const char *path;
 
 	if ((path = flashrom_path()) == NULL)
-		goto flashrom_read_exit_1;
+		goto flashrom_read_exit_0;
 
 	string_builder_sprintf(sb, "%s", path);
 	if (append_programmer_arg(sb, target) < 0)
-		goto flashrom_read_exit_1;
+		goto flashrom_read_exit_0;
 
 	if (!mkstemp(filename)) {
 		lperror(LOG_DEBUG, "Unable to make temporary file for flashrom");
-		goto flashrom_read_exit_1;
+		goto flashrom_read_exit_0;
 	}
 
 	if (region) {
@@ -170,29 +170,29 @@ int flashrom_read(uint8_t *buf, size_t size,
 	flashrom_cmd = mosys_strdup(string_builder_get_string(sb));
 	lprintf(LOG_DEBUG, "Calling \"%s\"\n", flashrom_cmd);
 	if (do_flashrom(flashrom_cmd) < 0)
-		goto flashrom_read_exit_2;
+		goto flashrom_read_exit_1;
 
 	fd = open(filename, O_RDONLY);
 	if (fstat(fd, &s) < 0) {
 		lprintf(LOG_DEBUG, "%s: Cannot stat %s\n", __func__, filename);
-		goto flashrom_read_exit_2;
+		goto flashrom_read_exit_1;
 	}
 
 	if (s.st_size != size) {
 		lprintf(LOG_DEBUG, "%s: Size of image: %lu, expected %lu",
 		                   __func__, s.st_size, size);
-		goto flashrom_read_exit_2;
+		goto flashrom_read_exit_1;
 	}
 
 	if (read(fd, buf, size) != size) {
 		lperror(LOG_DEBUG, "%s: Unable to read image");
-		goto flashrom_read_exit_2;
+		goto flashrom_read_exit_1;
 	}
 
 	rc = 0;
-flashrom_read_exit_2:
-	free(flashrom_cmd);
 flashrom_read_exit_1:
+	free(flashrom_cmd);
+flashrom_read_exit_0:
 	unlink(filename);
 	free_string_builder(sb);
 	return rc;

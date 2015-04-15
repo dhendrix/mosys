@@ -283,7 +283,7 @@ int flashrom_write_by_name(size_t size, uint8_t *buf,
 	if (!mkstemp(filename)) {
 		lperror(LOG_DEBUG,
 			"Unable to make temporary file for flashrom");
-		goto flashrom_write_exit_1;
+		goto flashrom_write_exit_0;
 	}
 
 	string_builder_strcat(sb, " -i ");

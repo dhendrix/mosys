@@ -153,7 +153,7 @@ int flashrom_read(uint8_t *buf, size_t size,
 	if (append_programmer_arg(sb, target) < 0)
 		goto flashrom_read_exit_0;
 
-	if (!mkstemp(filename)) {
+	if (mkstemp(filename) == -1) {
 		lperror(LOG_DEBUG, "Unable to make temporary file for flashrom");
 		goto flashrom_read_exit_0;
 	}
@@ -218,7 +218,7 @@ int flashrom_read_by_name(uint8_t **buf,
 	if (append_programmer_arg(sb, target) < 0)
 		goto flashrom_read_exit_1;
 
-	if (!mkstemp(filename)) {
+	if (mkstemp(filename) == -1) {
 		lperror(LOG_DEBUG, "Unable to make temporary file for flashrom");
 		goto flashrom_read_exit_1;
 	}
@@ -280,7 +280,7 @@ int flashrom_write_by_name(size_t size, uint8_t *buf,
 	if (append_programmer_arg(sb, target) < 0)
 		goto flashrom_write_exit_0;
 
-	if (!mkstemp(filename)) {
+	if (mkstemp(filename) == -1) {
 		lperror(LOG_DEBUG,
 			"Unable to make temporary file for flashrom");
 		goto flashrom_write_exit_0;

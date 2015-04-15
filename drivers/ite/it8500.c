@@ -112,7 +112,7 @@ int it8500_detect(struct platform_intf *intf)
 uint16_t it8500_get_iobad(struct platform_intf *intf, int bank, uint8_t ldn)
 {
 	uint8_t iobad_msb, iobad_lsb;
-	uint16_t iobad, port;
+	uint16_t iobad = 0, port;
 	uint8_t ldn_orig;
 
 	if (it8500_get_sioport(intf, &port) <= 0)

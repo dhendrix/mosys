@@ -49,7 +49,10 @@ int cros_ec_hello(struct platform_intf *intf, struct ec_cb *ec)
 	struct ec_params_hello p;
 	struct ec_response_hello r;
 	int rv;
-	struct cros_ec_priv *priv = ec->priv;
+	struct cros_ec_priv *priv;
+
+	MOSYS_CHECK(ec && ec->priv);
+	priv = ec->priv;
 
 	p.in_data = 0xa0b0c0d0;
 
@@ -73,7 +76,10 @@ const char *cros_ec_version(struct platform_intf *intf, struct ec_cb *ec)
 	static const char *const fw_copies[] = { "unknown", "RO", "RW" };
 	struct ec_response_get_version r;
 	const char *ret = NULL;
-	struct cros_ec_priv *priv = ec->priv;
+	struct cros_ec_priv *priv;
+
+	MOSYS_CHECK(ec && ec->priv);
+	priv = ec->priv;
 
 	if (priv->cmd(intf, ec, EC_CMD_GET_VERSION, 0, &r, sizeof(r), NULL, 0))
 		return NULL;
@@ -106,9 +112,12 @@ const char *cros_ec_version(struct platform_intf *intf, struct ec_cb *ec)
 
 int cros_ec_board_version(struct platform_intf *intf, struct ec_cb *ec)
 {
-	struct cros_ec_priv *priv = ec->priv;
+	struct cros_ec_priv *priv;
 	struct ec_response_board_version r;
 	int rc = 0;
+
+	MOSYS_CHECK(ec && ec->priv);
+	priv = ec->priv;
 
 	rc = priv->cmd(intf, ec, EC_CMD_GET_BOARD_VERSION, 0,
 		       &r, sizeof(r), NULL, 0);
@@ -124,7 +133,10 @@ int cros_ec_chip_info(struct platform_intf *intf, struct ec_cb *ec,
 		  struct ec_response_get_chip_info *info)
 {
 	int rc = 0;
-	struct cros_ec_priv *priv = ec->priv;
+	struct cros_ec_priv *priv;
+
+	MOSYS_CHECK(ec && ec->priv);
+	priv = ec->priv;
 
 	rc = priv->cmd(intf, ec,EC_CMD_GET_CHIP_INFO, 0,
 		       info, sizeof(*info), NULL, 0);
@@ -142,7 +154,10 @@ int cros_ec_flash_info(struct platform_intf *intf, struct ec_cb *ec,
 		   struct ec_response_flash_info *info)
 {
 	int rc = 0;
-	struct cros_ec_priv *priv = ec->priv;
+	struct cros_ec_priv *priv;
+
+	MOSYS_CHECK(ec && ec->priv);
+	priv = ec->priv;
 
 	rc = priv->cmd(intf, ec, EC_CMD_FLASH_INFO, 0,
 		       info, sizeof(*info), NULL, 0);
@@ -202,9 +217,8 @@ int cros_ec_vbnvcontext_read(struct platform_intf *intf, struct ec_cb *ec,
 	struct cros_ec_priv *priv;
 	int result;
 
-	if (!intf->cb || !ec || !ec->priv)
-		return -1;
-	priv = intf->cb->ec->priv;
+	MOSYS_CHECK(ec && ec->priv);
+	priv = ec->priv;
 
 	lprintf(LOG_DEBUG, "%s: sending VBNV_CONTEXT read request\n",
 		__func__);
@@ -227,8 +241,7 @@ int cros_ec_vbnvcontext_write(struct platform_intf *intf, struct ec_cb *ec,
 	struct cros_ec_priv *priv;
 	int result;
 
-	if (!intf->cb || !ec || !ec->priv)
-		return -1;
+	MOSYS_CHECK(ec && ec->priv);
 	priv = ec->priv;
 
 	lprintf(LOG_DEBUG, "%s: sending VBNV_CONTEXT write request\n",

@@ -114,6 +114,7 @@ static int pinky_setup_post(struct platform_intf *intf)
 		if (pinky_ec_setup(intf) <= 0)
 			return -1;
 		intf->cb->nvram = &cros_ec_nvram_cb;
+		intf->cb->ec = &cros_ec_cb;
 	} else {
 		intf->cb->nvram = &cros_spi_flash_nvram_cb;
 	}
@@ -123,7 +124,7 @@ static int pinky_setup_post(struct platform_intf *intf)
 
 static int pinky_destroy(struct platform_intf *intf)
 {
-	if (intf->cb->ec->destroy)
+	if (intf->cb->ec && intf->cb->ec->destroy)
 		intf->cb->ec->destroy(intf, intf->cb->ec);
 	return 0;
 }
@@ -141,7 +142,7 @@ struct eventlog_cb pinky_eventlog_cb = {
 };
 
 struct platform_cb pinky_cb = {
-	.ec		= &cros_ec_cb,
+	.ec		= NULL,	/* post-setup sets this if EC is detected */
 	.eeprom 	= &pinky_eeprom_cb,
 //	.gpio		= &pinky_gpio_cb,
 	.memory		= &pinky_memory_cb,

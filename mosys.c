@@ -183,14 +183,13 @@ static int intf_main(struct platform_intf *intf, int argc, char **argv)
 
 	if (do_list) {
 		printf("\n");
-		if (argc == 0) {
-			errno = EINVAL;
+		if (argc == 0)
 			ret = -1;
-		}
 		return ret;
 	}
 
 	lprintf(LOG_WARNING, "Command not found\n\n");
+	errno = ENOSYS;
 	return intf_main(intf, 0, NULL);	/* trigger a help listing */
 }
 

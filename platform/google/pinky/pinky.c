@@ -79,8 +79,12 @@ struct veyron_probe_id {
 	[THEA]		= { "Thea", "google,veyron-thea", 1 },
 };
 
+#define PINKY_CMD_EC_NUM	0
 struct platform_cmd *pinky_sub[] = {
-	&cmd_ec,
+	/* Keep this as the first entry. intf->sub will be set to point to
+         * the next entry if it turns out that we don't have an EC. */
+	[PINKY_CMD_EC_NUM] = &cmd_ec,
+
 	&cmd_eeprom,
 //	&cmd_gpio,
 	&cmd_memory,
@@ -119,6 +123,7 @@ static int pinky_setup_post(struct platform_intf *intf)
 	} else {
 		intf->cb->ec = NULL;
 		intf->cb->nvram = &cros_spi_flash_nvram_cb;
+		intf->sub = &pinky_sub[PINKY_CMD_EC_NUM + 1];
 	}
 
 	return 0;

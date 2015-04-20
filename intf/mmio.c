@@ -50,7 +50,7 @@
 
 #include "lib/string.h"
 
-inline struct file_backed_range *
+static inline struct file_backed_range *
 mmio_ranges(struct platform_intf *intf)
 {
 	return intf->op->mmio->ranges;

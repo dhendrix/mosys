@@ -69,7 +69,7 @@ static struct io_intf io_sys_intf;
 
 static int setup_done;
 
-inline struct file_backed_range *
+static inline struct file_backed_range *
 io_ranges(struct platform_intf *intf)
 {
 	return intf->op->io->ranges;

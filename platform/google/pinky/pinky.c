@@ -54,7 +54,8 @@ enum pinky_boards {
 	PINKY,
 	REMY,
 	RIALTO,
-	SPEEDY
+	SPEEDY,
+	THEA
 };
 
 static enum pinky_boards probed_board = UNKNOWN;
@@ -75,6 +76,7 @@ struct veyron_probe_id {
 	[REMY]		= { "Remy", "google,veyron-remy", 1 },
 	[RIALTO]	= { "Rialto", "google,veyron-rialto", 0 },
 	[SPEEDY]	= { "Speedy", "google,veyron-speedy", 1 },
+	[THEA]		= { "Thea", "google,veyron-thea", 1 },
 };
 
 struct platform_cmd *pinky_sub[] = {

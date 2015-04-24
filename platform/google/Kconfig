@@ -38,6 +38,11 @@ config PLATFORM_NYAN
         bool "nyan"
         default n
 
+config PLATFORM_OAK
+	depends on PLATFORM_ARCH_ARMEL
+	bool "Oak"
+	default n
+
 config PLATFORM_PINKY
 	depends on PLATFORM_ARCH_ARMEL
 	bool "Pinky"

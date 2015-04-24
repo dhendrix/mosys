@@ -47,6 +47,7 @@ extern struct platform_intf platform_link;
 extern struct platform_intf platform_lumpy;
 extern struct platform_intf platform_mario;
 extern struct platform_intf platform_nyan;
+extern struct platform_intf platform_oak;
 extern struct platform_intf platform_parrot;
 extern struct platform_intf platform_peach;
 extern struct platform_intf platform_pinky;
@@ -89,6 +90,9 @@ struct platform_intf *platform_intf_list[] = {
 #ifdef CONFIG_PLATFORM_NYAN
 	&platform_nyan,
 #endif
+#ifdef CONFIG_PLATFORM_OAK
+	&platform_oak,
+#endif
 #ifdef CONFIG_PLATFORM_PARROT
 	&platform_parrot,
 #endif
@@ -128,6 +132,7 @@ struct platform_intf *platform_intf_list[] = {
 #ifdef CONFIG_PLATFORM_ZGB
 	&platform_zgb,
 #endif
+
 
 /* experimental platforms */
 #ifdef CONFIG_EXPERIMENTAL_KIEV

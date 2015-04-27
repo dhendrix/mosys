@@ -36,7 +36,6 @@
 /* experimental */
 extern struct platform_intf platform_beltino;
 extern struct platform_intf platform_kiev;
-extern struct platform_intf platform_nyan;
 extern struct platform_intf platform_rambi;
 extern struct platform_intf platform_slippy;
 extern struct platform_intf platform_skate;
@@ -50,6 +49,7 @@ extern struct platform_intf platform_daisy;
 extern struct platform_intf platform_link;
 extern struct platform_intf platform_lumpy;
 extern struct platform_intf platform_mario;
+extern struct platform_intf platform_nyan;
 extern struct platform_intf platform_parrot;
 extern struct platform_intf platform_peach;
 extern struct platform_intf platform_pinky;
@@ -82,6 +82,9 @@ struct platform_intf *platform_intf_list[] = {
 #endif
 #ifdef CONFIG_PLATFORM_MARIO
 	&platform_mario,
+#endif
+#ifdef CONFIG_PLATFORM_NYAN
+	&platform_nyan,
 #endif
 #ifdef CONFIG_PLATFORM_PARROT
 	&platform_parrot,
@@ -120,9 +123,6 @@ struct platform_intf *platform_intf_list[] = {
 #endif
 #ifdef CONFIG_EXPERIMENTAL_KIEV
 	&platform_kiev,
-#endif
-#ifdef CONFIG_EXPERIMENTAL_NYAN
-	&platform_nyan,
 #endif
 #ifdef CONFIG_EXPERIMENTAL_RAMBI
 	&platform_rambi,

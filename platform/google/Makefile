@@ -1,6 +1,7 @@
 obj-$(CONFIG_PLATFORM_AURON)	+= auron/
 obj-$(CONFIG_PLATFORM_MARIO)	+= mario/
 obj-$(CONFIG_PLATFORM_LINK)	+= link/
+obj-$(CONFIG_PLATFORM_NYAN)	+= nyan/
 obj-$(CONFIG_PLATFORM_PINKY)	+= pinky/
 obj-$(CONFIG_PLATFORM_RUSH)	+= rush/
 obj-$(CONFIG_PLATFORM_SAMUS)	+= samus/

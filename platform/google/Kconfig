@@ -25,6 +25,13 @@ config PLATFORM_MARIO
 	bool "Google Cr-48 Chromebook"
 	default n
 
+config PLATFORM_NYAN
+        depends on PLATFORM_ARCH_ARMEL
+	select SOC_NVIDIA_TEGRA124
+        select CROS_EC_SPI
+        bool "nyan"
+        default n
+
 config PLATFORM_PINKY
 	depends on PLATFORM_ARCH_ARMEL
 	bool "Pinky"

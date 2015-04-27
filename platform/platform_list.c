@@ -36,6 +36,7 @@
 /* experimental */
 extern struct platform_intf platform_kiev;
 extern struct platform_intf platform_storm;
+extern struct platform_intf platform_glados;
 
 /* production platforms */
 extern struct platform_intf platform_alex;
@@ -137,6 +138,9 @@ struct platform_intf *platform_intf_list[] = {
 /* experimental platforms */
 #ifdef CONFIG_EXPERIMENTAL_KIEV
 	&platform_kiev,
+#endif
+#ifdef CONFIG_EXPERIMENTAL_GLADOS
+	&platform_glados,
 #endif
 #ifdef CONFIG_PLATFORM_STORM
 	&platform_storm,

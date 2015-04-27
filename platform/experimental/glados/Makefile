@@ -1,0 +1,8 @@
+## Temporarily disabling EC query##
+#obj-$(CONFIG_EXPERIMENTAL_GLADOS)	+= ec.o
+obj-$(CONFIG_EXPERIMENTAL_GLADOS)	+= eeprom.o
+#obj-$(CONFIG_EXPERIMENTAL_GLADOS)	+= gpio.o
+obj-$(CONFIG_EXPERIMENTAL_GLADOS)	+= memory.o
+obj-$(CONFIG_EXPERIMENTAL_GLADOS)	+= nvram.o
+obj-$(CONFIG_EXPERIMENTAL_GLADOS)	+= sys.o
+obj-$(CONFIG_EXPERIMENTAL_GLADOS)	+= glados.o

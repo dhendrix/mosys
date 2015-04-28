@@ -4,6 +4,7 @@ obj-$(CONFIG_PLATFORM_MARIO)	+= mario/
 obj-$(CONFIG_PLATFORM_LINK)	+= link/
 obj-$(CONFIG_PLATFORM_NYAN)	+= nyan/
 obj-$(CONFIG_PLATFORM_PINKY)	+= pinky/
+obj-$(CONFIG_PLATFORM_RAMBI)	+= rambi/
 obj-$(CONFIG_PLATFORM_RUSH)	+= rush/
 obj-$(CONFIG_PLATFORM_SAMUS)	+= samus/
 obj-$(CONFIG_PLATFORM_SKATE)	+= skate/

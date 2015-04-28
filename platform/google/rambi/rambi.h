@@ -29,8 +29,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef EXPERIMENTAL_RAMBI_H__
-#define EXPERIMENTAL_RAMBI_H__
+#ifndef PLATFORM_RAMBI_H__
+#define PLATFORM_RAMBI_H__
 
 #include <inttypes.h>
 #include "mosys/platform.h"
@@ -48,4 +48,4 @@ extern struct sys_cb rambi_sys_cb;		/* sys.c */
 extern int rambi_vpd_setup(struct platform_intf *intf);
 extern int rambi_ec_setup(struct platform_intf *intf);
 
-#endif /* EXPERIMENTAL_RAMBI_H_ */
+#endif /* PLATFORM_RAMBI_H_ */

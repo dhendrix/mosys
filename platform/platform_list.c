@@ -35,7 +35,6 @@
 
 /* experimental */
 extern struct platform_intf platform_kiev;
-extern struct platform_intf platform_rambi;
 extern struct platform_intf platform_storm;
 
 /* production platforms */
@@ -51,6 +50,7 @@ extern struct platform_intf platform_nyan;
 extern struct platform_intf platform_parrot;
 extern struct platform_intf platform_peach;
 extern struct platform_intf platform_pinky;
+extern struct platform_intf platform_rambi;
 extern struct platform_intf platform_rush;
 extern struct platform_intf platform_samus;
 extern struct platform_intf platform_skate;
@@ -98,6 +98,9 @@ struct platform_intf *platform_intf_list[] = {
 #ifdef CONFIG_PLATFORM_PINKY
 	&platform_pinky,
 #endif
+#ifdef CONFIG_PLATFORM_RAMBI
+	&platform_rambi,
+#endif
 #ifdef CONFIG_PLATFORM_RUSH
 	&platform_rush,
 #endif
@@ -129,9 +132,6 @@ struct platform_intf *platform_intf_list[] = {
 /* experimental platforms */
 #ifdef CONFIG_EXPERIMENTAL_KIEV
 	&platform_kiev,
-#endif
-#ifdef CONFIG_EXPERIMENTAL_RAMBI
-	&platform_rambi,
 #endif
 #ifdef CONFIG_PLATFORM_STORM
 	&platform_storm,

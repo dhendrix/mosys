@@ -43,6 +43,13 @@ config PLATFORM_PINKY
 	bool "Pinky"
 	default n
 
+config PLATFORM_RAMBI
+	depends on PLATFORM_ARCH_X86
+	select CROS_EC_LPC
+	select SOC_INTEL_BAYTRAIL
+	bool "rambi"
+	default n
+
 config PLATFORM_RUSH
 	depends on PLATFORM_ARCH_ARMEL
 	select SOC_NVIDIA_TEGRA124

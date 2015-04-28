@@ -5,4 +5,5 @@ obj-$(CONFIG_PLATFORM_NYAN)	+= nyan/
 obj-$(CONFIG_PLATFORM_PINKY)	+= pinky/
 obj-$(CONFIG_PLATFORM_RUSH)	+= rush/
 obj-$(CONFIG_PLATFORM_SAMUS)	+= samus/
+obj-$(CONFIG_PLATFORM_SKATE)	+= skate/
 obj-$(CONFIG_PLATFORM_STORM)	+= storm/

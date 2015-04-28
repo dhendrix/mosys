@@ -91,21 +91,6 @@ struct smbios_table_system {
 	uint8_t family;		/* v2.4+ */
 } __attribute__ ((packed));
 
-/* Type 2 - baseboard information */
-struct smbios_table_baseboard {
-	uint8_t manufacturer;
-	uint8_t name;
-	uint8_t version;
-	uint8_t serial_number;
-	uint8_t asset_tag;
-	uint8_t feature_flags;
-	uint8_t chassis_location;
-	uint16_t chassis_handle;
-	uint8_t board_type;
-	uint8_t num_cont_handles;
-	uint16_t cont_handles[];
-} __attribute__ ((packed));
-
 /* Type 15 - event log */
 struct smbios_table_log {
 	uint16_t length;
@@ -328,7 +313,6 @@ struct smbios_table {
 	union {
 		struct smbios_table_bios bios;
 		struct smbios_table_system system;
-		struct smbios_table_baseboard baseboard;
 		struct smbios_table_log log;
 		struct smbios_table_memory_array mem_array;
 		struct smbios_table_memory_device mem_device;

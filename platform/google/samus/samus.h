@@ -29,8 +29,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef EXPERIMENTAL_SAMUS_H__
-#define EXPERIMENTAL_SAMUS_H__
+#ifndef PLATFORM_SAMUS_H__
+#define PLATFORM_SAMUS_H__
 
 #include <inttypes.h>
 #include "mosys/platform.h"
@@ -49,4 +49,4 @@ extern int samus_vpd_setup(struct platform_intf *intf);
 extern int samus_ec_setup(struct platform_intf *intf);
 extern int samus_pd_setup(struct platform_intf *intf);
 
-#endif /* EXPERIMENTAL_SAMUS_H_ */
+#endif /* PLATFORM_SAMUS_H_ */

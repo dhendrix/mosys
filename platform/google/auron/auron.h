@@ -29,8 +29,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef EXPERIMENTAL_AURON_H__
-#define EXPERIMENTAL_AURON_H__
+#ifndef PLATFORM_AURON_H__
+#define PLATFORM_AURON_H__
 
 #include <inttypes.h>
 #include "mosys/platform.h"
@@ -49,4 +49,4 @@ extern int auron_vpd_setup(struct platform_intf *intf);
 extern int auron_ec_setup(struct platform_intf *intf);
 extern int auron_pd_setup(struct platform_intf *intf);
 
-#endif /* EXPERIMENTAL_AURON_H_ */
+#endif /* PLATFORM_AURON_H_ */

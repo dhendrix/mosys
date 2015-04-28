@@ -1,3 +1,2 @@
 obj-$(CONFIG_EXPERIMENTAL_KIEV)		+= kiev/
 obj-$(CONFIG_EXPERIMENTAL_RAMBI)	+= rambi/
-obj-$(CONFIG_EXPERIMENTAL_SLIPPY)	+= slippy/

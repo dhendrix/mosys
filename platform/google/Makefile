@@ -7,4 +7,5 @@ obj-$(CONFIG_PLATFORM_PINKY)	+= pinky/
 obj-$(CONFIG_PLATFORM_RUSH)	+= rush/
 obj-$(CONFIG_PLATFORM_SAMUS)	+= samus/
 obj-$(CONFIG_PLATFORM_SKATE)	+= skate/
+obj-$(CONFIG_PLATFORM_SLIPPY)	+= slippy/
 obj-$(CONFIG_PLATFORM_STORM)	+= storm/

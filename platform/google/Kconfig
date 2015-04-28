@@ -64,6 +64,13 @@ config PLATFORM_SKATE
         bool "skate"
         default n
 
+config PLATFORM_SLIPPY
+	depends on PLATFORM_ARCH_X86
+	select CHIPSET_INTEL_LYNXPOINT_LP
+	select CROS_EC_LPC
+	bool "slippy"
+	default n
+
 config PLATFORM_STORM
 	depends on PLATFORM_ARCH_ARMEL
 	bool "Storm"

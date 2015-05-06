@@ -110,7 +110,7 @@ struct smbios_table_log {
 	uint8_t header_format;
 	uint8_t descriptor_num;
 	uint8_t descriptor_len;
-	uint8_t descriptor[];
+	uint8_t descriptor[0];	/* variable length data */
 } __attribute__ ((packed));
 
 /* Event log Type 1 header */

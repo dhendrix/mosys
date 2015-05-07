@@ -359,8 +359,15 @@ const char *strlfind(const char *str, const char *arr[], int cs)
 	int i;
 	const char *ret = NULL;
 
-	if (cs < 0 || cs > 1)
+	if (cs < 0 || cs > 1) {
+		lprintf(LOG_SPEW, "Invalid CS\n");
 		return NULL;
+	}
+
+	if (arr == NULL) {
+		lprintf(LOG_SPEW, "Empty static id list.\n");
+		return NULL;
+	}
 
 	for (i = 0; arr[i] != NULL; i++) {
 		lprintf(LOG_SPEW, "%s: \"%s\" ?= \"%s\": ",

@@ -24,3 +24,7 @@ config CHIPSET_INTEL_LYNXPOINT_LP
 config SOC_INTEL_BAYTRAIL
 	bool "Intel Baytrail SOC"
 	default n
+
+config SOC_INTEL_BRASWELL
+	bool "Intel Braswell SOC"
+	default n

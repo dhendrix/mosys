@@ -22,4 +22,11 @@ config EXPERIMENTAL_KIEV
 	bool "kiev"
 	default n
 
+config EXPERIMENTAL_STRAGO
+	depends on PLATFORM_ARCH_X86 && PLATFORM_EXPERIMENTAL
+	select CROS_EC_LPC
+	select SOC_INTEL_BRASWELL
+	bool "strago"
+	default n
+
 endmenu

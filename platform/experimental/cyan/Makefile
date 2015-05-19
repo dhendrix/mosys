@@ -1,0 +1,7 @@
+obj-$(CONFIG_EXPERIMENTAL_CYAN)	+= ec.o
+obj-$(CONFIG_EXPERIMENTAL_CYAN)	+= eeprom.o
+obj-$(CONFIG_EXPERIMENTAL_CYAN)	+= gpio.o
+obj-$(CONFIG_EXPERIMENTAL_CYAN)	+= memory.o
+obj-$(CONFIG_EXPERIMENTAL_CYAN)	+= nvram.o
+obj-$(CONFIG_EXPERIMENTAL_CYAN)	+= sys.o
+obj-$(CONFIG_EXPERIMENTAL_CYAN)	+= cyan.o

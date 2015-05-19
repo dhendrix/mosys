@@ -34,6 +34,7 @@
 #include "mosys/platform.h"
 
 /* experimental */
+extern struct platform_intf platform_cyan;
 extern struct platform_intf platform_kiev;
 extern struct platform_intf platform_storm;
 extern struct platform_intf platform_glados;
@@ -137,6 +138,9 @@ struct platform_intf *platform_intf_list[] = {
 
 
 /* experimental platforms */
+#ifdef CONFIG_EXPERIMENTAL_CYAN
+	&platform_cyan,
+#endif
 #ifdef CONFIG_EXPERIMENTAL_KIEV
 	&platform_kiev,
 #endif

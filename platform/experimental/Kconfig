@@ -8,6 +8,13 @@ config PLATFORM_EXPERIMENTAL
 	bool "Experimental platform support"
 	default n
 
+config EXPERIMENTAL_CYAN
+	depends on PLATFORM_ARCH_X86 && PLATFORM_EXPERIMENTAL
+	select CROS_EC_LPC
+	select SOC_INTEL_BRASWELL
+	bool "cyan"
+	default n
+
 config EXPERIMENTAL_GLADOS
 	depends on PLATFORM_ARCH_X86 && PLATFORM_EXPERIMENTAL
 	select CROS_EC_LPC

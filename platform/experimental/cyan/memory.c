@@ -42,59 +42,18 @@
 #include "mosys/platform.h"
 
 #include "drivers/gpio.h"
-#include "drivers/google/cros_ec.h"
-//#include "drivers/intel/braswell.h"
+
 
 #include "lib/cbfs_core.h"
 #include "lib/file.h"
 #include "lib/flashrom.h"
 #include "lib/math.h"
 #include "lib/spd.h"
+#include "lib/smbios.h"
+#include "lib/smbios_tables.h"
+#include "mosys/output.h"
 
 #include "cyan.h"
-
-#define cyan_DIMM_COUNT	2
-#define cyan_DIMM_SPEED	1333
-#define cyan_RAMID_GPIO_COUNT 3
-
-/*
- * Return the number of RAM_ID strap GPIOs. These GPIOs are standardized
- * across all Strago-class platforms, but some platforms have four GPIOs
- * instead of three because they must support > 8 DRAM SKUs.
- */
-static int cyan_ramid_gpio_count(struct platform_intf *intf)
-{
-	return cyan_RAMID_GPIO_COUNT;
-}
-
-/*
- *TODO: Find the number of strappings and update.
- * SPD blob contains up to eight entries which are selected by
- * board strappings.
- */
-static int cyan_get_spd_index(struct platform_intf *intf)
-{
-#if 0
-	int spd_index = 0;
-	int gpio_count = cyan_ramid_gpio_count(intf);
-	int val;
-	int i;
-	struct gpio_map ram_id[] = { { 37, GPIO_IN, 0, BAYTRAIL_GPSSUS_PORT },
-				     { 38, GPIO_IN, 0, BAYTRAIL_GPSSUS_PORT },
-				     { 39, GPIO_IN, 0, BAYTRAIL_GPSSUS_PORT },
-				     { 40, GPIO_IN, 0, BAYTRAIL_GPSSUS_PORT } };
-
-	for (i = 0; i < gpio_count; i++) {
-		if ((val = intf->cb->gpio->read(intf, &ram_id[i])) < 0)
-			return -1;
-		spd_index |= val << i;
-	}
-
-	return spd_index;
-#else
-	return 0;
-#endif
-}
 
 /*
  * cyan_dimm_count  -  return total number of dimm slots
@@ -105,67 +64,46 @@ static int cyan_get_spd_index(struct platform_intf *intf)
  */
 static int cyan_dimm_count(struct platform_intf *intf)
 {
-	/*
-	 * TODO(shawnn): Find a programatic way to do this detection.
-	 * Platforms have 1 or 2 DIMM config based on RAM_ID.
-	 */
-#if 0
-	if (!strncmp(intf->name, "cyan", 6)) {
-		int index = cyan_get_spd_index(intf);
-		if (cros_ec_board_version(intf, intf->cb->ec) < 1) {
-			/*
-			 * {0,0,0} = 2 x 2GiB Micron
-			 * {0,0,1} = 2 x 2GiB Hynix
-			 * {0,1,0} = 2 x 1GiB Micron
-			 * {0,1,1} = 2 x 1GiB Hynix
-			 * {1,0,0} = 1 x 2GiB Micron
-			 * {1,0,1} = 1 x 2GiB Hynix
-			 */
-			switch (index) {
-			case 4: case 6:
-				return 1;
-			default:
-				return 2;
-			}
-		} else {
-			/*
-			 * {0,0,0} = 1 x 4GiB Micron
-			 * {0,0,1} = 1 x 4GiB Hynix
-			 * {0,1,0} = 1 x 2GiB Micron
-			 * {0,1,1} = 1 x 2GiB Hynix
-			 * {1,0,0} = 2 x 2GiB Micron
-			 * {1,0,1} = 2 x 2GiB Hynix
-			 */
-			switch (index) {
-			case 4: case 6:
-				return 2;
-			default:
-				return 1;
-			}
+	int status = 0, dimm_cnt = 0;
+	struct smbios_table table;
+
+	while (status == 0) {
+		status = smbios_find_table(intf, SMBIOS_TYPE_MEMORY, dimm_cnt,
+					   &table,
+					   SMBIOS_LEGACY_ENTRY_BASE,
+					   SMBIOS_LEGACY_ENTRY_LEN);
+		if (status == 0)
+			dimm_cnt++;
+	}
+	return dimm_cnt;
+}
+
+static int find_spd_by_part_number(struct platform_intf *intf, int dimm,
+				   uint8_t *spd, uint32_t num_spd)
+{
+	char *smbios_part_num;
+	uint8_t i;
+	uint8_t *ptr;
+	struct smbios_table table;
+
+	lprintf(LOG_DEBUG, "Use SMBIOS type 17 to get memory information\n");
+	if (smbios_find_table(intf, SMBIOS_TYPE_MEMORY, dimm, &table,
+			      SMBIOS_LEGACY_ENTRY_BASE,
+			      SMBIOS_LEGACY_ENTRY_LEN) < 0) {
+		lprintf(LOG_DEBUG, "Can't find smbios type17\n");
+		return -1;
+	}
+	smbios_part_num = table.string[table.data.mem_device.part_number];
+
+	for (i = 0; i < num_spd; i++) {
+		ptr = (spd + i * 256);
+		if (!memcmp(smbios_part_num, ptr + 128, 18)) {
+			lprintf(LOG_DEBUG, "found %x\n", i);
+			return i;
 		}
 	}
-#endif
-	return cyan_DIMM_COUNT;
+	return -1;
 }
-
-/*
- * cyan_dimm_speed - Write actual DDR speed in MHz to kv
- *
- * @intf:	platform interface
- * @dimm:	DIMM number
- * @kv:		kv_pair structure
- *
- * returns actual DDR speed in MHz
- */
-static int cyan_dimm_speed(struct platform_intf *intf,
-			    int dimm,
-			    struct kv_pair *kv) {
-	int speed = cyan_DIMM_SPEED;
-	if (kv)
-		kv_pair_fmt(kv, "speed", "%d MHz", speed);
-	return speed;
-}
-
 static int cyan_spd_read_cbfs(struct platform_intf *intf,
 				int dimm, int reg, int len, uint8_t *buf)
 {
@@ -174,9 +112,11 @@ static int cyan_spd_read_cbfs(struct platform_intf *intf,
 	size_t size = CYAN_HOST_FIRMWARE_ROM_SIZE;
 	struct cbfs_file *file;
 	int spd_index = 0;
-	uint32_t spd_offset;
+	uint32_t spd_offset, num_spd;
+	uint8_t *ptr;
 
-	if (dimm > cyan_dimm_count(intf)) {
+	/* dimm cnt is 0 based */
+	if (dimm >= cyan_dimm_count(intf)) {
 		lprintf(LOG_DEBUG, "%s: Invalid DIMM specified\n", __func__);
 		return -1;
 	}
@@ -195,7 +135,9 @@ static int cyan_spd_read_cbfs(struct platform_intf *intf,
 	if ((file = cbfs_find("spd.bin", bootblock, size)) == NULL)
 		return -1;
 
-	spd_index = cyan_get_spd_index(intf);
+	ptr = (uint8_t *)file + ntohl(file->offset);
+	num_spd = ntohl(file->len) / 256;
+	spd_index = find_spd_by_part_number(intf, dimm, ptr, num_spd);
 	if (spd_index < 0)
 		return -1;
 
@@ -210,6 +152,21 @@ static int cyan_spd_read(struct platform_intf *intf,
 			 int dimm, int reg, int len, uint8_t *buf)
 {
 	return cyan_spd_read_cbfs(intf, dimm, reg, len, buf);
+}
+
+int cyan_dimm_speed(struct platform_intf *intf,
+		     int dimm, struct kv_pair *kv)
+{
+	struct smbios_table table;
+	if (smbios_find_table(intf, SMBIOS_TYPE_MEMORY, dimm, &table,
+			      SMBIOS_LEGACY_ENTRY_BASE,
+			      SMBIOS_LEGACY_ENTRY_LEN) < 0) {
+		return -1;
+	}
+
+	kv_pair_fmt(kv, "speed", "%d MHz", table.data.mem_device.speed);
+
+	return 0;
 }
 
 static struct memory_spd_cb cyan_spd_cb = {

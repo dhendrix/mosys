@@ -139,6 +139,40 @@ const struct nonspd_mem_info elpida_16gbit_lpddr3_fa232a2ma_gc_f = {
                   '-', 'F',},
 };
 
+const struct nonspd_mem_info samsung_2gbit_lpddr3_k3qf2f20em_agce = {
+        .dram_type              = SPD_DRAM_TYPE_LPDDR3,
+        .module_type.ddr3_type  = DDR3_MODULE_TYPE_SO_DIMM,
+
+        .module_size_mbits      = 8192,
+        .num_ranks              = 2,
+        .device_width           = 32,
+        .ddr_freq               = { DDR_400, DDR_533, DDR_667, DDR_800 },
+
+        .module_mfg_id          = { .msb = 0xce, .lsb = 0x00 },
+        .dram_mfg_id            = { .msb = 0xce, .lsb = 0x00 },
+
+        .part_num               =
+                { 'K', '3', 'Q', 'F', '2', 'F', '2', '0', 'E', 'M', '-',
+                  'A', 'G', 'C', 'E' },
+};
+
+const struct nonspd_mem_info elpida_8gbit_lpddr3_edfa164a2ma_jd_f = {
+        .dram_type              = SPD_DRAM_TYPE_LPDDR3,
+        .module_type.ddr3_type  = DDR3_MODULE_TYPE_UNDEFINED,
+
+        .module_size_mbits      = 8192,
+        .num_ranks              = 2,
+        .device_width           = 32,
+        .ddr_freq               = { DDR_333, DDR_400, DDR_533, DDR_667, DDR_800, DDR_933 },
+
+        .module_mfg_id          = { .msb = 0x2c, .lsb = 0x80 },
+        .dram_mfg_id            = { .msb = 0x2c, .lsb = 0x80 },
+
+        .part_num               =
+                { 'E', 'D', 'F', 'A', '1', '6', '4', 'A', '2', 'M', 'A', '-',
+                  'J', 'D', '-', 'F',},
+};
+
 const struct nonspd_mem_info samsung_8gbit_lpddr3_k4e8e304ed_egcc = {
 	.dram_type		= SPD_DRAM_TYPE_DDR3,
 	.module_type.ddr3_type	= DDR3_MODULE_TYPE_SO_DIMM,
@@ -314,38 +348,54 @@ static int read_ram_code(struct platform_intf *intf)
 			break;
 		}
 	}else{
-		switch (ram_code) {
-		case 0:
-			pinky_dimm_count = 2;
-			pinky_mem_info = &samsung_8gbit_lpddr3_k4e8e304ed_egcc;
-			break;
-		case 4:
-			pinky_dimm_count = 4;
-			pinky_mem_info = &samsung_4gbit_ddr3l_k4b4g1646d_byk0;
-			break;
-		case 5:
-			pinky_dimm_count = 4;
-			pinky_mem_info = &hynix_4gbit_ddr3l_h5tc4g63cfr_pba;
-			break;
-		case 6:
-			pinky_dimm_count = 4;
-			pinky_mem_info = &samsung_4gbit_ddr3l_k4b4g1646q_hyk0;
-			break;
-		case 0x0d:
-			pinky_dimm_count = 4;
-			pinky_mem_info = &hynix_4gbit_ddr3l_h5tc4g63afr_pba;
-			break;
-		case 0x0e:
-			pinky_dimm_count = 4;
-			pinky_mem_info = &samsung_8gbit_ddr3l_k4b8g1646q_myk0;
-			break;
-		case 0x0f:
-			pinky_dimm_count = 4;
-			pinky_mem_info = &hynix_8gbit_ddr3l_h5tc8g63amr_pba;
-			break;
-		default:
-			ret = -1;
-			break;
+                if(!strncmp(intf->name, "Mickey", 6)) {
+			switch (ram_code) {
+			case 0:
+				pinky_dimm_count = 2;
+				pinky_mem_info = &samsung_2gbit_lpddr3_k3qf2f20em_agce;
+				break;
+			case 7:
+				pinky_dimm_count = 2;
+				pinky_mem_info = &elpida_8gbit_lpddr3_edfa164a2ma_jd_f;
+				break;
+			default:
+				ret = -1;
+				break;
+			}
+		} else {
+			switch (ram_code) {
+			case 0:
+				pinky_dimm_count = 2;
+				pinky_mem_info = &samsung_8gbit_lpddr3_k4e8e304ed_egcc;
+				break;
+			case 4:
+				pinky_dimm_count = 4;
+				pinky_mem_info = &samsung_4gbit_ddr3l_k4b4g1646d_byk0;
+				break;
+			case 5:
+				pinky_dimm_count = 4;
+				pinky_mem_info = &hynix_4gbit_ddr3l_h5tc4g63cfr_pba;
+				break;
+			case 6:
+				pinky_dimm_count = 4;
+				pinky_mem_info = &samsung_4gbit_ddr3l_k4b4g1646q_hyk0;
+				break;
+			case 0x0d:
+				pinky_dimm_count = 4;
+				pinky_mem_info = &hynix_4gbit_ddr3l_h5tc4g63afr_pba;
+				break;
+			case 0x0e:
+				pinky_dimm_count = 4;
+				pinky_mem_info = &samsung_8gbit_ddr3l_k4b8g1646q_myk0;
+				break;
+			case 0x0f:
+				pinky_dimm_count = 4;
+				pinky_mem_info = &hynix_8gbit_ddr3l_h5tc8g63amr_pba;
+				break;
+			default:
+				ret = -1;
+				break;
+			}
 		}
 	}
 

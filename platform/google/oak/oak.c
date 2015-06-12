@@ -46,8 +46,7 @@
 #include "oak.h"
 
 const char *oak_id_list[] = {
-	"google,oak-rev0",
-	"google,oak-rev1",
+	"google,oak",
 	NULL,
 };
 

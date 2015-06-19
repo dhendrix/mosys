@@ -46,11 +46,13 @@
 enum storm_boards {
 	STORM,
 	WHIRLWIND,
+	ARKHAM,
 };
 
 static const char *id_list[] = {
 	[STORM] = "google,storm",
 	[WHIRLWIND] = "google,whirlwind",
+	[ARKHAM] = "google,arkham",
 	NULL,
 };
 
@@ -75,6 +77,9 @@ int storm_probe(struct platform_intf *intf)
 
 		if (index == WHIRLWIND)
 			intf->name = "Whirlwind";
+
+		if (index == ARKHAM)
+			intf->name = "Arkham";
 	}
 
 

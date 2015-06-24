@@ -34,13 +34,18 @@
 
 #include "drivers/google/cros_ec.h"
 
+struct cros_ec_priv glados_ec_priv = {
+	.device_name = CROS_EC_DEV_NAME,
+};
+
 int glados_ec_setup(struct platform_intf *intf)
 {
 	int ret;
 
 	MOSYS_CHECK(intf->cb && intf->cb->ec);
+	intf->cb->ec->priv = &glados_ec_priv;
 
-	ret = cros_ec_probe_lpc(intf);
+	ret = cros_ec_probe_dev(intf, intf->cb->ec);
 	if (ret == 1)
 		lprintf(LOG_DEBUG, "CrOS EC found on LPC bus\n");
 	else if (ret == 0)

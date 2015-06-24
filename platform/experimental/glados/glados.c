@@ -121,8 +121,7 @@ static int glados_setup_post(struct platform_intf *intf)
 {
 	int rc = 0;
 
-/*	Temp Disable of ec info for glados
-	rc |= glados_ec_setup(intf);*/
+	rc |= glados_ec_setup(intf);
 	if (rc)
 		lprintf(LOG_DEBUG, "%s: failed\n", __func__);
 	return rc;

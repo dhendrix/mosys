@@ -63,7 +63,7 @@ static int glados_host_firmware_read(struct platform_intf *intf,
 	rom_size = eeprom->device->size(intf, eeprom);
 	buf = mosys_malloc(rom_size);
 
-	if (flashrom_read(buf, rom_size, INTERNAL_BUS_SPI, NULL) < 0)
+	if (flashrom_read(buf, rom_size, HOST_FIRMWARE, NULL) < 0)
 		return -1;
 
 	memcpy(data, &buf[offset], len);

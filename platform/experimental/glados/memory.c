@@ -106,6 +106,7 @@ static int find_spd_by_part_number(struct platform_intf *intf, int dimm,
 	}
 	return -1;
 }
+
 static int glados_spd_read_cbfs(struct platform_intf *intf,
 				int dimm, int reg, int len, uint8_t *buf)
 {
@@ -129,8 +130,8 @@ static int glados_spd_read_cbfs(struct platform_intf *intf,
 		first_run = 0;
 
 		/* read SPD from CBFS entry located within bootblock region */
-		if (flashrom_read(bootblock, size,
-				  INTERNAL_BUS_SPI, "BOOT_STUB") < 0)
+		if (flashrom_read(bootblock, size, HOST_FIRMWARE,
+				  "BOOT_STUB") < 0)
 			return -1;
 	}
 

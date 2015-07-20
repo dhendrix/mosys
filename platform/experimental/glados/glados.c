@@ -71,9 +71,9 @@ static const struct probe_ids probe_id_list[] = {
 struct platform_cmd *glados_sub[] = {
 	&cmd_ec,
 	&cmd_eeprom,
-	/*&cmd_gpio,*/
 	&cmd_memory,
 	&cmd_nvram,
+	&cmd_pd,
 	&cmd_platform,
 	&cmd_smbios,
 	&cmd_eventlog,
@@ -119,12 +119,13 @@ glados_probe_exit:
 /* late setup routine; not critical to core functionality */
 static int glados_setup_post(struct platform_intf *intf)
 {
-	int rc = 0;
+	if (glados_ec_setup(intf) <= 0)
+		return -1;
 
-	rc |= glados_ec_setup(intf);
-	if (rc)
-		lprintf(LOG_DEBUG, "%s: failed\n", __func__);
-	return rc;
+	if (glados_pd_setup(intf) <= 0)
+		return -1;
+
+	return 0;
 }
 
 static int glados_destroy(struct platform_intf *intf)
@@ -143,8 +144,8 @@ struct eventlog_cb glados_eventlog_cb = {
 
 struct platform_cb glados_cb = {
 	.ec		= &cros_ec_cb,
+	.pd		= &cros_pd_cb,
 	.eeprom		= &glados_eeprom_cb,
-	/*.gpio		= &glados_gpio_cb,*/
 	.memory		= &glados_memory_cb,
 	.nvram		= &glados_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,
@@ -155,8 +156,8 @@ struct platform_cb glados_cb = {
 struct platform_intf platform_glados = {
 	.type		= PLATFORM_X86_64,
 	.name		= "Glados",
-	.sub		= glados_sub,
-	.cb			= &glados_cb,
+	.sub		= &glados_sub,
+	.cb		= &glados_cb,
 	.probe		= &glados_probe,
 	.setup_post	= &glados_setup_post,
 	.destroy	= &glados_destroy,

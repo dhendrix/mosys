@@ -44,7 +44,7 @@
 #include "lib/eeprom.h"
 #include "lib/flashrom.h"
 
-#include "rush.h"
+#include "smaug.h"
 
 #define RUSH_HOST_FIRMWARE_ROM_SIZE	(8192 * 1024)
 

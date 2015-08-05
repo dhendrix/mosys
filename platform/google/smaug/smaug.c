@@ -46,7 +46,7 @@
 #include "lib/math.h"
 #include "lib/probe.h"
 
-#include "rush.h"
+#include "smaug.h"
 
 struct board_id_gpio {
 	int num;

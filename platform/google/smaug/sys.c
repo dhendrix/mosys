@@ -31,7 +31,7 @@
 
 #include "mosys/alloc.h"
 #include "mosys/platform.h"
-#include "rush.h"
+#include "smaug.h"
 
 static const char *rush_get_name(struct platform_intf *intf)
 {

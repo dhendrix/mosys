@@ -53,18 +53,18 @@ struct board_id_gpio {
 	gpio_t *gpios;
 };
 
-const char *rush_ryu_id_list[] = {
+const char *id_list[] = {
 	"google,smaug",
 	NULL,
 };
 
-static gpio_t rush_ryu_boardid_gpio[] = {GPIO(Q3), GPIO(Q4)};
+static gpio_t smaug_ryu_boardid_gpio[] = {GPIO(Q3), GPIO(Q4)};
 
-static struct board_id_gpio rush_ryu_gpio_list[] = {
-	{ARRAY_SIZE(rush_ryu_boardid_gpio), rush_ryu_boardid_gpio},
+static struct board_id_gpio smaug_ryu_gpio_list[] = {
+	{ARRAY_SIZE(smaug_ryu_boardid_gpio), smaug_ryu_boardid_gpio},
 };
 
-struct platform_cmd *rush_sub[] = {
+struct platform_cmd *sub[] = {
 	&cmd_ec,
 	&cmd_sh,
 	&cmd_eeprom,
@@ -92,22 +92,22 @@ static void update_platform_version(struct platform_intf *intf,
 	intf->version_id = str;
 }
 
-int rush_probe(struct platform_intf *intf)
+int probe(struct platform_intf *intf)
 {
 	int index;
 
-	index = probe_fdt_compatible(&rush_ryu_id_list[0],
-					ARRAY_SIZE(rush_ryu_id_list), 0);
+	index = probe_fdt_compatible(&id_list[0],
+					ARRAY_SIZE(id_list), 0);
 	if (index >= 0) {
 		lprintf(LOG_DEBUG, "Found platform \"%s\" via FDT compatible "
-				"node.\n", rush_ryu_id_list[index]);
+				"node.\n", id_list[index]);
 
 		/* This condition should never be true */
-		if (index >= ARRAY_SIZE(rush_ryu_gpio_list))
+		if (index >= ARRAY_SIZE(smaug_ryu_gpio_list))
 			return 0;
 
-		update_platform_version(intf, &rush_ryu_gpio_list[index],
-					rush_ryu_id_list[index]);
+		update_platform_version(intf, &smaug_ryu_gpio_list[index],
+					id_list[index]);
 
 		return 1;
 	}
@@ -115,28 +115,28 @@ int rush_probe(struct platform_intf *intf)
 	return 0;
 }
 
-enum rush_type get_rush_type(struct platform_intf *intf)
+enum smaug_type get_smaug_type(struct platform_intf *intf)
 {
-	enum rush_type ret = RUSH_UNKNOWN;
+	enum smaug_type ret = SMAUG_UNKNOWN;
 
 	if (!strncmp(intf->name, "Ryu", strlen(intf->name)))
-		ret = RUSH_RYU;
+		ret = SMAUG_RYU;
 
 	return ret;
 }
 
-static int rush_setup_post(struct platform_intf *intf)
+static int setup_post(struct platform_intf *intf)
 {
-	if (rush_ec_setup(intf) <= 0)
+	if (smaug_ec_setup(intf) <= 0)
 		return -1;
 
-	if (rush_sh_setup(intf) <= 0)
+	if (smaug_sh_setup(intf) <= 0)
 		return -1;
 
 	return 0;
 }
 
-static int rush_destroy(struct platform_intf *intf)
+static int destroy(struct platform_intf *intf)
 {
 	if (intf->cb->ec->destroy)
 		intf->cb->ec->destroy(intf, intf->cb->ec);
@@ -145,7 +145,7 @@ static int rush_destroy(struct platform_intf *intf)
 	return 0;
 }
 
-struct eventlog_cb rush_eventlog_cb = {
+struct eventlog_cb smaug_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
 	.print_multi	= &elog_print_multi,
@@ -157,23 +157,23 @@ struct eventlog_cb rush_eventlog_cb = {
 	.write		= &elog_write_to_flash,
 };
 
-struct platform_cb rush_cb = {
+struct platform_cb cb = {
 	.ec		= &cros_ec_cb,
 	.sh		= &cros_sh_cb,
-	.eeprom		= &rush_eeprom_cb,
+	.eeprom		= &smaug_eeprom_cb,
 	.nvram		= &cros_ec_nvram_cb,
-	.sys		= &rush_sys_cb,
-	.eventlog	= &rush_eventlog_cb,
+	.sys		= &smaug_sys_cb,
+	.eventlog	= &smaug_eventlog_cb,
 };
 
-struct platform_intf platform_rush = {
+struct platform_intf platform_smaug = {
 	.type		= PLATFORM_ARMV8,
 	.name		= "Ryu",
-	.id_list	= rush_ryu_id_list,
-	.sub		= rush_sub,
-	.cb		= &rush_cb,
-	.probe		= &rush_probe,
-	.setup_post	= &rush_setup_post,
-	.destroy	= &rush_destroy,
+	.id_list	= id_list,
+	.sub		= sub,
+	.cb		= &cb,
+	.probe		= &probe,
+	.setup_post	= &setup_post,
+	.destroy	= &destroy,
 	.version_id	= "google,ryu",
 };

@@ -29,24 +29,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PLATFORM_RUSH_H__
-#define PLATFORM_RUSH_H__
+#ifndef PLATFORM_SMAUG_H__
+#define PLATFORM_SMAUG_H__
 
 #include "mosys/platform.h"
 
-enum rush_type {
-	RUSH_RYU,
-	RUSH_UNKNOWN,
+enum smaug_type {
+	SMAUG_RYU,
+	SMAUG_UNKNOWN,
 };
 
-extern enum rush_type get_rush_type(struct platform_intf *intf);
-extern int rush_ec_setup(struct platform_intf *intf);
-extern int rush_sh_setup(struct platform_intf *intf);
+extern enum smaug_type get_smaug_type(struct platform_intf *intf);
+extern int smaug_ec_setup(struct platform_intf *intf);
+extern int smaug_sh_setup(struct platform_intf *intf);
 
 /* platform callbacks */
-extern struct eeprom_cb rush_eeprom_cb;	        /* eeprom.c */
-extern struct sys_cb rush_sys_cb;		/* sys.c */
-extern struct memory_cb rush_memory_cb;	        /* memory.c */
+extern struct eeprom_cb smaug_eeprom_cb;	        /* eeprom.c */
+extern struct sys_cb smaug_sys_cb;		/* sys.c */
+extern struct memory_cb smaug_memory_cb;	        /* memory.c */
 extern struct nvram_cb cros_ec_nvram_cb;	/* drivers/google/cros_ec.c */
 
-#endif /* PLATFORM_RUSH_H_ */
+#endif /* PLATFORM_SMAUG_H_ */

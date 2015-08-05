@@ -55,11 +55,11 @@ config PLATFORM_RAMBI
 	bool "rambi"
 	default n
 
-config PLATFORM_RUSH
+config PLATFORM_SMAUG
 	depends on PLATFORM_ARCH_ARMEL
 	select SOC_NVIDIA_TEGRA124
 	select CROS_EC_I2C
-	bool "rush"
+	bool "smaug"
 	default n
 
 config PLATFORM_SAMUS

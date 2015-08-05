@@ -46,12 +46,12 @@
 
 #include "smaug.h"
 
-#define RUSH_HOST_FIRMWARE_ROM_SIZE	(16384 * 1024)
+#define SMAUG_HOST_FIRMWARE_ROM_SIZE	(16384 * 1024)
 
 static size_t host_firmware_size(struct platform_intf *intf,
 					struct eeprom *eeprom)
 {
-	return RUSH_HOST_FIRMWARE_ROM_SIZE;
+	return SMAUG_HOST_FIRMWARE_ROM_SIZE;
 }
 
 static int host_firmware_read(struct platform_intf *intf, struct eeprom *eeprom,
@@ -156,6 +156,6 @@ static struct eeprom eeproms[] = {
 	{ 0 },
 };
 
-struct eeprom_cb rush_eeprom_cb = {
+struct eeprom_cb smaug_eeprom_cb = {
 	.eeprom_list	= eeproms,
 };

@@ -9,5 +9,5 @@ obj-$(CONFIG_PLATFORM_RAMBI)	+= rambi/
 obj-$(CONFIG_PLATFORM_SAMUS)	+= samus/
 obj-$(CONFIG_PLATFORM_SKATE)	+= skate/
 obj-$(CONFIG_PLATFORM_SLIPPY)	+= slippy/
-obj-$(CONFIG_PLATFORM_RUSH)	+= smaug/
+obj-$(CONFIG_PLATFORM_SMAUG)	+= smaug/
 obj-$(CONFIG_PLATFORM_STORM)	+= storm/

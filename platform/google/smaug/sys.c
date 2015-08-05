@@ -33,7 +33,7 @@
 #include "mosys/platform.h"
 #include "smaug.h"
 
-static const char *rush_get_name(struct platform_intf *intf)
+static const char *get_name(struct platform_intf *intf)
 {
 	char *ret = NULL;
 
@@ -42,7 +42,7 @@ static const char *rush_get_name(struct platform_intf *intf)
 	return (const char *)ret;
 }
 
-static const char *rush_get_vendor(struct platform_intf *intf)
+static const char *get_vendor(struct platform_intf *intf)
 {
 	char *ret = NULL;
 
@@ -52,7 +52,7 @@ static const char *rush_get_vendor(struct platform_intf *intf)
 	return ret;
 }
 
-static const char *rush_get_version(struct platform_intf *intf)
+static const char *get_version(struct platform_intf *intf)
 {
 	char *ret = NULL;
 
@@ -61,8 +61,8 @@ static const char *rush_get_version(struct platform_intf *intf)
 	return (const char *)ret;
 }
 
-struct sys_cb rush_sys_cb = {
-	.name		= &rush_get_name,
-	.vendor		= &rush_get_vendor,
-	.version	= &rush_get_version,
+struct sys_cb smaug_sys_cb = {
+	.name		= &get_name,
+	.vendor		= &get_vendor,
+	.version	= &get_version,
 };

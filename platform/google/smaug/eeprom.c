@@ -100,6 +100,10 @@ static struct eeprom_region host_firmware_regions[] = {
 		.name	= "RW_ELOG",
 		.flag	= EEPROM_FLAG_EVENTLOG,
 	},
+	{
+		.name	= "RW_NVRAM",
+		.flag	= EEPROM_FLAG_VBNV,
+	},
 	{ NULL },
 };
 

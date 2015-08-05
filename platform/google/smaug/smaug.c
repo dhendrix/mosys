@@ -154,7 +154,7 @@ struct eventlog_cb smaug_eventlog_cb = {
 struct platform_cb cb = {
 	.ec		= &cros_ec_cb,
 	.eeprom		= &smaug_eeprom_cb,
-	.nvram		= &cros_ec_nvram_cb,
+	.nvram		= &cros_spi_flash_nvram_cb,
 	.sys		= &smaug_sys_cb,
 	.eventlog	= &smaug_eventlog_cb,
 };

@@ -46,6 +46,6 @@ extern int smaug_ec_setup(struct platform_intf *intf);
 extern struct eeprom_cb smaug_eeprom_cb;	        /* eeprom.c */
 extern struct sys_cb smaug_sys_cb;		/* sys.c */
 extern struct memory_cb smaug_memory_cb;	        /* memory.c */
-extern struct nvram_cb cros_ec_nvram_cb;	/* drivers/google/cros_ec.c */
+extern struct nvram_cb cros_spi_flash_nvram_cb;	/* drivers/google/cros_ec.c */
 
 #endif /* PLATFORM_SMAUG_H_ */

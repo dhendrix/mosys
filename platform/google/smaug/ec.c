@@ -38,10 +38,6 @@ struct cros_ec_priv smaug_ec_priv = {
 	.device_name	= CROS_EC_DEV_NAME,
 };
 
-struct cros_ec_priv smaug_sh_priv = {
-	.device_name	= CROS_SH_DEV_NAME,
-};
-
 int smaug_ec_setup(struct platform_intf *intf)
 {
 	int ret;
@@ -56,24 +52,6 @@ int smaug_ec_setup(struct platform_intf *intf)
 		lprintf(LOG_DEBUG, "CrOS EC not found in /dev\n");
 	else
 		lprintf(LOG_ERR, "Error when probing CrOS EC via devfs\n");
-
-	return ret;
-}
-
-int smaug_sh_setup(struct platform_intf *intf)
-{
-	int ret;
-
-	MOSYS_CHECK(intf->cb && intf->cb->sh);
-	intf->cb->sh->priv = &smaug_sh_priv;
-
-	ret = cros_ec_probe_dev(intf, intf->cb->sh);
-	if (ret == 1)
-		lprintf(LOG_DEBUG, "CrOS SH found using /dev interface\n");
-	else if (ret == 0)
-		lprintf(LOG_DEBUG, "CrOS SH not found in /dev\n");
-	else
-		lprintf(LOG_ERR, "Error when probing CrOS Sensor Hub via devfs\n");
 
 	return ret;
 }

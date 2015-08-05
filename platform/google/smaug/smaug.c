@@ -66,7 +66,6 @@ static struct board_id_gpio smaug_ryu_gpio_list[] = {
 
 struct platform_cmd *sub[] = {
 	&cmd_ec,
-	&cmd_sh,
 	&cmd_eeprom,
 	&cmd_gpio,
 	&cmd_nvram,
@@ -130,9 +129,6 @@ static int setup_post(struct platform_intf *intf)
 	if (smaug_ec_setup(intf) <= 0)
 		return -1;
 
-	if (smaug_sh_setup(intf) <= 0)
-		return -1;
-
 	return 0;
 }
 
@@ -140,8 +136,6 @@ static int destroy(struct platform_intf *intf)
 {
 	if (intf->cb->ec->destroy)
 		intf->cb->ec->destroy(intf, intf->cb->ec);
-	if (intf->cb->sh->destroy(intf, intf->cb->ec))
-		intf->cb->sh->destroy(intf, intf->cb->sh);
 	return 0;
 }
 
@@ -159,7 +153,6 @@ struct eventlog_cb smaug_eventlog_cb = {
 
 struct platform_cb cb = {
 	.ec		= &cros_ec_cb,
-	.sh		= &cros_sh_cb,
 	.eeprom		= &smaug_eeprom_cb,
 	.nvram		= &cros_ec_nvram_cb,
 	.sys		= &smaug_sys_cb,

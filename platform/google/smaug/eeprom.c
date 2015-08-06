@@ -46,7 +46,7 @@
 
 #include "smaug.h"
 
-#define RUSH_HOST_FIRMWARE_ROM_SIZE	(8192 * 1024)
+#define RUSH_HOST_FIRMWARE_ROM_SIZE	(16384 * 1024)
 
 static size_t host_firmware_size(struct platform_intf *intf,
 					struct eeprom *eeprom)

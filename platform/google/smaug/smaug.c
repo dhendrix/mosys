@@ -54,7 +54,7 @@ struct board_id_gpio {
 };
 
 const char *rush_ryu_id_list[] = {
-	"google,ryu",
+	"google,smaug",
 	NULL,
 };
 

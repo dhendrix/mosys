@@ -92,6 +92,7 @@ struct platform_cmd *pinky_sub[] = {
 	&cmd_memory,
 	&cmd_nvram,
 	&cmd_platform,
+	&cmd_psu,
 	&cmd_eventlog,
 	NULL
 };
@@ -155,6 +156,7 @@ struct platform_cb pinky_cb = {
 	.eeprom 	= &pinky_eeprom_cb,
 //	.gpio		= &pinky_gpio_cb,
 	.memory		= &pinky_memory_cb,
+	.psu 		= &pinky_psu_cb,
 	.sys 		= &pinky_sys_cb,
 	.eventlog	= &pinky_eventlog_cb,
 };

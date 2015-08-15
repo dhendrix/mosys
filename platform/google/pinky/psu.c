@@ -1,5 +1,5 @@
 /*
- * Copyright 2014, Google Inc.
+ * Copyright 2015, Google Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,24 +29,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GOOGLE_PINKY_H
-#define GOOGLE_PINKY_H
-
-#include <inttypes.h>
 #include "mosys/platform.h"
 
-#define PINKY_HOST_FIRMWARE_ROM_SIZE		(4096 * 1024)
+static enum psu_types psu_type(struct platform_intf *intf)
+{
+	if (!strncmp(intf->name, "Brain", strlen(intf->name)) ||
+		!strncmp(intf->name, "Danger", strlen(intf->name)) ||
+		!strncmp(intf->name, "Mickey", strlen(intf->name)) ||
+		!strncmp(intf->name, "Romy", strlen(intf->name)))
+		return PSU_TYPE_AC_ONLY;
+	else
+		return PSU_TYPE_BATTERY;
+}
 
-/* platform callbacks */
-extern struct eeprom_cb pinky_eeprom_cb;
-extern struct memory_cb pinky_memory_cb;
-extern struct nvram_cb cros_ec_nvram_cb;
-extern struct nvram_cb cros_spi_flash_nvram_cb;
-extern struct psu_cb pinky_psu_cb;
-extern struct sys_cb pinky_sys_cb;
-
-/* functions called by setup routines */
-extern int pinky_ec_setup(struct platform_intf *intf);
-extern int pinky_vpd_setup(struct platform_intf *intf);
-
-#endif /* GOOGLE_PINKY_H */
+struct psu_cb pinky_psu_cb = {
+	.type		= &psu_type,
+};

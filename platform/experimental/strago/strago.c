@@ -61,6 +61,10 @@ static const struct probe_ids probe_id_list[] = {
 	  { "CELES", NULL },
 	  { "Celes", NULL },
 	},
+	{ { "Ultima", NULL },
+	  { "ULTIMA", NULL },
+	  { "Ultima", NULL },
+	},
 	{ { NULL } }
 };
 

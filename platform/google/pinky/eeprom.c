@@ -48,6 +48,11 @@
 
 #define PINKY_HOST_FIRMWARE_ROM_SIZE	(4096 * 1024)
 
+enum pinky_firmware {
+	PINKY_EC_FIRMWARE = 0,
+	PINKY_HOST_FIRMWARE
+};
+
 static size_t host_firmware_size(struct platform_intf *intf,
 					struct eeprom *eeprom)
 {
@@ -153,21 +158,28 @@ static struct eeprom_dev ec_firmware = {
 };
 
 static struct eeprom eeproms[] = {
-	{
+	/* ordering is important, see pinky_eeprom_setup() */
+	[PINKY_EC_FIRMWARE] = {
+		.name		= "ec_firmware",
+		.type		= EEPROM_TYPE_FW,
+		.flags		= EEPROM_FLAG_RDWR | EEPROM_FLAG_FMAP,
+		.device		= &ec_firmware,
+	},
+	[PINKY_HOST_FIRMWARE] = {
 		.name		= "host_firmware",
 		.type		= EEPROM_TYPE_FW,
 		.flags		= EEPROM_FLAG_RDWR | EEPROM_FLAG_FMAP,
 		.device		= &host_firmware,
 		.regions	= &host_firmware_regions[0],
 	},
-	{
-		.name		= "ec_firmware",
-		.type		= EEPROM_TYPE_FW,
-		.flags		= EEPROM_FLAG_RDWR | EEPROM_FLAG_FMAP,
-		.device		= &ec_firmware,
-	},
 	{ 0 },
 };
+
+void pinky_eeprom_setup(struct platform_intf *intf, int has_ec)
+{
+	if (!has_ec)
+		intf->cb->eeprom->eeprom_list = &eeproms[PINKY_HOST_FIRMWARE];
+}
 
 struct eeprom_cb pinky_eeprom_cb = {
 	.eeprom_list	= eeproms,

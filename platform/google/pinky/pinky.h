@@ -47,6 +47,7 @@ extern struct sys_cb pinky_sys_cb;
 
 /* functions called by setup routines */
 extern int pinky_ec_setup(struct platform_intf *intf);
+extern void pinky_eeprom_setup(struct platform_intf *intf, int has_ec);
 extern int pinky_vpd_setup(struct platform_intf *intf);
 
 #endif /* GOOGLE_PINKY_H */

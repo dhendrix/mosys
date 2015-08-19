@@ -129,6 +129,8 @@ static int pinky_setup_post(struct platform_intf *intf)
 		intf->sub = &pinky_sub[PINKY_CMD_EC_NUM + 1];
 	}
 
+	pinky_eeprom_setup(intf, veyron_id_list[probed_board].has_ec);
+
 	return 0;
 }
 

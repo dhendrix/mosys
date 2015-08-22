@@ -1076,7 +1076,8 @@ static int elog_find_log_in_flash(struct platform_intf *intf,
 
 	for (eeprom = &intf->cb->eeprom->eeprom_list[0];
 			eeprom->name; eeprom++) {
-		for (region = &eeprom->regions[0]; region->flag; region++) {
+		for (region = &eeprom->regions[0];
+				region && region->flag; region++) {
 			if (region->flag & EEPROM_FLAG_EVENTLOG) {
 				found = 1;
 				break;

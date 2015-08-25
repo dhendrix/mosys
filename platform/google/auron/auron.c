@@ -50,32 +50,41 @@ struct probe_ids {
 	const char *names[2];
 	const char *hwids[2];
 	const char *frids[2];
+	const int has_dimms;
 };
+
+struct platform_cb auron_cb;
 
 static const struct probe_ids probe_id_list[] = {
 	{ { "Buddy", NULL },
 	  { "BUDDY", NULL },
 	  { "Google_Buddy", NULL },
+	  1
 	},
 	{ { "Cid", NULL },
 	  { "CID", NULL },
 	  { "Google_Cid", NULL },
+	  0
 	},
 	{ { "Gandof", NULL },
 	  { "GANDOF", NULL },
 	  { "Google_Gandof", NULL },
+	  0
 	},
 	{ { "Lulu", NULL },
 	  { "LULU", NULL },
 	  { "Google_Lulu", NULL },
+	  0
 	},
 	{ { "Paine", NULL },
 	  { "PAINE", NULL },
 	  { "Google_Auron_Paine", NULL },
+	  0
 	},
 	{ { "Yuna", NULL },
 	  { "YUNA", NULL },
 	  { "Google_Auron_Yuna", NULL },
+	  0
 	},
 	/*
 	 * Leave this entry last in the table -- otherwise it will break
@@ -84,6 +93,7 @@ static const struct probe_ids probe_id_list[] = {
 	{ { "Auron", NULL },
 	  { "AURON", NULL },
 	  { "Google_Auron", NULL },
+	  0
 	},
 	{ { NULL } }
 };
@@ -133,6 +143,8 @@ auron_probe_exit:
 	probed = 1;
 	/* Update canonical platform name */
 	intf->name = pid->names[0];
+	if (pid->has_dimms == 1)
+		auron_cb.memory = &dimm_memory_cb;
 	return status;
 }
 

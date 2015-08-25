@@ -41,6 +41,7 @@
 extern struct eeprom_cb auron_eeprom_cb;	/* eeprom.c */
 extern struct gpio_cb auron_gpio_cb;		/* gpio.c */
 extern struct memory_cb auron_memory_cb;	/* memory.c */
+extern struct memory_cb dimm_memory_cb;		/* memory.c */
 extern struct nvram_cb auron_nvram_cb;		/* nvram.c */
 extern struct sys_cb auron_sys_cb;		/* sys.c */
 

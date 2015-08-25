@@ -41,6 +41,7 @@
 #include "mosys/platform.h"
 
 #include "drivers/gpio.h"
+#include "drivers/intel/series6.h"
 
 #include "lib/cbfs_core.h"
 #include "lib/file.h"
@@ -53,6 +54,8 @@
 #include "mosys/kv_pair.h"
 
 #include "auron.h"
+
+#define AURON_DIMM_COUNT	2
 
 /*
  * auron_dimm_count  -  return total number of dimm slots
@@ -171,12 +174,125 @@ int auron_dimm_speed(struct platform_intf *intf,
 	return 0;
 }
 
+/*
+ * dimm_auron_dimm_count  -  return total number of dimm slots
+ *
+ * @intf:       platform interface
+ *
+ * returns dimm slot count
+ */
+static int dimm_auron_dimm_count(struct platform_intf *intf)
+{
+	return AURON_DIMM_COUNT;
+}
+
+/*
+ * dimm_map  -  Convert logical dimm number to useful values
+ *
+ * @intf:       platform interface
+ * @dimm:       logical dimm number
+ * @type:       conversion type
+ *
+ * returns specified converted value
+ * returns <0 to indicate error
+ */
+static int dimm_auron_dimm_map(struct platform_intf *intf,
+                          enum dimm_map_type type, int dimm)
+{
+	int ret = -1;
+	static struct dimm_map {
+		int node;
+		int channel;
+		int slot;
+		int bus;
+		int address;
+	} auron_dimm_map[AURON_DIMM_COUNT] = {
+		/* Node 0 */
+		{ 0, 0, 0, 17, 0x50 },
+		{ 0, 0, 0, 17, 0x52 }
+	};
+	static unsigned int first_run = 1;
+	static int bus_offset = 0;
+
+	if (dimm < 0 || dimm >= intf->cb->memory->dimm_count(intf)) {
+		lprintf(LOG_ERR, "Invalid DIMM: %d\n", dimm);
+		return -1;
+	}
+
+	/*
+	 * Determine offset for smbus numbering:
+	 * 1. Scan known bus numbers for lowest value.
+	 * 2. Scan /sys for SMBus entries that match the adapter name.
+	 * 3. Calculate the difference between the lowest expected bus number
+	 *    and the lowest bus number seen in sysfs matching the criteria.
+	 */
+	if (first_run) {
+		char path[PATH_MAX];
+		int lowest_known_bus = INT_MAX, x;
+
+		for (x = 0; x < intf->cb->memory->dimm_count(intf); x++) {
+			if (auron_dimm_map[x].bus < lowest_known_bus)
+				lowest_known_bus = auron_dimm_map[x].bus;
+		}
+
+		snprintf(path, sizeof(path), "%s/%s",
+		         mosys_get_root_prefix(), "/sys/bus/i2c/devices");
+		x = sysfs_lowest_smbus(path, SERIES6_SMBUS_ADAPTER);
+		if (x >= 0) {
+			bus_offset = x - lowest_known_bus;
+			lprintf(LOG_DEBUG, "%s: bus_offset: %d\n",
+			        __func__, bus_offset);
+		} else {
+			lprintf(LOG_DEBUG, "%s: unable to determine "
+			                   "bus offset\n", __func__);
+			bus_offset = 0;
+		}
+
+		first_run = 0;
+	}
+
+	switch (type) {
+	case DIMM_TO_BUS:
+		ret = auron_dimm_map[dimm].bus + bus_offset;
+		break;
+	case DIMM_TO_ADDRESS:
+		ret = auron_dimm_map[dimm].address;
+		break;
+	default:
+		break;
+	}
+
+	return ret;
+}
+
+static int dimm_auron_spd_read(struct platform_intf *intf,
+                          int dimm, int reg, int len, uint8_t *buf)
+{
+	int bus;
+	int address;
+
+	bus = intf->cb->memory->dimm_map(intf, DIMM_TO_BUS, dimm);
+	address = intf->cb->memory->dimm_map(intf, DIMM_TO_ADDRESS, dimm);
+
+	return spd_read_i2c(intf, bus, address, reg, len, buf);
+}
+
 static struct memory_spd_cb auron_spd_cb = {
 	.read		= auron_spd_read,
+};
+
+static struct memory_spd_cb dimm_auron_spd_cb = {
+	.read		= dimm_auron_spd_read,
 };
 
 struct memory_cb auron_memory_cb = {
 	.dimm_count	= auron_dimm_count,
 	.spd		= &auron_spd_cb,
 	.dimm_speed	= &auron_dimm_speed,
+};
+
+struct memory_cb dimm_memory_cb = {
+	.dimm_count	= dimm_auron_dimm_count,
+	.dimm_map	= dimm_auron_dimm_map,
+	.spd		= &dimm_auron_spd_cb,
 };

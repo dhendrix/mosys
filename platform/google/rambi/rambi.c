@@ -135,6 +135,7 @@ struct platform_cmd *rambi_sub[] = {
 	&cmd_memory,
 	&cmd_nvram,
 	&cmd_platform,
+	&cmd_psu,
 	&cmd_smbios,
 	&cmd_eventlog,
 	NULL
@@ -208,6 +209,7 @@ struct platform_cb rambi_cb = {
 	.memory		= &rambi_memory_cb,
 	.nvram		= &rambi_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,
+	.psu		= &rambi_psu_cb,
 	.sys 		= &rambi_sys_cb,
 	.eventlog	= &rambi_eventlog_cb,
 };

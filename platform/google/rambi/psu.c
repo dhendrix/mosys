@@ -1,5 +1,5 @@
 /*
- * Copyright 2013, Google Inc.
+ * Copyright 2015, Google Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,24 +29,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PLATFORM_RAMBI_H__
-#define PLATFORM_RAMBI_H__
-
-#include <inttypes.h>
 #include "mosys/platform.h"
 
-#define RAMBI_HOST_FIRMWARE_ROM_SIZE		(8192 * 1024)
+static enum psu_types psu_type(struct platform_intf *intf)
+{
+	if (!strncmp(intf->name, "Ninja", strlen(intf->name)) ||
+		!strncmp(intf->name, "Sumo", strlen(intf->name)))
+		return PSU_TYPE_AC_ONLY;
+	else
+		return PSU_TYPE_BATTERY;
+}
 
-/* platform callbacks */
-extern struct eeprom_cb rambi_eeprom_cb;	/* eeprom.c */
-extern struct gpio_cb rambi_gpio_cb;		/* gpio.c */
-extern struct memory_cb rambi_memory_cb;	/* memory.c */
-extern struct nvram_cb rambi_nvram_cb;		/* nvram.c */
-extern struct psu_cb rambi_psu_cb;
-extern struct sys_cb rambi_sys_cb;		/* sys.c */
-
-/* functions called by setup routines */
-extern int rambi_vpd_setup(struct platform_intf *intf);
-extern int rambi_ec_setup(struct platform_intf *intf);
-
-#endif /* PLATFORM_RAMBI_H_ */
+struct psu_cb rambi_psu_cb = {
+	.type		= &psu_type,
+};

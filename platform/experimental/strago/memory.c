@@ -50,6 +50,8 @@
 #include "lib/flashrom.h"
 #include "lib/math.h"
 #include "lib/spd.h"
+#include "lib/smbios.h"
+#include "lib/smbios_tables.h"
 
 #include "strago.h"
 
@@ -65,11 +67,18 @@
  */
 static int strago_dimm_count(struct platform_intf *intf)
 {
-	/*
-	 * TODO(shawnn): Find a programatic way to do this detection.
-	 * Platforms have 1 or 2 DIMM config based on RAM_ID.
-	 */
-	return STRAGO_DIMM_COUNT;
+	int status = 0, dimm_cnt = 0;
+	struct smbios_table table;
+
+	while (status == 0) {
+		status = smbios_find_table(intf, SMBIOS_TYPE_MEMORY, dimm_cnt,
+					   &table,
+					   SMBIOS_LEGACY_ENTRY_BASE,
+					   SMBIOS_LEGACY_ENTRY_LEN);
+		if(status == 0)
+			dimm_cnt++;
+	}
+	return dimm_cnt;
 }
 
 /*
@@ -84,10 +93,16 @@ static int strago_dimm_count(struct platform_intf *intf)
 static int strago_dimm_speed(struct platform_intf *intf,
 			    int dimm,
 			    struct kv_pair *kv) {
-	int speed = STRAGO_DIMM_SPEED;
-	if (kv)
-		kv_pair_fmt(kv, "speed", "%d MHz", speed);
-	return speed;
+	struct smbios_table table;
+	char speed[10];
+
+	if (smbios_find_table(intf, SMBIOS_TYPE_MEMORY, dimm, &table,
+			      SMBIOS_LEGACY_ENTRY_BASE,
+			      SMBIOS_LEGACY_ENTRY_LEN) < 0) {
+		return -1;
+	}
+	kv_pair_fmt(kv, "speed", "%d MHz", table.data.mem_device.speed);
+	return 0;
 }
 
 static int strago_spd_read_cbfs(struct platform_intf *intf,
@@ -100,7 +115,7 @@ static int strago_spd_read_cbfs(struct platform_intf *intf,
 	int spd_index = 0;
 	uint32_t spd_offset;
 
-	if (dimm > strago_dimm_count(intf)) {
+	if (dimm >= strago_dimm_count(intf)) {
 		lprintf(LOG_DEBUG, "%s: Invalid DIMM specified\n", __func__);
 		return -1;
 	}

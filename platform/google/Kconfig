@@ -17,6 +17,11 @@ config PLATFORM_BELTINO
 	bool "beltino"
 	default n
 
+config PLATFORM_CYCLONE
+	depends on PLATFORM_ARCH_ARMEL
+	bool "Cyclone"
+	default n
+
 config PLATFORM_LINK
 	depends on PLATFORM_ARCH_X86
 	select CHIPSET_INTEL_SERIES6

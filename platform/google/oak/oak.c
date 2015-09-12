@@ -39,6 +39,7 @@
 
 #include "drivers/google/cros_ec.h"
 
+#include "lib/fdt.h"
 #include "lib/file.h"
 #include "lib/math.h"
 #include "lib/probe.h"
@@ -82,6 +83,9 @@ static int oak_setup_post(struct platform_intf *intf)
 	if (oak_ec_setup(intf) <= 0)
 		return -1;
 
+	if (fdt_set_nvram_cb(intf) < 0)
+		return -1;
+
 	return 0;
 }
 
@@ -107,7 +111,6 @@ struct eventlog_cb oak_eventlog_cb = {
 struct platform_cb oak_cb = {
 	.ec		= &cros_ec_cb,
 	.eeprom 	= &oak_eeprom_cb,
-	.nvram		= &cros_ec_nvram_cb,
 //	.gpio		= &oak_gpio_cb,
 	.memory		= &oak_memory_cb,
 	.psu		= &oak_psu_cb,

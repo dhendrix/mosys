@@ -34,7 +34,20 @@
 
 #include <inttypes.h>
 
+#include <mosys/platform.h>
+
 extern int fdt_get_ram_code(uint32_t *ram_code);
 extern int fdt_get_board_id(uint32_t *board_id);
+
+enum vbnv_storage_media {
+	VBNV_STORAGE_UNKNOWN	= -1,
+	VBNV_STORAGE_CROS_EC,	/* ChromeOS EC */
+	VBNV_STORAGE_DISK,	/* Block device */
+	VBNV_STORAGE_FLASH,	/* Flash memory (implies firmware ROM) */
+	VBNV_STORAGE_NVRAM,	/* NVRAM such as in CMOS (many x86 platforms)
+				 * and in some PMIC/RTC chips */
+};
+
+extern int fdt_set_nvram_cb(struct platform_intf *intf);
 
 #endif	/* MOSYS_LIB_FDT_H__ */

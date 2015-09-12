@@ -31,7 +31,9 @@
  */
 
 #include <arpa/inet.h>
+#include <errno.h>
 #include <inttypes.h>
+#include <string.h>
 #include <unistd.h>
 
 #include "lib/fdt.h"
@@ -41,10 +43,16 @@
 #include "mosys/globals.h"
 #include "mosys/log.h"
 
+/* for fdt_set_nvram_cb() */
+extern struct nvram_cb cros_ec_nvram_cb;
+extern struct nvram_cb cros_spi_flash_nvram_cb;
+
 #define FDT_ROOT		"/proc/device-tree/"
+#define FDT_VBNV_STORAGE_PATH	"firmware/chromeos/nonvolatile-context-storage"
 /* FIXME: assume coreboot for now */
 #define FDT_RAM_CODE_PATH	"firmware/coreboot/ram-code"
 #define FDT_BOARD_ID_PATH	"firmware/coreboot/board-id"
+
 
 /* returns number of bytes read or -1 to indicate error */
 static int fdt_read_node(const char *path, char *buf, int len)
@@ -127,5 +135,58 @@ int fdt_get_board_id(uint32_t *board_id)
 	}
 
 	lprintf(LOG_DEBUG, "%s: board_id: %u\n", __func__, *board_id);
+	return 0;
+}
+
+static enum vbnv_storage_media fdt_get_vbnv_storage(void)
+{
+	char buf[8];
+	int len = sizeof(buf);
+	enum vbnv_storage_media ret;
+
+	if (fdt_read_node(FDT_VBNV_STORAGE_PATH, buf, len) < 0) {
+		lprintf(LOG_ERR, "%s: Error when reading VBNV storage"
+				"type\n", __func__);
+		return VBNV_STORAGE_UNKNOWN;
+	}
+
+	if (!strncmp(buf, "cros-ec", len) || !strncmp(buf, "mkbp", len))
+		ret = VBNV_STORAGE_CROS_EC;
+	else if (!strncmp(buf, "disk", len))
+		ret = VBNV_STORAGE_DISK;
+	else if (!strncmp(buf, "flash", len))
+		ret = VBNV_STORAGE_FLASH;
+	else if (!strncmp(buf, "nvram", len))
+		ret = VBNV_STORAGE_NVRAM;
+	else
+		ret = VBNV_STORAGE_UNKNOWN;
+
+	lprintf(LOG_DEBUG, "%s: VBNV storage type: %d\n", __func__, ret);
+	return ret;
+}
+
+/*
+ * fdt_set_nvram_cb - Set platform's nvram callbacks based on FDT
+ *
+ * returns 0 to indicate success, <0 to indicate failure.
+ */
+int fdt_set_nvram_cb(struct platform_intf *intf)
+{
+	switch (fdt_get_vbnv_storage()) {
+	case VBNV_STORAGE_CROS_EC:
+		intf->cb->nvram = &cros_ec_nvram_cb;
+		break;
+	case VBNV_STORAGE_DISK:
+		lprintf(LOG_ERR, "VBNV from disk is not supported yet.\n");
+		return -ENOSYS;
+	case VBNV_STORAGE_FLASH:
+		intf->cb->nvram = &cros_spi_flash_nvram_cb;
+		break;
+	case VBNV_STORAGE_NVRAM:
+		return -ENOSYS;
+	default:
+		return -1;
+	}
+
 	return 0;
 }

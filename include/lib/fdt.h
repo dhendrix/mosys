@@ -34,7 +34,7 @@
 
 #include <inttypes.h>
 
-extern uint32_t fdt_get_ram_code(void);
-extern uint32_t fdt_get_board_id(void);
+extern int fdt_get_ram_code(uint32_t *ram_code);
+extern int fdt_get_board_id(uint32_t *board_id);
 
 #endif	/* MOSYS_LIB_FDT_H__ */

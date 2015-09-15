@@ -309,8 +309,7 @@ static int read_ram_code(struct platform_intf *intf)
 	if (done)
 		return ret;
 
-	ram_code = fdt_get_ram_code();
-	if (ram_code == ~(0)) {
+	if (fdt_get_ram_code(&ram_code) < 0) {
 		lprintf(LOG_ERR, "Unable to obtain RAM code.\n");
 		return -1;
 	}

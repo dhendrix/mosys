@@ -83,35 +83,33 @@ out_1:
 /*
  * fdt_get_ram_code - Obtain RAM code from FDT ram-code node
  *
- * returns ram code if successful, ~0 (invalid) to indicate failure
+ * returns 0 to indicate success, <0 to indicate failure.
  */
-uint32_t fdt_get_ram_code(void)
+int fdt_get_ram_code(uint32_t *ram_code)
 {
-	uint32_t ret;
-
-	ret = fdt_get_uint32_val(FDT_RAM_CODE_PATH);
-	if (ret == 0xffffffff)
+	*ram_code = fdt_get_uint32_val(FDT_RAM_CODE_PATH);
+	if (*ram_code == 0xffffffff) {
 		lprintf(LOG_ERR, "%s: ram_code is invalid.\n", __func__);
-	else
-		lprintf(LOG_DEBUG, "%s: ram_code: %u\n", __func__, ret);
+		return -1;
+	}
 
-	return ret;
+	lprintf(LOG_DEBUG, "%s: ram_code: %u\n", __func__, *ram_code);
+	return 0;
 }
 
 /*
  * fdt_get_board_id - Obtain board ID code from FDT board-id node
  *
- * returns board ID if successful, ~0 (invalid) to indicate failure
+ * returns 0 to indicate success, <0 to indicate failure.
  */
-uint32_t fdt_get_board_id(void)
+int fdt_get_board_id(uint32_t *board_id)
 {
-	uint32_t ret;
-
-	ret = fdt_get_uint32_val(FDT_BOARD_ID_PATH);
-	if (ret == 0xffffffff)
+	*board_id = fdt_get_uint32_val(FDT_BOARD_ID_PATH);
+	if (*board_id == 0xffffffff) {
 		lprintf(LOG_ERR, "%s: board_id is invalid.\n", __func__);
-	else
-		lprintf(LOG_DEBUG, "%s: board_id: %u\n", __func__, ret);
+		return -1;
+	}
 
-	return ret;
+	lprintf(LOG_DEBUG, "%s: board_id: %u\n", __func__, *board_id);
+	return 0;
 }

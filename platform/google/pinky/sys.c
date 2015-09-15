@@ -43,8 +43,7 @@ static const char *pinky_get_version(struct platform_intf *intf)
 	uint32_t board_id;
 	char board_id_str[16];
 
-	board_id = fdt_get_board_id();
-	if (board_id == 0xffffffff)
+	if (fdt_get_board_id(&board_id) < 0)
 		return NULL;
 
 	snprintf(board_id_str, sizeof(board_id_str), "rev%u", board_id);

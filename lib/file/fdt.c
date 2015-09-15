@@ -87,11 +87,7 @@ out_1:
  */
 uint32_t fdt_get_ram_code(void)
 {
-	static int done = 0;
-	static uint32_t ret = 0;
-
-	if (done)
-		return ret;
+	uint32_t ret;
 
 	ret = fdt_get_uint32_val(FDT_RAM_CODE_PATH);
 	if (ret == 0xffffffff)
@@ -99,7 +95,6 @@ uint32_t fdt_get_ram_code(void)
 	else
 		lprintf(LOG_DEBUG, "%s: ram_code: %u\n", __func__, ret);
 
-	done = 1;
 	return ret;
 }
 
@@ -110,11 +105,7 @@ uint32_t fdt_get_ram_code(void)
  */
 uint32_t fdt_get_board_id(void)
 {
-	static int done = 0;
-	static uint32_t ret = 0;
-
-	if (done)
-		return ret;
+	uint32_t ret;
 
 	ret = fdt_get_uint32_val(FDT_BOARD_ID_PATH);
 	if (ret == 0xffffffff)
@@ -122,6 +113,5 @@ uint32_t fdt_get_board_id(void)
 	else
 		lprintf(LOG_DEBUG, "%s: board_id: %u\n", __func__, ret);
 
-	done = 1;
 	return ret;
 }

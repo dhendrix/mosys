@@ -46,11 +46,10 @@
 #define FDT_RAM_CODE_PATH	"firmware/coreboot/ram-code"
 #define FDT_BOARD_ID_PATH	"firmware/coreboot/board-id"
 
-static uint32_t fdt_get_uint32_val(const char *path)
+/* returns number of bytes read or -1 to indicate error */
+static int fdt_read_node(const char *path, char *buf, int len)
 {
-	static uint32_t ret = ~0;	/* init to invalid value */
-	uint32_t tmp;
-	int fd;
+	int fd, ret;
 	struct string_builder *sb;
 
 	sb = new_string_builder();
@@ -65,19 +64,28 @@ static uint32_t fdt_get_uint32_val(const char *path)
 		goto out_1;
 	}
 
-	if (read(fd, &tmp, sizeof(tmp)) != sizeof(tmp)) {
+	ret = read(fd, buf, len);
+	if (ret < 0) {
 		lprintf(LOG_ERR, "Failed to read devicetree node.\n");
 		goto out_2;
 	}
-
-	tmp = ntohl(tmp);
-	ret = tmp;
 
 out_2:
 	close(fd);
 out_1:
 	free_string_builder(sb);
 	return ret;
+}
+
+static int fdt_get_uint32_val(const char *path, uint32_t *val)
+{
+	int len = sizeof(*val);
+
+	if (fdt_read_node(path, (char *)val, len) != len)
+		return -1;
+
+	*val = ntohl(*val);
+	return 0;
 }
 
 /*
@@ -87,7 +95,11 @@ out_1:
  */
 int fdt_get_ram_code(uint32_t *ram_code)
 {
-	*ram_code = fdt_get_uint32_val(FDT_RAM_CODE_PATH);
+	if (fdt_get_uint32_val(FDT_RAM_CODE_PATH, ram_code) < 0) {
+		lprintf(LOG_ERR, "%s: Error when reading RAM code\n", __func__);
+		return -1;
+	}
+
 	if (*ram_code == 0xffffffff) {
 		lprintf(LOG_ERR, "%s: ram_code is invalid.\n", __func__);
 		return -1;
@@ -104,7 +116,11 @@ int fdt_get_ram_code(uint32_t *ram_code)
  */
 int fdt_get_board_id(uint32_t *board_id)
 {
-	*board_id = fdt_get_uint32_val(FDT_BOARD_ID_PATH);
+	if (fdt_get_uint32_val(FDT_BOARD_ID_PATH, board_id) < 0) {
+		lprintf(LOG_ERR, "%s: Error when reading board ID\n", __func__);
+		return -1;
+	}
+
 	if (*board_id == 0xffffffff) {
 		lprintf(LOG_ERR, "%s: board_id is invalid.\n", __func__);
 		return -1;

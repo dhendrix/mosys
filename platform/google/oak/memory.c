@@ -39,23 +39,6 @@
 
 #define OAK_DIMM_COUNT	1
 
-const struct nonspd_mem_info hynix_8gbit_lpddr3_h9ccnnn8gtmlar_nud = {
-	.dram_type              = SPD_DRAM_TYPE_LPDDR3,
-	.module_type.ddr3_type  = DDR3_MODULE_TYPE_SO_DIMM,
-
-	.module_size_mbits      = 16384,
-	.num_ranks              = 1,
-	.device_width           = 32,
-	.ddr_freq               = { DDR_533, DDR_667, DDR_800 },
-
-	.module_mfg_id          = { .msb = 0xad, .lsb = 0x80 },
-	.dram_mfg_id            = { .msb = 0xad, .lsb = 0x80 },
-
-	.part_num =
-		{ 'H', '9', 'C', 'C', 'N', 'N', 'N', '8', 'G', 'T', 'M', 'L',
-		  'A', 'R', '-', 'N', 'U', 'D',},
-};
-
 /*
  * dimm_count  -  return total number of dimm slots
  *

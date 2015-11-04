@@ -36,41 +36,6 @@
 
 #include "storm.h"
 
-const struct nonspd_mem_info samsung_k4b4g1646d = {
-	.dram_type		= SPD_DRAM_TYPE_DDR3,
-	.module_type.ddr3_type	= DDR3_MODULE_TYPE_UNDEFINED,
-
-	.module_size_mbits	= 4096,
-	.num_ranks		= 1,
-	.device_width		= 16,
-	.ddr_freq 		= { DDR_400, DDR_533, DDR_667, DDR_800 },
-
-	.module_mfg_id		= { .msb = 0xce, .lsb = 0x00 },
-	.dram_mfg_id		= { .msb = 0xce, .lsb = 0x00 },
-
-	.serial_num 		= { 0, 0, 0, 0 },
-	.part_num		=
-		{ 'K', '4', 'B', '4', 'G', '1', '6', '4', '6', 'D',
-		  '-', 'B', 'Y', 'K', '0' },
-};
-
-const struct nonspd_mem_info micron_mt41k256m16ha = {
-	.dram_type		= SPD_DRAM_TYPE_DDR3,
-	.module_type.ddr3_type	= DDR3_MODULE_TYPE_UNDEFINED,
-
-	.module_size_mbits	= 4096,
-	.num_ranks		= 1,
-	.device_width		= 16,
-	.ddr_freq 		= { DDR_533, DDR_667, DDR_800 },
-
-	.module_mfg_id		= { .msb = 0x2c, .lsb = 0x00 },
-	.dram_mfg_id		= { .msb = 0x2c, .lsb = 0x00 },
-
-	.serial_num 		= { 0, 0, 0, 0 },
-	.part_num		= { 'M', 'T', '4', '1', 'K', '2', '5', '6', 'M',
-				    '1', '6', 'H', 'A', '-', '1', '2', '5' },
-};
-
 /* Treat each module as a logical "DIMM" */
 #define STORM_DIMM_COUNT	2
 

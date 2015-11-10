@@ -46,6 +46,7 @@ enum pinky_boards {
 	UNKNOWN = -1,
 	BRAIN,
 	DANGER,
+	EMILE,
 	GUS,
 	JAQ,
 	JERRY,
@@ -68,6 +69,7 @@ struct veyron_probe_id {
 } veyron_id_list[] = {
 	[BRAIN]		= { "Brain", "google,veyron-brain", 0 },
 	[DANGER]	= { "Danger", "google,veyron-danger", 0 },
+	[EMILE]		= { "Emile", "google,veyron-emile", 0 },
 	[GUS]		= { "Gus", "google,veyron-gus", 1 },
 	[JAQ]		= { "Jaq", "google,veyron-jaq", 1 },
 	[JERRY]		= { "Jerry", "google,veyron-jerry", 1 },

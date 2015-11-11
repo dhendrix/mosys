@@ -203,6 +203,23 @@ const struct nonspd_mem_info micron_mt41k256m16ha = {
 				    '1', '6', 'H', 'A', '-', '1', '2', '5' },
 };
 
+const struct nonspd_mem_info nanya_ddr3l_nt5cc256m16dp_di = {
+	.dram_type		= SPD_DRAM_TYPE_DDR3,
+	.module_type.ddr3_type	= DDR3_MODULE_TYPE_UNDEFINED,
+
+	.module_size_mbits	= 4096,
+	.num_ranks		= 1,
+	.device_width		= 16,
+	/* CL = 11, CWL = 8, min = 1.25ns, max <1.5ns */
+	.ddr_freq 		= { DDR_667, DDR_800 },
+	.module_mfg_id		= { .msb = 0x0b, .lsb = 0x03 },
+	.dram_mfg_id		= { .msb = 0x0b, .lsb = 0x03 },
+
+	.serial_num 		= { 0, 0, 0, 0 },
+	.part_num		= { 'N', 'T', '5', 'C', 'C', '2', '5', '6',
+				    'M', '1', '6', 'D', 'P', '-', 'D', 'I' },
+};
+
 const struct nonspd_mem_info samsung_k4b4g1646d = {
 	.dram_type		= SPD_DRAM_TYPE_DDR3,
 	.module_type.ddr3_type	= DDR3_MODULE_TYPE_UNDEFINED,

@@ -29,6 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "lib/fdt.h"
 #include "lib/nonspd.h"
 
 #include "mosys/log.h"
@@ -43,6 +44,15 @@ enum storm_memory_config {
 	SAMSUNG_DDR3_1600_1G,
 	MICRON_DDR3L_1600_1G,
 	MEM_UNKNOWN,
+};
+
+enum storm_board_id {
+	BOARD_ID_PROTO_0 = 0,
+	BOARD_ID_PROTO_0_2 = 1,
+	BOARD_ID_WHIRLWIND = 2,
+	BOARD_ID_WHIRLWIND_SP5 = 3,
+	BOARD_ID_ARKHAM = 6,
+	BOARD_ID_PROTO_0_2_NAND = 26,
 };
 
 /*
@@ -60,12 +70,30 @@ static int dimm_count(struct platform_intf *intf)
 
 static enum storm_memory_config get_memory_config(struct platform_intf *intf)
 {
-	if (!strcmp(intf->name, "Storm"))
+	uint32_t board_id;
+
+	if (fdt_get_board_id(&board_id) < 0) {
+		lprintf(LOG_ERR, "Unable to obtain RAM code.\n");
+		return MEM_UNKNOWN;
+	}
+
+	switch (board_id) {
+	/* Arkham */
+	case BOARD_ID_ARKHAM:
+		return MICRON_DDR3L_1600_1G;
+	/* Storm */
+	case BOARD_ID_PROTO_0:
+	case BOARD_ID_PROTO_0_2:
+	case BOARD_ID_PROTO_0_2_NAND:
 		return SAMSUNG_DDR3_1600_1G;
-	else if (!strcmp(intf->name, "Whirlwind"))
+	/* Whirlwind */
+	case BOARD_ID_WHIRLWIND:
+	case BOARD_ID_WHIRLWIND_SP5:
 		return MICRON_DDR3L_1600_1G;
-	else if (!strcmp(intf->name, "Arkham"))
-		return MICRON_DDR3L_1600_1G;
+	default:
+		lprintf(LOG_ERR, "Unable to determine memory configuration\n");
+	}
+
 	return MEM_UNKNOWN;
 }
 

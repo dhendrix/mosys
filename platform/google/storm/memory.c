@@ -41,8 +41,10 @@
 #define STORM_DIMM_COUNT	2
 
 enum storm_memory_config {
-	SAMSUNG_DDR3_1600_1G,
+	HYNIX_DDR3L_1600_1G,
 	MICRON_DDR3L_1600_1G,
+	NANYA_DDR3L_1600_1G,
+	SAMSUNG_DDR3_1600_1G,
 	MEM_UNKNOWN,
 };
 
@@ -51,7 +53,9 @@ enum storm_board_id {
 	BOARD_ID_PROTO_0_2 = 1,
 	BOARD_ID_WHIRLWIND = 2,
 	BOARD_ID_WHIRLWIND_SP5 = 3,
+	BOARD_ID_WHIRLWIND_NT5CC256M16DP_DI = 4,
 	BOARD_ID_ARKHAM = 6,
+	BOARD_ID_ARKHAM_H5TC4G63CFR_PBA = 7,
 	BOARD_ID_PROTO_0_2_NAND = 26,
 };
 
@@ -81,6 +85,8 @@ static enum storm_memory_config get_memory_config(struct platform_intf *intf)
 	/* Arkham */
 	case BOARD_ID_ARKHAM:
 		return MICRON_DDR3L_1600_1G;
+	case BOARD_ID_ARKHAM_H5TC4G63CFR_PBA:
+		return HYNIX_DDR3L_1600_1G;
 	/* Storm */
 	case BOARD_ID_PROTO_0:
 	case BOARD_ID_PROTO_0_2:
@@ -90,6 +96,8 @@ static enum storm_memory_config get_memory_config(struct platform_intf *intf)
 	case BOARD_ID_WHIRLWIND:
 	case BOARD_ID_WHIRLWIND_SP5:
 		return MICRON_DDR3L_1600_1G;
+	case BOARD_ID_WHIRLWIND_NT5CC256M16DP_DI:
+		return NANYA_DDR3L_1600_1G;
 	default:
 		lprintf(LOG_ERR, "Unable to determine memory configuration\n");
 	}
@@ -101,11 +109,17 @@ static int get_mem_info(struct platform_intf *intf,
 			const struct nonspd_mem_info **info)
 {
 	switch (get_memory_config(intf)) {
-	case SAMSUNG_DDR3_1600_1G:
-		*info = &samsung_k4b4g1646d;
+	case HYNIX_DDR3L_1600_1G:
+		*info = &hynix_4gbit_ddr3l_h5tc4g63cfr_pba;
 		break;
 	case MICRON_DDR3L_1600_1G:
 		*info = &micron_mt41k256m16ha;
+		break;
+	case NANYA_DDR3L_1600_1G:
+		*info = &nanya_ddr3l_nt5cc256m16dp_di;
+		break;
+	case SAMSUNG_DDR3_1600_1G:
+		*info = &samsung_k4b4g1646d;
 		break;
 	default:
 		return -1;

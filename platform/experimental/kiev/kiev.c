@@ -38,6 +38,7 @@
 #include "mosys/intf_list.h"
 #include "mosys/log.h"
 
+#include "lib/generic_callbacks.h"
 #include "lib/probe.h"
 #include "lib/smbios.h"
 #include "lib/vpd.h"
@@ -134,7 +135,7 @@ struct platform_cb kiev_cb = {
 //	.gpio		= &kiev_gpio_cb,
 	.memory		= &kiev_memory_cb,
 	.nvram		= &kiev_nvram_cb,
-	.psu		= &kiev_psu_cb,
+	.psu		= &generic_psu_ac_only_cb,
 	.smbios		= &smbios_sysinfo_cb,
 	.sensor		= &kiev_sensor_cb,
 	.sys 		= &kiev_sys_cb,

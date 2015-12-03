@@ -38,6 +38,7 @@
 #include "mosys/intf_list.h"
 #include "mosys/log.h"
 
+#include "lib/generic_callbacks.h"
 #include "lib/probe.h"
 #include "lib/smbios.h"
 #include "lib/vpd.h"
@@ -133,7 +134,7 @@ struct platform_cb stumpy_cb = {
 	.eeprom		= &stumpy_eeprom_cb,
 //	.gpio		= &stumpy_gpio_cb,
 	.memory		= &stumpy_memory_cb,
-	.psu		= &stumpy_psu_cb,
+	.psu		= &generic_psu_ac_only_cb,
 	.nvram		= &stumpy_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,
 	.sensor		= &stumpy_sensor_cb,

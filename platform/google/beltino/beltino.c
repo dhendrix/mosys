@@ -38,6 +38,7 @@
 #include "mosys/intf_list.h"
 #include "mosys/log.h"
 
+#include "lib/generic_callbacks.h"
 #include "lib/probe.h"
 #include "lib/smbios.h"
 #include "lib/elog.h"
@@ -162,7 +163,7 @@ struct platform_cb beltino_cb = {
 	.gpio		= &beltino_gpio_cb,
 	.memory		= &beltino_memory_cb,
 	.nvram		= &beltino_nvram_cb,
-	.psu		= &beltino_psu_cb,
+	.psu		= &generic_psu_ac_only_cb,
 	.sensor		= &beltino_sensor_cb,
 	.smbios		= &smbios_sysinfo_cb,
 	.sys 		= &beltino_sys_cb,

@@ -41,6 +41,7 @@
 
 #include "lib/fdt.h"
 #include "lib/file.h"
+#include "lib/generic_callbacks.h"
 #include "lib/math.h"
 #include "lib/probe.h"
 
@@ -113,7 +114,7 @@ struct platform_cb oak_cb = {
 	.eeprom 	= &oak_eeprom_cb,
 //	.gpio		= &oak_gpio_cb,
 	.memory		= &oak_memory_cb,
-	.psu		= &oak_psu_cb,
+	.psu		= &generic_psu_battery_cb,
 	.sys		= &oak_sys_cb,
 	.eventlog	= &oak_eventlog_cb,
 };

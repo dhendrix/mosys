@@ -40,6 +40,7 @@
 
 #include "drivers/google/cros_ec.h"
 
+#include "lib/generic_callbacks.h"
 #include "lib/probe.h"
 #include "lib/smbios.h"
 #include "lib/elog.h"
@@ -105,6 +106,7 @@ struct platform_cmd *auron_sub[] = {
 	&cmd_memory,
 	&cmd_nvram,
 	&cmd_platform,
+	&cmd_psu,
 	&cmd_smbios,
 	&cmd_eventlog,
 	NULL
@@ -177,6 +179,7 @@ struct platform_cb auron_cb = {
 	.gpio		= &auron_gpio_cb,
 	.memory		= &auron_memory_cb,
 	.nvram		= &auron_nvram_cb,
+	.psu		= &generic_psu_battery_cb,
 	.smbios		= &smbios_sysinfo_cb,
 	.sys 		= &auron_sys_cb,
 	.eventlog	= &auron_eventlog_cb,

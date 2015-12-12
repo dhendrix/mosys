@@ -29,21 +29,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <limits.h>	/* for INT_MAX */
-
-#include <arpa/inet.h>	/* ntohl() */
-
-#include "mosys/alloc.h"
 #include "mosys/callbacks.h"
-#include "mosys/globals.h"
-#include "mosys/globals.h"
 #include "mosys/log.h"
 #include "mosys/platform.h"
 
 #include "drivers/gpio.h"
 
-#include "lib/cbfs_core.h"
-#include "lib/file.h"
 #include "lib/flashrom.h"
 #include "lib/math.h"
 #include "lib/spd.h"
@@ -145,50 +136,30 @@ static int slippy_dimm_count(struct platform_intf *intf)
 		return SLIPPY_DIMM_COUNT;
 }
 
-static int slippy_spd_read_cbfs(struct platform_intf *intf,
-				int dimm, int reg, int len, uint8_t *buf)
+static int slippy_spd_read(struct platform_intf *intf,
+		 int dimm, int reg, int spd_len, uint8_t *spd_buf)
 {
-	static int first_run = 1;
-	static uint8_t *bootblock = NULL;
-	size_t size = SLIPPY_HOST_FIRMWARE_ROM_SIZE;
-	struct cbfs_file *file;
-	int spd_index = 0;
-	uint32_t spd_offset;
+	static uint8_t *fw_buf;
+	static int fw_size = 0;
 
-	if (dimm > slippy_dimm_count(intf)) {
+	/* dimm cnt is 0 based */
+	if (dimm >= intf->cb->memory->dimm_count(intf)) {
 		lprintf(LOG_DEBUG, "%s: Invalid DIMM specified\n", __func__);
 		return -1;
 	}
 
-	if (first_run) {
-		bootblock = mosys_malloc(size);	/* FIXME: overkill */
-		add_destroy_callback(free, bootblock);
-		first_run = 0;
+	if (fw_size < 0)
+		return -1;	/* previous attempt failed */
 
-		/* read SPD from CBFS entry located within bootblock region */
-		if (flashrom_read(bootblock, size,
-				  INTERNAL_BUS_SPI, "BOOT_STUB") < 0)
+	if (!fw_size) {
+		fw_size = flashrom_read_host_firmware_region(intf, &fw_buf);
+		if (fw_size < 0)
 			return -1;
+		add_destroy_callback(free, fw_buf);
 	}
 
-	if ((file = cbfs_find("spd.bin", bootblock, size)) == NULL)
-		return -1;
-
-	spd_index = slippy_get_spd_index(intf);
-	if (spd_index < 0)
-		return -1;
-
-	spd_offset = ntohl(file->offset) + (spd_index * 256);
-	lprintf(LOG_DEBUG, "Using memory config %u\n", spd_index);
-	memcpy(buf, (void *)file + spd_offset + reg, len);
-
-	return len;
-}
-
-static int slippy_spd_read(struct platform_intf *intf,
-			 int dimm, int reg, int len, uint8_t *buf)
-{
-	return slippy_spd_read_cbfs(intf, dimm, reg, len, buf);
+	return spd_read_from_cbfs(intf, dimm, reg,
+				spd_len, spd_buf, fw_size, fw_buf);
 }
 
 static struct memory_spd_cb slippy_spd_cb = {

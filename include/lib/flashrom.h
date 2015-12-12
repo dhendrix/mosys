@@ -88,4 +88,18 @@ extern int flashrom_read_by_name(uint8_t **buf,
 extern int flashrom_write_by_name(size_t size, uint8_t *buf,
                          enum programmer_target target, const char *region);
 
+/*
+ * flashrom_read_host_firmware_region - Read firmware region within ROM
+ *
+ * @buf:	double-pointer of buffer to allocate and fill
+ *
+ * This assumes that the name of the firmware region corresponds to a defined
+ * eeprom's "content" description.
+ *
+ * returns number of bytes read (ie region size) to indicate success
+ * returns <0 to indicate failure
+ */
+extern int flashrom_read_host_firmware_region(struct platform_intf *intf,
+							uint8_t **buf);
+
 #endif /* MOSYS_LIB_FLASHROM_H__ */

@@ -335,4 +335,22 @@ extern int spd_print_field_fbdimm(struct platform_intf *intf,
 extern int spd_print_field_ddr3(struct platform_intf *intf, struct kv_pair *kv,
                                 const void *data, enum spd_field_type type);
 
+/*
+ * spd_read_from_cbfs  -  retrieve SPD info from CBFS
+ *
+ * @intf:	platform interface
+ * @module:	module number
+ * @reg:	SPD register offset
+ * @spd_len:	length of SPD data
+ * @spd:	raw SPD data
+ * @fw_size:	size of firmware image
+ * @fw:		firmware image
+ *
+ * returns 0 to indicate success
+ * returns <0 to indicate error
+ */
+extern int spd_read_from_cbfs(struct platform_intf *intf,
+			int module, int reg, int spd_len, uint8_t *spd,
+			size_t fw_size, uint8_t *fw);
+
 #endif /* LIB_SPD_H__ */

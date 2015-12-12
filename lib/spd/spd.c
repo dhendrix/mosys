@@ -33,6 +33,7 @@
  */
 
 #define _LARGEFILE64_SOURCE
+#include <arpa/inet.h>	/* ntohl() */
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -47,6 +48,9 @@
 #include "mosys/platform.h"
 
 #include "intf/i2c.h"
+#include "lib/cbfs_core.h"
+#include "lib/smbios.h"
+#include "lib/smbios_tables.h"
 #include "lib/spd.h"
 
 static spd_raw_override spd_raw_access_override;
@@ -233,4 +237,66 @@ struct spd_device *new_spd_device(struct platform_intf *intf, int dimm)
 	}
 
 	return spd;
+}
+
+static int find_spd_by_part_number(struct platform_intf *intf, int dimm,
+				   uint8_t *spd, uint32_t num_spd)
+{
+	char *smbios_part_num;
+	uint8_t i;
+	uint8_t *ptr;
+	struct smbios_table table;
+
+	lprintf(LOG_DEBUG, "Use SMBIOS type 17 to get memory information\n");
+	if (smbios_find_table(intf, SMBIOS_TYPE_MEMORY, dimm, &table,
+			      SMBIOS_LEGACY_ENTRY_BASE,
+			      SMBIOS_LEGACY_ENTRY_LEN) < 0) {
+		lprintf(LOG_DEBUG, "Can't find smbios type17\n");
+		return -1;
+	}
+	smbios_part_num = table.string[table.data.mem_device.part_number];
+
+	for (i = 0; i < num_spd; i++) {
+		ptr = (spd + i * 256);
+		if (!memcmp(smbios_part_num, ptr + 128, 18)) {
+			lprintf(LOG_DEBUG, "found %x\n", i);
+			return i;
+		}
+	}
+	return -1;
+}
+
+int spd_read_from_cbfs(struct platform_intf *intf,
+			int module, int reg, int num_bytes_to_read,
+			uint8_t *spd, size_t fw_size, uint8_t *fw)
+{
+	struct cbfs_file *file;
+	int spd_index = 0;
+	uint32_t spd_offset, num_spd;
+	uint8_t *ptr;
+	int ret = 0;
+
+	if ((file = cbfs_find("spd.bin", fw, fw_size)) == NULL) {
+		ret = -1;
+		goto out;
+	}
+
+	ptr = (uint8_t *)file + ntohl(file->offset);
+	num_spd = ntohl(file->len) / 256;
+	spd_index = find_spd_by_part_number(intf, module, ptr, num_spd);
+	if (spd_index < 0) {
+		ret = -1;
+		goto out;
+	}
+
+	MOSYS_CHECK((spd_index * 256) + reg + num_bytes_to_read <
+							num_spd * 256);
+	spd_offset = ntohl(file->offset) + (spd_index * 256);
+
+	lprintf(LOG_DEBUG, "Using memory config %u\n", spd_index);
+	memcpy(spd, (void *)file + spd_offset + reg, num_bytes_to_read);
+
+	ret = num_bytes_to_read;
+out:
+	return ret;
 }

@@ -142,8 +142,22 @@ static int do_flashrom(const char *cmd, char *const *argv)
 		lperror(LOG_ERR, "%s: Failed to run %s", __func__, cmd);
 		rc = -1;
 	} else { /* parent */
-		if (waitpid(pid, &status, 0) < 0 || status) {
-			lprintf(LOG_ERR, "waitpid returns error\n");
+		if (waitpid(pid, &status, 0) > 0) {
+			if (WIFEXITED(status)) {
+				if (WEXITSTATUS(status) != 0) {
+					lprintf(LOG_ERR,
+						"Child process returned %d.\n",
+						WEXITSTATUS(status));
+					rc = -1;
+				}
+			} else {
+				lprintf(LOG_ERR, "Child process did not exit "
+						"normally.\n");
+				rc = -1;
+			}
+		} else {
+			lprintf(LOG_ERR, "waitpid() returned error.\n");
+			rc = -1;
 		}
 		close(fd);
 	}

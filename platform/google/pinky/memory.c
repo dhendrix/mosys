@@ -119,6 +119,10 @@ static int read_ram_code(struct platform_intf *intf)
 				pinky_dimm_count = 4;
 				pinky_mem_info = &samsung_4gbit_ddr3l_k4b4g1646q_hyk0;
 				break;
+			case 0x0a:
+				pinky_dimm_count = 4;
+				pinky_mem_info = &nanya_ddr3l_nt5cc256m16dp_di;
+				break;
 			case 0x0d:
 				pinky_dimm_count = 4;
 				pinky_mem_info = &hynix_4gbit_ddr3l_h5tc4g63afr_pba;

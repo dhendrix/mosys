@@ -37,6 +37,7 @@
 #include "intf/mmio.h"
 
 #include "lib/eeprom.h"
+#include "lib/flashrom.h"
 
 int eeprom_mmio_read(struct platform_intf *intf, struct eeprom *eeprom,
                      unsigned int offset, unsigned int len, void *data)
@@ -77,4 +78,16 @@ struct fmap *eeprom_get_fmap(struct platform_intf *intf, struct eeprom *eeprom)
 
 	free(buf);
 	return fmap;
+}
+
+int eeprom_get_host_firmware_rom_size(struct platform_intf *intf,
+					struct eeprom *eeprom)
+{
+	return flashrom_get_rom_size(intf, HOST_FIRMWARE);
+}
+
+int eeprom_get_ec_firmware_rom_size(struct platform_intf *intf,
+					struct eeprom *eeprom)
+{
+	return flashrom_get_rom_size(intf, EC_FIRMWARE);
 }

@@ -215,6 +215,28 @@ extern int eeprom_mmio_read(struct platform_intf *intf, struct eeprom *eeprom,
  */
 extern struct fmap *eeprom_get_fmap(struct platform_intf *intf,
                                     struct eeprom *eeprom);
+/*
+ * eeprom_get_host_firmware_rom_size - obtain size of host's firmware ROM
+ *
+ * @intf:	platform interface
+ * @eeprom:	eeprom structure
+ *
+ * returns host firmware ROM size (in bytes) if successful
+ * returns <0 to indicate failure
+ */
+extern int eeprom_get_host_firmware_rom_size(struct platform_intf *intf,
+					struct eeprom *eeprom);
+/*
+ * eeprom_get_ec_firmware_rom_size - obtain size of EC's firmware ROM
+ *
+ * @intf:	platform interface
+ * @eeprom:	eeprom structure
+ *
+ * returns EC firmware ROM size (in bytes) if successful
+ * returns <0 to indicate failure
+ */
+extern int eeprom_get_ec_firmware_rom_size(struct platform_intf *intf,
+					struct eeprom *eeprom);
 
 /*
  * vbnv_flash_vboot_read - Read VBNV context data

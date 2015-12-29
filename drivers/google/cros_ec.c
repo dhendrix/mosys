@@ -175,6 +175,18 @@ int cros_ec_flash_info(struct platform_intf *intf, struct ec_cb *ec,
 	return rc;
 }
 
+int cros_ec_get_firmware_rom_size(struct platform_intf *intf)
+{
+	struct ec_response_flash_info info;
+
+	if (cros_ec_flash_info(intf, intf->cb->ec, &info) < 0) {
+		lprintf(LOG_ERR, "%s: Failed to obtain flash info\n", __func__);
+		return -1;
+	}
+
+	return info.flash_size;
+}
+
 /* returns 1 if EC detected, 0 if not, <0 to indicate failure */
 int cros_ec_detect(struct platform_intf *intf, struct ec_cb *ec)
 {

@@ -36,6 +36,7 @@
 
 #include "intf/i2c.h"
 
+struct eeprom;
 struct platform_intf;
 struct ec_response_get_chip_info;
 struct ec_response_flash_info;
@@ -79,6 +80,8 @@ extern int cros_ec_vbnvcontext_read(struct platform_intf *intf,
 		struct ec_cb *ec, uint8_t *block);
 extern int cros_ec_vbnvcontext_write(struct platform_intf *intf,
 		struct ec_cb *ec, const uint8_t *block);
+extern int cros_ec_get_firmware_rom_size(struct platform_intf *intf);
+
 
 extern int cros_ec_probe_dev(struct platform_intf *intf, struct ec_cb *ec);
 extern int cros_ec_probe_i2c(struct platform_intf *intf);

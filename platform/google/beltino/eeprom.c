@@ -46,7 +46,7 @@
 
 #include "beltino.h"
 
-static size_t beltino_host_firmware_size(struct platform_intf *intf,
+static int beltino_host_firmware_size(struct platform_intf *intf,
 					struct eeprom *eeprom)
 {
 	return BELTINO_HOST_FIRMWARE_ROM_SIZE;

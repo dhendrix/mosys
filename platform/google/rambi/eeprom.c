@@ -44,7 +44,7 @@
 
 #include "rambi.h"
 
-static size_t rambi_host_firmware_size(struct platform_intf *intf,
+static int rambi_host_firmware_size(struct platform_intf *intf,
 					struct eeprom *eeprom)
 {
 	return RAMBI_HOST_FIRMWARE_ROM_SIZE;

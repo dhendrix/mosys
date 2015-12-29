@@ -43,7 +43,7 @@
 
 #include "cyclone.h"
 
-static size_t cyclone_host_firmware_size(struct platform_intf *intf,
+static int cyclone_host_firmware_size(struct platform_intf *intf,
 					struct eeprom *eeprom)
 {
 	return CYCLONE_HOST_FIRMWARE_ROM_SIZE;

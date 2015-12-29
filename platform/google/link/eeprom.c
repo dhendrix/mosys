@@ -46,7 +46,7 @@
 
 #include "link.h"
 
-static size_t link_host_firmware_size(struct platform_intf *intf,
+static int link_host_firmware_size(struct platform_intf *intf,
                                      struct eeprom *eeprom)
 {
 	/*

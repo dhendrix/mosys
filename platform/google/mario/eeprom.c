@@ -91,7 +91,7 @@ static int mario_firmware_read(struct platform_intf *intf,
 	return 0;
 }
 
-static size_t mario_host_firmware_size(struct platform_intf *intf,
+static int mario_host_firmware_size(struct platform_intf *intf,
                                      struct eeprom *eeprom)
 {
 	size_t rom_size;
@@ -132,7 +132,7 @@ static struct eeprom_dev mario_host_firmware = {
 	.get_map	= eeprom_get_fmap,
 };
 
-static size_t mario_ec_firmware_size(struct platform_intf *intf,
+static int mario_ec_firmware_size(struct platform_intf *intf,
                                    struct eeprom *eeprom)
 {
 	/* FIXME: the actual mechanism for obtaining this info is not yet

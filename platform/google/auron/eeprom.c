@@ -46,7 +46,7 @@
 
 #include "auron.h"
 
-static size_t auron_host_firmware_size(struct platform_intf *intf,
+static int auron_host_firmware_size(struct platform_intf *intf,
 					struct eeprom *eeprom)
 {
 	return AURON_HOST_FIRMWARE_ROM_SIZE;

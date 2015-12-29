@@ -91,7 +91,7 @@ static int agz_firmware_read(struct platform_intf *intf,
 	return 0;
 }
 
-static size_t agz_host_firmware_size(struct platform_intf *intf,
+static int agz_host_firmware_size(struct platform_intf *intf,
                                      struct eeprom *eeprom)
 {
 	size_t rom_size;
@@ -135,7 +135,7 @@ static struct eeprom_dev agz_host_firmware = {
 	.get_map	= eeprom_get_fmap,
 };
 
-static size_t agz_ec_firmware_size(struct platform_intf *intf,
+static int agz_ec_firmware_size(struct platform_intf *intf,
                                    struct eeprom *eeprom)
 {
 	/* FIXME: the actual mechanism for obtaining this info is not yet

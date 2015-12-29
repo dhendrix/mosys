@@ -80,7 +80,7 @@ struct eeprom_dev {
 	 *
 	 * returns <0 to indicate error
 	 */
-	size_t (*size)(struct platform_intf *intf,
+	int (*size)(struct platform_intf *intf,
 	               struct eeprom *eeprom);
 
 	/*

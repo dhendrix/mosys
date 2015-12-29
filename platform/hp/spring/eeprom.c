@@ -48,7 +48,7 @@
 
 #define SPRING_HOST_FIRMWARE_ROM_SIZE	(4096 * 1024)
 
-static size_t spring_host_firmware_size(struct platform_intf *intf,
+static int spring_host_firmware_size(struct platform_intf *intf,
 					struct eeprom *eeprom)
 {
 	return SPRING_HOST_FIRMWARE_ROM_SIZE;
@@ -108,7 +108,7 @@ static struct eeprom_region spring_host_firmware_regions[] = {
 	{ NULL },
 };
 
-static size_t spring_ec_firmware_size(struct platform_intf *intf,
+static int spring_ec_firmware_size(struct platform_intf *intf,
 				     struct eeprom *eeprom)
 {
 	struct ec_response_flash_info info;

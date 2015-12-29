@@ -44,7 +44,7 @@
 
 #include "strago.h"
 
-static size_t strago_host_firmware_size(struct platform_intf *intf,
+static int strago_host_firmware_size(struct platform_intf *intf,
 					struct eeprom *eeprom)
 {
 	return STRAGO_HOST_FIRMWARE_ROM_SIZE;

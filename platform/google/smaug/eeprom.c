@@ -48,7 +48,7 @@
 
 #define SMAUG_HOST_FIRMWARE_ROM_SIZE	(16384 * 1024)
 
-static size_t host_firmware_size(struct platform_intf *intf,
+static int host_firmware_size(struct platform_intf *intf,
 					struct eeprom *eeprom)
 {
 	return SMAUG_HOST_FIRMWARE_ROM_SIZE;
@@ -107,7 +107,7 @@ static struct eeprom_region host_firmware_regions[] = {
 	{ NULL },
 };
 
-static size_t ec_firmware_size(struct platform_intf *intf,
+static int ec_firmware_size(struct platform_intf *intf,
 				     struct eeprom *eeprom)
 {
 	struct ec_response_flash_info info;

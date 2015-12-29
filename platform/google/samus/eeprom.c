@@ -46,7 +46,7 @@
 
 #include "samus.h"
 
-static size_t samus_host_firmware_size(struct platform_intf *intf,
+static int samus_host_firmware_size(struct platform_intf *intf,
 					struct eeprom *eeprom)
 {
 	return SAMUS_HOST_FIRMWARE_ROM_SIZE;

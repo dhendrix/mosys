@@ -44,7 +44,7 @@
 
 #include "cyan.h"
 
-static size_t cyan_host_firmware_size(struct platform_intf *intf,
+static int cyan_host_firmware_size(struct platform_intf *intf,
 					struct eeprom *eeprom)
 {
 	return CYAN_HOST_FIRMWARE_ROM_SIZE;

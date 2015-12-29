@@ -41,7 +41,7 @@
 #define HP_Z600_FIRMWARE_SIZE		(2048 * 1024)
 #define HP_Z600_ETH0_EEPROM_SIZE	(128 * 1024)
 
-static size_t z600_fw_size(struct platform_intf *intf,
+static int z600_fw_size(struct platform_intf *intf,
                            struct eeprom *eeprom)
 {
 	return HP_Z600_FIRMWARE_SIZE;
@@ -52,7 +52,7 @@ static struct eeprom_dev z600_host_firmware = {
 	.read	= eeprom_mmio_read,
 };
 
-static size_t z600_eth0_size(struct platform_intf *intf, struct eeprom *eeprom)
+static int z600_eth0_size(struct platform_intf *intf, struct eeprom *eeprom)
 {
 	return HP_Z600_ETH0_EEPROM_SIZE;
 }

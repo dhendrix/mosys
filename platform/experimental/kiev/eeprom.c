@@ -93,7 +93,7 @@ static int kiev_firmware_read(struct platform_intf *intf,
 	return 0;
 }
 
-static size_t kiev_host_firmware_size(struct platform_intf *intf,
+static int kiev_host_firmware_size(struct platform_intf *intf,
                                      struct eeprom *eeprom)
 {
 	/*

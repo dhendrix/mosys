@@ -93,7 +93,7 @@ static int lumpy_firmware_read(struct platform_intf *intf,
 	return 0;
 }
 
-static size_t lumpy_host_firmware_size(struct platform_intf *intf,
+static int lumpy_host_firmware_size(struct platform_intf *intf,
                                      struct eeprom *eeprom)
 {
 	/*

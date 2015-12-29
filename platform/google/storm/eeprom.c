@@ -43,7 +43,7 @@
 
 #include "storm.h"
 
-static size_t storm_host_firmware_size(struct platform_intf *intf,
+static int storm_host_firmware_size(struct platform_intf *intf,
 					struct eeprom *eeprom)
 {
 	return STORM_HOST_FIRMWARE_ROM_SIZE;

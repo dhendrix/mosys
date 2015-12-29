@@ -93,7 +93,7 @@ static int butterfly_firmware_read(struct platform_intf *intf,
 	return 0;
 }
 
-static size_t butterfly_host_firmware_size(struct platform_intf *intf,
+static int butterfly_host_firmware_size(struct platform_intf *intf,
                                      struct eeprom *eeprom)
 {
 	/*

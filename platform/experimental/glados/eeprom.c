@@ -45,7 +45,7 @@
 #include "glados.h"
 
 
-static size_t glados_host_firmware_size(struct platform_intf *intf,
+static int glados_host_firmware_size(struct platform_intf *intf,
 					struct eeprom *eeprom)
 {
 	return GLADOS_HOST_FIRMWARE_ROM_SIZE;

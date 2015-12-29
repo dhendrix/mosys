@@ -301,7 +301,6 @@ static const char *flashrom_path(void)
 	int i = 0;
 	struct stat s;
 	char android_path[] = "/system/bin/flashrom";
-
 	char which_cmd[] = "/usr/bin/which";
 	char *args[MAX_ARRAY_SIZE];
 	int stdout_pipefd[2];
@@ -590,4 +589,50 @@ int flashrom_read_host_firmware_region(struct platform_intf *intf,
 	}
 
 	return rc;
+}
+
+int flashrom_get_rom_size(struct platform_intf *intf,
+			enum programmer_target target)
+{
+	int ret = -1;
+	const char *path;
+	char *args[MAX_ARRAY_SIZE];
+	int i = 0;
+	int stdout_pipefd[2];
+	size_t stdout_buf_len = 16;
+	char stdout_buf[stdout_buf_len];
+	struct pipe pipes[] = {
+		{ PIPE_IN, fileno(stdout),
+			stdout_pipefd, stdout_buf, stdout_buf_len },
+		{ PIPE_NONE, fileno(stderr) },
+	};
+
+	if ((path = flashrom_path()) == NULL)
+		goto flashrom_get_rom_size_exit_0;
+	args[i++] = strdup(path);
+
+	if ((i += append_programmer_arg(target, i, args)) < 0)
+		goto flashrom_get_rom_size_exit_1;
+
+	args[i++] = strdup("--get-size");
+	args[i++] = NULL;
+
+	memset(stdout_buf, 0, sizeof(stdout_buf));
+	if (do_cmd(path, args, pipes, ARRAY_SIZE(pipes)) < 0) {
+		lprintf(LOG_DEBUG, "Unable to get ROM size\n");
+		goto flashrom_get_rom_size_exit_1;
+	}
+
+	errno = 0;
+	ret = strtol(stdout_buf, NULL, 0);
+	if (errno) {
+		lperror(LOG_ERR, "Failed to obtain ROM size using flashrom");
+		ret = -1;
+	}
+
+flashrom_get_rom_size_exit_1:
+	for (i = i - 1 ; i > 0; i--)
+		free(args[i]);
+flashrom_get_rom_size_exit_0:
+	return ret;
 }

@@ -102,4 +102,16 @@ extern int flashrom_write_by_name(size_t size, uint8_t *buf,
 extern int flashrom_read_host_firmware_region(struct platform_intf *intf,
 							uint8_t **buf);
 
+/*
+ * flashrom_get_rom_size - Obtain the ROM size by calling flashrom
+ *
+ * @intf:	the platform interface
+ * @target:	target programmer (host, ec, etc)
+ *
+ * returns ROM size in bytes to indicate success
+ * returns <0 to indicate failure
+ */
+extern int flashrom_get_rom_size(struct platform_intf *intf,
+			enum programmer_target target);
+
 #endif /* MOSYS_LIB_FLASHROM_H__ */

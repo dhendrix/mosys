@@ -81,19 +81,6 @@ static struct eeprom_dev daisy_host_firmware = {
 	.get_map	= eeprom_get_fmap,
 };
 
-static int daisy_ec_firmware_size(struct platform_intf *intf,
-				     struct eeprom *eeprom)
-{
-	struct ec_response_flash_info info;
-
-	if (cros_ec_flash_info(intf, intf->cb->ec, &info) < 0) {
-		lprintf(LOG_ERR, "%s: Failed to obtain flash info\n", __func__);
-		return 0;
-	}
-
-	return info.flash_size;
-}
-
 static int daisy_ec_firmware_read(struct platform_intf *intf,
 				  struct eeprom *eeprom,
 				  unsigned int offset,
@@ -116,7 +103,7 @@ static int daisy_ec_firmware_read(struct platform_intf *intf,
 }
 
 static struct eeprom_dev daisy_ec_firmware = {
-	.size		= daisy_ec_firmware_size,
+	.size		= cros_ec_get_firmware_rom_size,
 	.read		= daisy_ec_firmware_read,
 	.get_map	= eeprom_get_fmap,
 };

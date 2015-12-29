@@ -107,19 +107,6 @@ static struct eeprom_region host_firmware_regions[] = {
 	{ NULL },
 };
 
-static int ec_firmware_size(struct platform_intf *intf,
-				     struct eeprom *eeprom)
-{
-	struct ec_response_flash_info info;
-
-	if (cros_ec_flash_info(intf, intf->cb->ec, &info) < 0) {
-		lprintf(LOG_ERR, "%s: Failed to obtain flash info\n", __func__);
-		return 0;
-	}
-
-	return info.flash_size;
-}
-
 static int ec_firmware_read(struct platform_intf *intf, struct eeprom *eeprom,
 			  unsigned int offset, unsigned int len, void *data)
 {
@@ -138,7 +125,7 @@ static int ec_firmware_read(struct platform_intf *intf, struct eeprom *eeprom,
 }
 
 static struct eeprom_dev ec_firmware = {
-	.size		= ec_firmware_size,
+	.size		= cros_ec_get_firmware_rom_size,
 	.read		= ec_firmware_read,
 	.get_map	= eeprom_get_fmap,
 };

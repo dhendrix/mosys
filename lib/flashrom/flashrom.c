@@ -72,51 +72,6 @@ struct pipe {
 	int size;	/* size of buffer */
 };
 
-/* returns pointer to string containing flashrom path if successful,
-   returns NULL otherwise */
-static const char *flashrom_path(void)
-{
-	static char path[PATH_MAX];
-	FILE *fp;
-	int fd;
-	int c, i = 0;
-	struct stat s;
-	char android_path[] = "/system/bin/flashrom";
-
-	/* In Android, flashrom utility located in /system/bin
-	   check if file exists.  Using fstat because for some
-	   reason, stat() was seg faulting in Android */
-	fd = open(android_path, O_RDONLY);
-	if (fstat(fd, &s) == 0) {
-		in_android = 1;
-		strcpy(path, android_path);
-		close(fd);
-		return path;
-	}
-	close(fd);
-
-	if ((fp = popen("which flashrom 2>/dev/null", "r")) == NULL) {
-		lprintf(LOG_DEBUG, "Cannot find flashrom\n");
-		return NULL;
-	}
-
-	for (i = 0; i < PATH_MAX; i++) {
-		c = fgetc(fp);
-		if (c == EOF || c == '\n') {
-			path[i] = '\0';
-			break;
-		}
-		path[i] = c;
-	}
-
-	pclose(fp);
-	/* no characters were read from stream, or buffer overrun */
-	if ((c == EOF && i == 0) || (c != EOF && i == PATH_MAX))
-		return NULL;
-
-	return path;
-}
-
 /*
  * do_cmd - Execute a command and optionally pipe output to/from child process
  *
@@ -335,6 +290,59 @@ static int append_programmer_arg(const enum programmer_target target,
 	}
 
 	return ret;
+}
+
+/* returns pointer to string containing flashrom path if successful,
+   returns NULL otherwise */
+static const char *flashrom_path(void)
+{
+	static char path[PATH_MAX];
+	int fd;
+	int i = 0;
+	struct stat s;
+	char android_path[] = "/system/bin/flashrom";
+
+	char which_cmd[] = "/usr/bin/which";
+	char *args[MAX_ARRAY_SIZE];
+	int stdout_pipefd[2];
+	struct pipe pipes[] = {
+		{ PIPE_IN, fileno(stdout), stdout_pipefd, path, PATH_MAX },
+		{ PIPE_NONE, fileno(stderr) },
+	};
+
+	/* In Android, flashrom utility located in /system/bin
+	   check if file exists.  Using fstat because for some
+	   reason, stat() was seg faulting in Android */
+	fd = open(android_path, O_RDONLY);
+	if (fstat(fd, &s) == 0) {
+		in_android = 1;
+		strcpy(path, android_path);
+		close(fd);
+		return path;
+	}
+	close(fd);
+
+	/* We're not in Android, try using the `which` command. */
+	args[i++] = strdup(which_cmd);
+	args[i++] = strdup("flashrom");
+	args[i++] = NULL;
+	memset(path, 0, sizeof(path));
+	if (do_cmd(which_cmd, args, pipes, ARRAY_SIZE(pipes)) < 0) {
+		lprintf(LOG_DEBUG, "Unable to determine flashrom path\n");
+		return NULL;
+	}
+
+	for (i = 0; i < PATH_MAX; i++) {
+		if (path[i] == EOF || path[i] == '\n') {
+			path[i] = '\0';
+			break;
+		}
+	}
+
+	lprintf(LOG_DEBUG, "%s: path: \"%s\"\n", __func__, path);
+	for (i = 0; args[i] != NULL; i++)
+		free(args[i]);
+	return path;
 }
 
 /* TODO: add arbitrary range support */

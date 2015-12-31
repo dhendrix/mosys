@@ -30,7 +30,6 @@
  */
 
 #include "mosys/callbacks.h"
-#include "mosys/kv_pair.h"
 #include "mosys/log.h"
 #include "mosys/platform.h"
 
@@ -41,59 +40,11 @@
 #include "lib/flashrom.h"
 #include "lib/spd.h"
 #include "lib/smbios.h"
-#include "lib/smbios_tables.h"
 
 #include "strago.h"
 
 #define STRAGO_DIMM_COUNT	2
 #define STRAGO_DIMM_SPEED	1333
-
-/*
- * strago_dimm_count  -  return total number of dimm slots
- *
- * @intf:       platform interface
- *
- * returns dimm slot count
- */
-static int strago_dimm_count(struct platform_intf *intf)
-{
-	int status = 0, dimm_cnt = 0;
-	struct smbios_table table;
-
-	while (status == 0) {
-		status = smbios_find_table(intf, SMBIOS_TYPE_MEMORY, dimm_cnt,
-					   &table,
-					   SMBIOS_LEGACY_ENTRY_BASE,
-					   SMBIOS_LEGACY_ENTRY_LEN);
-		if(status == 0)
-			dimm_cnt++;
-	}
-	return dimm_cnt;
-}
-
-/*
- * strago_dimm_speed - Write actual DDR speed in MHz to kv
- *
- * @intf:	platform interface
- * @dimm:	DIMM number
- * @kv:		kv_pair structure
- *
- * returns actual DDR speed in MHz
- */
-static int strago_dimm_speed(struct platform_intf *intf,
-			    int dimm,
-			    struct kv_pair *kv) {
-	struct smbios_table table;
-	char speed[10];
-
-	if (smbios_find_table(intf, SMBIOS_TYPE_MEMORY, dimm, &table,
-			      SMBIOS_LEGACY_ENTRY_BASE,
-			      SMBIOS_LEGACY_ENTRY_LEN) < 0) {
-		return -1;
-	}
-	kv_pair_fmt(kv, "speed", "%d MHz", table.data.mem_device.speed);
-	return 0;
-}
 
 static int strago_spd_read(struct platform_intf *intf,
 		 int dimm, int reg, int spd_len, uint8_t *spd_buf)
@@ -126,7 +77,7 @@ static struct memory_spd_cb strago_spd_cb = {
 };
 
 struct memory_cb strago_memory_cb = {
-	.dimm_count	= strago_dimm_count,
-	.dimm_speed	= strago_dimm_speed,
+	.dimm_count	= smbios_dimm_count,
+	.dimm_speed	= smbios_dimm_speed,
 	.spd		= &strago_spd_cb,
 };

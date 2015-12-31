@@ -48,29 +48,6 @@
 
 #define AURON_DIMM_COUNT	2
 
-/*
- * auron_dimm_count  -  return total number of dimm slots
- *
- * @intf:       platform interface
- *
- * returns dimm slot count
- */
-static int auron_dimm_count(struct platform_intf *intf)
-{
-	int status = 0, dimm_cnt = 0;
-	struct smbios_table table;
-
-	while (status == 0) {
-		status = smbios_find_table(intf, SMBIOS_TYPE_MEMORY, dimm_cnt,
-					   &table,
-					   SMBIOS_LEGACY_ENTRY_BASE,
-					   SMBIOS_LEGACY_ENTRY_LEN);
-		if(status == 0)
-			dimm_cnt++;
-	}
-	return dimm_cnt;
-}
-
 static int auron_spd_read(struct platform_intf *intf,
 		 int dimm, int reg, int spd_len, uint8_t *spd_buf)
 {
@@ -95,22 +72,6 @@ static int auron_spd_read(struct platform_intf *intf,
 
 	return spd_read_from_cbfs(intf, dimm, reg,
 				spd_len, spd_buf, fw_size, fw_buf);
-}
-
-int auron_dimm_speed(struct platform_intf *intf,
-		     int dimm, struct kv_pair *kv)
-{
-	struct smbios_table table;
-	char speed[10];
-	if (smbios_find_table(intf, SMBIOS_TYPE_MEMORY, dimm, &table,
-			      SMBIOS_LEGACY_ENTRY_BASE,
-			      SMBIOS_LEGACY_ENTRY_LEN) < 0) {
-		return -1;
-	}
-	sprintf(speed, "%d", table.data.mem_device.speed);
-	kv_pair_add(kv, "speed: ", speed);
-
-	return 0;
 }
 
 /*
@@ -225,9 +186,9 @@ static struct memory_spd_cb dimm_auron_spd_cb = {
 };
 
 struct memory_cb auron_memory_cb = {
-	.dimm_count	= auron_dimm_count,
+	.dimm_count	= smbios_dimm_count,
 	.spd		= &auron_spd_cb,
-	.dimm_speed	= &auron_dimm_speed,
+	.dimm_speed	= smbios_dimm_speed,
 };
 
 struct memory_cb dimm_memory_cb = {

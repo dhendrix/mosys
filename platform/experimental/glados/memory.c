@@ -30,7 +30,6 @@
  */
 
 #include "mosys/callbacks.h"
-#include "mosys/kv_pair.h"
 #include "mosys/log.h"
 #include "mosys/platform.h"
 
@@ -39,32 +38,8 @@
 #include "lib/flashrom.h"
 #include "lib/spd.h"
 #include "lib/smbios.h"
-#include "lib/smbios_tables.h"
 
 #include "glados.h"
-
-/*
- * glados_dimm_count  -  return total number of dimm slots
- *
- * @intf:       platform interface
- *
- * returns dimm slot count
- */
-static int glados_dimm_count(struct platform_intf *intf)
-{
-	int status = 0, dimm_cnt = 0;
-	struct smbios_table table;
-
-	while (status == 0) {
-		status = smbios_find_table(intf, SMBIOS_TYPE_MEMORY, dimm_cnt,
-					   &table,
-					   SMBIOS_LEGACY_ENTRY_BASE,
-					   SMBIOS_LEGACY_ENTRY_LEN);
-		if (status == 0)
-			dimm_cnt++;
-	}
-	return dimm_cnt;
-}
 
 static int glados_spd_read(struct platform_intf *intf,
 		 int dimm, int reg, int spd_len, uint8_t *spd_buf)
@@ -92,28 +67,12 @@ static int glados_spd_read(struct platform_intf *intf,
 				spd_len, spd_buf, fw_size, fw_buf);
 }
 
-int glados_dimm_speed(struct platform_intf *intf,
-		     int dimm, struct kv_pair *kv)
-{
-	struct smbios_table table;
-	char speed[10];
-	if (smbios_find_table(intf, SMBIOS_TYPE_MEMORY, dimm, &table,
-			      SMBIOS_LEGACY_ENTRY_BASE,
-			      SMBIOS_LEGACY_ENTRY_LEN) < 0) {
-		return -1;
-	}
-	sprintf(speed, "%d", table.data.mem_device.speed);
-	kv_pair_add(kv, "speed: ", speed);
-
-	return 0;
-}
-
 static struct memory_spd_cb glados_spd_cb = {
 	.read		= glados_spd_read,
 };
 
 struct memory_cb glados_memory_cb = {
-	.dimm_count	= glados_dimm_count,
-	.dimm_speed	= glados_dimm_speed,
+	.dimm_count	= smbios_dimm_count,
+	.dimm_speed	= smbios_dimm_speed,
 	.spd		= &glados_spd_cb,
 };

@@ -38,6 +38,8 @@
 
 #include "lib/smbios_tables.h"
 
+struct kv_pair;
+
 /* SMBIOS Table Types */
 enum smbios_types {
 	SMBIOS_TYPE_BIOS = 0,
@@ -86,6 +88,11 @@ enum smbios_types {
 
 /* SMBIOS platform information callbacks */
 extern struct smbios_cb smbios_sysinfo_cb;
+
+extern int smbios_dimm_count(struct platform_intf *intf);
+
+extern int smbios_dimm_speed(struct platform_intf *intf,
+		     int dimm, struct kv_pair *kv);
 
 /* SMBIOS main API. */
 extern int smbios_find_table(struct platform_intf *intf,

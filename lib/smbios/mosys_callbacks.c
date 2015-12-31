@@ -35,6 +35,7 @@
 #include <unistd.h>
 
 #include "mosys/alloc.h"
+#include "mosys/kv_pair.h"
 #include "mosys/list.h"
 #include "mosys/log.h"
 #include "mosys/platform.h"
@@ -246,3 +247,46 @@ struct smbios_cb smbios_sysinfo_cb = {
 	.system_family		= smbios_sysinfo_get_family,
 	.system_sku		= smbios_sysinfo_get_sku,
 };
+
+/*
+ * Memory callbacks
+ */
+
+/*
+ * smbios_dimm_count  -  return total number of dimm slots
+ *
+ * @intf:       platform interface
+ *
+ * returns dimm slot count
+ */
+int smbios_dimm_count(struct platform_intf *intf)
+{
+	int status = 0, dimm_cnt = 0;
+	struct smbios_table table;
+
+	while (status == 0) {
+		status = smbios_find_table(intf, SMBIOS_TYPE_MEMORY, dimm_cnt,
+					   &table,
+					   SMBIOS_LEGACY_ENTRY_BASE,
+					   SMBIOS_LEGACY_ENTRY_LEN);
+		if (status == 0)
+			dimm_cnt++;
+	}
+
+	return dimm_cnt;
+}
+
+int smbios_dimm_speed(struct platform_intf *intf,
+		     int dimm, struct kv_pair *kv)
+{
+	struct smbios_table table;
+	if (smbios_find_table(intf, SMBIOS_TYPE_MEMORY, dimm, &table,
+			      SMBIOS_LEGACY_ENTRY_BASE,
+			      SMBIOS_LEGACY_ENTRY_LEN) < 0) {
+		return -1;
+	}
+
+	kv_pair_fmt(kv, "speed", "%d MHz", table.data.mem_device.speed);
+
+	return 0;
+}

@@ -42,7 +42,12 @@
 int eeprom_mmio_read(struct platform_intf *intf, struct eeprom *eeprom,
                      unsigned int offset, unsigned int len, void *data)
 {
-	if (offset + len > eeprom->device->size(intf, eeprom))
+	int rom_size;
+
+	if ((rom_size = eeprom->device->size(intf, eeprom)) < 0)
+		return -1;
+
+	if (offset + len > rom_size)
 		return -1;
 
 	return mmio_read(intf, eeprom->addr.mmio + offset, len, data);

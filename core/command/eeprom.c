@@ -94,9 +94,12 @@ static int eeprom_list_cmd(struct platform_intf *intf,
 		kv_pair_add(kv, "name", eeprom->name);
 		/* FIXME: should this go one level deeper? */
 		if (eeprom->device) {
-			size_t size = eeprom->device->size(intf, eeprom);
+			int size;
 
-			kv_pair_fmt(kv, "size", "%u", size);
+			if ((size = eeprom->device->size(intf, eeprom)) < 0)
+				return -1;
+
+			kv_pair_fmt(kv, "size", "%d", size);
 			kv_pair_add(kv, "units", "bytes");
 		}
 
@@ -430,7 +433,7 @@ static int eeprom_dump_cmd(struct platform_intf *intf,
 	struct stat st;
 	uint8_t *buf = NULL;
 	const char *devname, *filename;
-	size_t eeprom_size;
+	int eeprom_size;
 
 	if ((argc < 1) || (argc > 2)) {
 		platform_cmd_usage(cmd);
@@ -487,7 +490,9 @@ static int eeprom_dump_cmd(struct platform_intf *intf,
 
 	/* do the actual work - read from eeprom, print to screen or
 	 * write to file */
-	eeprom_size = eeprom->device->size(intf, eeprom);
+	if ((eeprom_size = eeprom->device->size(intf, eeprom)) < 0)
+		return -1;
+
 	buf = mosys_malloc(eeprom_size);
 	if (eeprom->device->read(intf, eeprom, 0, eeprom_size, buf) < 0) {
 		lprintf(LOG_ERR, "Unable to read %d bytes from %s\n",
@@ -523,7 +528,7 @@ static int eeprom_write_cmd(struct platform_intf *intf,
 	struct stat st;
 	uint8_t *buf = NULL;
 	const char *devname, *filename;
-	size_t eeprom_size;
+	int eeprom_size;
 
 	if (argc != 2) {
 		platform_cmd_usage(cmd);
@@ -555,7 +560,9 @@ static int eeprom_write_cmd(struct platform_intf *intf,
 	}
 
 	/* size sanity checks */
-	eeprom_size = eeprom->device->size(intf, eeprom);
+	if ((eeprom_size = eeprom->device->size(intf, eeprom)) < 0)
+		return -1;
+
 	if (lstat(filename, &st) < 0) {
 		int errsv = errno;
 

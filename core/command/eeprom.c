@@ -96,7 +96,7 @@ static int eeprom_list_cmd(struct platform_intf *intf,
 		if (eeprom->device) {
 			int size;
 
-			if ((size = eeprom->device->size(intf, eeprom)) < 0)
+			if ((size = eeprom->device->size(intf)) < 0)
 				return -1;
 
 			kv_pair_fmt(kv, "size", "%d", size);
@@ -387,7 +387,7 @@ static int eeprom_csum_cmd(struct platform_intf *intf,
 		    !eeprom->device->read)
 			continue;
 
-		if ((len = eeprom->device->size(intf, eeprom)) < 0) {
+		if ((len = eeprom->device->size(intf)) < 0) {
 			lprintf(LOG_DEBUG, "failed to obtain size of %s\n",
 			                   eeprom->name);
 			continue;
@@ -490,7 +490,7 @@ static int eeprom_dump_cmd(struct platform_intf *intf,
 
 	/* do the actual work - read from eeprom, print to screen or
 	 * write to file */
-	if ((eeprom_size = eeprom->device->size(intf, eeprom)) < 0)
+	if ((eeprom_size = eeprom->device->size(intf)) < 0)
 		return -1;
 
 	buf = mosys_malloc(eeprom_size);
@@ -560,7 +560,7 @@ static int eeprom_write_cmd(struct platform_intf *intf,
 	}
 
 	/* size sanity checks */
-	if ((eeprom_size = eeprom->device->size(intf, eeprom)) < 0)
+	if ((eeprom_size = eeprom->device->size(intf)) < 0)
 		return -1;
 
 	if (lstat(filename, &st) < 0) {

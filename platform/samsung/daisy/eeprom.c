@@ -48,8 +48,7 @@
 
 #define DAISY_HOST_FIRMWARE_ROM_SIZE	(4096 * 1024)
 
-static int daisy_host_firmware_size(struct platform_intf *intf,
-				       struct eeprom *eeprom)
+static int daisy_host_firmware_size(struct platform_intf *intf)
 {
 	return DAISY_HOST_FIRMWARE_ROM_SIZE;
 }
@@ -63,7 +62,7 @@ static int daisy_host_firmware_read(struct platform_intf *intf,
 	uint8_t *buf;
 	size_t rom_size;
 
-	rom_size = eeprom->device->size(intf, eeprom);
+	rom_size = eeprom->device->size(intf);
 	buf = mosys_malloc(rom_size);
 
 	if (flashrom_read(buf, rom_size, INTERNAL_BUS_SPI, NULL) < 0)
@@ -90,7 +89,7 @@ static int daisy_ec_firmware_read(struct platform_intf *intf,
 	uint8_t *buf;
 	size_t rom_size;
 
-	rom_size = eeprom->device->size(intf, eeprom);
+	rom_size = eeprom->device->size(intf);
 	buf = mosys_malloc(rom_size);
 
 	if (flashrom_read(buf, rom_size, INTERNAL_BUS_I2C, NULL) < 0)

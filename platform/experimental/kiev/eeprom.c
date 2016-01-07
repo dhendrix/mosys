@@ -54,7 +54,7 @@ static int kiev_firmware_mmio_setup(struct platform_intf *intf,
 
 	if (!eeprom->device || !eeprom->device->size)
 		return -1;
-	rom_size = eeprom->device->size(intf, eeprom);
+	rom_size = eeprom->device->size(intf);
 	rom_base = 0xffffffff - rom_size + 1;
 	lprintf(LOG_DEBUG, "%s: rom_base: 0x%08x, rom_size: 0x%08x\n",
 	__func__, rom_base, rom_size);
@@ -93,8 +93,7 @@ static int kiev_firmware_read(struct platform_intf *intf,
 	return 0;
 }
 
-static int kiev_host_firmware_size(struct platform_intf *intf,
-                                     struct eeprom *eeprom)
+static int kiev_host_firmware_size(struct platform_intf *intf)
 {
 	/*
 	 * FIXME: use libflashrom for this. SMBIOS won't work because it

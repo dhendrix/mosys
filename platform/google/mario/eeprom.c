@@ -52,7 +52,7 @@ static int mario_firmware_mmio_setup(struct platform_intf *intf,
 
 	if (!eeprom->device || !eeprom->device->size)
 		return -1;
-	rom_size = eeprom->device->size(intf, eeprom);
+	rom_size = eeprom->device->size(intf);
 	rom_base = 0xffffffff - rom_size + 1;
 	lprintf(LOG_DEBUG, "%s: rom_base: 0x%08x, rom_size: 0x%08x\n",
 	__func__, rom_base, rom_size);
@@ -91,8 +91,7 @@ static int mario_firmware_read(struct platform_intf *intf,
 	return 0;
 }
 
-static int mario_host_firmware_size(struct platform_intf *intf,
-                                     struct eeprom *eeprom)
+static int mario_host_firmware_size(struct platform_intf *intf)
 {
 	size_t rom_size;
 	struct smbios_table table;
@@ -132,8 +131,7 @@ static struct eeprom_dev mario_host_firmware = {
 	.get_map	= eeprom_get_fmap,
 };
 
-static int mario_ec_firmware_size(struct platform_intf *intf,
-                                   struct eeprom *eeprom)
+static int mario_ec_firmware_size(struct platform_intf *intf)
 {
 	/* FIXME: the actual mechanism for obtaining this info is not yet
 	 * supported by mosys, so we'll cheat for now */

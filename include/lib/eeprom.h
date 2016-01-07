@@ -76,12 +76,10 @@ struct eeprom_dev {
 	 * size  -  return size of eeprom (in bytes)
 	 *
 	 * @intf:	platform interface
-	 * @eeprom:	eeprom interface
 	 *
 	 * returns <0 to indicate error
 	 */
-	int (*size)(struct platform_intf *intf,
-	               struct eeprom *eeprom);
+	int (*size)(struct platform_intf *intf);
 
 	/*
 	 * read  -  read from eeprom
@@ -224,8 +222,7 @@ extern struct fmap *eeprom_get_fmap(struct platform_intf *intf,
  * returns host firmware ROM size (in bytes) if successful
  * returns <0 to indicate failure
  */
-extern int eeprom_get_host_firmware_rom_size(struct platform_intf *intf,
-					struct eeprom *eeprom);
+extern int eeprom_get_host_firmware_rom_size(struct platform_intf *intf);
 /*
  * eeprom_get_ec_firmware_rom_size - obtain size of EC's firmware ROM
  *
@@ -235,8 +232,7 @@ extern int eeprom_get_host_firmware_rom_size(struct platform_intf *intf,
  * returns EC firmware ROM size (in bytes) if successful
  * returns <0 to indicate failure
  */
-extern int eeprom_get_ec_firmware_rom_size(struct platform_intf *intf,
-					struct eeprom *eeprom);
+extern int eeprom_get_ec_firmware_rom_size(struct platform_intf *intf);
 
 /*
  * vbnv_flash_vboot_read - Read VBNV context data

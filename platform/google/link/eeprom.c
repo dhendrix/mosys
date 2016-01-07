@@ -46,8 +46,7 @@
 
 #include "link.h"
 
-static int link_host_firmware_size(struct platform_intf *intf,
-                                     struct eeprom *eeprom)
+static int link_host_firmware_size(struct platform_intf *intf)
 {
 	/*
 	 * FIXME: use libflashrom for this. SMBIOS won't work because it
@@ -66,7 +65,7 @@ static int link_host_firmware_read(struct platform_intf *intf,
 	uint8_t *buf;
 	size_t rom_size;
 	
-	rom_size = eeprom->device->size(intf, eeprom);
+	rom_size = eeprom->device->size(intf);
 	buf = mosys_malloc(rom_size);
 
 	/* FIXME: since flashrom_read() does not yet support arbitrary sizes,

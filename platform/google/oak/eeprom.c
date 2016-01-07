@@ -46,8 +46,7 @@
 
 #include "oak.h"
 
-static int host_firmware_size(struct platform_intf *intf,
-					struct eeprom *eeprom)
+static int host_firmware_size(struct platform_intf *intf)
 {
 	return OAK_HOST_FIRMWARE_ROM_SIZE;
 }
@@ -58,7 +57,7 @@ static int host_firmware_read(struct platform_intf *intf, struct eeprom *eeprom,
 	uint8_t *buf;
 	size_t rom_size;
 
-	rom_size = eeprom->device->size(intf, eeprom);
+	rom_size = eeprom->device->size(intf);
 	buf = mosys_malloc(rom_size);
 
 	if (flashrom_read(buf, rom_size, HOST_FIRMWARE, NULL) < 0)
@@ -112,7 +111,7 @@ static int ec_firmware_read(struct platform_intf *intf, struct eeprom *eeprom,
 	uint8_t *buf;
 	size_t rom_size;
 
-	rom_size = eeprom->device->size(intf, eeprom);
+	rom_size = eeprom->device->size(intf);
 	buf = mosys_malloc(rom_size);
 
 	if (flashrom_read(buf, rom_size, EC_FIRMWARE, NULL) < 0)

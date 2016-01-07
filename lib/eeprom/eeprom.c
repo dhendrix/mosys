@@ -44,7 +44,7 @@ int eeprom_mmio_read(struct platform_intf *intf, struct eeprom *eeprom,
 {
 	int rom_size;
 
-	if ((rom_size = eeprom->device->size(intf, eeprom)) < 0)
+	if ((rom_size = eeprom->device->size(intf)) < 0)
 		return -1;
 
 	if (offset + len > rom_size)
@@ -60,7 +60,7 @@ struct fmap *eeprom_get_fmap(struct platform_intf *intf, struct eeprom *eeprom)
 	int fmap_offset, fmap_size;
 	int len;
 
-	if ((len= eeprom->device->size(intf, eeprom)) < 0)
+	if ((len= eeprom->device->size(intf)) < 0)
 		return NULL;
 
 	buf = mosys_malloc(len);
@@ -85,14 +85,12 @@ struct fmap *eeprom_get_fmap(struct platform_intf *intf, struct eeprom *eeprom)
 	return fmap;
 }
 
-int eeprom_get_host_firmware_rom_size(struct platform_intf *intf,
-					struct eeprom *eeprom)
+int eeprom_get_host_firmware_rom_size(struct platform_intf *intf)
 {
 	return flashrom_get_rom_size(intf, HOST_FIRMWARE);
 }
 
-int eeprom_get_ec_firmware_rom_size(struct platform_intf *intf,
-					struct eeprom *eeprom)
+int eeprom_get_ec_firmware_rom_size(struct platform_intf *intf)
 {
 	return flashrom_get_rom_size(intf, EC_FIRMWARE);
 }

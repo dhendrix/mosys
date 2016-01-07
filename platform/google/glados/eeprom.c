@@ -45,8 +45,7 @@
 #include "glados.h"
 
 
-static int host_firmware_size(struct platform_intf *intf,
-			      struct eeprom *eeprom)
+static int glados_host_firmware_size(struct platform_intf *intf)
 {
 	return GLADOS_HOST_FIRMWARE_ROM_SIZE;
 }
@@ -60,7 +59,7 @@ static int host_firmware_read(struct platform_intf *intf,
 	uint8_t *buf;
 	size_t rom_size;
 
-	rom_size = eeprom->device->size(intf, eeprom);
+	rom_size = eeprom->device->size(intf);
 	buf = mosys_malloc(rom_size);
 
 	if (flashrom_read(buf, rom_size, HOST_FIRMWARE, NULL) < 0)
@@ -89,7 +88,7 @@ static int host_firmware_write_by_name(struct platform_intf *intf,
 }
 
 static struct eeprom_dev host_firmware = {
-	.size		= host_firmware_size,
+	.size		= glados_host_firmware_size,
 	.read		= host_firmware_read,
 	.read_by_name	= host_firmware_read_by_name,
 	.write_by_name	= host_firmware_write_by_name,

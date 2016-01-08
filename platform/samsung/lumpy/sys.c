@@ -34,38 +34,14 @@
 
 #include "lib/smbios.h"
 
-static const char *lumpy_get_vendor(struct platform_intf *intf)
-{
-	if (intf->cb && intf->cb->smbios)
-		return intf->cb->smbios->system_vendor(intf);
-	else
-		return NULL;
-}
-
-static const char *lumpy_get_name(struct platform_intf *intf)
+static char *lumpy_get_name(struct platform_intf *intf)
 {
 	return mosys_strdup(intf->name);
 }
 
-static const char *lumpy_get_family(struct platform_intf *intf)
-{
-	if (intf->cb && intf->cb->smbios)
-		return intf->cb->smbios->system_family(intf);
-	else
-		return NULL;
-}
-
-static const char *lumpy_get_firmware_vendor(struct platform_intf *intf)
-{
-	if (intf->cb && intf->cb->smbios)
-		return intf->cb->smbios->bios_vendor(intf);
-	else
-		return NULL;
-}
-
 struct sys_cb lumpy_sys_cb = {
-	.vendor			= &lumpy_get_vendor,
+	.vendor			= &smbios_sysinfo_get_vendor,
 	.name			= &lumpy_get_name,
-	.family			= &lumpy_get_family,
-	.firmware_vendor	= &lumpy_get_firmware_vendor,
+	.family			= &smbios_sysinfo_get_family,
+	.firmware_vendor	= &smbios_bios_get_vendor,
 };

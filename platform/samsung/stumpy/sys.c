@@ -36,25 +36,9 @@
 
 #include "lib/smbios.h"
 
-static const char *stumpy_get_vendor(struct platform_intf *intf)
-{
-	if (intf->cb && intf->cb->smbios)
-		return intf->cb->smbios->system_vendor(intf);
-	else
-		return NULL;
-}
-
-static const char *stumpy_get_name(struct platform_intf *intf)
+static char *stumpy_get_name(struct platform_intf *intf)
 {
 	return mosys_strdup(intf->name);
-}
-
-static const char *stumpy_get_family(struct platform_intf *intf)
-{
-	if (intf->cb && intf->cb->smbios)
-		return intf->cb->smbios->system_family(intf);
-	else
-		return NULL;
 }
 
 static int stumpy_reset(struct platform_intf *intf)
@@ -63,8 +47,8 @@ static int stumpy_reset(struct platform_intf *intf)
 }
 
 struct sys_cb stumpy_sys_cb = {
-	.vendor		= &stumpy_get_vendor,
-	.name		= &stumpy_get_name,
-	.family		= &stumpy_get_family,
-	.reset		= &stumpy_reset,
+	.vendor		= &smbios_sysinfo_get_vendor,
+	.name		= stumpy_get_name,
+	.family		= &smbios_sysinfo_get_family,
+	.reset		= stumpy_reset,
 };

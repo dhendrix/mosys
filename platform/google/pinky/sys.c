@@ -38,7 +38,7 @@
 /* Pinky uses device-tree compatible typle: google,<family>-<name>-rev<N>,
  * ie "google,veyron-pinky-rev0" */
 
-static const char *pinky_get_version(struct platform_intf *intf)
+static char *pinky_get_version(struct platform_intf *intf)
 {
 	uint32_t board_id;
 	char board_id_str[16];
@@ -50,13 +50,13 @@ static const char *pinky_get_version(struct platform_intf *intf)
 	return mosys_strdup(board_id_str);
 }
 
-static const char *pinky_get_vendor(struct platform_intf *intf)
+static char *pinky_get_vendor(struct platform_intf *intf)
 {
 	/* FIXME: implement this */
 	return mosys_strdup("Unknown");
 }
 
-static const char *pinky_get_name(struct platform_intf *intf)
+static char *pinky_get_name(struct platform_intf *intf)
 {
 	return mosys_strdup(intf->name);
 }

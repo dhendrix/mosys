@@ -102,7 +102,7 @@ smbios_scan_sysfs_exit:
  * returns pointer to allocated bios vendor string
  * returns NULL if not found
  */
-static char *smbios_bios_get_vendor(struct platform_intf *intf)
+char *smbios_bios_get_vendor(struct platform_intf *intf)
 {
 	char *str = NULL;
 	struct smbios_table table;
@@ -128,7 +128,7 @@ static char *smbios_bios_get_vendor(struct platform_intf *intf)
  * returns pointer to allocated platform vendor string
  * returns NULL if not found
  */
-static char *smbios_sysinfo_get_vendor(struct platform_intf *intf)
+char *smbios_sysinfo_get_vendor(struct platform_intf *intf)
 {
 	char *str = NULL;
 	struct smbios_table table;
@@ -155,7 +155,7 @@ static char *smbios_sysinfo_get_vendor(struct platform_intf *intf)
  * returns pointer to allocated platform name string
  * returns NULL if not found
  */
-static char *smbios_sysinfo_get_name(struct platform_intf *intf)
+char *smbios_sysinfo_get_name(struct platform_intf *intf)
 {
 	char *str = NULL;
 	struct smbios_table table;
@@ -180,7 +180,7 @@ static char *smbios_sysinfo_get_name(struct platform_intf *intf)
  * returns pointer to allocated platform version string
  * returns NULL if not found
  */
-static char *smbios_sysinfo_get_version(struct platform_intf *intf)
+char *smbios_sysinfo_get_version(struct platform_intf *intf)
 {
 	char *str = NULL;
 	struct smbios_table table;
@@ -206,7 +206,7 @@ static char *smbios_sysinfo_get_version(struct platform_intf *intf)
  * returns pointer to allocated platform version string
  * returns NULL if not found
  */
-static char *smbios_sysinfo_get_family(struct platform_intf *intf)
+char *smbios_sysinfo_get_family(struct platform_intf *intf)
 {
 	struct smbios_table table;
 
@@ -226,7 +226,7 @@ static char *smbios_sysinfo_get_family(struct platform_intf *intf)
  * returns pointer to allocated platform version string
  * returns NULL if not found
  */
-static char *smbios_sysinfo_get_sku(struct platform_intf *intf)
+char *smbios_sysinfo_get_sku(struct platform_intf *intf)
 {
 	struct smbios_table table;
 

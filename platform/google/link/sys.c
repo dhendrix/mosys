@@ -34,38 +34,14 @@
 
 #include "lib/smbios.h"
 
-static const char *link_get_vendor(struct platform_intf *intf)
-{
-	if (intf->cb && intf->cb->smbios)
-		return intf->cb->smbios->system_vendor(intf);
-	else
-		return NULL;
-}
-
-static const char *link_get_name(struct platform_intf *intf)
+static char *link_get_name(struct platform_intf *intf)
 {
 	return mosys_strdup(intf->name);
 }
 
-static const char *link_get_family(struct platform_intf *intf)
-{
-	if (intf->cb && intf->cb->smbios)
-		return intf->cb->smbios->system_family(intf);
-	else
-		return NULL;
-}
-
-static const char *link_get_firmware_vendor(struct platform_intf *intf)
-{
-	if (intf->cb && intf->cb->smbios)
-		return intf->cb->smbios->bios_vendor(intf);
-	else
-		return NULL;
-}
-
 struct sys_cb link_sys_cb = {
-	.vendor			= &link_get_vendor,
+	.vendor			= &smbios_sysinfo_get_vendor,
 	.name			= &link_get_name,
-	.family			= &link_get_family,
-	.firmware_vendor	= &link_get_firmware_vendor,
+	.family			= &smbios_sysinfo_get_family,
+	.firmware_vendor	= &smbios_bios_get_vendor,
 };

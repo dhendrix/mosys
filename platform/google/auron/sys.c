@@ -33,49 +33,16 @@
 #include "mosys/platform.h"
 
 #include "lib/smbios.h"
-#include "drivers/google/cros_ec.h"
 
-static const char *auron_get_version(struct platform_intf *intf)
-{
-	if (intf->cb && intf->cb->smbios)
-		return intf->cb->smbios->system_version(intf);
-	else
-		return NULL;
-}
-
-static const char *auron_get_vendor(struct platform_intf *intf)
-{
-	if (intf->cb && intf->cb->smbios)
-		return intf->cb->smbios->system_vendor(intf);
-	else
-		return NULL;
-}
-
-static const char *auron_get_name(struct platform_intf *intf)
+static char *auron_get_name(struct platform_intf *intf)
 {
 	return mosys_strdup(intf->name);
 }
 
-static const char *auron_get_family(struct platform_intf *intf)
-{
-	if (intf->cb && intf->cb->smbios)
-		return intf->cb->smbios->system_family(intf);
-	else
-		return NULL;
-}
-
-static const char *auron_get_firmware_vendor(struct platform_intf *intf)
-{
-	if (intf->cb && intf->cb->smbios)
-		return intf->cb->smbios->bios_vendor(intf);
-	else
-		return NULL;
-}
-
 struct sys_cb auron_sys_cb = {
-	.vendor			= &auron_get_vendor,
+	.vendor			= &smbios_sysinfo_get_vendor,
 	.name			= &auron_get_name,
-	.family			= &auron_get_family,
-	.firmware_vendor	= &auron_get_firmware_vendor,
-	.version		= &auron_get_version,
+	.family			= &smbios_sysinfo_get_family,
+	.firmware_vendor	= &smbios_bios_get_vendor,
+	.version		= &smbios_sysinfo_get_version,
 };

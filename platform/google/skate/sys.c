@@ -41,7 +41,7 @@ static const char *skate_get_vendor(struct platform_intf *intf)
 }
 #endif
 
-static const char *skate_get_name(struct platform_intf *intf)
+static char *skate_get_name(struct platform_intf *intf)
 {
 	char *ret = NULL;
 
@@ -57,7 +57,7 @@ static const char *skate_get_family(struct platform_intf *intf)
 }
 #endif
 
-static const char *skate_get_version(struct platform_intf *intf)
+static char *skate_get_version(struct platform_intf *intf)
 {
 	char *ret = NULL;
 

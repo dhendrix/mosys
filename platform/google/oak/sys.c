@@ -35,31 +35,31 @@
 #include "lib/probe.h"
 #include "lib/fdt.h"
 
-static const char *oak_get_vendor(struct platform_intf *intf)
+static char *oak_get_vendor(struct platform_intf *intf)
 {
 	char *ret = NULL;
 
 	ret = mosys_strdup("Google");
 
-	return (const char *)ret;
+	return ret;
 }
 
-static const char *oak_get_name(struct platform_intf *intf)
+static char *oak_get_name(struct platform_intf *intf)
 {
 	char *ret = NULL;
 
 	ret = mosys_strdup(intf->name);
 
-	return (const char *)ret;
+	return ret;
 }
 
-static const char *oak_get_version(struct platform_intf *intf)
+static char *oak_get_version(struct platform_intf *intf)
 {
 	char *ret = NULL;
 
 	ret = mosys_strdup(intf->version_id);
 
-	return (const char *)ret;
+	return ret;
 }
 
 struct sys_cb oak_sys_cb = {

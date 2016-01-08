@@ -33,16 +33,16 @@
 #include "mosys/platform.h"
 #include "smaug.h"
 
-static const char *get_name(struct platform_intf *intf)
+static char *get_name(struct platform_intf *intf)
 {
 	char *ret = NULL;
 
 	ret = mosys_strdup(intf->name);
 
-	return (const char *)ret;
+	return ret;
 }
 
-static const char *get_vendor(struct platform_intf *intf)
+static char *get_vendor(struct platform_intf *intf)
 {
 	char *ret = NULL;
 
@@ -52,13 +52,13 @@ static const char *get_vendor(struct platform_intf *intf)
 	return ret;
 }
 
-static const char *get_version(struct platform_intf *intf)
+static char *get_version(struct platform_intf *intf)
 {
 	char *ret = NULL;
 
 	ret = mosys_strdup(intf->version_id);
 
-	return (const char *)ret;
+	return ret;
 }
 
 struct sys_cb smaug_sys_cb = {

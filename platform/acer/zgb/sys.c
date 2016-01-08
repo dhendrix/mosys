@@ -34,29 +34,14 @@
 
 #include "lib/smbios.h"
 
-static const char *acer_chromia700_get_vendor(struct platform_intf *intf)
-{
-	if (intf->cb && intf->cb->smbios)
-		return intf->cb->smbios->system_vendor(intf);
-	else
-		return NULL;
-}
 
-static const char *acer_chromia700_get_name(struct platform_intf *intf)
+static char *acer_chromia700_get_name(struct platform_intf *intf)
 {
-	return (const char *)mosys_strdup(intf->name);
-}
-
-static const char *acer_chromia700_get_family(struct platform_intf *intf)
-{
-	if (intf->cb && intf->cb->smbios)
-		return intf->cb->smbios->system_family(intf);
-	else
-		return NULL;
+	return mosys_strdup(intf->name);
 }
 
 struct sys_cb acer_chromia700_sys_cb = {
-	.vendor		= &acer_chromia700_get_vendor,
+	.vendor		= &smbios_sysinfo_get_vendor,
 	.name		= &acer_chromia700_get_name,
-	.family		= &acer_chromia700_get_family,
+	.family		= &smbios_sysinfo_get_family,
 };

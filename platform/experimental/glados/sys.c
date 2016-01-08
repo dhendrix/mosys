@@ -51,39 +51,15 @@ static const char *glados_get_version(struct platform_intf *intf)
 				glados_board_version));
 }*/
 
-static const char *glados_get_vendor(struct platform_intf *intf)
-{
-	if (intf->cb && intf->cb->smbios)
-		return intf->cb->smbios->system_vendor(intf);
-	else
-		return NULL;
-}
-
-static const char *glados_get_name(struct platform_intf *intf)
+static char *glados_get_name(struct platform_intf *intf)
 {
 	return mosys_strdup(intf->name);
 }
 
-static const char *glados_get_family(struct platform_intf *intf)
-{
-	if (intf->cb && intf->cb->smbios)
-		return intf->cb->smbios->system_family(intf);
-	else
-		return NULL;
-}
-
-static const char *glados_get_firmware_vendor(struct platform_intf *intf)
-{
-	if (intf->cb && intf->cb->smbios)
-		return intf->cb->smbios->bios_vendor(intf);
-	else
-		return NULL;
-}
-
 struct sys_cb glados_sys_cb = {
 	/*.version		= &glados_get_version,*/
-	.vendor			= &glados_get_vendor,
+	.vendor			= &smbios_sysinfo_get_vendor,
 	.name			= &glados_get_name,
-	.family			= &glados_get_family,
-	.firmware_vendor	= &glados_get_firmware_vendor,
+	.family			= &smbios_sysinfo_get_family,
+	.firmware_vendor	= &smbios_bios_get_vendor,
 };

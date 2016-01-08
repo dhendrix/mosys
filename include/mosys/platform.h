@@ -307,15 +307,15 @@ struct edac_event;
 struct gtune_var;
 struct sys_cb {
 	/* methods useful for probing */
-	const char *(*vendor)(struct platform_intf *intf);
-	const char *(*name)(struct platform_intf *intf);
-	const char *(*version)(struct platform_intf *intf);
-	const char *(*family)(struct platform_intf *intf);
-	const char *(*variant)(struct platform_intf *intf);
+	char *(*vendor)(struct platform_intf *intf);
+	char *(*name)(struct platform_intf *intf);
+	char *(*version)(struct platform_intf *intf);
+	char *(*family)(struct platform_intf *intf);
+	char *(*variant)(struct platform_intf *intf);
 
 	/* firmware info */
-	const char *(*firmware_vendor)(struct platform_intf *intf);
-	const char *(*firmware_version)(struct platform_intf *intf);
+	char *(*firmware_vendor)(struct platform_intf *intf);
+	char *(*firmware_version)(struct platform_intf *intf);
 
 	/* Boot-time initialization. This may include things the BIOS / kernel
 	   did not initialize.  */

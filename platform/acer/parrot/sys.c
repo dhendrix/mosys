@@ -36,25 +36,9 @@
 
 #include "lib/smbios.h"
 
-static const char *parrot_get_vendor(struct platform_intf *intf)
-{
-	if (intf->cb && intf->cb->smbios)
-		return intf->cb->smbios->system_vendor(intf);
-	else
-		return NULL;
-}
-
-static const char *parrot_get_name(struct platform_intf *intf)
+static char *parrot_get_name(struct platform_intf *intf)
 {
 	return mosys_strdup(intf->name);
-}
-
-static const char *parrot_get_family(struct platform_intf *intf)
-{
-	if (intf->cb && intf->cb->smbios)
-		return intf->cb->smbios->system_family(intf);
-	else
-		return NULL;
 }
 
 static int parrot_reset(struct platform_intf *intf)
@@ -63,8 +47,8 @@ static int parrot_reset(struct platform_intf *intf)
 }
 
 struct sys_cb parrot_sys_cb = {
-	.vendor		= &parrot_get_vendor,
+	.vendor		= &smbios_sysinfo_get_vendor,
 	.name		= &parrot_get_name,
-	.family		= &parrot_get_family,
+	.family		= &smbios_sysinfo_get_family,
 	.reset		= &parrot_reset,
 };

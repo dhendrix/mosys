@@ -41,7 +41,7 @@ static const char *pit_get_vendor(struct platform_intf *intf)
 }
 #endif
 
-static const char *get_name(struct platform_intf *intf)
+static char *get_name(struct platform_intf *intf)
 {
 	char *ret = NULL;
 
@@ -50,7 +50,7 @@ static const char *get_name(struct platform_intf *intf)
 	return (const char *)ret;
 }
 
-static const char *get_version(struct platform_intf *intf)
+static char *get_version(struct platform_intf *intf)
 {
 	char *ret = NULL;
 

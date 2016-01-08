@@ -36,25 +36,9 @@
 
 #include "lib/smbios.h"
 
-static const char *butterfly_get_vendor(struct platform_intf *intf)
-{
-	if (intf->cb && intf->cb->smbios)
-		return intf->cb->smbios->system_vendor(intf);
-	else
-		return NULL;
-}
-
-static const char *butterfly_get_name(struct platform_intf *intf)
+static char *butterfly_get_name(struct platform_intf *intf)
 {
 	return mosys_strdup(intf->name);
-}
-
-static const char *butterfly_get_family(struct platform_intf *intf)
-{
-	if (intf->cb && intf->cb->smbios)
-		return intf->cb->smbios->system_family(intf);
-	else
-		return NULL;
 }
 
 static int butterfly_reset(struct platform_intf *intf)
@@ -63,8 +47,8 @@ static int butterfly_reset(struct platform_intf *intf)
 }
 
 struct sys_cb butterfly_sys_cb = {
-	.vendor		= &butterfly_get_vendor,
+	.vendor		= &smbios_sysinfo_get_vendor,
 	.name		= &butterfly_get_name,
-	.family		= &butterfly_get_family,
+	.family		= &smbios_sysinfo_get_family,
 	.reset		= &butterfly_reset,
 };

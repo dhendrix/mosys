@@ -51,39 +51,15 @@ static const char *strago_get_version(struct platform_intf *intf)
 				    strago_board_version));
 }*/
 
-static const char *strago_get_vendor(struct platform_intf *intf)
-{
-	if (intf->cb && intf->cb->smbios)
-		return intf->cb->smbios->system_vendor(intf);
-	else
-		return NULL;
-}
-
-static const char *strago_get_name(struct platform_intf *intf)
+static char *strago_get_name(struct platform_intf *intf)
 {
 	return mosys_strdup(intf->name);
 }
 
-static const char *strago_get_family(struct platform_intf *intf)
-{
-	if (intf->cb && intf->cb->smbios)
-		return intf->cb->smbios->system_family(intf);
-	else
-		return NULL;
-}
-
-static const char *strago_get_firmware_vendor(struct platform_intf *intf)
-{
-	if (intf->cb && intf->cb->smbios)
-		return intf->cb->smbios->bios_vendor(intf);
-	else
-		return NULL;
-}
-
 struct sys_cb strago_sys_cb = {
 	/*.version		= &strago_get_version,*/
-	.vendor			= &strago_get_vendor,
+	.vendor			= &smbios_sysinfo_get_vendor,
 	.name			= &strago_get_name,
-	.family			= &strago_get_family,
-	.firmware_vendor	= &strago_get_firmware_vendor,
+	.family			= &smbios_sysinfo_get_family,
+	.firmware_vendor	= &smbios_bios_get_vendor,
 };

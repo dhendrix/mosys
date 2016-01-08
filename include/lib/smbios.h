@@ -100,4 +100,11 @@ extern int smbios_find_entry(struct platform_intf *intf,
                              unsigned long int baseaddr,
                              unsigned long int len);
 
+extern char *smbios_bios_get_vendor(struct platform_intf *intf);
+extern char *smbios_sysinfo_get_vendor(struct platform_intf *intf);
+extern char *smbios_sysinfo_get_name(struct platform_intf *intf);
+extern char *smbios_sysinfo_get_version(struct platform_intf *intf);
+extern char *smbios_sysinfo_get_family(struct platform_intf *intf);
+extern char *smbios_sysinfo_get_sku(struct platform_intf *intf);
+
 #endif /* MOSYS_LIB_SMBIOS_H__ */

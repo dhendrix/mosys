@@ -93,6 +93,10 @@ static int read_ram_code(struct platform_intf *intf)
 				pinky_dimm_count = 2;
 				pinky_mem_info = &samsung_2gbit_lpddr3_k3qf2f20em_agce;
 				break;
+			case 3:
+				pinky_dimm_count = 1;
+				pinky_mem_info = &hynix_16gbit_lpddr3_h9ccnnnbptblbr_nud;
+				break;
 			case 7:
 				pinky_dimm_count = 2;
 				pinky_mem_info = &elpida_8gbit_lpddr3_edfa164a2ma_jd_f;

@@ -36,12 +36,30 @@ config LOGLEVEL
 	  LOG_SPEW	8	excessive debug messages
 
 config USE_IPC_LOCK
-	bool "Use IPC locking mechanism"
+	bool
 	default y
+
+choice IPC_LOCK_MECHANISM
+	prompt "IPC locking mechanism"
+	default USE_FILE_LOCK
 	help
 	  The IPC locking mechanism ensures that mosys does not run at the
 	  the same time as processes holding known IPC locks. For example,
 	  this prevents multiple instances of mosys from running.
+
+config USE_FILE_LOCK
+	bool "File lock"
+	help
+	  The file lock mechanism will create a file and use flock() to manage
+	  the lock.
+
+config USE_SYSV_SEMAPHORE_LOCK
+	bool "SysV semaphore lock"
+	help
+	  The SysV semaphore lock will create a lock and use semctl(), semop(),
+	  etc. to manage the lock.
+
+endchoice
 
 config DEBUG_INFO
 	bool "Optimize mosys binary for debugging"

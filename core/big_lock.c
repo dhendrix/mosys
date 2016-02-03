@@ -32,7 +32,11 @@
 #include "mosys/ipc_lock.h"
 #include "mosys/locks.h"
 
-static struct ipc_lock mosys_big_lock = IPC_LOCK_INIT(MOSYS_LOCK_BIGLOCK);
+#if defined(CONFIG_USE_SYSV_SEMAPHORE_LOCK)
+static struct ipc_lock mosys_big_lock = SYSV_IPC_LOCK_INIT(MOSYS_LOCK_BIGLOCK);
+#else
+static struct ipc_lock mosys_big_lock = LOCKFILE_INIT(MOSYS_LOCKFILE_NAME);
+#endif
 
 /*
  * mosys_acquire_big_lock  -  acquire global lock

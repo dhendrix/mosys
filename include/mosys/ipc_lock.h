@@ -33,20 +33,38 @@
 #define MOSYS_IPC_LOCK_H__
 
 #include <sys/ipc.h>
+#include <unistd.h>
 
 /* a mosys lock */
 struct ipc_lock {
-	key_t key;         /* provided by the developer */
-	int sem;           /* mosys internal */
-	int is_held;       /* mosys internal */
+	int is_held;	/* mosys internal */
+
+	/* Used by SysV semaphore */
+	key_t key;	/* provided by the developer */
+	int sem;	/* mosys internal */
+
+	/* Used by file lock */
+	char *filename;	/* provided by the developer */
+	int fd;		/* mosys internal */
 };
 
 /* don't use C99 initializers here, so this can be used in C++ code */
-#define IPC_LOCK_INIT(key) \
+#define SYSV_IPC_LOCK_INIT(key) \
 	{ \
-		key,       /* name */ \
-		-1,        /* sem */ \
-		0,         /* is_held */ \
+		0,		/* is_held */	\
+		key,		/* key */	\
+		-1,		/* sem */	\
+		NULL,		/* filename */	\
+		-1,		/* fd */	\
+	}
+
+#define LOCKFILE_INIT(lockfile) \
+	{ \
+		0,		/* is_held */	\
+		0,		/* key */	\
+		0,		/* sem */	\
+		lockfile,	/* filename */	\
+		-1,		/* fd */	\
 	}
 
 /*
@@ -69,14 +87,5 @@ extern int mosys_lock(struct ipc_lock *lock, int timeout_msecs);
  * returns -1 if lock had not been held before the call
  */
 extern int mosys_unlock(struct ipc_lock *lock);
-
-/*
- * WARNING!!!
- *
- * The following is exposed only for testing.  These must not be used
- * outside of tests and the implementation of the above interfaces.
- */
-
-extern int mosys_lock_is_held(struct ipc_lock *lock);
 
 #endif /* MOSYS_IPC_LOCK_H__ */

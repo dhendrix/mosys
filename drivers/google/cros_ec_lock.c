@@ -33,7 +33,11 @@
 
 #include "drivers/google/cros_ec_lock.h"
 
-static struct ipc_lock cros_ec_lock = IPC_LOCK_INIT(CROS_EC_LOCK);
+#if defined(CONFIG_USE_SYSV_SEMAPHORE_LOCK)
+static struct ipc_lock cros_ec_lock = SYSV_IPC_LOCK_INIT(CROS_EC_LOCK);
+#else
+static struct ipc_lock cros_ec_lock = LOCKFILE_INIT(CROS_EC_LOCKFILE_NAME);
+#endif
 
 int acquire_cros_ec_lock(int timeout_secs)
 {

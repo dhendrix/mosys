@@ -71,7 +71,9 @@ int spd_print_field_ddr3(struct platform_intf *intf, struct kv_pair *kv,
 	ret =  0;
 	switch (type) {
 	case SPD_GET_DRAM_TYPE:
-		kv_pair_add(kv, "dram", "DDR3");
+		kv_pair_add(kv, "dram",
+			    (byte[DDR3_SPD_REG_DEVICE_TYPE] ==
+			     SPD_DRAM_TYPE_LPDDR3) ? "LPDDR3" : "DDR3");
 		ret = 1;
 		break;
 	case SPD_GET_MODULE_TYPE:
@@ -287,6 +289,9 @@ int spd_print_field_ddr3(struct platform_intf *intf, struct kv_pair *kv,
 				if (!first_entry)
 					strcat(speeds, ", ");
 				first_entry = 0;
+				if (byte[DDR3_SPD_REG_DEVICE_TYPE] ==
+				    SPD_DRAM_TYPE_LPDDR3)
+					strcat(speeds, "LP");
 				strcat(speeds, possible_mhz[i].str);
 			}
 		}

@@ -58,12 +58,6 @@ const char *id_list[] = {
 	NULL,
 };
 
-static gpio_t smaug_ryu_boardid_gpio[] = {GPIO(Q3), GPIO(Q4)};
-
-static struct board_id_gpio smaug_ryu_gpio_list[] = {
-	{ARRAY_SIZE(smaug_ryu_boardid_gpio), smaug_ryu_boardid_gpio},
-};
-
 struct platform_cmd *sub[] = {
 	&cmd_ec,
 	&cmd_eeprom,
@@ -74,23 +68,6 @@ struct platform_cmd *sub[] = {
 	NULL
 };
 
-static void update_platform_version(struct platform_intf *intf,
-				    struct board_id_gpio *gpio,
-				    const char *str_id)
-{
-	char *str;
-	int value;
-
-	str = mosys_malloc(strlen(str_id) + strlen("-revXX") + 1);
-	if (str == NULL)
-		return;
-
-	value = gpio_get_in_tristate_values(intf, gpio->gpios, gpio->num);
-
-	sprintf(str, "%s-rev%d", str_id, value);
-	intf->version_id = str;
-}
-
 int probe(struct platform_intf *intf)
 {
 	int index;
@@ -100,14 +77,6 @@ int probe(struct platform_intf *intf)
 	if (index >= 0) {
 		lprintf(LOG_DEBUG, "Found platform \"%s\" via FDT compatible "
 				"node.\n", id_list[index]);
-
-		/* This condition should never be true */
-		if (index >= ARRAY_SIZE(smaug_ryu_gpio_list))
-			return 0;
-
-		update_platform_version(intf, &smaug_ryu_gpio_list[index],
-					id_list[index]);
-
 		return 1;
 	}
 
@@ -168,5 +137,4 @@ struct platform_intf platform_smaug = {
 	.probe		= &probe,
 	.setup_post	= &setup_post,
 	.destroy	= &destroy,
-	.version_id	= "google,ryu",
 };

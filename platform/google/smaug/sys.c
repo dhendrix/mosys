@@ -33,6 +33,8 @@
 #include "mosys/platform.h"
 #include "smaug.h"
 
+#include "lib/fdt.h"
+
 static char *get_name(struct platform_intf *intf)
 {
 	char *ret = NULL;
@@ -54,11 +56,19 @@ static char *get_vendor(struct platform_intf *intf)
 
 static char *get_version(struct platform_intf *intf)
 {
-	char *ret = NULL;
+	uint32_t board_id;
+	char revision_str[16];
+	char version_str[32];
 
-	ret = mosys_strdup(intf->version_id);
+	if (fdt_get_board_id(&board_id) < 0)
+		return NULL;
+	snprintf(revision_str, sizeof(revision_str), "rev%u", board_id);
 
-	return ret;
+	/* Smaug uses a different format for this string than other platforms */
+	snprintf(version_str, sizeof(version_str), "%s-%s",
+			"google,smaug", revision_str);
+
+	return mosys_strdup(version_str);
 }
 
 struct sys_cb smaug_sys_cb = {

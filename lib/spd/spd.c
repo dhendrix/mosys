@@ -289,7 +289,7 @@ int spd_read_from_cbfs(struct platform_intf *intf,
 		goto out;
 	}
 
-	MOSYS_CHECK((spd_index * 256) + reg + num_bytes_to_read <
+	MOSYS_CHECK((spd_index * 256) + reg + num_bytes_to_read <=
 							num_spd * 256);
 	spd_offset = ntohl(file->offset) + (spd_index * 256);
 

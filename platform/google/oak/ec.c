@@ -38,6 +38,10 @@ struct cros_ec_priv oak_ec_priv = {
 	.device_name	= CROS_EC_DEV_NAME,
 };
 
+struct cros_ec_priv oak_pd_priv = {
+	.device_name	= CROS_PD_DEV_NAME,
+};
+
 int oak_ec_setup(struct platform_intf *intf)
 {
 	int ret;
@@ -52,6 +56,24 @@ int oak_ec_setup(struct platform_intf *intf)
 		lprintf(LOG_DEBUG, "CrOS EC not found in /dev\n");
 	else
 		lprintf(LOG_ERR, "Error when probing CrOS EC via devfs\n");
+
+	return ret;
+}
+
+int oak_pd_setup(struct platform_intf *intf)
+{
+	int ret;
+
+	MOSYS_CHECK(intf->cb && intf->cb->pd);
+	intf->cb->pd->priv = &oak_pd_priv;
+
+	ret = cros_ec_probe_dev(intf, intf->cb->pd);
+	if (ret == 1)
+		lprintf(LOG_DEBUG, "CrOS PD found using /dev interface\n");
+	else if (ret == 0)
+		lprintf(LOG_DEBUG, "CrOS PD not found in /dev\n");
+	else
+		lprintf(LOG_ERR, "Error when probing CrOS PD via devfs\n");
 
 	return ret;
 }

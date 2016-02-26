@@ -58,6 +58,7 @@ struct platform_cmd *oak_sub[] = {
 //	&cmd_gpio,
 	&cmd_memory,
 	&cmd_nvram,
+	&cmd_pd,
 	&cmd_platform,
 	&cmd_psu,
 	&cmd_eventlog,
@@ -82,6 +83,9 @@ static int oak_probe(struct platform_intf *intf)
 static int oak_setup_post(struct platform_intf *intf)
 {
 	if (oak_ec_setup(intf) <= 0)
+		return -1;
+
+	if (oak_pd_setup(intf) <= 0)
 		return -1;
 
 	if (fdt_set_nvram_cb(intf) < 0)
@@ -114,6 +118,7 @@ struct platform_cb oak_cb = {
 	.eeprom 	= &oak_eeprom_cb,
 //	.gpio		= &oak_gpio_cb,
 	.memory		= &oak_memory_cb,
+	.pd		= &cros_pd_cb,
 	.psu		= &generic_psu_battery_cb,
 	.sys		= &oak_sys_cb,
 	.eventlog	= &oak_eventlog_cb,

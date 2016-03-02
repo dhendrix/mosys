@@ -54,7 +54,7 @@
 #define MOSYS_TEST_KEY		0xffffffff
 
 /* For alternative file locking mechanism */
-#define SYSTEM_LOCKFILE_DIR	"/var/run/lock"
+#define SYSTEM_LOCKFILE_DIR	"/run/lock"
 #define MOSYS_LOCKFILE_NAME	"firmware_utility_lock"
 #define CROS_EC_LOCKFILE_NAME	"cros_ec_lock"
 

@@ -163,10 +163,7 @@ enum nyan_type get_nyan_type(struct platform_intf *intf)
 
 static int nyan_setup_post(struct platform_intf *intf)
 {
-	if (nyan_ec_setup(intf) <= 0)
-		return -1;
-
-	return 0;
+	return cros_ec_setup_dev(intf);
 }
 
 static int nyan_destroy(struct platform_intf *intf)

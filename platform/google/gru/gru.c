@@ -101,7 +101,7 @@ static int gru_probe(struct platform_intf *intf)
 static int gru_setup_post(struct platform_intf *intf)
 {
 	if (gru_id_list[probed_board].has_ec) {
-		if (gru_ec_setup(intf) <= 0)
+		if (cros_ec_setup_dev(intf) < 0)
 			return -1;
 	} else {
 		intf->cb->ec = NULL;

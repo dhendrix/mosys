@@ -46,6 +46,5 @@ extern struct sys_cb cyan_sys_cb;		/* sys.c */
 
 /* functions called by setup routines */
 extern int cyan_vpd_setup(struct platform_intf *intf);
-extern int cyan_ec_setup(struct platform_intf *intf);
 
 #endif /* PLATFORM_CYAN_H__ */

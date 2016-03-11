@@ -46,7 +46,5 @@ extern struct sys_cb glados_sys_cb;		/* sys.c */
 
 /* functions called by setup routines */
 extern int glados_vpd_setup(struct platform_intf *intf);
-extern int glados_ec_setup(struct platform_intf *intf);
-extern int glados_pd_setup(struct platform_intf *intf);
 
 #endif /* EXPERIMENTAL_GLADOS_H_ */

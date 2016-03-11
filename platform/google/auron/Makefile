@@ -1,4 +1,3 @@
-obj-$(CONFIG_PLATFORM_AURON)	+= ec.o
 obj-$(CONFIG_PLATFORM_AURON)	+= eeprom.o
 obj-$(CONFIG_PLATFORM_AURON)	+= gpio.o
 obj-$(CONFIG_PLATFORM_AURON)	+= memory.o

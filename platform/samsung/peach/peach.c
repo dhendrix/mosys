@@ -266,7 +266,7 @@ static int peach_setup_post(struct platform_intf *intf)
 	if (peach_board_config == PEACH_CONFIG_UNKNOWN)
 		return -1;
 
-	if (peach_ec_setup(intf) <= 0)
+	if (cros_ec_setup_dev(intf) < 0)
 		return -1;
 
 	return 0;

@@ -1,4 +1,3 @@
-obj-$(CONFIG_PLATFORM_PINKY)	+= ec.o
 obj-$(CONFIG_PLATFORM_PINKY)	+= eeprom.o
 #obj-$(CONFIG_PLATFORM_PINKY)	+= gpio.o
 obj-$(CONFIG_PLATFORM_PINKY)	+= memory.o

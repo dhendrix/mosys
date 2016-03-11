@@ -155,12 +155,7 @@ strago_probe_exit:
 /* late setup routine; not critical to core functionality */
 static int strago_setup_post(struct platform_intf *intf)
 {
-	int rc = 0;
-
-	rc |= strago_ec_setup(intf);
-	if (rc)
-		lprintf(LOG_DEBUG, "%s: failed\n", __func__);
-	return rc;
+	return cros_ec_setup_dev(intf);
 }
 
 static int strago_destroy(struct platform_intf *intf)

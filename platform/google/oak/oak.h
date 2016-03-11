@@ -46,8 +46,6 @@ extern struct oak_psu_cb oak_psu_cb;
 extern struct sys_cb oak_sys_cb;
 
 /* functions called by setup routines */
-extern int oak_ec_setup(struct platform_intf *intf);
-extern int oak_pd_setup(struct platform_intf *intf);
 extern int oak_vpd_setup(struct platform_intf *intf);
 
 #endif /* PLATFORM_OAK_H */

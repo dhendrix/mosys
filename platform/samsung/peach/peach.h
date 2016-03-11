@@ -109,7 +109,6 @@ enum peach_board_config {
 };
 
 extern enum peach_board_config peach_board_config;
-extern int peach_ec_setup(struct platform_intf *intf);
 
 /* platform callbacks */
 extern struct eeprom_cb peach_eeprom_cb;	/* eeprom.c */

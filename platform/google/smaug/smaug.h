@@ -40,7 +40,6 @@ enum smaug_type {
 };
 
 extern enum smaug_type get_smaug_type(struct platform_intf *intf);
-extern int smaug_ec_setup(struct platform_intf *intf);
 
 /* platform callbacks */
 extern struct eeprom_cb smaug_eeprom_cb;	        /* eeprom.c */

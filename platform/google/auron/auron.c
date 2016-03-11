@@ -153,9 +153,7 @@ auron_probe_exit:
 /* late setup routine; not critical to core functionality */
 static int auron_setup_post(struct platform_intf *intf)
 {
-	if (auron_ec_setup(intf) <= 0)
-		return -1;
-	return 0;
+	return cros_ec_setup_dev(intf);
 }
 
 static int auron_destroy(struct platform_intf *intf)

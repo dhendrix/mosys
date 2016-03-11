@@ -47,7 +47,5 @@ extern struct sys_cb auron_sys_cb;		/* sys.c */
 
 /* functions called by setup routines */
 extern int auron_vpd_setup(struct platform_intf *intf);
-extern int auron_ec_setup(struct platform_intf *intf);
-extern int auron_pd_setup(struct platform_intf *intf);
 
 #endif /* PLATFORM_AURON_H_ */

@@ -1,4 +1,3 @@
-obj-$(CONFIG_PLATFORM_SAMUS)	+= ec.o
 obj-$(CONFIG_PLATFORM_SAMUS)	+= eeprom.o
 obj-$(CONFIG_PLATFORM_SAMUS)	+= gpio.o
 obj-$(CONFIG_PLATFORM_SAMUS)	+= memory.o

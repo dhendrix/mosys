@@ -347,3 +347,45 @@ struct nvram_cb cros_ec_nvram_cb = {
 	.vboot_read	= cros_ec_vboot_read,
 	.vboot_write	= cros_ec_vboot_write,
 };
+
+int cros_ec_setup_dev(struct platform_intf *intf)
+{
+	int ret;
+	static struct cros_ec_priv ec_priv_dev = {
+		.device_name    = CROS_EC_DEV_NAME,
+	};
+
+	MOSYS_CHECK(intf->cb && intf->cb->ec);
+	intf->cb->ec->priv = &ec_priv_dev;
+
+	ret = cros_ec_probe_dev(intf, intf->cb->ec);
+	if (ret == 1)
+		lprintf(LOG_DEBUG, "CrOS EC found via kernel driver\n");
+	else if (ret == 0)
+		lprintf(LOG_DEBUG, "CrOS EC not found via kernel driver\n");
+	else
+		lprintf(LOG_ERR, "Error probing CrOS EC via kernel driver\n");
+
+	return ret == 1 ? 0 : -1;
+}
+
+int cros_pd_setup_dev(struct platform_intf *intf)
+{
+	int ret;
+	static struct cros_ec_priv pd_priv_dev = {
+		.device_name = CROS_PD_DEV_NAME,
+	};
+
+	MOSYS_CHECK(intf->cb && intf->cb->pd);
+	intf->cb->pd->priv = &pd_priv_dev;
+
+	ret = cros_ec_probe_dev(intf, intf->cb->pd);
+	if (ret == 1)
+		lprintf(LOG_DEBUG, "CrOS PD found via kernel driver\n");
+	else if (ret == 0)
+		lprintf(LOG_DEBUG, "CrOS PD not found via kernel driver\n");
+	else
+		lprintf(LOG_ERR, "Error probing CrOS PD via kernel driver\n");
+
+	return ret == 1 ? 0 : -1;
+}

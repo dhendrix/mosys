@@ -1,4 +1,3 @@
-obj-$(CONFIG_EXPERIMENTAL_CYAN)	+= ec.o
 obj-$(CONFIG_EXPERIMENTAL_CYAN)	+= eeprom.o
 obj-$(CONFIG_EXPERIMENTAL_CYAN)	+= gpio.o
 obj-$(CONFIG_EXPERIMENTAL_CYAN)	+= memory.o

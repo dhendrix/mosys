@@ -46,7 +46,5 @@ extern struct sys_cb samus_sys_cb;		/* sys.c */
 
 /* functions called by setup routines */
 extern int samus_vpd_setup(struct platform_intf *intf);
-extern int samus_ec_setup(struct platform_intf *intf);
-extern int samus_pd_setup(struct platform_intf *intf);
 
 #endif /* PLATFORM_SAMUS_H_ */

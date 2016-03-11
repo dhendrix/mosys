@@ -95,10 +95,7 @@ enum smaug_type get_smaug_type(struct platform_intf *intf)
 
 static int setup_post(struct platform_intf *intf)
 {
-	if (smaug_ec_setup(intf) <= 0)
-		return -1;
-
-	return 0;
+	return cros_ec_setup_dev(intf);
 }
 
 static int destroy(struct platform_intf *intf)

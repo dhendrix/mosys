@@ -43,7 +43,6 @@ enum nyan_type {
 };
 
 extern enum nyan_type get_nyan_type(struct platform_intf *intf);
-extern int nyan_ec_setup(struct platform_intf *intf);
 
 /* platform callbacks */
 extern struct eeprom_cb nyan_eeprom_cb;	        /* eeprom.c */

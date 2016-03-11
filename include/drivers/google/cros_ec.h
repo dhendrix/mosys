@@ -105,6 +105,10 @@ extern int cros_pd_flash_info(struct platform_intf *intf,
 		         struct ec_response_flash_info *info);
 extern int cros_pd_detect(struct platform_intf *intf);
 
+/* Setup functions return 0 if successful and <0 otherwise) */
+extern int cros_ec_setup_dev(struct platform_intf *intf);
+extern int cros_pd_setup_dev(struct platform_intf *intf);
+
 #define CROS_EC_DEV_NAME		"/dev/cros_ec"
 #define CROS_PD_DEV_NAME		"/dev/cros_pd"
 #define CROS_SH_DEV_NAME		"/dev/cros_sh"

@@ -1,4 +1,3 @@
-obj-$(CONFIG_PLATFORM_OAK)	+= ec.o
 obj-$(CONFIG_PLATFORM_OAK)	+= eeprom.o
 #obj-$(CONFIG_PLATFORM_OAK)	+= gpio.o
 obj-$(CONFIG_PLATFORM_OAK)	+= memory.o

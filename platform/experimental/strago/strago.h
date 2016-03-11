@@ -46,6 +46,5 @@ extern struct sys_cb strago_sys_cb;		/* sys.c */
 
 /* functions called by setup routines */
 extern int strago_vpd_setup(struct platform_intf *intf);
-extern int strago_ec_setup(struct platform_intf *intf);
 
 #endif /* EXPERIMENTAL_STRAGO_H_ */

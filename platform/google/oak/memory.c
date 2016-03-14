@@ -37,7 +37,37 @@
 
 #include "oak.h"
 
-#define OAK_DIMM_COUNT	1
+#define OAK_DIMM_COUNT 2
+
+enum oak_memory_config {
+	HYNIX_DDR3_1600_1G,
+	SAMSUNG_DDR3_1866_1G,
+	SAMSUNG_DDR3_1866_2G,
+	MEM_UNKNOWN,
+};
+
+static int get_memory_config(struct platform_intf *intf)
+{
+	uint32_t ram_code;
+
+	if (fdt_get_ram_code(&ram_code) < 0) {
+		lprintf(LOG_ERR, "Unable to obtain RAM code.\n");
+		return -1;
+	}
+
+	switch (ram_code) {
+	case 0:
+		return HYNIX_DDR3_1600_1G;
+	case 1:
+		return SAMSUNG_DDR3_1866_1G;
+	case 2:
+		return SAMSUNG_DDR3_1866_2G;
+	default:
+		lprintf(LOG_ERR, "Unable to determine memory configuration\n");
+	}
+
+	return MEM_UNKNOWN;
+}
 
 /*
  * dimm_count  -  return total number of dimm slots
@@ -55,7 +85,19 @@ static int dimm_count(struct platform_intf *intf)
 static int get_mem_info(struct platform_intf *intf,
 			const struct nonspd_mem_info **info)
 {
-	*info = &hynix_8gbit_lpddr3_h9ccnnn8gtmlar_nud;
+	switch (get_memory_config(intf)) {
+	case HYNIX_DDR3_1600_1G:
+		*info = &hynix_2gbit_lpddr3_h9ccnnn8gtmlar_nud;
+		break;
+	case SAMSUNG_DDR3_1866_1G:
+		*info = &samsung_2gbit_lpddr3_k4e8e304ee_egce;
+		break;
+	case SAMSUNG_DDR3_1866_2G:
+		*info = &samsung_4gbit_lpddr3_k4e6e304ee_egce;
+		break;
+	default:
+		return -1;
+	}
 	return 0;
 }
 

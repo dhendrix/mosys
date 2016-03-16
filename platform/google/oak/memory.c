@@ -87,13 +87,13 @@ static int get_mem_info(struct platform_intf *intf,
 {
 	switch (get_memory_config(intf)) {
 	case HYNIX_DDR3_1600_1G:
-		*info = &hynix_2gbit_lpddr3_h9ccnnn8gtmlar_nud;
+		*info = &hynix_lpddr3_h9ccnnn8gtmlar_nud;
 		break;
 	case SAMSUNG_DDR3_1866_1G:
-		*info = &samsung_2gbit_lpddr3_k4e8e304ee_egce;
+		*info = &samsung_lpddr3_k4e8e304ee_egce;
 		break;
 	case SAMSUNG_DDR3_1866_2G:
-		*info = &samsung_4gbit_lpddr3_k4e6e304ee_egce;
+		*info = &samsung_lpddr3_k4e6e304ee_egce;
 		break;
 	default:
 		return -1;

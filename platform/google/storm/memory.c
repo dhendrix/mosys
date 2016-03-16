@@ -110,7 +110,7 @@ static int get_mem_info(struct platform_intf *intf,
 {
 	switch (get_memory_config(intf)) {
 	case HYNIX_DDR3L_1600_1G:
-		*info = &hynix_4gbit_ddr3l_h5tc4g63cfr_pba;
+		*info = &hynix_ddr3l_h5tc4g63cfr_pba;
 		break;
 	case MICRON_DDR3L_1600_1G:
 		*info = &micron_mt41k256m16ha;

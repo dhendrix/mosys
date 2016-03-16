@@ -106,7 +106,6 @@ extern const struct nonspd_mem_info hynix_4gbit_ddr3l_h5tc4g63cfr_pba;
 extern const struct nonspd_mem_info hynix_2gbit_lpddr3_h9ccnnn8gtmlar_nud;
 extern const struct nonspd_mem_info hynix_4gbit_lpddr3_h9ccnnnbjtmlar_nud;
 extern const struct nonspd_mem_info hynix_8gbit_ddr3l_h5tc8g63amr_pba;
-extern const struct nonspd_mem_info hynix_8gbit_lpddr3_h9ccnnn8gtmlar_nud;
 extern const struct nonspd_mem_info hynix_16gbit_lpddr3_h9ccnnnbptblbr_nud;
 extern const struct nonspd_mem_info micron_mt41k256m16ha;
 extern const struct nonspd_mem_info nanya_ddr3l_nt5cc256m16dp_di;

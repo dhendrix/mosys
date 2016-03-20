@@ -58,7 +58,7 @@ static int dimm_count(struct platform_intf *intf)
 
 static enum cyclone_memory_config get_memory_config(struct platform_intf *intf)
 {
-	if (!strcmp(intf->name, "Cyclone"))
+	if (!strcmp(intf->name, "Gale"))
 		return SAMSUNG_DDR3_1600_512M;
 	return MEM_UNKNOWN;
 }

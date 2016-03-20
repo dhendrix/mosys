@@ -45,10 +45,12 @@
 
 enum CYCLONE_boards {
 	CYCLONE,
+	GALE,
 };
 
 static const char *id_list[] = {
 	[CYCLONE] = "google,cyclone",
+	[GALE] = "google,gale",
 	NULL,
 };
 
@@ -101,7 +103,7 @@ struct platform_cb cyclone_cb = {
 
 struct platform_intf platform_cyclone = {
 	.type		= PLATFORM_ARMV7,
-	.name		= "Cyclone",
+	.name		= "Gale",
 	.sub		= cyclone_sub,
 	.cb		= &cyclone_cb,
 	.probe		= &cyclone_probe,

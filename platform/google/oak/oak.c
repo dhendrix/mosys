@@ -47,18 +47,29 @@
 
 #include "oak.h"
 
-const char *oak_id_list[] = {
-	"google,oak",
-	NULL,
+static int probed_board = -1;
+
+struct oak_probe_id {
+	const char *name;
+	const char *fdt_compat;
+	int has_pd;
+} oak_id_list[] = {
+	{ "Elm", "google,elm", 0 },
+	{ "Oak", "google,oak", 1 },
 };
 
+#define OAK_CMD_PD_NUM	0
+
 struct platform_cmd *oak_sub[] = {
+	/* Keep this as the first entry. intf->sub will be set to point to
+         * the next entry if it turns out that we don't have a PD. */
+	[OAK_CMD_PD_NUM] = &cmd_pd,
+
 	&cmd_ec,
 	&cmd_eeprom,
 //	&cmd_gpio,
 	&cmd_memory,
 	&cmd_nvram,
-	&cmd_pd,
 	&cmd_platform,
 	&cmd_psu,
 	&cmd_eventlog,
@@ -67,17 +78,22 @@ struct platform_cmd *oak_sub[] = {
 
 static int oak_probe(struct platform_intf *intf)
 {
-	int index;
+	int i;
 
-	index = probe_fdt_compatible(&oak_id_list[0],
-					ARRAY_SIZE(oak_id_list), 0);
-	if (index >= 0) {
-		lprintf(LOG_DEBUG, "Found platform \"%s\" via FDT compatible "
-				"node.\n", oak_id_list[index]);
-		return 1;
+	for (i = 0; i < ARRAY_SIZE(oak_id_list); i++) {
+		const char **compat = &oak_id_list[i].fdt_compat;
+
+		if (probe_fdt_compatible(compat, 1, 1) == 0) {
+			lprintf(LOG_DEBUG, "Found platform \"%s\" via FDT "
+				"compatible node.\n", oak_id_list[i].name);
+			intf->name = oak_id_list[i].name;
+			probed_board = i;
+			break;
+		}
 	}
 
-	return 0;
+	lprintf(LOG_DEBUG, "%s: probed_board: %d\n", __func__, probed_board);
+	return probed_board > -1 ? 1 : 0;
 }
 
 static int oak_setup_post(struct platform_intf *intf)
@@ -85,8 +101,13 @@ static int oak_setup_post(struct platform_intf *intf)
 	if (oak_ec_setup(intf) <= 0)
 		return -1;
 
-	if (oak_pd_setup(intf) <= 0)
-		return -1;
+	if (oak_id_list[probed_board].has_pd) {
+		if (oak_pd_setup(intf) <= 0)
+			return -1;
+	} else {
+		intf->cb->pd = NULL;
+		intf->sub = &oak_sub[OAK_CMD_PD_NUM + 1];
+	}
 
 	if (fdt_set_nvram_cb(intf) < 0)
 		return -1;

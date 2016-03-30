@@ -42,6 +42,7 @@
 
 #include "intf/io.h"
 
+#include "lib/eeprom.h"
 #include "lib/math.h"
 
 enum cmos_device {
@@ -197,7 +198,9 @@ static int glados_nvram_clear(struct platform_intf *intf)
 }
 
 struct nvram_cb glados_nvram_cb = {
-	.list	= glados_nvram_list,
-	.dump	= glados_nvram_dump,
-	.clear	= glados_nvram_clear,
+	.list		= glados_nvram_list,
+	.dump		= glados_nvram_dump,
+	.clear		= glados_nvram_clear,
+	.vboot_read	= vbnv_flash_vboot_read,
+	.vboot_write	= vbnv_flash_vboot_write,
 };

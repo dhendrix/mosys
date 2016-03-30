@@ -45,17 +45,17 @@
 #include "glados.h"
 
 
-static int glados_host_firmware_size(struct platform_intf *intf,
-					struct eeprom *eeprom)
+static int host_firmware_size(struct platform_intf *intf,
+			      struct eeprom *eeprom)
 {
 	return GLADOS_HOST_FIRMWARE_ROM_SIZE;
 }
 
-static int glados_host_firmware_read(struct platform_intf *intf,
-					struct eeprom *eeprom,
-					unsigned int offset,
-					unsigned int len,
-					void *data)
+static int host_firmware_read(struct platform_intf *intf,
+			      struct eeprom *eeprom,
+			      unsigned int offset,
+			      unsigned int len,
+			      void *data)
 {
 	uint8_t *buf;
 	size_t rom_size;
@@ -71,37 +71,50 @@ static int glados_host_firmware_read(struct platform_intf *intf,
 	return 0;
 }
 
-static struct eeprom_dev glados_host_firmware = {
-	.size		= glados_host_firmware_size,
-	.read		= glados_host_firmware_read,
+static int host_firmware_read_by_name(struct platform_intf *intf,
+				      struct eeprom *eeprom,
+				      const char *name,
+				      uint8_t **data)
+{
+	return flashrom_read_by_name(data, HOST_FIRMWARE, name);
+}
+
+static int host_firmware_write_by_name(struct platform_intf *intf,
+				       struct eeprom *eeprom,
+				       const char *name,
+				       unsigned int len,
+				       uint8_t *data)
+{
+	return flashrom_write_by_name(len, data, HOST_FIRMWARE, name);
+}
+
+static struct eeprom_dev host_firmware = {
+	.size		= host_firmware_size,
+	.read		= host_firmware_read,
+	.read_by_name	= host_firmware_read_by_name,
+	.write_by_name	= host_firmware_write_by_name,
 	.get_map	= eeprom_get_fmap,
 };
 
-static struct eeprom glados_eeproms[] = {
+static struct eeprom_region host_firmware_regions[] = {
 	{
-		.name		= "host_firmware",
-		.type		= EEPROM_TYPE_FW,
-		.flags		= EEPROM_FLAG_RDWR,
-		.device		= &glados_host_firmware,
+		.name	= "RW_NVRAM",
+		.flag	= EEPROM_FLAG_VBNV,
 	},
 	{ 0 },
 };
 
-/*int glados_eeprom_setup(struct platform_intf *intf)
-{
-	struct eeprom *eeprom;
-	int rc = 0;
-
-	for (eeprom = intf->cb->eeprom->eeprom_list;
-	     eeprom && eeprom->name;
-	     eeprom++) {
-		if (eeprom->setup)
-			rc |= eeprom->setup(intf, eeprom);
-	}
-
-	return rc;
-}*/
+static struct eeprom eeproms[] = {
+	{
+		.name		= "host_firmware",
+		.type		= EEPROM_TYPE_FW,
+		.flags		= EEPROM_FLAG_RDWR | EEPROM_FLAG_FMAP,
+		.device		= &host_firmware,
+		.regions	= &host_firmware_regions[0],
+	},
+	{ 0 },
+};
 
 struct eeprom_cb glados_eeprom_cb = {
-	.eeprom_list	= glados_eeproms,
+	.eeprom_list	= eeproms,
 };

@@ -40,9 +40,11 @@
 #define OAK_DIMM_COUNT 2
 
 enum oak_memory_config {
-	HYNIX_DDR3_1600_1G,
-	SAMSUNG_DDR3_1866_1G,
-	SAMSUNG_DDR3_1866_2G,
+	HYNIX_DDR3_H9CCNNN8GTMLAR_NUD_1G,
+	HYNIX_DDR3_H9CCNNNBLTBLAR_NUD_2G,
+	SAMSUNG_DDR3_K4E8E304EE_EGCE_1G,
+	SAMSUNG_DDR3_K4E6E304EE_EGCE_2G,
+	SAMSUNG_DDR3_K4E6E304EB_EGCF_2G,
 	MEM_UNKNOWN,
 };
 
@@ -57,11 +59,15 @@ static int get_memory_config(struct platform_intf *intf)
 
 	switch (ram_code) {
 	case 0:
-		return HYNIX_DDR3_1600_1G;
+		return HYNIX_DDR3_H9CCNNN8GTMLAR_NUD_1G;
 	case 1:
-		return SAMSUNG_DDR3_1866_1G;
+		return SAMSUNG_DDR3_K4E8E304EE_EGCE_1G;
 	case 2:
-		return SAMSUNG_DDR3_1866_2G;
+		return SAMSUNG_DDR3_K4E6E304EE_EGCE_2G;
+	case 3:
+		return HYNIX_DDR3_H9CCNNNBLTBLAR_NUD_2G;
+	case 4:
+		return SAMSUNG_DDR3_K4E6E304EB_EGCF_2G;
 	default:
 		lprintf(LOG_ERR, "Unable to determine memory configuration\n");
 	}
@@ -86,14 +92,20 @@ static int get_mem_info(struct platform_intf *intf,
 			const struct nonspd_mem_info **info)
 {
 	switch (get_memory_config(intf)) {
-	case HYNIX_DDR3_1600_1G:
+	case HYNIX_DDR3_H9CCNNN8GTMLAR_NUD_1G:
 		*info = &hynix_lpddr3_h9ccnnn8gtmlar_nud;
 		break;
-	case SAMSUNG_DDR3_1866_1G:
+	case HYNIX_DDR3_H9CCNNNBLTBLAR_NUD_2G:
+		*info = &hynix_lpddr3_h9ccnnnbltblar_nud;
+		break;
+	case SAMSUNG_DDR3_K4E8E304EE_EGCE_1G:
 		*info = &samsung_lpddr3_k4e8e304ee_egce;
 		break;
-	case SAMSUNG_DDR3_1866_2G:
+	case SAMSUNG_DDR3_K4E6E304EE_EGCE_2G:
 		*info = &samsung_lpddr3_k4e6e304ee_egce;
+		break;
+	case SAMSUNG_DDR3_K4E6E304EB_EGCF_2G:
+		*info = &samsung_lpddr3_k4e6e304eb_egcf;
 		break;
 	default:
 		return -1;

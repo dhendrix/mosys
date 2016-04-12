@@ -186,6 +186,23 @@ const struct nonspd_mem_info hynix_lpddr3_h9ccnnnbptblbr_nud = {
 		  'B', 'R', '-', 'N', 'U', 'D',},
 };
 
+const struct nonspd_mem_info hynix_lpddr3_h9ccnnnbltblar_nud = {
+	.dram_type              = SPD_DRAM_TYPE_LPDDR3,
+	.module_type.ddr3_type  = DDR3_MODULE_TYPE_SO_DIMM,
+
+	.module_size_mbits      = 16384,
+	.num_ranks              = 2,
+	.device_width           = 32,
+	.ddr_freq               = { DDR_667, DDR_800, DDR_933 },
+
+	.module_mfg_id          = { .msb = 0xad, .lsb = 0x80 },
+	.dram_mfg_id            = { .msb = 0xad, .lsb = 0x80 },
+
+	.part_num =
+		{ 'H', '9', 'C', 'C', 'N', 'N', 'N', 'B', 'L', 'T', 'B', 'L',
+		  'A', 'R', '-', 'N', 'U', 'D',},
+};
+
 const struct nonspd_mem_info micron_mt41k256m16ha = {
 	.dram_type		= SPD_DRAM_TYPE_DDR3,
 	.module_type.ddr3_type	= DDR3_MODULE_TYPE_UNDEFINED,
@@ -341,6 +358,23 @@ const struct nonspd_mem_info samsung_lpddr3_k4e6e304ee_egce = {
 	.part_num		=
 		{ 'K', '4', 'E', '6', 'E', '3', '0', '4', 'E', 'E', '-',
 		  'E', 'G', 'C', 'E' },
+};
+
+const struct nonspd_mem_info samsung_lpddr3_k4e6e304eb_egcf = {
+	.dram_type		= SPD_DRAM_TYPE_LPDDR3,
+	.module_type.ddr3_type	= DDR3_MODULE_TYPE_SO_DIMM,
+
+	.module_size_mbits	= 16384,
+	.num_ranks		= 2,
+	.device_width		= 32,
+	.ddr_freq 		= { DDR_400, DDR_533, DDR_667, DDR_800, DDR_933},
+
+	.module_mfg_id		= { .msb = 0xce, .lsb = 0x00 },
+	.dram_mfg_id		= { .msb = 0xce, .lsb = 0x00 },
+
+	.part_num		=
+		{ 'K', '4', 'E', '6', 'E', '3', '0', '4', 'E', 'B', '-',
+		  'E', 'G', 'C', 'F' },
 };
 
 const struct nonspd_mem_info samsung_lpddr3_k4e8e304ed_egcc = {

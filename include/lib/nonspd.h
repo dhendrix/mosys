@@ -107,6 +107,7 @@ extern const struct nonspd_mem_info hynix_lpddr3_h9ccnnn8gtmlar_nud;
 extern const struct nonspd_mem_info hynix_lpddr3_h9ccnnnbjtmlar_nud;
 extern const struct nonspd_mem_info hynix_ddr3l_h5tc8g63amr_pba;
 extern const struct nonspd_mem_info hynix_lpddr3_h9ccnnnbptblbr_nud;
+extern const struct nonspd_mem_info hynix_lpddr3_h9ccnnnbltblar_nud;
 extern const struct nonspd_mem_info micron_mt41k256m16ha;
 extern const struct nonspd_mem_info nanya_ddr3l_nt5cc256m16dp_di;
 extern const struct nonspd_mem_info samsung_k4b4g1646d;
@@ -116,6 +117,7 @@ extern const struct nonspd_mem_info samsung_ddr3l_k4b4g1646q_hyk0;
 extern const struct nonspd_mem_info samsung_ddr3l_k4b8g1646q_myk0;
 extern const struct nonspd_mem_info samsung_lpddr3_k3qf2f20em_agce;
 extern const struct nonspd_mem_info samsung_lpddr3_k4e6e304ee_egce;
+extern const struct nonspd_mem_info samsung_lpddr3_k4e6e304eb_egcf;
 extern const struct nonspd_mem_info samsung_lpddr3_k4e8e304ed_egcc;
 extern const struct nonspd_mem_info samsung_lpddr3_k4e8e304ee_egce;
 

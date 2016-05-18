@@ -47,6 +47,7 @@ extern struct platform_intf platform_auron;
 extern struct platform_intf platform_beltino;
 extern struct platform_intf platform_butterfly;
 extern struct platform_intf platform_daisy;
+extern struct platform_intf platform_gru;
 extern struct platform_intf platform_link;
 extern struct platform_intf platform_lumpy;
 extern struct platform_intf platform_mario;
@@ -81,6 +82,9 @@ struct platform_intf *platform_intf_list[] = {
 #endif
 #ifdef CONFIG_PLATFORM_DAISY
 	&platform_daisy,
+#endif
+#ifdef CONFIG_PLATFORM_GRU
+	&platform_gru,
 #endif
 #ifdef CONFIG_PLATFORM_LINK
 	&platform_link,
@@ -136,7 +140,6 @@ struct platform_intf *platform_intf_list[] = {
 #ifdef CONFIG_PLATFORM_ZGB
 	&platform_zgb,
 #endif
-
 
 /* experimental platforms */
 #ifdef CONFIG_EXPERIMENTAL_CYAN

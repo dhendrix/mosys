@@ -111,6 +111,10 @@ static int read_ram_code(struct platform_intf *intf)
 				pinky_dimm_count = 2;
 				pinky_mem_info = &samsung_lpddr3_k4e8e304ed_egcc;
 				break;
+			case 2:
+				pinky_dimm_count = 2;
+				pinky_mem_info = &samsung_lpddr3_k4e6e304eb_egce;
+				break;
 			case 4:
 				pinky_dimm_count = 4;
 				pinky_mem_info = &samsung_ddr3l_k4b4g1646d_byk0;
@@ -126,6 +130,10 @@ static int read_ram_code(struct platform_intf *intf)
 			case 0x0a:
 				pinky_dimm_count = 4;
 				pinky_mem_info = &nanya_ddr3l_nt5cc256m16dp_di;
+				break;
+			case 0x0c:
+				pinky_dimm_count = 2;
+				pinky_mem_info = &samsung_lpddr3_k4e8e324eb_egcf;
 				break;
 			case 0x0d:
 				pinky_dimm_count = 4;

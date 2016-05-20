@@ -47,6 +47,7 @@ enum pinky_boards {
 	BRAIN,
 	DANGER,
 	EMILE,
+	FIEVEL,
 	GUS,
 	JAQ,
 	JERRY,
@@ -57,7 +58,8 @@ enum pinky_boards {
 	REMY,
 	RIALTO,
 	SPEEDY,
-	THEA
+	THEA,
+	TIGER
 };
 
 static enum pinky_boards probed_board = UNKNOWN;
@@ -70,6 +72,7 @@ struct veyron_probe_id {
 	[BRAIN]		= { "Brain", "google,veyron-brain", 0 },
 	[DANGER]	= { "Danger", "google,veyron-danger", 0 },
 	[EMILE]		= { "Emile", "google,veyron-emile", 0 },
+	[FIEVEL]	= { "Fievel", "google,veyron-fievel", 0 },
 	[GUS]		= { "Gus", "google,veyron-gus", 1 },
 	[JAQ]		= { "Jaq", "google,veyron-jaq", 1 },
 	[JERRY]		= { "Jerry", "google,veyron-jerry", 1 },
@@ -81,6 +84,7 @@ struct veyron_probe_id {
 	[RIALTO]	= { "Rialto", "google,veyron-rialto", 0 },
 	[SPEEDY]	= { "Speedy", "google,veyron-speedy", 1 },
 	[THEA]		= { "Thea", "google,veyron-thea", 1 },
+	[TIGER]		= { "Tiger", "google,veyron-tiger", 0 },
 };
 
 #define PINKY_CMD_EC_NUM	0

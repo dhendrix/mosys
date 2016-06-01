@@ -73,6 +73,23 @@ static int mosys_lock_is_held(struct ipc_lock *lock)
 	return lock->is_held;
 }
 
+static int test_dir(const char *path)
+{
+	struct stat s;
+
+	if (lstat(path, &s) < 0) {
+		lperror(LOG_ERR, "Cannot stat %s.\n", path);
+		return -1;
+	}
+
+	if (!S_ISDIR(s.st_mode)) {
+		lprintf(LOG_ERR, "%s is not a directory.\n", path);
+		return -1;
+	}
+
+	return 0;
+}
+
 static int file_lock_open_or_create(struct ipc_lock *lock)
 {
 	struct stat s;
@@ -90,19 +107,22 @@ static int file_lock_open_or_create(struct ipc_lock *lock)
 			return -1;
 		}
 	} else {
+		const char fallback[] = "/tmp";
+
 		if (snprintf(path, sizeof(path), "%s/%s",
 				mosys_get_root_prefix(),
 				SYSTEM_LOCKFILE_DIR) < 0)
 			return -1;
 
-		if (lstat(path, &s) < 0) {
-			lperror(LOG_ERR, "Cannot stat %s", path);
-			return -1;
-		}
+		if (test_dir(path)) {
+			lprintf(LOG_ERR,
+				"Trying fallback directory: %s\n", fallback);
 
-		if (!S_ISDIR(s.st_mode)) {
-			lprintf(LOG_ERR, "%s is not a directory.\n", path);
-			return -1;
+			if (snprintf(path, sizeof(path), "%s/%s",
+					mosys_get_root_prefix(), fallback) < 0)
+				return -1;
+			if (test_dir(path))
+				return -1;
 		}
 
 		if (strlen(path) + strlen(lock->filename) + 2 > PATH_MAX) {

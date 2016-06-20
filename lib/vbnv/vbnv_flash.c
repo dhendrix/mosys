@@ -119,7 +119,7 @@ static int vbnv_index(const uint8_t *data, size_t len)
 
 		if (!memcmp(blank, &data[offset], VBNV_BLOCK_SIZE)) {
 			lprintf(LOG_DEBUG, "Found blank VBNV block (index: %d, "
-					"offset: 0x%0x\n", index, offset);
+					"offset: 0x%0x)\n", index, offset);
 			break;
 		}
 	}

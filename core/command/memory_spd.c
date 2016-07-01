@@ -55,6 +55,12 @@ static int memory_spd_dump_cmd(struct platform_intf *intf,
 		errno = EINVAL;
 		return -1;
 	}
+
+	if (!intf->cb->memory->spd || !intf->cb->memory->spd->read) {
+		errno = ENOSYS;
+		return -1;
+	}
+
 	dimm = (uint8_t) strtoul(argv[0], NULL, 0);
 
 	lprintf(LOG_DEBUG, "memory spd dump %u\n", dimm);

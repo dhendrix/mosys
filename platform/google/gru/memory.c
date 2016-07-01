@@ -44,7 +44,7 @@ static const struct nonspd_mem_info *gru_mem_info;
 static int read_ram_code(struct platform_intf *intf)
 {
 	static int done = 0;
-	int	ret = 0;
+	static int ret = 0;
 	uint32_t ram_code;
 
 	if (done)

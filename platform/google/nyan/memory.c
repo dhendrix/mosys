@@ -481,7 +481,7 @@ static enum nyan_memory_config get_memory_config(struct platform_intf *intf)
 	case NYAN_KITTY:
 		if (ramcode == 0x0)
 			memory_config = HYNIX_DDR3_1600_2G;
-		else if (ramcode == 0x1)
+		else if (ramcode == 0x1 || ramcode == 0x3)
 			memory_config = HYNIX_DDR3_1600_4G;
 		else
 			memory_config = MEM_UNKNOWN;
@@ -583,6 +583,13 @@ static int spd_read(struct platform_intf *intf,
 			p[DDR3_SPD_REG_MODULE_PART_NUM_15] = 'B';
 			p[DDR3_SPD_REG_MODULE_PART_NUM_16] = 0;
 			p[DDR3_SPD_REG_MODULE_PART_NUM_17] = 0;
+		} else if (get_nyan_type(intf) == NYAN_KITTY) {
+			p[DDR3_SPD_REG_DENSITY_BANKS]	= 0x05;
+			p[DDR3_SPD_REG_MODULE_PART_NUM_4] = '8';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_9] = 'M';
+			p[DDR3_SPD_REG_MODULE_PART_NUM_14] = 'A';
+			if (get_ramcode(intf) == 0x3)
+				p[DDR3_SPD_REG_MODULE_PART_NUM_8] = 'C';
 		} else {
 			p[DDR3_SPD_REG_DENSITY_BANKS]	= 0x05;	/* 8 banks, 8Gb */
 			p[DDR3_SPD_REG_MODULE_PART_NUM_4] = '8';

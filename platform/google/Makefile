@@ -8,6 +8,7 @@ obj-$(CONFIG_PLATFORM_NYAN)	+= nyan/
 obj-$(CONFIG_PLATFORM_OAK)	+= oak/
 obj-$(CONFIG_PLATFORM_PINKY)	+= pinky/
 obj-$(CONFIG_PLATFORM_RAMBI)	+= rambi/
+obj-$(CONFIG_PLATFORM_REEF)	+= reef/
 obj-$(CONFIG_PLATFORM_SAMUS)	+= samus/
 obj-$(CONFIG_PLATFORM_SKATE)	+= skate/
 obj-$(CONFIG_PLATFORM_SLIPPY)	+= slippy/

@@ -57,6 +57,7 @@ extern struct platform_intf platform_parrot;
 extern struct platform_intf platform_peach;
 extern struct platform_intf platform_pinky;
 extern struct platform_intf platform_rambi;
+extern struct platform_intf platform_reef;
 extern struct platform_intf platform_smaug;
 extern struct platform_intf platform_samus;
 extern struct platform_intf platform_skate;
@@ -112,6 +113,9 @@ struct platform_intf *platform_intf_list[] = {
 #endif
 #ifdef CONFIG_PLATFORM_RAMBI
 	&platform_rambi,
+#endif
+#ifdef CONFIG_PLATFORM_REEF
+	&platform_reef,
 #endif
 #ifdef CONFIG_PLATFORM_SMAUG
 	&platform_smaug,

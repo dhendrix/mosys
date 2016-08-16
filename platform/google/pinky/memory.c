@@ -105,6 +105,20 @@ static int read_ram_code(struct platform_intf *intf)
 				ret = -1;
 				break;
 			}
+		} else if(!strncmp(intf->name, "Rialto", 6)) {
+			switch (ram_code) {
+			case 0:
+				pinky_dimm_count = 1;
+				pinky_mem_info = &samsung_lpddr3_k4e8e304ee_egce;
+				break;
+			case 1:
+				pinky_dimm_count = 1;
+				pinky_mem_info = &samsung_lpddr3_k4e6e304eb_egcf;
+				break;
+			default:
+				ret = -1;
+				break;
+			}
 		} else {
 			switch (ram_code) {
 			case 0:

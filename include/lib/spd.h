@@ -55,6 +55,7 @@ enum spd_dram_type {
 	SPD_DRAM_TYPE_FBDIMM	= 0x09,
 	SPD_DRAM_TYPE_DDR3	= 0x0b,
 	SPD_DRAM_TYPE_LPDDR3	= 0xf1,
+	SPD_DRAM_TYPE_LPDDR4	= 0x10,
 };
 
 enum ddr3_module_type {
@@ -96,6 +97,7 @@ enum ddr_freq {
 	DDR_800,
 	DDR_933,
 	DDR_1067,
+	DDR_1400,
 };
 
 extern const char *ddr_freq_prettyprint[];

@@ -30,20 +30,17 @@
  */
 
 #include "lib/nonspd.h"
-#include "lib/smbios.h"
-
 #include "reef.h"
 
-static int get_mem_info(struct platform_intf *intf,
-			const struct nonspd_mem_info **info)
+int get_mem_info(struct platform_intf *intf,
+                        const struct nonspd_mem_info **info)
 {
-	*info = &samsung_lpddr3_k4e8e304ee_egce;
-	return 0;
+	return spd_set_nonspd_info(intf, info);
 }
 
 struct memory_cb reef_memory_cb = {
 	.dimm_count		= smbios_dimm_count,
 	.dimm_speed		= smbios_dimm_speed,
-	.nonspd_mem_info	= &get_mem_info,
+	.nonspd_mem_info	= get_mem_info,
 };
 

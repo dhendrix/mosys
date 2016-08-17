@@ -37,6 +37,12 @@
 #include <inttypes.h>
 
 #include "lib/spd.h"
+#include "lib/smbios.h"
+#include "mosys/log.h"
+
+#ifndef ARRAY_SIZE
+#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
+#endif
 
 struct nonspd_mem_info {
 	/* DRAM type */
@@ -122,5 +128,8 @@ extern const struct nonspd_mem_info samsung_lpddr3_k4e6e304eb_egcf;
 extern const struct nonspd_mem_info samsung_lpddr3_k4e8e304ed_egcc;
 extern const struct nonspd_mem_info samsung_lpddr3_k4e8e304ee_egce;
 extern const struct nonspd_mem_info samsung_lpddr3_k4e8e324eb_egcf;
+
+int spd_set_nonspd_info(struct platform_intf *intf,
+                        const struct nonspd_mem_info **info);
 
 #endif /* LIB_NONSPD_H__ */

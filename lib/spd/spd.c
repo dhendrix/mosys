@@ -64,6 +64,7 @@ const char *ddr_freq_prettyprint[] = {
 	[DDR_800] = "1600",
 	[DDR_933] = "1866",
 	[DDR_1067] = "2133",
+	[DDR_1400] = "2400",
 };
 
 /*

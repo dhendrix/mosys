@@ -445,3 +445,146 @@ const struct nonspd_mem_info samsung_lpddr3_k4e8e324eb_egcf = {
 		{ 'K', '4', 'E', '8', 'E', '3', '2', '4', 'E', 'B', '-',
 		  'E', 'G', 'C', 'F' },
 };
+
+static const struct nonspd_mem_info micron_lpddr4_mt53b256m32d1np = {
+	.dram_type		= SPD_DRAM_TYPE_LPDDR4,
+
+	.module_size_mbits	= 8192,
+	.num_ranks		= 1,
+	.device_width		= 32,
+	.ddr_freq 		= { DDR_667, DDR_800, DDR_933, DDR_1067, DDR_1400},
+
+	.module_mfg_id		= { .msb = 0x2c, .lsb = 0x00 },
+	.dram_mfg_id		= { .msb = 0x2c, .lsb = 0x00 },
+
+	.part_num		=
+		{ 'M', 'T', '5', '3', 'B', '2', '5', '6', 'M', '3', '2', 'D',
+		  '1', 'N', 'P'},
+};
+
+static const struct nonspd_mem_info micron_lpddr4_mt53b512m32d2np = {
+	.dram_type		= SPD_DRAM_TYPE_LPDDR4,
+
+	.module_size_mbits	= 16384,
+	.num_ranks		= 2,
+	.device_width		= 32,
+	.ddr_freq 		= { DDR_667, DDR_800, DDR_933, DDR_1067, DDR_1400},
+
+	.module_mfg_id		= { .msb = 0x2c, .lsb = 0x00 },
+	.dram_mfg_id		= { .msb = 0x2c, .lsb = 0x00 },
+
+	.part_num		=
+		{ 'M', 'T', '5', '3', 'B', '5', '1', '2', 'M', '3', '2', 'D',
+		  '2', 'N', 'P'},
+};
+
+static const struct nonspd_mem_info samsung_lpddr4_k4f6e304hb_mgcj = {
+	.dram_type		= SPD_DRAM_TYPE_LPDDR4,
+
+	.module_size_mbits	= 16384,
+	.num_ranks		= 2,
+	.device_width		= 32,
+	.ddr_freq 		= { DDR_667, DDR_800, DDR_933, DDR_1067, DDR_1400},
+
+	.module_mfg_id		= { .msb = 0xce, .lsb = 0x00 },
+	.dram_mfg_id		= { .msb = 0xce, .lsb = 0x00 },
+
+	.part_num		=
+		{ 'K', '4', 'F', '6', 'E', '3', '0', '4', 'H', 'B', '-',
+		  'M', 'G', 'C', 'J' },
+};
+
+static const struct nonspd_mem_info samsung_lpddr4_k4f8e304hb_mgcj = {
+	.dram_type		= SPD_DRAM_TYPE_LPDDR4,
+
+	.module_size_mbits	= 8192,
+	.num_ranks		= 1,
+	.device_width		= 32,
+	.ddr_freq 		= { DDR_667, DDR_800, DDR_933, DDR_1067, DDR_1400},
+
+	.module_mfg_id		= { .msb = 0xce, .lsb = 0x00 },
+	.dram_mfg_id		= { .msb = 0xce, .lsb = 0x00 },
+
+	.part_num		=
+		{ 'K', '4', 'F', '8', 'E', '3', '0', '4', 'H', 'B', '-',
+		  'M', 'G', 'C', 'J' },
+};
+
+static const struct nonspd_mem_info samsung_lpddr4_k4f6e304hb_mgch = {
+	.dram_type		= SPD_DRAM_TYPE_LPDDR4,
+
+	.module_size_mbits	= 8192,
+	.num_ranks		= 1,
+	.device_width		= 32,
+	.ddr_freq 		= { DDR_667, DDR_800, DDR_933, DDR_1067, DDR_1400},
+
+	.module_mfg_id		= { .msb = 0xce, .lsb = 0x00 },
+	.dram_mfg_id		= { .msb = 0xce, .lsb = 0x00 },
+
+	.part_num		=
+		{ 'K', '4', 'F', '6', 'E', '3', '0', '4', 'H', 'B', '-',
+		  'M', 'G', 'C', 'H' },
+};
+
+static const struct nonspd_mem_info *nospdmemory[] = {
+	&elpida_lpddr3_edfa164a2ma_jd_f,
+	&elpida_lpddr3_f8132a3ma_gd_f,
+	&elpida_lpddr3_fa232a2ma_gc_f,
+	&hynix_ddr3l_h5tc4g63afr_pba,
+	&hynix_ddr3l_h5tc4g63cfr_pba,
+	&hynix_lpddr3_h9ccnnn8gtmlar_nud,
+	&hynix_lpddr3_h9ccnnnbjtmlar_nud,
+	&hynix_ddr3l_h5tc8g63amr_pba,
+	&hynix_lpddr3_h9ccnnnbptblbr_nud,
+	&hynix_lpddr3_h9ccnnnbltblar_nud,
+	&micron_lpddr4_mt53b256m32d1np,
+	&micron_lpddr4_mt53b512m32d2np,
+	&micron_mt41k256m16ha,
+	&nanya_ddr3l_nt5cc256m16dp_di,
+	&samsung_k4b4g1646d,
+	&samsung_k4b4g1646e,
+	&samsung_ddr3l_k4b4g1646d_byk0,
+	&samsung_ddr3l_k4b4g1646q_hyk0,
+	&samsung_ddr3l_k4b8g1646q_myk0,
+	&samsung_lpddr3_k3qf2f20em_agce,
+	&samsung_lpddr3_k4e6e304eb_egce,
+	&samsung_lpddr3_k4e6e304ee_egce,
+	&samsung_lpddr3_k4e6e304eb_egcf,
+	&samsung_lpddr3_k4e8e304ed_egcc,
+	&samsung_lpddr3_k4e8e304ee_egce,
+	&samsung_lpddr3_k4e8e324eb_egcf,
+	&samsung_lpddr4_k4f6e304hb_mgch,
+	&samsung_lpddr4_k4f6e304hb_mgcj,
+	&samsung_lpddr4_k4f8e304hb_mgcj,
+};
+
+int spd_set_nonspd_info(struct platform_intf *intf,
+                        const struct nonspd_mem_info **info)
+{
+	int dimm = 0, index;
+	struct smbios_table table;
+
+	if (smbios_find_table(intf, SMBIOS_TYPE_MEMORY, dimm, &table,
+			SMBIOS_LEGACY_ENTRY_BASE,
+			SMBIOS_LEGACY_ENTRY_LEN) < 0) {
+		lprintf(LOG_ERR, "%s: SMBIOS Memory info table missing\n"
+			, __func__);
+		return -1;
+	}
+
+	for (index = 0; index < ARRAY_SIZE(nospdmemory); index++) {
+		if (!strncmp(table.string[table.data.mem_device.part_number],
+			nospdmemory[index]->part_num,
+			sizeof(nospdmemory[index]->part_num))) {
+			*info = nospdmemory[index];
+			break;
+		}
+	}
+
+	if (index == ARRAY_SIZE(nospdmemory)) {
+		lprintf(LOG_ERR, "%s: non SPD info missing\n", __func__);
+		return -1;
+	}
+
+	return 0;
+}

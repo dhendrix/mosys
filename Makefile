@@ -292,8 +292,8 @@ LINUXINCLUDE    := -Iinclude \
 
 KERNELVERSION	= $(CORE).$(MAJOR).$(MINOR)
 
-FMAP_LINKOPT	?= -lfmap-0.3
-LDLIBS		:= -luuid $(FMAP_LINKOPT)
+FMAP_LINKOPT	?= $(shell pkg-config --libs fmap 2> /dev/null || -lfmap-0.3)
+LDLIBS		:= $(shell pkg-config --libs uuid 2> /dev/null || -luuid) $(FMAP_LINKOPT)
 
 #EXTRA_CFLAGS	:= $(patsubst %,-l%, $(LIBRARIES))
 

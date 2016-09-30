@@ -179,6 +179,7 @@ struct elog_cros_recovery_mode {
 	uint8_t reason;
 	uint8_t checksum;
 } __attribute__ ((packed));
+#define ELOG_RECOVERY_REASON_MAX_STR     80
 
 /* Management Engine Events */
 #define ELOG_TYPE_MANAGEMENT_ENGINE      0xa2

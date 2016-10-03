@@ -55,6 +55,7 @@ struct oak_probe_id {
 	int has_pd;
 } oak_id_list[] = {
 	{ "Elm", "google,elm", 0 },
+	{ "Hana", "google,hana", 0 },
 	{ "Oak", "google,oak", 1 },
 };
 

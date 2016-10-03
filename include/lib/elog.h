@@ -302,6 +302,16 @@ struct elog_event_data_me_extended {
 #define VBNV_RECOVERY_EC_EXPECTED_HASH 0x29
 /* EC software sync - expected EC image doesn't match hash */
 #define VBNV_RECOVERY_EC_HASH_MISMATCH 0x2A
+/* VB2: Secure data inititalization error */
+#define VBNV_RECOVERY_VB2_SECDATA_INIT 0x2B
+/* VB2: GBB header is bad */
+#define VBNV_RECOVERY_VB2_GBB_HEADER  0x2C
+/* VB2: Unable to clear TPM owner */
+#define VBNV_RECOVERY_VB2_TPM_CLEAR_OWNER 0x2D
+/* VB2: Error determining/updating virtual dev switch */
+#define VBNV_RECOVERY_VB2_DEV_SWITCH  0x2E
+/* VB2: Error determining firmware slot */
+#define VBNV_RECOVERY_VB2_FW_SLOT     0x2F
 /* Unspecified/unknown error in read-only firmware */
 #define VBNV_RECOVERY_RO_UNSPECIFIED  0x3F
 /* User manually requested recovery by pressing a key at developer
@@ -347,6 +357,10 @@ struct elog_event_data_me_extended {
 #define VBNV_RECOVERY_RW_NO_DISK      0x5A
 /* No bootable kernel found on disk */
 #define VBNV_RECOVERY_RW_NO_KERNEL    0x5B
+/* BCB-related error in RW firmware */
+#define VBNV_RECOVERY_RW_BCB_ERROR    0x5C
+/* Fastboot mode requested in firmware */
+#define VBNV_RECOVERY_FW_FASTBOOT     0x5E
 /* Unspecified/unknown error in rewritable firmware */
 #define VBNV_RECOVERY_RW_UNSPECIFIED  0x7F
 /* DM-verity error */
@@ -355,6 +369,10 @@ struct elog_event_data_me_extended {
 #define VBNV_RECOVERY_KE_UNSPECIFIED  0xBF
 /* Recovery mode test from user-mode */
 #define VBNV_RECOVERY_US_TEST         0xC1
+/* Recovery requested by user-mode via BCB */
+#define VBNV_RECOVERY_BCB_USER_MODE   0xC2
+/* Fastboot mode requested by user-mode */
+#define VBNV_RECOVERY_US_FASTBOOT     0xC3
 /* Unspecified/unknown error in user-mode */
 #define VBNV_RECOVERY_US_UNSPECIFIED  0xFF
 

@@ -69,6 +69,10 @@ static const struct probe_ids probe_id_list[] = {
 	  { "CHELL", NULL },
 	  { "Chell", NULL },
 	},
+	{ { "Eve", NULL },
+	  { "EVE", NULL },
+	  { "Eve", NULL },
+	},
 	{ { "Glados", NULL },
 	  { "GLADOS", NULL },
 	  { "Glados", NULL },
@@ -151,7 +155,7 @@ static int glados_setup_post(struct platform_intf *intf)
 		return -1;
 
 	if (glados_pd_setup(intf) <= 0)
-		return -1;
+		intf->cb->pd = NULL;
 
 	return 0;
 }

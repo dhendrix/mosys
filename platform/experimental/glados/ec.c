@@ -73,7 +73,8 @@ int glados_pd_setup(struct platform_intf *intf)
 	else if (ret == 0)
 		lprintf(LOG_DEBUG, "CrOS PD not found on LPC bus\n");
 	else
-		lprintf(LOG_ERR, "Error when probing CrOS PD on LPC bus\n");
+		lprintf(LOG_DEBUG, "Error when probing CrOS PD on LPC bus\n");
 
+	/* Non-fatal as it may not always be used */
 	return ret;
 }

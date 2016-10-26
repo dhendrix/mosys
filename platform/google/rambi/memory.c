@@ -66,7 +66,8 @@ static int rambi_ramid_gpio_count(struct platform_intf *intf)
 	int gpio_count;
 
 	if (!strncmp(intf->name, "Candy", 5) ||
-		!strncmp(intf->name, "Glimmer", 7))
+		!strncmp(intf->name, "Glimmer", 7) ||
+		!strncmp(intf->name, "Gnawty", 6))
 		gpio_count = 4;
 	else
 		gpio_count = 3;
@@ -242,18 +243,19 @@ static int rambi_dimm_count(struct platform_intf *intf)
 		}
 	} else if (!strncmp(intf->name, "Gnawty", 6)) {
 		/*
-		 * {0,0,0} = 2 x 2GiB Samsung
-		 * {0,0,1} = 2 x 2GiB Hynix
-		 * {0,1,0} = 2 x 1GiB Micron
-		 * {0,1,1} = 1 x 2GiB Hynix
-		 * {1,0,0} = 1 x 2GiB Hynix
-		 * {1,0,1} = 1 x 2GiB Hynix
-		 * {1,1,0} = 2 x 2GiB Hynix
-		 * {1,1,1} = 2 x 2GiB Hynix
+		 * {0,0,0,0} = 2 x 2GiB Samsung
+		 * {0,0,0,1} = 2 x 2GiB Hynix
+		 * {0,0,1,0} = 2 x 1GiB Micron
+		 * {0,0,1,1} = 1 x 2GiB Hynix
+		 * {0,1,0,0} = 1 x 2GiB Hynix
+		 * {0,1,0,1} = 1 x 2GiB Hynix
+		 * {0,1,1,0} = 2 x 2GiB Hynix
+		 * {0,1,1,1} = 2 x 2GiB Hynix
+		 * {1,0,0,0} = 1 x 2GiB Micro
 		 */
 		int index = rambi_get_spd_index(intf);
 		switch (index) {
-		case 3: case 4: case 5:
+		case 3: case 4: case 5: case 8:
 			return 1;
 		default:
 			return 2;

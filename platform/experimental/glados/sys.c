@@ -38,18 +38,23 @@
 
 #include "drivers/google/cros_ec.h"
 
-/*TODO: To be added when board versions are available
- * static struct valstr glados_board_version[] = {
-	{ 0, "Proto1/1.5" },
-	{ 1, "Proto2" },
-	{ },
+static struct valstr caroline_board_version[] = {
+	{ 0, "Proto0" },
+	{ 1, "Proto1" },
+	{ 2, "EVT" },
 };
 
 static const char *glados_get_version(struct platform_intf *intf)
 {
-	return mosys_strdup(val2str(cros_ec_board_version(intf, intf->cb->ec),
-				glados_board_version));
-}*/
+	const char *version = NULL;
+
+	if (!strcmp(intf->name, "Caroline"))
+		version = mosys_strdup(val2str(
+				cros_ec_board_version(intf, intf->cb->ec),
+				caroline_board_version));
+
+	return version;
+}
 
 static char *glados_get_name(struct platform_intf *intf)
 {
@@ -57,7 +62,7 @@ static char *glados_get_name(struct platform_intf *intf)
 }
 
 struct sys_cb glados_sys_cb = {
-	/*.version		= &glados_get_version,*/
+	.version		= &glados_get_version,
 	.vendor			= &smbios_sysinfo_get_vendor,
 	.name			= &glados_get_name,
 	.family			= &smbios_sysinfo_get_family,

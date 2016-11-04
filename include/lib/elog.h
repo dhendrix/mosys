@@ -232,6 +232,15 @@ struct elog_event_data_me_extended {
 #define ELOG_TYPE_WAKE                   0xa8
 #define ELOG_TYPE_FW_WAKE                0xa9
 
+/* Memory Cache Update */
+#define ELOG_TYPE_MEM_CACHE_UPDATE        0xaa
+#define  ELOG_MEM_CACHE_UPDATE_SLOT_NORMAL    0
+#define  ELOG_MEM_CACHE_UPDATE_STATUS_SUCCESS 0
+#define  ELOG_MEM_CACHE_UPDATE_STATUS_FAIL    1
+struct elog_event_mem_cache_update {
+	uint8_t slot;
+	uint8_t status;
+} __attribute__ ((packed));
 
 /* Recovery reason codes for EVENT_TYPE_CROS_RECOVERY_MODE */
 /* Recovery not requested. */

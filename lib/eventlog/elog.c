@@ -114,6 +114,7 @@ int elog_print_type(struct platform_intf *intf, struct smbios_log_entry *entry,
 		{ ELOG_TYPE_SLEEP, "Sleep" },
 		{ ELOG_TYPE_WAKE, "Wake" },
 		{ ELOG_TYPE_FW_WAKE, "FW Wake" },
+		{ ELOG_TYPE_MEM_CACHE_UPDATE, "Memory Cache Update" },
 		{ 0x0, NULL },
 	};
 
@@ -447,6 +448,15 @@ int elog_print_data(struct platform_intf *intf, struct smbios_log_entry *entry,
 		  "FSP Notify Before Finalize"},
 		{ 0, NULL },
 	};
+	static struct valstr mem_cache_slots[] = {
+		{ ELOG_MEM_CACHE_UPDATE_SLOT_NORMAL, "Normal" },
+		{ 0, NULL },
+	};
+	static struct valstr mem_cache_statuses[] = {
+		{ ELOG_MEM_CACHE_UPDATE_STATUS_SUCCESS, "Success" },
+		{ ELOG_MEM_CACHE_UPDATE_STATUS_FAIL, "Fail" },
+		{ 0, NULL },
+	};
 
 	switch (entry->type) {
 	case SMBIOS_EVENT_TYPE_LOGCLEAR:
@@ -529,6 +539,17 @@ int elog_print_data(struct platform_intf *intf, struct smbios_log_entry *entry,
 	{
 		uint8_t *path = (void *)&entry->data[0];
 		kv_pair_add(kv, "path", val2str(*path, me_path_types));
+		break;
+	}
+	case ELOG_TYPE_MEM_CACHE_UPDATE:
+	{
+		struct elog_event_mem_cache_update *event;
+		event = (void *)&entry->data[0];
+		kv_pair_add(kv, "slot",
+			    val2str(event->slot, mem_cache_slots));
+		kv_pair_add(kv, "status",
+			    val2str(event->status, mem_cache_statuses));
+		break;
 	}
 	default:
 		return 0;

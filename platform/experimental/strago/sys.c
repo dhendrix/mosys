@@ -29,27 +29,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <valstr.h>
-
 #include "mosys/alloc.h"
 #include "mosys/platform.h"
 
-#include "lib/smbios.h"
-
 #include "drivers/google/cros_ec.h"
 
-/*TODO: To be added when board versions are available
- * static struct valstr strago_board_version[] = {
-	{ 0, "Proto1/1.5" },
-	{ 1, "Proto2" },
-	{ },
-};
-
-static const char *strago_get_version(struct platform_intf *intf)
-{
-	return mosys_strdup(val2str(cros_ec_board_version(intf, intf->cb->ec),
-				    strago_board_version));
-}*/
+#include "lib/smbios.h"
 
 static char *strago_get_name(struct platform_intf *intf)
 {
@@ -57,7 +42,7 @@ static char *strago_get_name(struct platform_intf *intf)
 }
 
 struct sys_cb strago_sys_cb = {
-	/*.version		= &strago_get_version,*/
+	.version		= &cros_ec_board_version_str,
 	.vendor			= &smbios_sysinfo_get_vendor,
 	.name			= &strago_get_name,
 	.family			= &smbios_sysinfo_get_family,

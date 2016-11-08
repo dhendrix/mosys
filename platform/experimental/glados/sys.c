@@ -29,32 +29,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <valstr.h>
-
 #include "mosys/alloc.h"
 #include "mosys/platform.h"
 
-#include "lib/smbios.h"
-
 #include "drivers/google/cros_ec.h"
 
-static struct valstr caroline_board_version[] = {
-	{ 0, "Proto0" },
-	{ 1, "Proto1" },
-	{ 2, "EVT" },
-};
-
-static const char *glados_get_version(struct platform_intf *intf)
-{
-	const char *version = NULL;
-
-	if (!strcmp(intf->name, "Caroline"))
-		version = mosys_strdup(val2str(
-				cros_ec_board_version(intf, intf->cb->ec),
-				caroline_board_version));
-
-	return version;
-}
+#include "lib/smbios.h"
 
 static char *glados_get_name(struct platform_intf *intf)
 {
@@ -62,7 +42,7 @@ static char *glados_get_name(struct platform_intf *intf)
 }
 
 struct sys_cb glados_sys_cb = {
-	.version		= &glados_get_version,
+	.version		= &cros_ec_board_version_str,
 	.vendor			= &smbios_sysinfo_get_vendor,
 	.name			= &glados_get_name,
 	.family			= &smbios_sysinfo_get_family,

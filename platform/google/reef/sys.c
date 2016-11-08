@@ -29,27 +29,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <valstr.h>
-
 #include "mosys/alloc.h"
 #include "mosys/platform.h"
 
 #include "lib/smbios.h"
-
-#include "drivers/google/cros_ec.h"
-
-/*TODO: To be added when board versions are available
- * static struct valstr reef_board_version[] = {
-	{ 0, "Proto1/1.5" },
-	{ 1, "Proto2" },
-	{ },
-};
-
-static const char *reef_get_version(struct platform_intf *intf)
-{
-	return mosys_strdup(val2str(cros_ec_board_version(intf, intf->cb->ec),
-				reef_board_version));
-}*/
 
 static char *reef_get_name(struct platform_intf *intf)
 {
@@ -57,7 +40,7 @@ static char *reef_get_name(struct platform_intf *intf)
 }
 
 struct sys_cb reef_sys_cb = {
-	/*.version		= &reef_get_version,*/
+	.version		= &smbios_sysinfo_get_version,
 	.vendor			= &smbios_sysinfo_get_vendor,
 	.name			= &reef_get_name,
 	.family			= &smbios_sysinfo_get_family,

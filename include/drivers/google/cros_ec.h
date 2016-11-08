@@ -76,6 +76,14 @@ extern int cros_ec_flash_info(struct platform_intf *intf, struct ec_cb *ec,
 extern int cros_ec_detect(struct platform_intf *intf, struct ec_cb *ec);
 extern int cros_ec_board_version(struct platform_intf *intf, struct ec_cb *ec);
 
+/*
+ * This is intended to be used in platform-specific system callbacks (sys_cb)
+ * which means it also allocates memory that must be freed. For these callbacks
+ * the high-level command handling code is typically responsible for calling
+ * the function and freeing the allocated memory.
+ */
+extern char *cros_ec_board_version_str(struct platform_intf *intf);
+
 extern int cros_ec_vbnvcontext_read(struct platform_intf *intf,
 		struct ec_cb *ec, uint8_t *block);
 extern int cros_ec_vbnvcontext_write(struct platform_intf *intf,

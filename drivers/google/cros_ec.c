@@ -44,6 +44,8 @@
 
 #include "lib/math.h"
 
+#define BOARD_VERSION_LEN	8	/* a 16-bit value or "Unknown" */
+
 int cros_ec_hello(struct platform_intf *intf, struct ec_cb *ec)
 {
 	struct ec_params_hello p;
@@ -127,6 +129,30 @@ int cros_ec_board_version(struct platform_intf *intf, struct ec_cb *ec)
 	lprintf(LOG_DEBUG, "CrOS EC Board Version: %d\n", r.board_version);
 
 	return r.board_version;
+}
+
+char *cros_ec_board_version_str(struct platform_intf *intf)
+{
+	int version;
+	char *str = mosys_zalloc(BOARD_VERSION_LEN);
+
+	/* Baseboard may have variants without EC in which case this
+	   function needs to be used more selectively. */
+	MOSYS_CHECK(intf && intf->cb->ec);
+
+	version = cros_ec_board_version(intf, intf->cb->ec);
+	if (version < 0) {
+		snprintf(str, BOARD_VERSION_LEN, "Unknown");
+	} else {
+		/*
+		 * Prepend "rev" to match format currently used for CrOS
+		 * platforms with devicetree and newer (beginning with Reef)
+		 * SMBIOS system (type-1) version format.
+		 */
+		snprintf(str, BOARD_VERSION_LEN, "rev%d", version);
+	}
+
+	return str;
 }
 
 int cros_ec_chip_info(struct platform_intf *intf, struct ec_cb *ec,

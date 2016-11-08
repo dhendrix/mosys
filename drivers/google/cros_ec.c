@@ -122,7 +122,7 @@ int cros_ec_board_version(struct platform_intf *intf, struct ec_cb *ec)
 	rc = priv->cmd(intf, ec, EC_CMD_GET_BOARD_VERSION, 0,
 		       &r, sizeof(r), NULL, 0);
 	if (rc)
-		return 0;
+		return -1;
 
 	lprintf(LOG_DEBUG, "CrOS EC Board Version: %d\n", r.board_version);
 

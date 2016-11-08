@@ -171,7 +171,11 @@ static int rambi_dimm_count(struct platform_intf *intf)
 	} else if (!strncmp(intf->name, "Expresso", 8) ||
 		   !strncmp(intf->name, "Rambi", 5)) {
 		int index = rambi_get_spd_index(intf);
-		if (cros_ec_board_version(intf, intf->cb->ec) < 1) {
+		int board_version = cros_ec_board_version(intf, intf->cb->ec);
+
+		if (board_version < 0) {
+			return -1;
+		} else if (board_version < 1) {
 			/*
 			 * {0,0,0} = 2 x 2GiB Micron
 			 * {0,0,1} = 2 x 2GiB Hynix
@@ -408,8 +412,14 @@ static int rambi_spd_read_cbfs(struct platform_intf *intf,
 	struct cbfs_file *file;
 	int spd_index = 0;
 	uint32_t spd_offset;
+	int dimm_count = rambi_dimm_count(intf);
 
-	if (dimm > rambi_dimm_count(intf)) {
+	if (dimm_count < 0) {
+		lprintf(LOG_ERR, "%s: Failed to get DIMM count.\n", __func__);
+		return -1;
+	}
+
+	if (dimm > dimm_count) {
 		lprintf(LOG_DEBUG, "%s: Invalid DIMM specified\n", __func__);
 		return -1;
 	}

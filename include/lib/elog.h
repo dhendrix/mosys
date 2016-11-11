@@ -111,30 +111,31 @@ struct elog_os_boot {
 } __attribute__ ((packed));
 
 #define ELOG_TYPE_EC_EVENT                0x91
-#define EC_EVENT_LID_CLOSED                0x01
-#define EC_EVENT_LID_OPEN                  0x02
-#define EC_EVENT_POWER_BUTTON              0x03
-#define EC_EVENT_AC_CONNECTED              0x04
-#define EC_EVENT_AC_DISCONNECTED           0x05
-#define EC_EVENT_BATTERY_LOW               0x06
-#define EC_EVENT_BATTERY_CRITICAL          0x07
-#define EC_EVENT_BATTERY                   0x08
-#define EC_EVENT_THERMAL_THRESHOLD         0x09
-#define EC_EVENT_THERMAL_OVERLOAD          0x0a
-#define EC_EVENT_THERMAL                   0x0b
-#define EC_EVENT_USB_CHARGER               0x0c
-#define EC_EVENT_KEY_PRESSED               0x0d
-#define EC_EVENT_INTERFACE_READY           0x0e
-#define EC_EVENT_KEYBOARD_RECOVERY         0x0f
-#define EC_EVENT_THERMAL_SHUTDOWN          0x10
-#define EC_EVENT_BATTERY_SHUTDOWN          0x11
-#define EC_EVENT_THROTTLE_START            0x12
-#define EC_EVENT_THROTTLE_STOP             0x13
-#define EC_EVENT_HANG_DETECT               0x14
-#define EC_EVENT_HANG_REBOOT               0x15
-#define EC_EVENT_PD_MCU                    0x16
-#define EC_EVENT_BATTERY_STATUS            0x17
-#define EC_EVENT_PANIC                     0x18
+#define EC_EVENT_LID_CLOSED                  0x01
+#define EC_EVENT_LID_OPEN                    0x02
+#define EC_EVENT_POWER_BUTTON                0x03
+#define EC_EVENT_AC_CONNECTED                0x04
+#define EC_EVENT_AC_DISCONNECTED             0x05
+#define EC_EVENT_BATTERY_LOW                 0x06
+#define EC_EVENT_BATTERY_CRITICAL            0x07
+#define EC_EVENT_BATTERY                     0x08
+#define EC_EVENT_THERMAL_THRESHOLD           0x09
+#define EC_EVENT_THERMAL_OVERLOAD            0x0a
+#define EC_EVENT_THERMAL                     0x0b
+#define EC_EVENT_USB_CHARGER                 0x0c
+#define EC_EVENT_KEY_PRESSED                 0x0d
+#define EC_EVENT_INTERFACE_READY             0x0e
+#define EC_EVENT_KEYBOARD_RECOVERY           0x0f
+#define EC_EVENT_THERMAL_SHUTDOWN            0x10
+#define EC_EVENT_BATTERY_SHUTDOWN            0x11
+#define EC_EVENT_THROTTLE_START              0x12
+#define EC_EVENT_THROTTLE_STOP               0x13
+#define EC_EVENT_HANG_DETECT                 0x14
+#define EC_EVENT_HANG_REBOOT                 0x15
+#define EC_EVENT_PD_MCU                      0x16
+#define EC_EVENT_BATTERY_STATUS              0x17
+#define EC_EVENT_PANIC                       0x18
+#define EC_EVENT_KEYBOARD_RECOVERY_HWREINIT  0x19
 struct elog_ec_event {
 	uint8_t event;
 	uint8_t checksum;
@@ -235,6 +236,7 @@ struct elog_event_data_me_extended {
 /* Memory Cache Update */
 #define ELOG_TYPE_MEM_CACHE_UPDATE        0xaa
 #define  ELOG_MEM_CACHE_UPDATE_SLOT_NORMAL    0
+#define  ELOG_MEM_CACHE_UPDATE_SLOT_RECOVERY  1
 #define  ELOG_MEM_CACHE_UPDATE_STATUS_SUCCESS 0
 #define  ELOG_MEM_CACHE_UPDATE_STATUS_FAIL    1
 struct elog_event_mem_cache_update {
@@ -370,6 +372,8 @@ struct elog_event_mem_cache_update {
 #define VBNV_RECOVERY_RW_BCB_ERROR    0x5C
 /* Fastboot mode requested in firmware */
 #define VBNV_RECOVERY_FW_FASTBOOT     0x5E
+/* Recovery hash space lock error in RO firmware */
+#define VBNV_RECOVERY_RO_TPM_REC_HASH_L_ERROR    0x5F
 /* Unspecified/unknown error in rewritable firmware */
 #define VBNV_RECOVERY_RW_UNSPECIFIED  0x7F
 /* DM-verity error */
@@ -382,6 +386,8 @@ struct elog_event_mem_cache_update {
 #define VBNV_RECOVERY_BCB_USER_MODE   0xC2
 /* Fastboot mode requested by user-mode */
 #define VBNV_RECOVERY_US_FASTBOOT     0xC3
+/* User requested recovery for training memory and rebooting. */
+#define VBNV_RECOVERY_TRAIN_AND_REBOOT 0xC4
 /* Unspecified/unknown error in user-mode */
 #define VBNV_RECOVERY_US_UNSPECIFIED  0xFF
 

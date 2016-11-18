@@ -36,7 +36,9 @@ static enum psu_types psu_type(struct platform_intf *intf)
 	if (!strncmp(intf->name, "Brain", strlen(intf->name)) ||
 		!strncmp(intf->name, "Danger", strlen(intf->name)) ||
 		!strncmp(intf->name, "Mickey", strlen(intf->name)) ||
-		!strncmp(intf->name, "Romy", strlen(intf->name)))
+		!strncmp(intf->name, "Romy", strlen(intf->name)) ||
+		!strncmp(intf->name, "Tiger", strlen(intf->name)) ||
+		!strncmp(intf->name, "Fievel", strlen(intf->name)))
 		return PSU_TYPE_AC_ONLY;
 	else
 		return PSU_TYPE_BATTERY;

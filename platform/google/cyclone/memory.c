@@ -29,6 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "lib/fdt.h"
 #include "lib/nonspd.h"
 
 #include "mosys/log.h"
@@ -41,7 +42,20 @@
 
 enum cyclone_memory_config {
 	SAMSUNG_DDR3_1600_512M,
+	NANYA_DDR3L_1600_512M,
 	MEM_UNKNOWN,
+};
+
+enum cyclone_board_id {
+	BOARD_ID_GALE_PROTO = 0, /* 000 */
+	BOARD_ID_GALE_EVT = 1, /* 001 */
+	BOARD_ID_GALE_EVT2_0 = 2, /* 010 */
+	BOARD_ID_GALE_EVT2_1 = 6, /* 110 */
+	BOARD_ID_GALE_EVT3 = 5, /* 101 */
+	BOARD_ID_GALE_DVT_CONFIG_A = 7, /* 111 */
+	BOARD_ID_GALE_DVT_CONFIG_B = 8, /* 002 */
+	BOARD_ID_GALE_CR_CONFIG_A = 9, /* 012 */
+	BOARD_ID_GALE_CR_CONFIG_B = 10, /* 020 */
 };
 
 /*
@@ -58,8 +72,31 @@ static int dimm_count(struct platform_intf *intf)
 
 static enum cyclone_memory_config get_memory_config(struct platform_intf *intf)
 {
-	if (!strcmp(intf->name, "Gale"))
+	uint32_t board_id;
+
+	if (fdt_get_board_id(&board_id) >= 0) {
+		switch (board_id) {
+		case BOARD_ID_GALE_PROTO:
+		case BOARD_ID_GALE_EVT:
+		case BOARD_ID_GALE_EVT2_0:
+		case BOARD_ID_GALE_EVT2_1:
+		case BOARD_ID_GALE_EVT3:
+		case BOARD_ID_GALE_DVT_CONFIG_A:
+		case BOARD_ID_GALE_CR_CONFIG_A:
+			return SAMSUNG_DDR3_1600_512M;
+		case BOARD_ID_GALE_DVT_CONFIG_B:
+		case BOARD_ID_GALE_CR_CONFIG_B:
+			return NANYA_DDR3L_1600_512M;
+		}
+	}
+	else {
+		lprintf(LOG_DEBUG, "Unable to obtain board ID\n");
+	}
+	/* Return default memory type for Gale */
+	if (!strcmp(intf->name, "Gale")) {
 		return SAMSUNG_DDR3_1600_512M;
+	}
+	lprintf(LOG_ERR, "Unable to determine memory configuration\n");
 	return MEM_UNKNOWN;
 }
 
@@ -69,6 +106,9 @@ static int get_mem_info(struct platform_intf *intf,
 	switch (get_memory_config(intf)) {
 	case SAMSUNG_DDR3_1600_512M:
 		*info = &samsung_k4b4g1646e;
+		break;
+	case NANYA_DDR3L_1600_512M:
+		*info = &nanya_ddr3l_nt5cc256m16dp_di;
 		break;
 	default:
 		return -1;

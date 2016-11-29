@@ -135,6 +135,23 @@ const struct nonspd_mem_info hynix_lpddr3_h9ccnnn8gtmlar_nud = {
                   'A', 'R', '-', 'N', 'U', 'D',},
 };
 
+const struct nonspd_mem_info hynix_lpddr3_h9ccnnnbjtalar_nud = {
+        .dram_type              = SPD_DRAM_TYPE_LPDDR3,
+        .module_type.ddr3_type  = DDR3_MODULE_TYPE_SO_DIMM,
+
+        .module_size_mbits      = 16384,
+        .num_ranks              = 2,
+        .device_width           = 32,
+        .ddr_freq               = { DDR_333, DDR_400, DDR_533, DDR_667, DDR_800 },
+
+        .module_mfg_id          = { .msb = 0xad, .lsb = 0x80 },
+        .dram_mfg_id            = { .msb = 0xad, .lsb = 0x80 },
+
+        .part_num               =
+                { 'H', '9', 'C', 'C', 'N', 'N', 'N', 'B', 'J', 'T', 'A', 'L',
+                  'A', 'R', '-', 'N', 'U', 'D',},
+};
+
 const struct nonspd_mem_info hynix_lpddr3_h9ccnnnbjtmlar_nud = {
         .dram_type              = SPD_DRAM_TYPE_LPDDR3,
         .module_type.ddr3_type  = DDR3_MODULE_TYPE_SO_DIMM,
@@ -250,6 +267,42 @@ const struct nonspd_mem_info micron_mt41k256m16ha = {
 	.serial_num 		= { 0, 0, 0, 0 },
 	.part_num		= { 'M', 'T', '4', '1', 'K', '2', '5', '6', 'M',
 				    '1', '6', 'H', 'A', '-', '1', '2', '5' },
+};
+
+const struct nonspd_mem_info micron_mt52l256m32d1pf = {
+	.dram_type		= SPD_DRAM_TYPE_DDR3,
+	.module_type.ddr3_type	= DDR3_MODULE_TYPE_UNDEFINED,
+
+	.module_size_mbits	= 8192,
+	.num_ranks		= 1,
+	.device_width		= 32,
+	.ddr_freq 		= { DDR_800, DDR_933, DDR_1067 },
+
+	.module_mfg_id		= { .msb = 0x2c, .lsb = 0x00 },
+	.dram_mfg_id		= { .msb = 0x2c, .lsb = 0x00 },
+
+	.serial_num 		= { 0, 0, 0, 0 },
+	.part_num		= { 'M', 'T', '5', '2', 'L', '2', '5', '6', 'M',
+				    '3', '2', 'D', '1', 'P', 'F', '-', '0', '9',
+				    '3', 'W', 'T', ':', 'B' },
+};
+
+const struct nonspd_mem_info micron_mt52l512m32d2pf = {
+	.dram_type		= SPD_DRAM_TYPE_DDR3,
+	.module_type.ddr3_type	= DDR3_MODULE_TYPE_UNDEFINED,
+
+	.module_size_mbits	= 16384,
+	.num_ranks		= 2,
+	.device_width		= 32,
+	.ddr_freq 		= { DDR_800, DDR_933, DDR_1067 },
+
+	.module_mfg_id		= { .msb = 0x2c, .lsb = 0x00 },
+	.dram_mfg_id		= { .msb = 0x2c, .lsb = 0x00 },
+
+	.serial_num 		= { 0, 0, 0, 0 },
+	.part_num		= { 'M', 'T', '5', '2', 'L', '5', '1', '2', 'M',
+				    '3', '2', 'D', '2', 'P', 'F', '-', '0', '9',
+				    '3', 'W', 'T', ':', 'B' },
 };
 
 const struct nonspd_mem_info nanya_ddr3l_nt5cc256m16dp_di = {
@@ -565,6 +618,7 @@ static const struct nonspd_mem_info *nospdmemory[] = {
 	&hynix_ddr3l_h5tc4g63afr_pba,
 	&hynix_ddr3l_h5tc4g63cfr_pba,
 	&hynix_lpddr3_h9ccnnn8gtmlar_nud,
+	&hynix_lpddr3_h9ccnnnbjtalar_nud,
 	&hynix_lpddr3_h9ccnnnbjtmlar_nud,
 	&hynix_ddr3l_h5tc8g63amr_pba,
 	&hynix_lpddr3_h9ccnnnbptblbr_nud,
@@ -574,6 +628,8 @@ static const struct nonspd_mem_info *nospdmemory[] = {
 	&micron_lpddr4_mt53b256m32d1np,
 	&micron_lpddr4_mt53b512m32d2np,
 	&micron_mt41k256m16ha,
+	&micron_mt52l256m32d1pf,
+	&micron_mt52l512m32d2pf,
 	&nanya_ddr3l_nt5cc256m16dp_di,
 	&samsung_k4b4g1646d,
 	&samsung_k4b4g1646e,

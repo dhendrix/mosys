@@ -41,10 +41,14 @@
 
 enum oak_memory_config {
 	HYNIX_DDR3_H9CCNNN8GTMLAR_NUD_1G,
+	HYNIX_DDR3_H9CCNNNBJTALAR_NUD_2G,
 	HYNIX_DDR3_H9CCNNNBLTBLAR_NUD_2G,
-	SAMSUNG_DDR3_K4E8E304EE_EGCE_1G,
-	SAMSUNG_DDR3_K4E6E304EE_EGCE_2G,
+	MICRON_DDR3_MT52L256M32D1PF_107WTB_1G,
+	MICRON_DDR3_MT52L512M32D2PF_107WTB_2G,
 	SAMSUNG_DDR3_K4E6E304EB_EGCF_2G,
+	SAMSUNG_DDR3_K4E6E304EE_EGCE_2G,
+	SAMSUNG_DDR3_K4E8E304EE_EGCE_1G,
+	SAMSUNG_DDR3_K4E8E324EB_EGCF_1G,
 	MEM_UNKNOWN,
 };
 
@@ -68,6 +72,15 @@ static int get_memory_config(struct platform_intf *intf)
 		return HYNIX_DDR3_H9CCNNNBLTBLAR_NUD_2G;
 	case 4:
 		return SAMSUNG_DDR3_K4E6E304EB_EGCF_2G;
+	case 5:
+		return SAMSUNG_DDR3_K4E8E324EB_EGCF_1G;
+	case 6:
+		return MICRON_DDR3_MT52L512M32D2PF_107WTB_2G;
+	case 7:
+		return HYNIX_DDR3_H9CCNNNBJTALAR_NUD_2G;
+	case 8:
+		return MICRON_DDR3_MT52L256M32D1PF_107WTB_1G;
+
 	default:
 		lprintf(LOG_ERR, "Unable to determine memory configuration\n");
 	}
@@ -95,17 +108,29 @@ static int get_mem_info(struct platform_intf *intf,
 	case HYNIX_DDR3_H9CCNNN8GTMLAR_NUD_1G:
 		*info = &hynix_lpddr3_h9ccnnn8gtmlar_nud;
 		break;
+	case HYNIX_DDR3_H9CCNNNBJTALAR_NUD_2G:
+		*info = &hynix_lpddr3_h9ccnnnbjtalar_nud;
+		break;
 	case HYNIX_DDR3_H9CCNNNBLTBLAR_NUD_2G:
 		*info = &hynix_lpddr3_h9ccnnnbltblar_nud;
 		break;
-	case SAMSUNG_DDR3_K4E8E304EE_EGCE_1G:
-		*info = &samsung_lpddr3_k4e8e304ee_egce;
+	case MICRON_DDR3_MT52L256M32D1PF_107WTB_1G:
+		*info = &micron_mt52l256m32d1pf;
+		break;
+	case MICRON_DDR3_MT52L512M32D2PF_107WTB_2G:
+		*info = &micron_mt52l512m32d2pf;
+		break;
+	case SAMSUNG_DDR3_K4E6E304EB_EGCF_2G:
+		*info = &samsung_lpddr3_k4e6e304eb_egcf;
 		break;
 	case SAMSUNG_DDR3_K4E6E304EE_EGCE_2G:
 		*info = &samsung_lpddr3_k4e6e304ee_egce;
 		break;
-	case SAMSUNG_DDR3_K4E6E304EB_EGCF_2G:
-		*info = &samsung_lpddr3_k4e6e304eb_egcf;
+	case SAMSUNG_DDR3_K4E8E304EE_EGCE_1G:
+		*info = &samsung_lpddr3_k4e8e304ee_egce;
+		break;
+	case SAMSUNG_DDR3_K4E8E324EB_EGCF_1G:
+		*info = &samsung_lpddr3_k4e8e324eb_egcf;
 		break;
 	default:
 		return -1;

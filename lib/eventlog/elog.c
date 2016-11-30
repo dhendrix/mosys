@@ -524,23 +524,9 @@ int elog_print_data(struct platform_intf *intf, struct smbios_log_entry *entry,
 	case ELOG_TYPE_CROS_RECOVERY_MODE:
 	{
 		uint8_t *reason = (void *)&entry->data[0];
-		const char *reason_str = val2str_default(*reason,
-							 cros_recovery_reasons,
-							 NULL);
-		char reason_full_str[ELOG_RECOVERY_REASON_MAX_STR];
-
-		if (reason_str) {
-			snprintf(reason_full_str, sizeof(reason_full_str),
-				 "%s", reason_str);
-		} else {
-			/*
-			 * Couldn't find a listed reason, so just
-			 * append hex string of reason code
-			 */
-			snprintf(reason_full_str, sizeof(reason_full_str),
-				 "Unknown reason: 0x%x", *reason);
-		}
-		kv_pair_add(kv, "reason", reason_full_str);
+		kv_pair_add(kv, "reason",
+			    val2str(*reason, cros_recovery_reasons));
+		kv_pair_fmt(kv, "code", "0x%02x", *reason);
 		break;
 	}
 	case ELOG_TYPE_MANAGEMENT_ENGINE:

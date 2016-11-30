@@ -45,6 +45,7 @@
 
 enum gru_boards {
 	UNKNOWN = -1,
+	BOB,
 	GRU,
 	KEVIN
 
@@ -57,6 +58,7 @@ struct gru_probe_id {
 	const char *fdt_compat;
 	int has_ec;
 } gru_id_list[] = {
+	[BOB]		= { "Bob", "google,bob-rev", 1 },
 	[GRU]		= { "Gru", "google,gru-rev", 1 },
 	[KEVIN]	    = { "Kevin", "google,kevin-rev", 1 },
 };

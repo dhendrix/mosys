@@ -457,6 +457,7 @@ int elog_print_data(struct platform_intf *intf, struct smbios_log_entry *entry,
 	static struct valstr mem_cache_slots[] = {
 		{ ELOG_MEM_CACHE_UPDATE_SLOT_NORMAL, "Normal" },
 		{ ELOG_MEM_CACHE_UPDATE_SLOT_RECOVERY, "Recovery" },
+		{ ELOG_MEM_CACHE_UPDATE_SLOT_VARIABLE, "Variable" },
 		{ 0, NULL },
 	};
 	static struct valstr mem_cache_statuses[] = {

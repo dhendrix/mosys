@@ -75,6 +75,28 @@ static int read_ram_code(struct platform_intf *intf)
 			ret = -1;
 			break;
 		}
+	} else if (!strncmp(intf->name, "Bob", 3)) {
+		switch (ram_code) {
+		case 3:
+			gru_dimm_count = 2;
+			gru_mem_info = &samsung_lpddr3_k4e8e324eb_egcf;
+			break;
+		case 4:
+			gru_dimm_count = 2;
+			gru_mem_info = &micron_lpddr3_mt52l256m32d1pf_107wtb;
+			break;
+		case 5:
+			gru_dimm_count = 2;
+			gru_mem_info = &samsung_lpddr3_k4e6e304eb_egcf;
+			break;
+		case 6:
+			gru_dimm_count = 2;
+			gru_mem_info = &micron_lpddr3_mt52l512m32d2pf_107wtb;
+			break;
+		default:
+			ret = -1;
+			break;
+		}
 	} else {
 		ret = -1;
 	}

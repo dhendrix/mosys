@@ -256,6 +256,7 @@ static int rambi_dimm_count(struct platform_intf *intf)
 		 * {0,1,1,0} = 2 x 2GiB Hynix
 		 * {0,1,1,1} = 2 x 2GiB Hynix
 		 * {1,0,0,0} = 1 x 2GiB Micro
+		 * {1,0,0,1} = 2 x 2GiB Micro
 		 */
 		int index = rambi_get_spd_index(intf);
 		switch (index) {

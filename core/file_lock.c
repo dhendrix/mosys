@@ -92,7 +92,6 @@ static int test_dir(const char *path)
 
 static int file_lock_open_or_create(struct ipc_lock *lock)
 {
-	struct stat s;
 	char path[PATH_MAX];
 
 	if (in_android()) {

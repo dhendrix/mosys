@@ -67,6 +67,7 @@ static int fdt_read_node(const char *path, char *buf, int len)
 
 	fd = file_open(string_builder_get_string(sb), FILE_READ);
 	if (fd < 0) {
+		ret = fd;
 		lprintf(LOG_ERR, "Unable to open %s.\n",
 				string_builder_get_string(sb));
 		goto out_1;

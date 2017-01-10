@@ -150,6 +150,14 @@ extern char *buf2nicid(uint8_t *inbuf, enum nic_id_type type);
 const char *strlfind(const char *str, const char *arr[], int case_sensitive);
 
 /*
+ * strlower - convert a string to lower case
+ *
+ * @str:		string to convert (in place)
+ * returns pointer to string
+ */
+char *strlower(char *str);
+
+/*
  * Find the min-length string.
  */
 #ifndef __minlen

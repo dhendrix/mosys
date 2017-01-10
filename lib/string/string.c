@@ -33,6 +33,7 @@
  * string.c: string utilities
  */
 
+#include <ctype.h>
 #include <stdlib.h>
 #include <inttypes.h>
 #include <unistd.h>
@@ -390,4 +391,14 @@ const char *strlfind(const char *str, const char *arr[], int cs)
 	}
 
 	return ret;
+}
+
+char *strlower(char *str)
+{
+	char *p;
+
+	for (p = str; *p; p++)
+		*p = tolower(*p);
+
+	return str;
 }

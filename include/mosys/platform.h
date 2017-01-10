@@ -313,6 +313,11 @@ struct sys_cb {
 	char *(*family)(struct platform_intf *intf);
 	char *(*variant)(struct platform_intf *intf);
 
+	/* Obtain the model name of this device. With unified builds a board
+	 * can support multiple models. This allows the model to be obtained,
+	 * which can be used to adjust how various packages work. */
+	char *(*model)(struct platform_intf *intf);
+
 	/* firmware info */
 	char *(*firmware_vendor)(struct platform_intf *intf);
 	char *(*firmware_version)(struct platform_intf *intf);

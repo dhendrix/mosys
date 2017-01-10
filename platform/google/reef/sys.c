@@ -32,11 +32,19 @@
 #include "mosys/alloc.h"
 #include "mosys/platform.h"
 
+#include "lib/acpi.h"
 #include "lib/smbios.h"
+#include "lib/string.h"
 
 static char *reef_get_name(struct platform_intf *intf)
 {
 	return mosys_strdup(intf->name);
+}
+
+static char *reef_get_model(struct platform_intf *intf)
+{
+	/* TODO(sjg@chromium.org): Consider obtaining this from ACPI data */
+	return strlower(mosys_strdup(intf->name));
 }
 
 struct sys_cb reef_sys_cb = {
@@ -45,5 +53,5 @@ struct sys_cb reef_sys_cb = {
 	.name			= &reef_get_name,
 	.family			= &smbios_sysinfo_get_family,
 	.firmware_vendor	= &smbios_bios_get_vendor,
+	.model			= &reef_get_model,
 };
-

@@ -41,14 +41,8 @@ static char *google_cr48_get_name(struct platform_intf *intf)
 	return mosys_strdup(intf->name);
 }
 
-static char *google_cr48_get_variant(struct platform_intf *intf)
-{
-	return google_cr48_ec_mbid(intf);
-}
-
 struct sys_cb google_cr48_sys_cb = {
 	.vendor		= &smbios_sysinfo_get_vendor,
 	.name		= &google_cr48_get_name,
 	.family		= &smbios_sysinfo_get_family,
-	.variant	= &google_cr48_get_variant,
 };

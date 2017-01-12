@@ -76,6 +76,8 @@ static void ec_wait(struct platform_intf *intf, uint16_t mbx_base)
 		lprintf(LOG_DEBUG, "%s: timeout value: %u\n", __func__, t);
 }
 
+#if 0
+/* This is dead code but might still be useful as a reference. */
 static uint8_t ecram_read8(struct platform_intf *intf, uint16_t offset)
 {
 	uint16_t mbx_base;
@@ -101,6 +103,7 @@ static uint8_t ecram_read8(struct platform_intf *intf, uint16_t offset)
 
 	return tmp8;
 }
+#endif
 
 /*
  * google_cr48_ec_name - return EC firmware name string
@@ -157,32 +160,6 @@ int google_cr48_ec_setup(struct platform_intf *intf)
 		rc = 1;
 
 	return rc;
-}
-
-/*
- * google_cr48_ec_mbid - return allocated mainboard ID string
- *
- * @intf:	platform interface
- *
- * Mainboard ID string is determined based upon EC strapping.
- *
- * returns 0 if successful
- * returns <0 if failure
- */
-char *google_cr48_ec_mbid(struct platform_intf *intf)
-{
-	uint8_t tmp8;
-	char *ret = NULL;
-
-	tmp8 = ecram_read8(intf, 0x051e);
-	switch(tmp8 & 0x07) {
-	default:
-		ret = mosys_strdup("Unknown");
-		break;
-	}
-
-	lprintf(LOG_DEBUG, "mbid 0x%02x: %s\n", tmp8 & 0x0f, ret);
-	return ret;
 }
 
 /*

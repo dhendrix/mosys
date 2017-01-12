@@ -102,18 +102,6 @@ static int platform_model_cmd(struct platform_intf *intf,
 	return print_platforminfo("model", intf->cb->sys->model(intf));
 }
 
-static int platform_variant_cmd(struct platform_intf *intf,
-                               struct platform_cmd *cmd,
-                               int argc, char **argv)
-{
-	if (!intf->cb || !intf->cb->sys || !intf->cb->sys->variant) {
-		errno = ENOSYS;
-		return -1;
-	}
-
-	return print_platforminfo("variant", intf->cb->sys->variant(intf));
-}
-
 static int print_platforminfo(const char *key, const char *value)
 {
 	struct kv_pair *kv = kv_pair_new();
@@ -174,12 +162,6 @@ struct platform_cmd platform_cmds[] = {
 		.desc	= "Display Platform Family",
 		.type	= ARG_TYPE_GETTER,
 		.arg	= { .func = platform_family_cmd }
-	},
-	{
-		.name	= "variant",
-		.desc	= "Display Platform Variant",
-		.type	= ARG_TYPE_GETTER,
-		.arg	= { .func = platform_variant_cmd }
 	},
 	{
 		.name	= "reset",

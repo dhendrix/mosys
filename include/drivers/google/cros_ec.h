@@ -122,10 +122,8 @@ extern int cros_pd_chip_info(struct platform_intf *intf,
 		         struct ec_response_get_chip_info *info);
 extern int cros_pd_flash_info(struct platform_intf *intf,
 		         struct ec_response_flash_info *info);
-extern int cros_pd_detect(struct platform_intf *intf);
 
-/* Setup functions return 0 if successful and <0 otherwise) */
-extern int cros_ec_setup_dev(struct platform_intf *intf);
-extern int cros_pd_setup_dev(struct platform_intf *intf);
+extern int cros_ec_setup(struct platform_intf *intf);
+extern int cros_pd_setup(struct platform_intf *intf);
 
 #endif	/* MOSYS_DRIVERS_EC_GOOGLE__ */

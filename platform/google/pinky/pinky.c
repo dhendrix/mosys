@@ -126,7 +126,7 @@ static int pinky_probe(struct platform_intf *intf)
 static int pinky_setup_post(struct platform_intf *intf)
 {
 	if (veyron_id_list[probed_board].has_ec) {
-		if (cros_ec_setup_dev(intf) < 0)
+		if (cros_ec_setup(intf) < 0)
 			return -1;
 		intf->cb->nvram = &cros_ec_nvram_cb;
 	} else {

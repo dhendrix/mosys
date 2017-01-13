@@ -41,6 +41,7 @@
 
 #include "drivers/google/cros_ec.h"
 #include "drivers/google/cros_ec_commands.h"
+#include "drivers/google/cros_ec_dev.h"
 
 #include "lib/math.h"
 
@@ -348,50 +349,24 @@ struct nvram_cb cros_ec_nvram_cb = {
 	.vboot_write	= cros_ec_vboot_write,
 };
 
-int cros_ec_setup_dev(struct platform_intf *intf)
+int cros_ec_setup(struct platform_intf *intf)
 {
-	int ret;
-	static struct cros_ec_dev dev = {
-		.name    = CROS_EC_DEV_NAME,
-	};
-	static struct cros_ec_priv ec_priv_dev = {
-		.devfs = &dev,
-	};
-
 	MOSYS_CHECK(intf->cb && intf->cb->ec);
-	intf->cb->ec->priv = &ec_priv_dev;
 
-	ret = cros_ec_probe_dev(intf, intf->cb->ec);
-	if (ret == 1)
-		lprintf(LOG_DEBUG, "CrOS EC found via kernel driver\n");
-	else if (ret == 0)
-		lprintf(LOG_DEBUG, "CrOS EC not found via kernel driver\n");
-	else
-		lprintf(LOG_ERR, "Error probing CrOS EC via kernel driver\n");
+	lprintf(LOG_DEBUG, "%s: Trying devfs interface...\n", __func__);
+	if (cros_ec_setup_dev(intf) == 1)
+		return 1;
 
-	return ret == 1 ? 0 : -1;
+	return 0;
 }
 
-int cros_pd_setup_dev(struct platform_intf *intf)
+int cros_pd_setup(struct platform_intf *intf)
 {
-	int ret;
-	static struct cros_ec_dev dev = {
-		.name    = CROS_PD_DEV_NAME,
-	};
-	static struct cros_ec_priv pd_priv_dev = {
-		.devfs = &dev,
-	};
-
 	MOSYS_CHECK(intf->cb && intf->cb->pd);
-	intf->cb->pd->priv = &pd_priv_dev;
 
-	ret = cros_ec_probe_dev(intf, intf->cb->pd);
-	if (ret == 1)
-		lprintf(LOG_DEBUG, "CrOS PD found via kernel driver\n");
-	else if (ret == 0)
-		lprintf(LOG_DEBUG, "CrOS PD not found via kernel driver\n");
-	else
-		lprintf(LOG_DEBUG, "Error probing CrOS PD via kernel driver\n");
+	lprintf(LOG_DEBUG, "%s: Trying devfs interface...\n", __func__);
+	if (cros_pd_setup_dev(intf) == 1)
+		return 1;
 
-	return ret == 1 ? 0 : -1;
+	return 0;
 }

@@ -260,16 +260,23 @@ static int cros_ec_close_dev(struct platform_intf *intf, struct ec_cb *ec)
 	return close(priv->devfs->fd);
 }
 
-/* returns 1 if EC detected, 0 if not, <0 to indicate failure */
+/*
+ * cros_ec_probe_dev - Probe for CrOS EC type device using devfs.
+ *
+ * @intf:	The platform interface
+ * @ec:		EC interface, can be for any CrOS EC type (EC, PD, SH, etc)
+ *
+ * returns 1 if EC is detected
+ * returns 0 if EC is not detected
+ * returns <0 to indicate error
+ */
 int cros_ec_probe_dev(struct platform_intf *intf, struct ec_cb *ec)
 {
 	int ret = 0;
-	struct cros_ec_priv *priv;
+	struct cros_ec_priv *priv = ec->priv;
 	char filename[PATH_MAX];
 
-	MOSYS_DCHECK(ec && ec->priv);
-	priv = ec->priv;
-
+	MOSYS_CHECK(priv && priv->devfs && priv->devfs->name);
 	sprintf(filename, "%s/%s", mosys_get_root_prefix(), priv->devfs->name);
 	priv->devfs->fd = open(filename, O_RDWR);
 	if (priv->devfs->fd < 0) {
@@ -284,6 +291,70 @@ int cros_ec_probe_dev(struct platform_intf *intf, struct ec_cb *ec)
 			priv->cmd = cros_ec_command_dev;
 		ret = cros_ec_detect(intf, ec);
 	}
+
+	return ret;
+}
+
+int cros_ec_setup_dev(struct platform_intf *intf)
+{
+	int ret;
+	static struct cros_ec_dev default_ec_dev = {
+		.name = CROS_EC_DEV_NAME,
+	};
+	static struct cros_ec_priv default_ec_priv = {
+		.devfs = &default_ec_dev,
+	};
+
+	MOSYS_CHECK(intf->cb && intf->cb->ec);
+	if (!intf->cb->ec->priv) {
+		/*
+		 * Whoever ported the platform was lazy. Assume they want to
+		 * use the default CrOS EC device.
+		 */
+		intf->cb->ec->priv = &default_ec_priv;
+		lprintf(LOG_DEBUG, "Using default EC devfs interface.\n");
+	}
+
+	ret = cros_ec_probe_dev(intf, intf->cb->ec);
+	if (ret == 1)
+		lprintf(LOG_DEBUG, "CrOS EC found via kernel driver\n");
+	else if (ret == 0)
+		lprintf(LOG_DEBUG, "CrOS EC not found via kernel driver\n");
+	else
+		lprintf(LOG_ERR, "Error probing CrOS EC via kernel driver\n");
+
+	return ret;
+}
+
+int cros_pd_setup_dev(struct platform_intf *intf)
+{
+	int ret;
+	static struct cros_ec_dev default_pd_dev = {
+		.name = CROS_PD_DEV_NAME,
+	};
+	static struct cros_ec_priv default_pd_priv = {
+		.devfs = &default_pd_dev,
+	};
+
+	MOSYS_CHECK(intf->cb && intf->cb->pd);
+	if (!intf->cb->pd->priv) {
+		/*
+		 * Whoever ported the platform was lazy. Assume they want to
+		 * use the default CrOS PD device.
+		 */
+		intf->cb->pd->priv = &default_pd_priv;
+		lprintf(LOG_DEBUG, "Using default PD devfs interface.\n");
+	}
+
+	ret = cros_ec_probe_dev(intf, intf->cb->pd);
+	if (ret == 1)
+		lprintf(LOG_DEBUG, "CrOS PD found via kernel driver\n");
+	else if (ret == 0)
+		lprintf(LOG_DEBUG, "CrOS PD not found via kernel driver\n");
+	else
+		/* FIXME: should be LOG_ERR, but squelched for "eve" platform
+		   (chrome-os-partner:62440) */
+		lprintf(LOG_DEBUG, "Error probing CrOS PD via kernel driver\n");
 
 	return ret;
 }

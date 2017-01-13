@@ -122,7 +122,7 @@ reef_probe_exit:
 /* late setup routine; not critical to core functionality */
 static int reef_setup_post(struct platform_intf *intf)
 {
-	if (cros_ec_setup_dev(intf) < 0)
+	if (cros_ec_setup(intf) < 0)
 		return -1;
 	return 0;
 }

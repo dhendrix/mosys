@@ -99,11 +99,11 @@ static int oak_probe(struct platform_intf *intf)
 
 static int oak_setup_post(struct platform_intf *intf)
 {
-	if (cros_ec_setup_dev(intf) < 0)
+	if (cros_ec_setup(intf) < 0)
 		return -1;
 
 	if (oak_id_list[probed_board].has_pd) {
-		if (cros_pd_setup_dev(intf) < 0)
+		if (cros_pd_setup(intf) < 0)
 			return -1;
 	} else {
 		intf->cb->pd = NULL;

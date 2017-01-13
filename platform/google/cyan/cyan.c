@@ -111,7 +111,7 @@ cyan_probe_exit:
 /* late setup routine; not critical to core functionality */
 static int cyan_setup_post(struct platform_intf *intf)
 {
-	return cros_ec_setup_dev(intf);
+	return cros_ec_setup(intf);
 }
 
 static int cyan_destroy(struct platform_intf *intf)

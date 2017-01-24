@@ -65,7 +65,7 @@ static int cros_ec_command_i2c(struct platform_intf *intf,
 	int req_len = 0, resp_len = 0;
 	int i, len, csum;
 	struct cros_ec_priv *priv = ec->priv;
-	struct i2c_addr *addr = &(priv->addr.i2c);
+	struct i2c_addr *addr = priv->i2c;
 
 	if (insize > EC_HOST_PARAM_SIZE || outsize > EC_HOST_PARAM_SIZE) {
 		lprintf(LOG_DEBUG, "%s: data size too big\n", __func__);
@@ -285,8 +285,8 @@ int cros_ec_probe_i2c(struct platform_intf *intf)
 	bus = cros_ec_probe_i2c_sysfs(intf);
 	if (bus >= 0) {
 		lprintf(LOG_DEBUG, "%s: Overriding bus %d with %d\n",
-			__func__, priv->addr.i2c.bus, bus);
-		priv->addr.i2c.bus = bus;
+			__func__, priv->i2c->bus, bus);
+		priv->i2c->bus = bus;
 	}
 
 	priv->cmd = cros_ec_command_i2c;

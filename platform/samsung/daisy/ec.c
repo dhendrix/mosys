@@ -37,10 +37,18 @@
 #define DAISY_EC_BUS		4
 #define	DAISY_EC_ADDRESS	0x1e
 
-struct cros_ec_priv daisy_ec_priv = {
-	.addr.i2c.bus	= DAISY_EC_BUS,		/* may be overridden */
-	.addr.i2c.addr	= DAISY_EC_ADDRESS,
-	.device_name	= CROS_EC_DEV_NAME,
+static struct cros_ec_dev dev = {
+	.name	= CROS_EC_DEV_NAME,
+};
+
+static struct i2c_addr i2c_addr = {
+	.bus	= DAISY_EC_BUS,		/* may be overridden */
+	.addr	= DAISY_EC_ADDRESS,
+};
+
+static struct cros_ec_priv daisy_ec_priv = {
+	.devfs	= &dev,
+	.i2c	= &i2c_addr,
 };
 
 int daisy_ec_setup(struct platform_intf *intf)

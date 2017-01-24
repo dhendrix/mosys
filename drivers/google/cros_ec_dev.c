@@ -75,7 +75,7 @@ static int command_wait_for_response(struct cros_ec_priv *priv)
 	cmd.insize = sizeof(status);
 
 	for (i = 1; i <= CROS_EC_COMMAND_RETRIES; i++) {
-		ret = ioctl(priv->addr.fd, CROS_EC_DEV_IOCXCMD, &cmd,
+		ret = ioctl(priv->devfs->fd, CROS_EC_DEV_IOCXCMD, &cmd,
 			    sizeof(cmd));
 		if (ret) {
 			lprintf(LOG_ERR, "%s: CrOS EC command failed: %d\n",
@@ -129,7 +129,7 @@ static int cros_ec_command_dev(struct platform_intf *intf, struct ec_cb *ec,
 	cmd.outsize = outsize;
 	cmd.indata = (uint8_t *)indata;
 	cmd.insize = insize;
-	ret = ioctl(priv->addr.fd, CROS_EC_DEV_IOCXCMD, &cmd, sizeof(cmd));
+	ret = ioctl(priv->devfs->fd, CROS_EC_DEV_IOCXCMD, &cmd, sizeof(cmd));
 	if (ret < 0 && errno == -EAGAIN)
 		ret = command_wait_for_response(priv);
 
@@ -164,7 +164,7 @@ static int command_wait_for_response_v2(struct cros_ec_priv *priv)
 	s_cmd->insize = sizeof(*status);
 
 	for (i = 1; i <= CROS_EC_COMMAND_RETRIES; i++) {
-		ret = ioctl(priv->addr.fd, CROS_EC_DEV_IOCXCMD_V2, s_cmd_buf,
+		ret = ioctl(priv->devfs->fd, CROS_EC_DEV_IOCXCMD_V2, s_cmd_buf,
 			    sizeof(s_cmd_buf));
 		if (ret) {
 			lprintf(LOG_ERR, "%s: CrOS EC command failed: %d\n",
@@ -205,7 +205,7 @@ static int cros_ec_command_dev_v2(struct platform_intf *intf, struct ec_cb *ec,
 	if (outdata)
 		memcpy(s_cmd->data, outdata, outsize);
 
-	ret = ioctl(priv->addr.fd, CROS_EC_DEV_IOCXCMD_V2, s_cmd, size);
+	ret = ioctl(priv->devfs->fd, CROS_EC_DEV_IOCXCMD_V2, s_cmd, size);
 	if (ret < 0 && errno == -EAGAIN)
 		ret = command_wait_for_response_v2(priv);
 	if (ret < 0) {
@@ -257,7 +257,7 @@ static int cros_ec_close_dev(struct platform_intf *intf, struct ec_cb *ec)
 {
 	struct cros_ec_priv *priv;
 	priv = ec->priv;
-	return close(priv->addr.fd);
+	return close(priv->devfs->fd);
 }
 
 /* returns 1 if EC detected, 0 if not, <0 to indicate failure */
@@ -270,15 +270,15 @@ int cros_ec_probe_dev(struct platform_intf *intf, struct ec_cb *ec)
 	MOSYS_DCHECK(ec && ec->priv);
 	priv = ec->priv;
 
-	sprintf(filename, "%s/%s", mosys_get_root_prefix(), priv->device_name);
-	priv->addr.fd = open(filename, O_RDWR);
-	if (priv->addr.fd < 0) {
+	sprintf(filename, "%s/%s", mosys_get_root_prefix(), priv->devfs->name);
+	priv->devfs->fd = open(filename, O_RDWR);
+	if (priv->devfs->fd < 0) {
 		lprintf(LOG_DEBUG, "%s: unable to open \"%s\"\n",
 				__func__, filename);
 		ret = -1;
 	} else {
 		ec->destroy = cros_ec_close_dev;
-		if (ec_dev_is_v2(priv->addr.fd))
+		if (ec_dev_is_v2(priv->devfs->fd))
 			priv->cmd = cros_ec_command_dev_v2;
 		else
 			priv->cmd = cros_ec_command_dev;

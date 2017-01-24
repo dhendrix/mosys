@@ -42,6 +42,10 @@ enum io_access_width {
 	IO_ACCESS_32	= 4
 };
 
+struct io_port {
+	unsigned int port;
+};
+
 struct platform_intf;
 struct io_intf {
 	struct file_backed_range *ranges;

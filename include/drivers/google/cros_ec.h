@@ -35,11 +35,25 @@
 #define MOSYS_DRIVERS_EC_GOOGLE_H__
 
 #include "intf/i2c.h"
+#include "intf/io.h"
+
+#define CROS_EC_DEV_NAME		"/dev/cros_ec"
+#define CROS_PD_DEV_NAME		"/dev/cros_pd"
+#define CROS_SH_DEV_NAME		"/dev/cros_sh"
 
 struct eeprom;
 struct platform_intf;
 struct ec_response_get_chip_info;
 struct ec_response_flash_info;
+
+struct cros_ec_dev {
+	/*
+	 * For now name is assumed (CROS_*_DEV_NAME, depending on the
+	 * driver) but platforms can specify other interfaces to use.
+	 */
+	char *name;
+	int fd;
+};
 
 struct cros_ec_priv {
 	/* Wrapped with EC lock */
@@ -53,13 +67,19 @@ struct cros_ec_priv {
 		   const void *indata, int insize,
 		   const void *outdata, int outsize);
 
-	union {
-		struct i2c_addr i2c;
-		uint16_t io;
-		int fd;
-	} addr;
+	/*
+	 * We usually only have one raw interface on any given platform. However
+	 * we want a single mosys binary to be able to support many platforms,
+	 * so this allows the drivers to check what interfaces are available and
+	 * try them in a generic manner.
+	 *
+	 * Unused interfaces must be set/initialized to NULL.
+	 */
+	struct cros_ec_dev *devfs;
+	struct i2c_addr *i2c;
+	struct io_port *io;
+
 	int device_index;
-	char* device_name;
 };
 
 extern struct ec_cb cros_ec_cb;
@@ -90,7 +110,6 @@ extern int cros_ec_vbnvcontext_write(struct platform_intf *intf,
 		struct ec_cb *ec, const uint8_t *block);
 extern int cros_ec_get_firmware_rom_size(struct platform_intf *intf);
 
-
 extern int cros_ec_probe_dev(struct platform_intf *intf, struct ec_cb *ec);
 extern int cros_ec_probe_i2c(struct platform_intf *intf);
 extern int cros_ec_probe_lpc(struct platform_intf *intf);
@@ -108,9 +127,5 @@ extern int cros_pd_detect(struct platform_intf *intf);
 /* Setup functions return 0 if successful and <0 otherwise) */
 extern int cros_ec_setup_dev(struct platform_intf *intf);
 extern int cros_pd_setup_dev(struct platform_intf *intf);
-
-#define CROS_EC_DEV_NAME		"/dev/cros_ec"
-#define CROS_PD_DEV_NAME		"/dev/cros_pd"
-#define CROS_SH_DEV_NAME		"/dev/cros_sh"
 
 #endif	/* MOSYS_DRIVERS_EC_GOOGLE__ */

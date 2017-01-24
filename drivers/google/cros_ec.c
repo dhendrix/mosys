@@ -351,8 +351,11 @@ struct nvram_cb cros_ec_nvram_cb = {
 int cros_ec_setup_dev(struct platform_intf *intf)
 {
 	int ret;
+	static struct cros_ec_dev dev = {
+		.name    = CROS_EC_DEV_NAME,
+	};
 	static struct cros_ec_priv ec_priv_dev = {
-		.device_name    = CROS_EC_DEV_NAME,
+		.devfs = &dev,
 	};
 
 	MOSYS_CHECK(intf->cb && intf->cb->ec);
@@ -372,8 +375,11 @@ int cros_ec_setup_dev(struct platform_intf *intf)
 int cros_pd_setup_dev(struct platform_intf *intf)
 {
 	int ret;
+	static struct cros_ec_dev dev = {
+		.name    = CROS_PD_DEV_NAME,
+	};
 	static struct cros_ec_priv pd_priv_dev = {
-		.device_name = CROS_PD_DEV_NAME,
+		.devfs = &dev,
 	};
 
 	MOSYS_CHECK(intf->cb && intf->cb->pd);

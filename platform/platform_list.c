@@ -34,7 +34,6 @@
 #include "mosys/platform.h"
 
 /* experimental */
-extern struct platform_intf platform_cyan;
 extern struct platform_intf platform_cyclone;
 extern struct platform_intf platform_kiev;
 extern struct platform_intf platform_storm;
@@ -46,6 +45,7 @@ extern struct platform_intf platform_alex;
 extern struct platform_intf platform_auron;
 extern struct platform_intf platform_beltino;
 extern struct platform_intf platform_butterfly;
+extern struct platform_intf platform_cyan;
 extern struct platform_intf platform_daisy;
 extern struct platform_intf platform_gru;
 extern struct platform_intf platform_link;
@@ -80,6 +80,9 @@ struct platform_intf *platform_intf_list[] = {
 #endif
 #ifdef CONFIG_PLATFORM_BUTTERFLY
 	&platform_butterfly,
+#endif
+#ifdef CONFIG_PLATFORM_CYAN
+	&platform_cyan,
 #endif
 #ifdef CONFIG_PLATFORM_DAISY
 	&platform_daisy,
@@ -146,9 +149,6 @@ struct platform_intf *platform_intf_list[] = {
 #endif
 
 /* experimental platforms */
-#ifdef CONFIG_EXPERIMENTAL_CYAN
-	&platform_cyan,
-#endif
 #ifdef CONFIG_PLATFORM_CYCLONE
 	&platform_cyclone,
 #endif

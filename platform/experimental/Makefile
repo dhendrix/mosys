@@ -1,4 +1,3 @@
-obj-$(CONFIG_EXPERIMENTAL_CYAN)		+= cyan/
 obj-$(CONFIG_EXPERIMENTAL_KIEV)		+= kiev/
 obj-$(CONFIG_EXPERIMENTAL_GLADOS)	+= glados/
 obj-$(CONFIG_EXPERIMENTAL_STRAGO)	+= strago/

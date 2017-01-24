@@ -17,6 +17,13 @@ config PLATFORM_BELTINO
 	bool "beltino"
 	default n
 
+config PLATFORM_CYAN
+	depends on PLATFORM_ARCH_X86
+	select CROS_EC_LPC
+	select SOC_INTEL_BRASWELL
+	bool "cyan"
+	default n
+
 config PLATFORM_CYCLONE
 	depends on PLATFORM_ARCH_ARMEL
 	bool "Cyclone"

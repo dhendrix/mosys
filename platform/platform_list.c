@@ -38,7 +38,6 @@ extern struct platform_intf platform_cyclone;
 extern struct platform_intf platform_kiev;
 extern struct platform_intf platform_storm;
 extern struct platform_intf platform_glados;
-extern struct platform_intf platform_strago;
 
 /* production platforms */
 extern struct platform_intf platform_alex;
@@ -64,6 +63,7 @@ extern struct platform_intf platform_skate;
 extern struct platform_intf platform_slippy;
 extern struct platform_intf platform_spring;
 extern struct platform_intf platform_stout;
+extern struct platform_intf platform_strago;
 extern struct platform_intf platform_stumpy;
 extern struct platform_intf platform_z600;
 extern struct platform_intf platform_zgb;
@@ -138,6 +138,9 @@ struct platform_intf *platform_intf_list[] = {
 #ifdef CONFIG_PLATFORM_STOUT
 	&platform_stout,
 #endif
+#ifdef CONFIG_PLATFORM_STRAGO
+	&platform_strago,
+#endif
 #ifdef CONFIG_PLATFORM_STUMPY
 	&platform_stumpy,
 #endif
@@ -157,9 +160,6 @@ struct platform_intf *platform_intf_list[] = {
 #endif
 #ifdef CONFIG_EXPERIMENTAL_GLADOS
 	&platform_glados,
-#endif
-#ifdef CONFIG_EXPERIMENTAL_STRAGO
-	&platform_strago,
 #endif
 #ifdef CONFIG_PLATFORM_STORM
 	&platform_storm,

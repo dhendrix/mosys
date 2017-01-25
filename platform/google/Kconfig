@@ -112,4 +112,11 @@ config PLATFORM_STORM
 	bool "Storm"
 	default n
 
+config PLATFORM_STRAGO
+	depends on PLATFORM_ARCH_X86
+	select CROS_EC_LPC
+	select SOC_INTEL_BRASWELL
+	bool "strago"
+	default n
+
 endmenu

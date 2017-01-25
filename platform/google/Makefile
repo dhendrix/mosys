@@ -15,3 +15,4 @@ obj-$(CONFIG_PLATFORM_SKATE)	+= skate/
 obj-$(CONFIG_PLATFORM_SLIPPY)	+= slippy/
 obj-$(CONFIG_PLATFORM_SMAUG)	+= smaug/
 obj-$(CONFIG_PLATFORM_STORM)	+= storm/
+obj-$(CONFIG_PLATFORM_STRAGO)	+= strago/

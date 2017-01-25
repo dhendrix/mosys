@@ -8,13 +8,6 @@ config PLATFORM_EXPERIMENTAL
 	bool "Experimental platform support"
 	default n
 
-config EXPERIMENTAL_GLADOS
-	depends on PLATFORM_ARCH_X86 && PLATFORM_EXPERIMENTAL
-	select CROS_EC_LPC
-	#select CHIPSET_INTEL_LYNXPOINT_LP
-	bool "glados"
-	default n
-
 config EXPERIMENTAL_KIEV
 	depends on PLATFORM_ARCH_X86 && PLATFORM_EXPERIMENTAL
 	select CHIPSET_INTEL_SERIES6

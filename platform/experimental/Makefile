@@ -1,2 +1,1 @@
 obj-$(CONFIG_EXPERIMENTAL_KIEV)		+= kiev/
-obj-$(CONFIG_EXPERIMENTAL_GLADOS)	+= glados/

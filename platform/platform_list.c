@@ -37,7 +37,6 @@
 extern struct platform_intf platform_cyclone;
 extern struct platform_intf platform_kiev;
 extern struct platform_intf platform_storm;
-extern struct platform_intf platform_glados;
 
 /* production platforms */
 extern struct platform_intf platform_alex;
@@ -46,6 +45,7 @@ extern struct platform_intf platform_beltino;
 extern struct platform_intf platform_butterfly;
 extern struct platform_intf platform_cyan;
 extern struct platform_intf platform_daisy;
+extern struct platform_intf platform_glados;
 extern struct platform_intf platform_gru;
 extern struct platform_intf platform_link;
 extern struct platform_intf platform_lumpy;
@@ -86,6 +86,9 @@ struct platform_intf *platform_intf_list[] = {
 #endif
 #ifdef CONFIG_PLATFORM_DAISY
 	&platform_daisy,
+#endif
+#ifdef CONFIG_PLATFORM_GLADOS
+	&platform_glados,
 #endif
 #ifdef CONFIG_PLATFORM_GRU
 	&platform_gru,
@@ -157,9 +160,6 @@ struct platform_intf *platform_intf_list[] = {
 #endif
 #ifdef CONFIG_EXPERIMENTAL_KIEV
 	&platform_kiev,
-#endif
-#ifdef CONFIG_EXPERIMENTAL_GLADOS
-	&platform_glados,
 #endif
 #ifdef CONFIG_PLATFORM_STORM
 	&platform_storm,

@@ -155,7 +155,7 @@ static int glados_setup_post(struct platform_intf *intf)
 		return -1;
 
 	if (cros_pd_setup_dev(intf) < 0)
-		return -1;
+		intf->cb->pd = NULL;
 
 	return 0;
 }

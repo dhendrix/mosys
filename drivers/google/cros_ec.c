@@ -385,7 +385,7 @@ int cros_pd_setup_dev(struct platform_intf *intf)
 	else if (ret == 0)
 		lprintf(LOG_DEBUG, "CrOS PD not found via kernel driver\n");
 	else
-		lprintf(LOG_ERR, "Error probing CrOS PD via kernel driver\n");
+		lprintf(LOG_DEBUG, "Error probing CrOS PD via kernel driver\n");
 
 	return ret == 1 ? 0 : -1;
 }

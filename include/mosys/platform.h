@@ -318,6 +318,9 @@ struct sys_cb {
 	 * which can be used to adjust how various packages work. */
 	char *(*model)(struct platform_intf *intf);
 
+        /* Query an identifier for chassis. */
+        char *(*chassis)(struct platform_intf *intf);
+
 	/* firmware info */
 	char *(*firmware_vendor)(struct platform_intf *intf);
 	char *(*firmware_version)(struct platform_intf *intf);

@@ -37,6 +37,7 @@
 
 #include "mosys/platform.h"
 
+#include "lib/probe.h"
 #include "mosys/log.h"
 #include "mosys/kv_pair.h"
 
@@ -102,6 +103,27 @@ static int platform_model_cmd(struct platform_intf *intf,
 	return print_platforminfo("model", intf->cb->sys->model(intf));
 }
 
+static int platform_chassis_cmd(struct platform_intf *intf,
+				struct platform_cmd *cmd,
+				int argc, char **argv)
+{
+	const char *chassis = NULL;
+
+	if (!intf->cb || !intf->cb->sys) {
+		errno = ENOSYS;
+		return -1;
+	}
+
+	if (intf->cb->sys->chassis) {
+		chassis = intf->cb->sys->chassis(intf);
+	} else {
+		/* Fallback to customization_id (go/cros-chassis-id). */
+		chassis = extract_customization_id_series_part();
+	}
+
+	return chassis ? print_platforminfo("chassis", chassis) : -1;
+}
+
 static int print_platforminfo(const char *key, const char *value)
 {
 	struct kv_pair *kv = kv_pair_new();
@@ -150,6 +172,12 @@ struct platform_cmd platform_cmds[] = {
 		.desc	= "Display Model",
 		.type	= ARG_TYPE_GETTER,
 		.arg	= { .func = platform_model_cmd }
+	},
+	{
+		.name	= "chassis",
+		.desc	= "Display Chassis ID",
+		.type	= ARG_TYPE_GETTER,
+		.arg	= { .func = platform_chassis_cmd }
 	},
 	{
 		.name	= "version",

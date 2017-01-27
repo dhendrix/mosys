@@ -115,6 +115,14 @@ extern const char *extract_cpuinfo(const char *key);
 extern const char *extract_block_device_model_name(const char *device);
 
 /*
+ * extract_customization_id_series_part - Gets SERIES from VPD customization_id
+ *
+ * returns allocated string containing value if found
+ * returns NULL to indicate value not found or error
+ */
+extern const char *extract_customization_id_series_part(void);
+
+/*
  * probe_cmdline - probe /proc/cmdline for key
  *
  * @key:	key to search for

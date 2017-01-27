@@ -294,6 +294,37 @@ const char *extract_block_device_model_name(const char *device)
 	return (const char *)model_name;
 }
 
+/*
+ * extract_customization_id_series_part - Gets SERIES from VPD customization_id.
+ *
+ * Returns pointer to allocated series name string on success, NULL on failure.
+ */
+const char *extract_customization_id_series_part(void)
+{
+	char *series = NULL, *dash;
+	char buffer[256];
+	FILE *fp = popen("vpd_get_value customization_id", "r");
+
+	if (!fp)
+		return NULL;
+
+	if (!fgets(buffer, sizeof(buffer), fp))
+		buffer[0] = '\0';
+
+	dash = strchr(buffer, '-');
+
+	if (dash) {
+		/* Output from fgets may contain newline that must be removed */
+		char *newline = strchr(dash, '\n');
+		if (newline)
+			*newline = '\0';
+		series = mosys_strdup(dash + 1);
+	}
+
+	fclose(fp);
+	return series;
+}
+
 #define FDT_MODEL_NODE	"/proc/device-tree/model"
 char *fdt_model(void)
 {

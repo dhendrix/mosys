@@ -2582,4 +2582,7 @@ struct ec_response_pd_chip_info {
 #define EC_LPC_ADDR_OLD_PARAM   EC_HOST_CMD_REGION1
 #define EC_OLD_PARAM_SIZE       EC_HOST_CMD_REGION_SIZE
 
+/* ec_command return value for non-success result from EC */
+#define EECRESULT 1000
+
 #endif  /* __CROS_EC_COMMANDS_H */

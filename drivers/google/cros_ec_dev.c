@@ -138,6 +138,16 @@ static int cros_ec_command_dev(struct platform_intf *intf, struct ec_cb *ec,
 		return -EC_RES_ERROR;
 	}
 
+	/* TODO: Remove this. Issue 695075. */
+	if (command != EC_CMD_PD_CHIP_INFO)
+		return 0;
+
+	if (cmd.result) {
+		lprintf(LOG_ERR, "%s: EC command failed: 0x%x\n",
+			__func__, cmd.result);
+		return -EECRESULT - cmd.result;
+	}
+
 	return 0; /* Should we return ret here? */
 }
 
@@ -192,6 +202,7 @@ static int cros_ec_command_dev_v2(struct platform_intf *intf, struct ec_cb *ec,
 	struct cros_ec_command_v2 *s_cmd;
 	int size = sizeof(struct cros_ec_command_v2) + __max(outsize, insize);
 	int ret;
+	uint32_t result;
 
 	MOSYS_DCHECK(ec && ec->priv);
 	priv = ec->priv;
@@ -222,7 +233,19 @@ static int cros_ec_command_dev_v2(struct platform_intf *intf, struct ec_cb *ec,
 	 */
 	if (indata)
 		memcpy((void *)indata, s_cmd->data, __min(ret, insize));
+	result = s_cmd->result;
 	free(s_cmd);
+
+	/* TODO: Remove this. Issue 695075. */
+	if (command != EC_CMD_PD_CHIP_INFO)
+		return 0;
+
+	if (result) {
+		lprintf(LOG_ERR, "%s: EC command failed: 0x%x\n",
+			__func__, result);
+		return -EECRESULT - result;
+	}
+
 	return 0;
 }
 

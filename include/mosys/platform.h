@@ -412,6 +412,8 @@ struct ec_cb {
 	const char *(*vendor)(struct platform_intf *intf, struct ec_cb *ec);
 	const char *(*name)(struct platform_intf *intf, struct ec_cb *ec);
 	const char *(*fw_version)(struct platform_intf *intf, struct ec_cb *ec);
+	int (*pd_chip_info)(struct platform_intf *intf, struct ec_cb *ec,
+			int port);
 
 	int (*setup)(struct platform_intf *intf, struct ec_cb *ec);
 	int (*destroy)(struct platform_intf *intf, struct ec_cb *ec);

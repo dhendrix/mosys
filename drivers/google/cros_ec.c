@@ -46,6 +46,8 @@
 #include "lib/math.h"
 
 #define BOARD_VERSION_LEN	8	/* a 16-bit value or "Unknown" */
+#define ANX74XX_VENDOR_ID	0xAAAA
+#define PS8751_VENDOR_ID	0x1DA0
 
 int cros_ec_hello(struct platform_intf *intf, struct ec_cb *ec)
 {
@@ -173,6 +175,44 @@ int cros_ec_chip_info(struct platform_intf *intf, struct ec_cb *ec,
 	lprintf(LOG_DEBUG, "CrOS EC vendor: %s\n", info->vendor);
 	lprintf(LOG_DEBUG, "CrOS EC name: %s\n", info->name);
 	lprintf(LOG_DEBUG, "CrOS EC revision: %s\n", info->revision);
+
+	return rc;
+}
+
+int cros_ec_pd_chip_info(struct platform_intf *intf, struct ec_cb *ec, int port)
+{
+	struct cros_ec_priv *priv;
+	struct ec_params_pd_chip_info p;
+	struct ec_response_pd_chip_info info;
+	struct kv_pair *kv;
+	int rc;
+
+	MOSYS_CHECK(ec && ec->priv);
+	priv = ec->priv;
+
+	p.port = port;
+	p.renew = 0;
+
+	rc = priv->cmd(intf, ec, EC_CMD_PD_CHIP_INFO, 0,
+		       &info, sizeof(info), &p, sizeof(p));
+	if (rc)
+		return rc;
+
+	kv = kv_pair_new();
+	kv_pair_fmt(kv, "vendor_id", "0x%x", info.vendor_id);
+	kv_pair_fmt(kv, "product_id", "0x%x", info.product_id);
+	kv_pair_fmt(kv, "device_id", "0x%x", info.device_id);
+	switch (info.vendor_id) {
+	case ANX74XX_VENDOR_ID:
+	case PS8751_VENDOR_ID:
+		kv_pair_fmt(kv, "fw_version", "0x%" PRIx64,
+			    info.fw_version_number);
+		break;
+	default:
+		kv_pair_fmt(kv, "fw_version", "UNSUPPORTED");
+	}
+	kv_pair_print(kv);
+	kv_pair_free(kv);
 
 	return rc;
 }

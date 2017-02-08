@@ -37,7 +37,7 @@
 #include "mosys/platform.h"
 
 static int pd_info(struct platform_intf *intf,
-                   struct platform_cmd *cmd, int argc, char **argv)
+		   struct platform_cmd *cmd, int argc, char **argv)
 {
 	struct kv_pair *kv;
 	int rc;
@@ -63,12 +63,37 @@ static int pd_info(struct platform_intf *intf,
 	return rc;
 }
 
+static int pd_chip_info(struct platform_intf *intf,
+			struct platform_cmd *cmd, int argc, char **argv)
+{
+	int port;
+
+	if (!intf->cb->ec || !intf->cb->ec->pd_chip_info)
+		return -1;
+
+	if (argc < 1) {
+		platform_cmd_usage(cmd);
+		errno = EINVAL;
+		return -1;
+	}
+
+	port = strtoul(argv[0], NULL, 0);
+	return intf->cb->ec->pd_chip_info(intf, intf->cb->ec, port);
+}
+
 struct platform_cmd pd_cmds[] = {
 	{
 		.name	= "info",
 		.desc	= "Print basic PD information",
 		.type	= ARG_TYPE_GETTER,
-		.arg	= { .func = pd_info}
+		.arg	= { .func = pd_info }
+	},
+	{
+		.name	= "chip",
+		.desc	= "Print basic PD information",
+		.usage = "<port>",
+		.type	= ARG_TYPE_GETTER,
+		.arg	= { .func = pd_chip_info }
 	},
 	/* TODO: add a sub-menu for PD commands */
 	{ NULL }

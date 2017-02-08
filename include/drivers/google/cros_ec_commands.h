@@ -2527,6 +2527,23 @@ struct ec_params_usb_pd_control {
 	uint8_t mux;
 } __packed;
 
+#define EC_CMD_PD_CHIP_INFO	0x011B
+
+struct ec_params_pd_chip_info {
+	uint8_t port;	/* USB-C port number */
+	uint8_t renew;	/* Force renewal */
+} __packed;
+
+struct ec_response_pd_chip_info {
+	uint16_t vendor_id;
+	uint16_t product_id;
+	uint16_t device_id;
+	union {
+		uint8_t fw_version_string[8];
+		uint64_t fw_version_number;
+	};
+} __packed;
+
 /*****************************************************************************/
 /*
  * Passthru commands

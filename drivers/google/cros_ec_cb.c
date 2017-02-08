@@ -88,6 +88,7 @@ struct ec_cb cros_ec_cb = {
 	.vendor		= cros_ec_vendor,
 	.name		= cros_ec_name,
 	.fw_version	= cros_ec_fw_version,
+	.pd_chip_info	= cros_ec_pd_chip_info,
 };
 
 struct ec_cb cros_pd_cb = {

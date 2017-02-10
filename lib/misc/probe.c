@@ -38,6 +38,7 @@
 #include <unistd.h>
 
 #include "mosys/alloc.h"
+#include "mosys/big_lock.h"
 #include "mosys/callbacks.h"
 #include "mosys/globals.h"
 #include "mosys/log.h"
@@ -294,6 +295,27 @@ const char *extract_block_device_model_name(const char *device)
 	return (const char *)model_name;
 }
 
+static int _release_lock(void)
+{
+#if defined(CONFIG_USE_IPC_LOCK)
+	return mosys_release_big_lock() >= 0;
+#endif
+	return 0;
+}
+
+static int _acquire_lock()
+{
+#if defined(CONFIG_USE_IPC_LOCK)
+	/* Timeout copied from lib/flashrom/flashrom.c */
+	if (mosys_acquire_big_lock(50000) < 0) {
+		lprintf(LOG_DEBUG, "%s: could not re-acquire lock\n",
+			__func__);
+		return -1;
+	}
+#endif
+	return 0;
+}
+
 /*
  * extract_customization_id_series_part - Gets SERIES from VPD customization_id.
  *
@@ -303,10 +325,17 @@ const char *extract_customization_id_series_part(void)
 {
 	char *series = NULL, *dash;
 	char buffer[256];
-	FILE *fp = popen("vpd_get_value customization_id", "r");
+	FILE *fp = NULL;
+	int relock = 0;
 
-	if (!fp)
+	relock = _release_lock();
+	fp = popen("vpd_get_value customization_id", "r");
+
+	if (!fp) {
+		if (relock)
+			_acquire_lock();
 		return NULL;
+	}
 
 	if (!fgets(buffer, sizeof(buffer), fp))
 		buffer[0] = '\0';
@@ -322,6 +351,8 @@ const char *extract_customization_id_series_part(void)
 	}
 
 	fclose(fp);
+	if (relock)
+		_acquire_lock();
 	return series;
 }
 

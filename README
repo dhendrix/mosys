@@ -1,4 +1,4 @@
-mosys - The multifunction open system tool
+mosys - The more open system tool
 
 Introduction
 ------------
@@ -16,6 +16,9 @@ Due to the system-specific nature of this program, it is unlikely to work with
 most platforms. A generic subset of functionality will be available, though
 its usefulness may be extremely limited.
 
+Core components of mosys came from an internal project within Google (gsys)
+and were opened as part of ChromiumOS, hence "more open."
+
 Configuration & Building
 ------------------------
 Mosys uses the Linux kernel configuration and build system. "make help" lists
@@ -27,17 +30,15 @@ menuconfig") followed by a generic target such as "make" or "make all".
 
 Usage
 -----
-Mosys uses a natural language syntax to navigate thru a command hierarchy for
-a given platform. Each supported platform will have a specific set of commands
-available.
+Mosys commands are organized in a a hierarchy. Each supported platform will have
+a specific set of commands made available. Typically, top-level commands will
+reflect classes of hardware components such as "cpu" or "sensor", available
+busses such as "pci" or "i2c", or a type of information such as "smbios" or
+"vpd" that is present on the host platform.
 
-Typically, top-level commands will reflect classes of hardware components
-such as "cpu" or "sensor", available busses such as "pci" or "i2c", or a
-type of information such as "smbios" or "vpd".
-
-Mosys returns EXIT_SUCCESS upon successful completion of a command, or
-EXIT_FAILURE if a command is not supported on a given platform. These values
-are defined in the system's stdlib.h. In case of failure, mosys will also print
-a message to stderr to let the user know.
+Mosys returns EXIT_SUCCESS upon successful completion of a command. If a command
+is not implemented for the host platform then it will return ENOSYS. Other
+return values correspond to errno if possible to make determining what went
+wrong easier, or a generic error code (EXIT_FAILURE) if unknown.
 
 Use "mosys -t" to display the command tree for the host platform.

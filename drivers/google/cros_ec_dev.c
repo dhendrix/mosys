@@ -374,10 +374,11 @@ int cros_pd_setup_dev(struct platform_intf *intf)
 		lprintf(LOG_DEBUG, "CrOS PD found via kernel driver\n");
 	else if (ret == 0)
 		lprintf(LOG_DEBUG, "CrOS PD not found via kernel driver\n");
-	else
-		/* FIXME: should be LOG_ERR, but squelched for "eve" platform
-		   (chrome-os-partner:62440) */
+	else {
+		/* Allow PD probe to fail if not present on a board */
 		lprintf(LOG_DEBUG, "Error probing CrOS PD via kernel driver\n");
+		intf->cb->pd = NULL;
+	}
 
 	return ret;
 }

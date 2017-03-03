@@ -57,6 +57,7 @@ struct oak_probe_id {
 	{ "Elm", "google,elm", 0 },
 	{ "Hana", "google,hana", 0 },
 	{ "Oak", "google,oak", 1 },
+	{ "Rowan", "google,rowan", 0 },
 };
 
 #define OAK_CMD_PD_NUM	0

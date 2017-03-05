@@ -245,6 +245,9 @@ struct elog_event_mem_cache_update {
 	uint8_t status;
 } __attribute__ ((packed));
 
+/* CPU Thermal Trip */
+#define ELOG_TYPE_THERM_TRIP             0xab
+
 /* Recovery reason codes for EVENT_TYPE_CROS_RECOVERY_MODE */
 /* Recovery not requested. */
 #define VBNV_RECOVERY_NOT_REQUESTED   0x00

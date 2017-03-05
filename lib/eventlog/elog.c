@@ -115,6 +115,7 @@ int elog_print_type(struct platform_intf *intf, struct smbios_log_entry *entry,
 		{ ELOG_TYPE_WAKE, "Wake" },
 		{ ELOG_TYPE_FW_WAKE, "FW Wake" },
 		{ ELOG_TYPE_MEM_CACHE_UPDATE, "Memory Cache Update" },
+		{ ELOG_TYPE_THERM_TRIP, "CPU Thermal Trip" },
 		{ 0x0, NULL },
 	};
 

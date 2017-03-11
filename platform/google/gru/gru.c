@@ -47,8 +47,8 @@ enum gru_boards {
 	UNKNOWN = -1,
 	BOB,
 	GRU,
-	KEVIN
-
+	KEVIN,
+	SCARLET
 };
 
 static enum gru_boards probed_board = UNKNOWN;
@@ -60,7 +60,8 @@ struct gru_probe_id {
 } gru_id_list[] = {
 	[BOB]		= { "Bob", "google,bob-rev", 1 },
 	[GRU]		= { "Gru", "google,gru-rev", 1 },
-	[KEVIN]	    = { "Kevin", "google,kevin-rev", 1 },
+	[KEVIN]		= { "Kevin", "google,kevin-rev", 1 },
+	[SCARLET]	= { "Scarlet", "google,scarlet-rev", 1 },
 };
 
 #define GRU_CMD_EC_NUM	0

@@ -2,6 +2,7 @@ obj-y		+= battery.o
 obj-y		+= ec.o
 obj-y		+= eeprom.o
 obj-y		+= eventlog.o
+obj-y		+= fp.o
 obj-y		+= gpio.o
 obj-y		+= hid.o
 obj-y		+= i2c.o

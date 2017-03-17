@@ -107,6 +107,7 @@ static const struct probe_ids probe_id_list[] = {
 struct platform_cmd *glados_sub[] = {
 	&cmd_ec,
 	&cmd_eeprom,
+	&cmd_fp,
 	&cmd_memory,
 	&cmd_nvram,
 	&cmd_pd,
@@ -161,6 +162,9 @@ static int glados_setup_post(struct platform_intf *intf)
 	if (cros_pd_setup(intf) < 0)
 		return -1;
 
+	if (cros_fp_setup(intf) < 0)
+		return -1;
+
 	return 0;
 }
 
@@ -181,6 +185,7 @@ struct eventlog_cb glados_eventlog_cb = {
 struct platform_cb glados_cb = {
 	.ec		= &cros_ec_cb,
 	.pd		= &cros_pd_cb,
+	.fp		= &cros_fp_cb,
 	.eeprom		= &glados_eeprom_cb,
 	.memory		= &glados_memory_cb,
 	.nvram		= &glados_nvram_cb,

@@ -382,3 +382,37 @@ int cros_pd_setup_dev(struct platform_intf *intf)
 
 	return ret;
 }
+
+int cros_fp_setup_dev(struct platform_intf *intf)
+{
+	int ret;
+	static struct cros_ec_dev default_fp_dev = {
+		.name = CROS_FP_DEV_NAME,
+	};
+	static struct cros_ec_priv default_fp_priv = {
+		.devfs = &default_fp_dev,
+	};
+
+	MOSYS_CHECK(intf->cb && intf->cb->fp);
+	if (!intf->cb->fp->priv) {
+		/*
+		 * Whoever ported the platform was lazy. Assume they want to
+		 * use the default CrOS FP device.
+		 */
+		intf->cb->fp->priv = &default_fp_priv;
+		lprintf(LOG_DEBUG, "Using default FP devfs interface.\n");
+	}
+
+	ret = cros_ec_probe_dev(intf, intf->cb->fp);
+	if (ret == 1)
+		lprintf(LOG_DEBUG, "CrOS FP found via kernel driver\n");
+	else if (ret == 0)
+		lprintf(LOG_DEBUG, "CrOS FP not found via kernel driver\n");
+	else {
+		/* Allow FP probe to fail if not present on a board */
+		lprintf(LOG_DEBUG, "Error probing CrOS FP via kernel driver\n");
+		intf->cb->fp = NULL;
+	}
+
+	return ret;
+}

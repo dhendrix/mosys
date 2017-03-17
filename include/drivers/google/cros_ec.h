@@ -41,6 +41,7 @@
 #define CROS_EC_DEV_NAME		"/dev/cros_ec"
 #define CROS_PD_DEV_NAME		"/dev/cros_pd"
 #define CROS_SH_DEV_NAME		"/dev/cros_sh"
+#define CROS_FP_DEV_NAME		"/dev/cros_fp"
 
 struct eeprom;
 struct platform_intf;
@@ -84,6 +85,7 @@ struct cros_ec_priv {
 extern struct ec_cb cros_ec_cb;
 extern struct ec_cb cros_pd_cb;
 extern struct ec_cb cros_sh_cb;
+extern struct ec_cb cros_fp_cb;
 
 /* EC commands */
 int cros_ec_hello(struct platform_intf *intf, struct ec_cb *ec);
@@ -126,5 +128,6 @@ int cros_pd_flash_info(struct platform_intf *intf,
 
 int cros_ec_setup(struct platform_intf *intf);
 int cros_pd_setup(struct platform_intf *intf);
+int cros_fp_setup(struct platform_intf *intf);
 
 #endif	/* MOSYS_DRIVERS_EC_GOOGLE__ */

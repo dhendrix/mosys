@@ -66,5 +66,6 @@ struct cros_ec_command_v2 {
 /* Setup functions return 0 if successful and <0 otherwise) */
 extern int cros_ec_setup_dev(struct platform_intf *intf);
 extern int cros_pd_setup_dev(struct platform_intf *intf);
+extern int cros_fp_setup_dev(struct platform_intf *intf);
 
 #endif /* CROS_EC_DEV_H__ */

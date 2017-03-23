@@ -40,6 +40,14 @@
 static int pinky_dimm_count;
 static const struct nonspd_mem_info *pinky_mem_info;
 
+static int supports_tristate(struct platform_intf *intf)
+{
+	if(!strncmp(intf->name, "Jerry", 5) ||
+	   !strncmp(intf->name, "Jaq", 3) ||
+	   !strncmp(intf->name, "Mighty", 6))
+		return 0;
+	return 1;
+}
 /* read RAM code and fill in values needed by memory commands */
 static int read_ram_code(struct platform_intf *intf)
 {
@@ -126,8 +134,13 @@ static int read_ram_code(struct platform_intf *intf)
 		} else {
 			switch (ram_code) {
 			case 0:
-				pinky_dimm_count = 2;
-				pinky_mem_info = &samsung_lpddr3_k4e8e304ed_egcc;
+				if(supports_tristate(intf)) {
+					pinky_dimm_count = 2;
+					pinky_mem_info = &samsung_lpddr3_k4e8e304ed_egcc;
+				} else {
+					pinky_dimm_count = 4;
+					pinky_mem_info = &samsung_k4b4g1646e;
+				}
 				break;
 			case 2:
 				pinky_dimm_count = 2;

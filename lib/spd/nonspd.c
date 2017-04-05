@@ -176,10 +176,10 @@ int nonspd_print_field(struct kv_pair *kv,
 
 	case SPD_GET_PART_NUMBER:
 	{
-		char part[19];
+		char part[sizeof(info->part_num)+1];
 
-		memcpy(part, &info->part_num[0], 18);
-		part[18] = '\0';
+		memcpy(part, &info->part_num[0], sizeof(info->part_num));
+		part[sizeof(info->part_num)] = '\0';
 		kv_pair_fmt(kv, "part_number", "%s", part);
 
 		ret = 1;

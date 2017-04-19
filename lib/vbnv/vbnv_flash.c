@@ -42,7 +42,7 @@
 #include "mosys/output.h"
 #include "mosys/platform.h"
 
- /* VBNV entries are 16 bytes each and are stored back-to-back in RW_NVRAM. */
+/* VBNV entries are 16 bytes each and are stored back-to-back in RW_NVRAM. */
 #define VBNV_BLOCK_SIZE	16
 
 /*
@@ -149,7 +149,7 @@ static int vbnv_fetch_from_flash(struct platform_intf *intf, uint8_t *block)
 {
 	struct eeprom *eeprom = NULL;
 	struct eeprom_region *region = NULL;
-	uint8_t *data;
+	uint8_t *data = NULL;
 	int ret = -1, bytes_read, index;
 
 	if (vbnv_find_eeprom(intf, &eeprom, &region))
@@ -208,7 +208,7 @@ static int vbnv_write_to_flash(struct platform_intf *intf, const void *data)
 {
 	struct eeprom *eeprom = NULL;
 	struct eeprom_region *region = NULL;
-	uint8_t *buf;
+	uint8_t *buf = NULL;
 	int ret = -1, len, index;
 
 	if (vbnv_find_eeprom(intf, &eeprom, &region))

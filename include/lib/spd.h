@@ -41,7 +41,7 @@
 
 #define SPD_READ          0
 #define SPD_WRITE         1
-#define SPD_MAX_LENGTH    256
+#define SPD_MAX_LENGTH    384
 
 /* forward declarations */
 struct kv_pair;
@@ -55,6 +55,7 @@ enum spd_dram_type {
 	SPD_DRAM_TYPE_FBDIMM	= 0x09,
 	SPD_DRAM_TYPE_DDR3	= 0x0b,
 	SPD_DRAM_TYPE_LPDDR3	= 0xf1,
+	SPD_DRAM_TYPE_DDR4      = 0x0c,
 	SPD_DRAM_TYPE_LPDDR4	= 0x10,
 };
 
@@ -335,6 +336,22 @@ extern int spd_print_field_fbdimm(struct platform_intf *intf,
  *
  */
 extern int spd_print_field_ddr3(struct platform_intf *intf, struct kv_pair *kv,
+                                const void *data, enum spd_field_type type);
+
+/*
+ * spd_print_field_ddr4  -  add common DDR SPD fields into key=value pair
+ *
+ * @intf:       platform interface
+ * @kv:         key=value pair
+ * @data:       raw spd data
+ * @type:       type of field to retrieve
+ *
+ * returns 1 to indicate data added to key=value pair
+ * returns 0 to indicate no data added
+ * returns <0 to indicate error
+ *
+ */
+extern int spd_print_field_ddr4(struct platform_intf *intf, struct kv_pair *kv,
                                 const void *data, enum spd_field_type type);
 
 /*

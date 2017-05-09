@@ -2,6 +2,7 @@ obj-$(CONFIG_PLATFORM_AURON)	+= auron/
 obj-$(CONFIG_PLATFORM_BELTINO)	+= beltino/
 obj-$(CONFIG_PLATFORM_CYAN)	+= cyan/
 obj-$(CONFIG_PLATFORM_CYCLONE)	+= cyclone/
+obj-$(CONFIG_PLATFORM_FIZZ)	+= fizz/
 obj-$(CONFIG_PLATFORM_GLADOS)	+= glados/
 obj-$(CONFIG_PLATFORM_GRU)      += gru/
 obj-$(CONFIG_PLATFORM_MARIO)	+= mario/

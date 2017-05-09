@@ -94,6 +94,9 @@ int spd_total_size(uint8_t *data)
 
 		break;
 	}
+	case SPD_DRAM_TYPE_DDR4:
+	  size = 384;
+	  break;
 	default:
 		lprintf(LOG_ERR, "SPD type %02x not supported\n", data[2]);
 		return -1;
@@ -161,6 +164,9 @@ int spd_print_field(struct platform_intf *intf,
 	case SPD_DRAM_TYPE_DDR3:
 	case SPD_DRAM_TYPE_LPDDR3:
 		return spd_print_field_ddr3(intf, kv, data, type);
+	case SPD_DRAM_TYPE_DDR4:
+	  return spd_print_field_ddr4(intf, kv, data, type);
+	  break;
 	default:
 		lprintf(LOG_ERR, "SPD type %02x not supported\n", byte[2]);
 	}

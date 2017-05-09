@@ -1,6 +1,7 @@
 #obj-y		+= ddr1.o
 obj-y		+= ddr2.o
 obj-y		+= ddr3.o
+obj-y		+= ddr4.o
 #obj-y		+= fbdimm.o
 obj-y		+= nonspd.o
 obj-y		+= nonspd_modules.o

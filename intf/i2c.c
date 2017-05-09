@@ -50,6 +50,7 @@
 
 #include "lib/math.h"
 #include "lib/string.h"
+#include "lib/spd.h"
 
 /* these are exposed only to make testing easier */
 #define I2C_DEV_ROOT	"/dev"
@@ -216,8 +217,7 @@ static int smbus_read_reg(struct platform_intf *intf, int bus,
 	int32_t result;
 	static int read_words = 1;
 
-	/* limit to 256 bytes at a time */
-	if (length < 1 || length > 256) {
+	if (length < 1 || length > SPD_MAX_LENGTH) {
 		lprintf(LOG_NOTICE, "Invalid I2C read length: %d\n", length);
 		return -1;
 	}

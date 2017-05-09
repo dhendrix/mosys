@@ -29,6 +29,12 @@ config PLATFORM_CYCLONE
 	bool "Cyclone"
 	default n
 
+config PLATFORM_FIZZ
+	depends on PLATFORM_ARCH_X86
+	select CROS_EC_LPC
+	bool "fizz"
+	default n
+
 config PLATFORM_GLADOS
 	depends on PLATFORM_ARCH_X86
 	select CROS_EC_LPC

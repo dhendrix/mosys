@@ -254,6 +254,12 @@ struct elog_event_mem_cache_update {
 /* CPU Thermal Trip */
 #define ELOG_TYPE_THERM_TRIP             0xab
 
+/* Cr50 */
+#define ELOG_TYPE_CR50_UPDATE            0xac
+
+/* Deep Sx wake variant */
+#define ELOG_TYPE_ACPI_DEEP_WAKE         0xad
+
 /* Recovery reason codes for EVENT_TYPE_CROS_RECOVERY_MODE */
 /* Recovery not requested. */
 #define VBNV_RECOVERY_NOT_REQUESTED   0x00

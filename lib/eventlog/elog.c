@@ -103,6 +103,7 @@ int elog_print_type(struct platform_intf *intf, struct smbios_log_entry *entry,
 		{ ELOG_TYPE_TCO_RESET, "TCO Reset" },
 		{ ELOG_TYPE_ACPI_ENTER, "ACPI Enter" },
 		{ ELOG_TYPE_ACPI_WAKE, "ACPI Wake" },
+		{ ELOG_TYPE_ACPI_DEEP_WAKE, "ACPI Deep Sx Wake" },
 		{ ELOG_TYPE_WAKE_SOURCE, "Wake Source" },
 		{ ELOG_TYPE_CROS_DEVELOPER_MODE, "Chrome OS Developer Mode" },
 		{ ELOG_TYPE_CROS_RECOVERY_MODE, "Chrome OS Recovery Mode" },
@@ -116,6 +117,7 @@ int elog_print_type(struct platform_intf *intf, struct smbios_log_entry *entry,
 		{ ELOG_TYPE_FW_WAKE, "FW Wake" },
 		{ ELOG_TYPE_MEM_CACHE_UPDATE, "Memory Cache Update" },
 		{ ELOG_TYPE_THERM_TRIP, "CPU Thermal Trip" },
+		{ ELOG_TYPE_CR50_UPDATE, "cr50 Update Reset" },
 		{ 0x0, NULL },
 	};
 
@@ -508,6 +510,7 @@ int elog_print_data(struct platform_intf *intf, struct smbios_log_entry *entry,
 	}
 	case ELOG_TYPE_ACPI_ENTER:
 	case ELOG_TYPE_ACPI_WAKE:
+	case ELOG_TYPE_ACPI_DEEP_WAKE:
 	{
 		uint8_t *state = (void *)&entry->data[0];
 		kv_pair_fmt(kv, "state", "S%u", *state);

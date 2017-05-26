@@ -166,13 +166,36 @@ struct elog_ec_event {
 #define ELOG_TYPE_ACPI_ENTER              0x9d
 #define ELOG_TYPE_ACPI_WAKE               0x9e
 #define ELOG_TYPE_WAKE_SOURCE             0x9f
-#define ELOG_WAKE_SOURCE_PCIE              0x00
-#define ELOG_WAKE_SOURCE_PME               0x01
-#define ELOG_WAKE_SOURCE_PME_INTERNAL      0x02
-#define ELOG_WAKE_SOURCE_RTC               0x03
-#define ELOG_WAKE_SOURCE_GPIO              0x04
-#define ELOG_WAKE_SOURCE_SMBUS             0x05
-#define ELOG_WAKE_SOURCE_PWRBTN            0x06
+#define  ELOG_WAKE_SOURCE_PCIE             0x00
+#define  ELOG_WAKE_SOURCE_PME              0x01
+#define  ELOG_WAKE_SOURCE_PME_INTERNAL     0x02
+#define  ELOG_WAKE_SOURCE_RTC              0x03
+#define  ELOG_WAKE_SOURCE_GPIO             0x04
+#define  ELOG_WAKE_SOURCE_SMBUS            0x05
+#define  ELOG_WAKE_SOURCE_PWRBTN           0x06
+#define  ELOG_WAKE_SOURCE_PME_HDA          0x07
+#define  ELOG_WAKE_SOURCE_PME_GBE          0x08
+#define  ELOG_WAKE_SOURCE_PME_EMMC         0x09
+#define  ELOG_WAKE_SOURCE_PME_SDCARD       0x0a
+#define  ELOG_WAKE_SOURCE_PME_PCIE1        0x0b
+#define  ELOG_WAKE_SOURCE_PME_PCIE2        0x0c
+#define  ELOG_WAKE_SOURCE_PME_PCIE3        0x0d
+#define  ELOG_WAKE_SOURCE_PME_PCIE4        0x0e
+#define  ELOG_WAKE_SOURCE_PME_PCIE5        0x0f
+#define  ELOG_WAKE_SOURCE_PME_PCIE6        0x10
+#define  ELOG_WAKE_SOURCE_PME_PCIE7        0x11
+#define  ELOG_WAKE_SOURCE_PME_PCIE8        0x12
+#define  ELOG_WAKE_SOURCE_PME_PCIE9        0x13
+#define  ELOG_WAKE_SOURCE_PME_PCIE10       0x14
+#define  ELOG_WAKE_SOURCE_PME_PCIE11       0x15
+#define  ELOG_WAKE_SOURCE_PME_PCIE12       0x16
+#define  ELOG_WAKE_SOURCE_PME_SATA         0x17
+#define  ELOG_WAKE_SOURCE_PME_CSE          0x18
+#define  ELOG_WAKE_SOURCE_PME_CSE2         0x19
+#define  ELOG_WAKE_SOURCE_PME_CSE3         0x1a
+#define  ELOG_WAKE_SOURCE_PME_XHCI         0x1b
+#define  ELOG_WAKE_SOURCE_PME_XDCI         0x1c
+
 struct elog_wake_source {
 	uint8_t source;
 	uint32_t instance;

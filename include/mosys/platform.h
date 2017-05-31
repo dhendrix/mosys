@@ -313,13 +313,15 @@ struct sys_cb {
 	char *(*family)(struct platform_intf *intf);
 	char *(*variant)(struct platform_intf *intf);
 
+	/* Query identifiers for chassis, brand code, and SKU number. */
+	char *(*chassis)(struct platform_intf *intf);
+	char *(*brand)(struct platform_intf *intf);
+	int (*sku_number)(struct platform_intf *intf);
+
 	/* Obtain the model name of this device. With unified builds a board
 	 * can support multiple models. This allows the model to be obtained,
 	 * which can be used to adjust how various packages work. */
 	char *(*model)(struct platform_intf *intf);
-
-        /* Query an identifier for chassis. */
-        char *(*chassis)(struct platform_intf *intf);
 
 	/* firmware info */
 	char *(*firmware_vendor)(struct platform_intf *intf);

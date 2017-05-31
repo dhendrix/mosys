@@ -35,93 +35,145 @@
 #include <inttypes.h>
 #include <errno.h>
 
+#include "mosys/alloc.h"
 #include "mosys/platform.h"
 
 #include "lib/probe.h"
 #include "mosys/log.h"
 #include "mosys/kv_pair.h"
 
+/* Identifiers for platform_generic_identifier_cmd. */
+enum {
+	PLATFORM_ID_VENDOR,
+	PLATFORM_ID_NAME,
+	PLATFORM_ID_VERSION,
+	PLATFORM_ID_FAMILY,
+	PLATFORM_ID_MODEL,
+	PLATFORM_ID_CHASSIS,
+	PLATFORM_ID_BRAND,
+};
+
 static int print_platforminfo(const char *key, const char *value);
 
-static int platform_vendor_cmd(struct platform_intf *intf,
-                               struct platform_cmd *cmd,
-                               int argc, char **argv)
+static int platform_generic_identifier_cmd(struct platform_intf *intf,
+					   struct platform_cmd *cmd,
+					   int id_enum)
 {
-	if (!intf->cb || !intf->cb->sys || !intf->cb->sys->vendor) {
-		errno = ENOSYS;
-		return -1;
-	}
-
-	return print_platforminfo("vendor", intf->cb->sys->vendor(intf));
-}
-
-static int platform_name_cmd(struct platform_intf *intf,
-                             struct platform_cmd *cmd,
-                             int argc, char **argv)
-{
-	if (!intf->cb || !intf->cb->sys || !intf->cb->sys->name) {
-		errno = ENOSYS;
-		return -1;
-	}
-
-	return print_platforminfo("name", intf->cb->sys->name(intf));
-}
-
-static int platform_version_cmd(struct platform_intf *intf,
-			      struct platform_cmd *cmd,
-			      int argc, char **argv)
-{
-	if (!intf->cb || !intf->cb->sys || !intf->cb->sys->version) {
-		errno = ENOSYS;
-		return -1;
-	}
-
-	return print_platforminfo("version", intf->cb->sys->version(intf));
-}
-
-static int platform_family_cmd(struct platform_intf *intf,
-                               struct platform_cmd *cmd,
-                               int argc, char **argv)
-{
-	if (!intf->cb || !intf->cb->sys || !intf->cb->sys->family) {
-		errno = ENOSYS;
-		return -1;
-	}
-
-	return print_platforminfo("family", intf->cb->sys->family(intf));
-}
-
-static int platform_model_cmd(struct platform_intf *intf,
-			      struct platform_cmd *cmd,
-			      int argc, char **argv)
-{
-	if (!intf->cb || !intf->cb->sys || !intf->cb->sys->model) {
-		errno = ENOSYS;
-		return -1;
-	}
-
-	return print_platforminfo("model", intf->cb->sys->model(intf));
-}
-
-static int platform_chassis_cmd(struct platform_intf *intf,
-				struct platform_cmd *cmd,
-				int argc, char **argv)
-{
-	const char *chassis = NULL;
+	char *id = NULL;
+	char* (*fallback)(struct platform_intf *intf) = NULL;
+	char* (*getter)(struct platform_intf *intf) = NULL;
 
 	if (!intf->cb || !intf->cb->sys) {
 		errno = ENOSYS;
 		return -1;
 	}
 
-	if (intf->cb->sys->chassis) {
-		chassis = intf->cb->sys->chassis(intf);
-	} else {
-		/* Fallback to customization_id (go/cros-chassis-id). */
-		chassis = extract_customization_id_series_part();
+	switch (id_enum) {
+		case PLATFORM_ID_VENDOR:
+			getter = intf->cb->sys->vendor;
+			break;
+
+		case PLATFORM_ID_NAME:
+			getter = intf->cb->sys->name;
+			break;
+
+		case PLATFORM_ID_VERSION:
+			getter = intf->cb->sys->version;
+			break;
+
+		case PLATFORM_ID_FAMILY:
+			getter = intf->cb->sys->family;
+			break;
+
+		case PLATFORM_ID_MODEL:
+			getter = intf->cb->sys->model;
+			break;
+
+		case PLATFORM_ID_CHASSIS:
+			getter = intf->cb->sys->chassis;
+			fallback = probe_chassis;
+			break;
+
+		case PLATFORM_ID_BRAND:
+			getter = intf->cb->sys->brand;
+			fallback = probe_brand;
+			break;
 	}
 
-	return chassis ? print_platforminfo("chassis", chassis) : -1;
+	if (getter) {
+		id = getter(intf);
+	} else if (fallback) {
+		id = fallback(intf);
+	} else {
+		errno = ENOSYS;
+	}
+
+	return id ? print_platforminfo(cmd->name, id) : -1;
+}
+
+static int platform_vendor_cmd(struct platform_intf *intf,
+			       struct platform_cmd *cmd,
+			       int argc, char **argv)
+{
+	return platform_generic_identifier_cmd(intf, cmd, PLATFORM_ID_VENDOR);
+}
+
+static int platform_name_cmd(struct platform_intf *intf,
+			     struct platform_cmd *cmd,
+			     int argc, char **argv)
+{
+	return platform_generic_identifier_cmd(intf, cmd, PLATFORM_ID_NAME);
+}
+
+static int platform_version_cmd(struct platform_intf *intf,
+			      struct platform_cmd *cmd,
+			      int argc, char **argv)
+{
+	return platform_generic_identifier_cmd(intf, cmd, PLATFORM_ID_VERSION);
+}
+
+static int platform_family_cmd(struct platform_intf *intf,
+			       struct platform_cmd *cmd,
+			       int argc, char **argv)
+{
+	return platform_generic_identifier_cmd(intf, cmd, PLATFORM_ID_FAMILY);
+}
+
+static int platform_model_cmd(struct platform_intf *intf,
+			      struct platform_cmd *cmd,
+			      int argc, char **argv)
+{
+	return platform_generic_identifier_cmd(intf, cmd, PLATFORM_ID_MODEL);
+}
+
+static int platform_chassis_cmd(struct platform_intf *intf,
+				struct platform_cmd *cmd,
+				int argc, char **argv)
+{
+	return platform_generic_identifier_cmd(intf, cmd, PLATFORM_ID_CHASSIS);
+}
+
+static int platform_brand_cmd(struct platform_intf *intf,
+			      struct platform_cmd *cmd,
+			      int argc, char **argv)
+{
+	return platform_generic_identifier_cmd(intf, cmd, PLATFORM_ID_BRAND);
+}
+
+static int platform_sku_cmd(struct platform_intf *intf,
+			    struct platform_cmd *cmd,
+			    int argc, char **argv)
+{
+	char buffer[16];
+	int sku_number = probe_sku_number(intf);
+
+	if (sku_number < 0) {
+		errno = ENOSYS;
+		return -1;
+	}
+
+	snprintf(buffer, sizeof(buffer), "%d", sku_number);
+	return print_platforminfo(cmd->name, mosys_strdup(buffer));
 }
 
 static int print_platforminfo(const char *key, const char *value)
@@ -178,6 +230,18 @@ struct platform_cmd platform_cmds[] = {
 		.desc	= "Display Chassis ID",
 		.type	= ARG_TYPE_GETTER,
 		.arg	= { .func = platform_chassis_cmd }
+	},
+	{
+		.name	= "sku",
+		.desc	= "Display SKU Number",
+		.type	= ARG_TYPE_GETTER,
+		.arg	= { .func = platform_sku_cmd }
+	},
+	{
+		.name	= "brand",
+		.desc	= "Display Brand Code",
+		.type	= ARG_TYPE_GETTER,
+		.arg	= { .func = platform_brand_cmd }
 	},
 	{
 		.name	= "version",

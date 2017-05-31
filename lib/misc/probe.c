@@ -317,43 +317,112 @@ static int _acquire_lock()
 }
 
 /*
- * extract_customization_id_series_part - Gets SERIES from VPD customization_id.
- *
- * Returns pointer to allocated series name string on success, NULL on failure.
+ * Strips the "end of line" character (\n) in string.
  */
-const char *extract_customization_id_series_part(void)
+static void _strip_eol(char *str)
 {
-	char *series = NULL, *dash;
+	char *newline = strchr(str, '\n');
+	if (newline)
+		*newline = '\0';
+}
+
+/*
+ * Reads one stripped line from fp and close file.
+ *
+ * This is a helper utility for functions reading identifier files.
+ */
+static char *_read_close_stripped_line(FILE *fp)
+{
 	char buffer[256];
+
+	if (!fp)
+		return NULL;
+
+	if (!fgets(buffer, sizeof(buffer), fp)) {
+		buffer[0] = '\0';
+	} else {
+		_strip_eol(buffer);
+	}
+	fclose(fp);
+
+	if (!*buffer)
+		return NULL;
+	return mosys_strdup(buffer);
+}
+
+/*
+ * Reads and returns a VPD value.
+ */
+static char *_get_vpd_value(const char *key_name)
+{
+	char command[PATH_MAX];
 	FILE *fp = NULL;
 	int relock = 0;
+	char *value;
+
+	snprintf(command, sizeof(command), "vpd_get_value %s", key_name);
+	command[sizeof(command) - 1] = '\0';
 
 	relock = _release_lock();
-	fp = popen("vpd_get_value customization_id", "r");
-
-	if (!fp) {
-		if (relock)
-			_acquire_lock();
-		return NULL;
-	}
-
-	if (!fgets(buffer, sizeof(buffer), fp))
-		buffer[0] = '\0';
-
-	dash = strchr(buffer, '-');
-
-	if (dash) {
-		/* Output from fgets may contain newline that must be removed */
-		char *newline = strchr(dash, '\n');
-		if (newline)
-			*newline = '\0';
-		series = mosys_strdup(dash + 1);
-	}
-
-	fclose(fp);
+	fp = popen(command, "r");
+	value = _read_close_stripped_line(fp);
 	if (relock)
 		_acquire_lock();
+	return value;
+}
+
+/*
+ * Extracts the SERIES part from VPD "customization_id".
+ *
+ * customization_id should be in LOEMID-SERIES format.
+ * If - is not found, return nothing.
+ */
+static char *_extract_customization_id_series_part(void)
+{
+	char *customization_id;
+	char *series = NULL, *dash;
+
+	customization_id = _get_vpd_value("customization_id");
+	if (!customization_id)
+		return NULL;
+
+	dash = strchr(customization_id, '-');
+	if (dash) {
+		series = mosys_strdup(dash + 1);
+	}
+	free(customization_id);
+
 	return series;
+}
+
+char *probe_brand(struct platform_intf *intf)
+{
+	const char *legacy_path = "/opt/oem/etc/BRAND_CODE";
+	FILE *fp = fopen(legacy_path, "r");
+
+	if (fp)
+		return _read_close_stripped_line(fp);
+
+	return _get_vpd_value("rlz_brand_code");
+}
+
+char *probe_chassis(struct platform_intf *intf)
+{
+	/* Fallback to customization_id (go/cros-chassis-id). */
+	return _extract_customization_id_series_part();
+}
+
+int probe_sku_number(struct platform_intf *intf)
+{
+	if (!intf || !intf->cb || !intf->cb->sys) {
+		return -1;
+	}
+
+	if (intf->cb->sys->sku_number) {
+		return intf->cb->sys->sku_number(intf);
+	}
+
+	return -1;
 }
 
 #define FDT_MODEL_NODE	"/proc/device-tree/model"

@@ -128,6 +128,13 @@ extern char *probe_brand(struct platform_intf *intf);
  */
 extern char *probe_chassis(struct platform_intf *intf);
 
+/* probe_customization - probe customization ID
+ *
+ * returns allocated string containing value if found
+ * returns NULL to indicate value not found or error
+ */
+extern char *probe_customization(struct platform_intf *intf);
+
 /* probe_sku_number - probe SKU number
  *
  * returns integer representing SKU number

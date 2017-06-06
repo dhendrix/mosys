@@ -51,6 +51,7 @@ enum {
 	PLATFORM_ID_MODEL,
 	PLATFORM_ID_CHASSIS,
 	PLATFORM_ID_BRAND,
+	PLATFORM_ID_CUSTOMIZATION,
 };
 
 static int print_platforminfo(const char *key, const char *value);
@@ -97,6 +98,11 @@ static int platform_generic_identifier_cmd(struct platform_intf *intf,
 		case PLATFORM_ID_BRAND:
 			getter = intf->cb->sys->brand;
 			fallback = probe_brand;
+			break;
+
+		case PLATFORM_ID_CUSTOMIZATION:
+			getter = intf->cb->sys->customization;
+			fallback = probe_customization;
 			break;
 	}
 
@@ -158,6 +164,14 @@ static int platform_brand_cmd(struct platform_intf *intf,
 			      int argc, char **argv)
 {
 	return platform_generic_identifier_cmd(intf, cmd, PLATFORM_ID_BRAND);
+}
+
+static int platform_customization_cmd(struct platform_intf *intf,
+				      struct platform_cmd *cmd,
+				      int argc, char **argv)
+{
+	return platform_generic_identifier_cmd(intf, cmd,
+					       PLATFORM_ID_CUSTOMIZATION);
 }
 
 static int platform_sku_cmd(struct platform_intf *intf,
@@ -242,6 +256,12 @@ struct platform_cmd platform_cmds[] = {
 		.desc	= "Display Brand Code",
 		.type	= ARG_TYPE_GETTER,
 		.arg	= { .func = platform_brand_cmd }
+	},
+	{
+		.name	= "customization",
+		.desc	= "Display Customization ID",
+		.type	= ARG_TYPE_GETTER,
+		.arg	= { .func = platform_customization_cmd }
 	},
 	{
 		.name	= "version",

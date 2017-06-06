@@ -395,6 +395,11 @@ static char *_extract_customization_id_series_part(void)
 	return series;
 }
 
+char *probe_customization(struct platform_intf *intf)
+{
+	return _get_vpd_value("customization_id");
+}
+
 char *probe_brand(struct platform_intf *intf)
 {
 	const char *legacy_path = "/opt/oem/etc/BRAND_CODE";

@@ -195,6 +195,8 @@ struct elog_ec_event {
 #define  ELOG_WAKE_SOURCE_PME_CSE3         0x1a
 #define  ELOG_WAKE_SOURCE_PME_XHCI         0x1b
 #define  ELOG_WAKE_SOURCE_PME_XDCI         0x1c
+#define  ELOG_WAKE_SOURCE_PME_XHCI_USB_2   0x1d
+#define  ELOG_WAKE_SOURCE_PME_XHCI_USB_3   0x1e
 
 struct elog_wake_source {
 	uint8_t source;

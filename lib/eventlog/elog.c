@@ -251,6 +251,8 @@ int elog_print_data(struct platform_intf *intf, struct smbios_log_entry *entry,
 		{ ELOG_WAKE_SOURCE_PME_CSE3, "PME - CSE" },
 		{ ELOG_WAKE_SOURCE_PME_XHCI, "PME - XHCI" },
 		{ ELOG_WAKE_SOURCE_PME_XDCI, "PME - XDCI" },
+		{ ELOG_WAKE_SOURCE_PME_XHCI_USB_2, "PME - XHCI (USB 2.0 port)" },
+		{ ELOG_WAKE_SOURCE_PME_XHCI_USB_3, "PME - XHCI (USB 3.0 port)" },
 		{ 0, NULL },
 	};
 	static struct valstr ec_event_types[] = {

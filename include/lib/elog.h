@@ -120,7 +120,7 @@ struct elog_os_boot {
 #define EC_EVENT_BATTERY_CRITICAL            0x07
 #define EC_EVENT_BATTERY                     0x08
 #define EC_EVENT_THERMAL_THRESHOLD           0x09
-#define EC_EVENT_THERMAL_OVERLOAD            0x0a
+#define EC_EVENT_DEVICE_EVENT                0x0a
 #define EC_EVENT_THERMAL                     0x0b
 #define EC_EVENT_USB_CHARGER                 0x0c
 #define EC_EVENT_KEY_PRESSED                 0x0d
@@ -284,6 +284,12 @@ struct elog_event_mem_cache_update {
 
 /* Deep Sx wake variant */
 #define ELOG_TYPE_ACPI_DEEP_WAKE         0xad
+
+/* EC Device Event */
+#define ELOG_TYPE_EC_DEVICE_EVENT         0xae
+#define ELOG_EC_DEVICE_EVENT_TRACKPAD       0x00
+#define ELOG_EC_DEVICE_EVENT_DSP            0x01
+#define ELOG_EC_DEVICE_EVENT_WIFI           0x02
 
 /* Recovery reason codes for EVENT_TYPE_CROS_RECOVERY_MODE */
 /* Recovery not requested. */

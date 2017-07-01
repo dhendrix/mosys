@@ -118,6 +118,7 @@ int elog_print_type(struct platform_intf *intf, struct smbios_log_entry *entry,
 		{ ELOG_TYPE_MEM_CACHE_UPDATE, "Memory Cache Update" },
 		{ ELOG_TYPE_THERM_TRIP, "CPU Thermal Trip" },
 		{ ELOG_TYPE_CR50_UPDATE, "cr50 Update Reset" },
+		{ ELOG_TYPE_EC_DEVICE_EVENT, "EC Device" },
 		{ 0x0, NULL },
 	};
 
@@ -265,7 +266,7 @@ int elog_print_data(struct platform_intf *intf, struct smbios_log_entry *entry,
 		{ EC_EVENT_BATTERY_CRITICAL, "Battery Critical" },
 		{ EC_EVENT_BATTERY, "Battery" },
 		{ EC_EVENT_THERMAL_THRESHOLD, "Thermal Threshold" },
-		{ EC_EVENT_THERMAL_OVERLOAD, "Thermal Overload" },
+		{ EC_EVENT_DEVICE_EVENT, "Device Event" },
 		{ EC_EVENT_THERMAL, "Thermal" },
 		{ EC_EVENT_USB_CHARGER, "USB Charger" },
 		{ EC_EVENT_KEY_PRESSED, "Key Pressed" },
@@ -290,6 +291,12 @@ int elog_print_data(struct platform_intf *intf, struct smbios_log_entry *entry,
 		{ EC_EVENT_KEYBOARD_RECOVERY_HWREINIT,
 		  "Keyboard Recovery Forced Hardware Reinit" },
 		{ EC_EVENT_EXTENDED, "Extended EC events" },
+		{ 0, NULL },
+	};
+	static struct valstr ec_device_event_types[] = {
+		{ ELOG_EC_DEVICE_EVENT_TRACKPAD, "Trackpad" },
+		{ ELOG_EC_DEVICE_EVENT_DSP, "DSP" },
+		{ ELOG_EC_DEVICE_EVENT_WIFI, "WiFi" },
 		{ 0, NULL },
 	};
 	/*
@@ -553,6 +560,13 @@ int elog_print_data(struct platform_intf *intf, struct smbios_log_entry *entry,
 	{
 		uint8_t *event = (void *)&entry->data[0];
 		kv_pair_add(kv, "event", val2str(*event, ec_event_types));
+		break;
+	}
+	case ELOG_TYPE_EC_DEVICE_EVENT:
+	{
+		uint8_t *event = (void *)&entry->data[0];
+		kv_pair_add(kv, "event",
+			    val2str(*event, ec_device_event_types));
 		break;
 	}
 	case ELOG_TYPE_CROS_RECOVERY_MODE:

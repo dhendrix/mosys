@@ -65,12 +65,6 @@ struct platform_cmd *acer_chromia700_sub[] = {
 	NULL
 };
 
-static const char *hwids[] = {
-	"{9707217C-7943-4376-A812-FA05C318A16F}",
-	"{FA42644C-CF3A-4692-A9D3-1A667CB232E9}",
-	NULL
-};
-
 static const char *frids[] = {
 	"ZGB",
 	NULL
@@ -82,11 +76,6 @@ int acer_chromia700_probe(struct platform_intf *intf)
 
 	if (probed)
 		return status;
-
-	if (probe_hwid(hwids)) {
-		status = 1;
-		goto acer_chromia700_probe_exit;
-	}
 
 	if (probe_frid(frids)) {
 		status = 1;

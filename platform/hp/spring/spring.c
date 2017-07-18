@@ -67,12 +67,6 @@ struct platform_cmd *spring_sub[] = {
 	NULL
 };
 
-#if 0
-static const char *hwids[] = {
-	NULL
-};
-#endif
-
 /* TODO: replace this with proper FDT parsing */
 #define FDT_MODEL_NODE	"/proc/device-tree/model"
 static char *model_from_fdt(void)
@@ -125,13 +119,6 @@ int spring_probe(struct platform_intf *intf)
 			}
 		}
 	}
-
-#if 0
-	if (probe_hwid(hwids)) {
-		status = 1;
-		goto spring_probe_exit;
-	}
-#endif
 
 spring_probe_exit:
 	probed = 1;

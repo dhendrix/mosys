@@ -66,10 +66,6 @@ struct platform_cmd *stumpy_sub[] = {
 	NULL
 };
 
-static const char *hwids[] = {
-	"X86 STUMPY",
-};
-
 static const char *frids[] = {
 	"Stumpy",
 	NULL
@@ -81,11 +77,6 @@ int stumpy_probe(struct platform_intf *intf)
 
 	if (probed)
 		return status;
-
-	if (probe_hwid(hwids)) {
-		status = 1;
-		goto stumpy_probe_exit;
-	}
 
 	if (probe_frid(frids)) {
 		status = 1;

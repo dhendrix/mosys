@@ -48,29 +48,23 @@
 
 struct probe_ids {
 	const char *names[2];
-	const char *hwids[2];
 	const char *frids[2];
 };
 
 static const struct probe_ids probe_id_list[] = {
 	{ { "Falco", NULL },
-	  { "X86 FALCO", NULL },
 	  { "Google_Falco", NULL },
 	},
 	{ { "Leon", NULL },
-	  { "X86 LEON", NULL },
 	  { "Google_Leon", NULL },
 	},
 	{ { "Peppy", NULL },
-	  { "X86 PEPPY", NULL },
 	  { "Google_Peppy", NULL },
 	},
 	{ { "Slippy", NULL },
-	  { "X86 SLIPPY", NULL },
 	  { "Google_Slippy", NULL },
 	},
 	{ { "Wolf", NULL },
-	  { "X86 WOLF", NULL },
 	  { "Google_Wolf", NULL },
 	},
 	{ { NULL } }
@@ -97,12 +91,6 @@ int slippy_probe(struct platform_intf *intf)
 		return status;
 
 	for (pid = probe_id_list; pid && pid->names[0]; pid++) {
-		/* HWID */
-		if (probe_hwid((const char **)pid->hwids)) {
-			status = 1;
-			goto slippy_probe_exit;
-		}
-
 		/* FRID */
 		if (probe_frid((const char **)pid->frids)) {
 			status = 1;

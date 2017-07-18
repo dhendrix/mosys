@@ -48,33 +48,26 @@
 
 struct probe_ids {
 	const char *names[2];
-	const char *hwids[2];
 	const char *frids[2];
 };
 
 static const struct probe_ids probe_id_list[] = {
         { { "Pyro", NULL },
-          { "PYRO", NULL },
           { "pyro", NULL },
         },
 	{ { "Reef", NULL },
-	  { "REEF", NULL },
 	  { "reef", NULL },
 	},
 	{ { "Sand", NULL },
-	  { "SAND", NULL },
 	  { "sand", NULL },
 	},
 	{ { "Snappy", NULL },
-	  { "SNAPPY", NULL },
 	  { "snappy", NULL },
 	},
 	{ { "Nasher", NULL },
-	  { "NASHER", NULL },
 	  { "nasher", NULL },
 	},
 	{ { "Apl", NULL },
-	  { "APL", NULL },
 	  { "apl", NULL },
 	},
 	{ { NULL } }
@@ -101,12 +94,6 @@ int reef_probe(struct platform_intf *intf)
 		return status;
 
 	for (pid = probe_id_list; pid && pid->names[0]; pid++) {
-		/* HWID */
-		if (probe_hwid((const char **)pid->hwids)) {
-			status = 1;
-			goto reef_probe_exit;
-		}
-
 		/* FRID */
 		if (probe_frid((const char **)pid->frids)) {
 			status = 1;

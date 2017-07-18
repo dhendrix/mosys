@@ -64,10 +64,6 @@ struct platform_cmd *parrot_sub[] = {
 	NULL
 };
 
-static const char *hwids[] = {
-	"X86 PARROT",
-};
-
 static const char *frids[] = {
 	"Google_Parrot",
 	NULL
@@ -79,11 +75,6 @@ int parrot_probe(struct platform_intf *intf)
 
 	if (probed)
 		return status;
-
-	if (probe_hwid(hwids)) {
-		status = 1;
-		goto parrot_probe_exit;
-	}
 
 	if (probe_frid(frids)) {
 		status = 1;

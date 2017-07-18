@@ -61,16 +61,6 @@ struct sensor;
 struct sensor_reading;
 
 /*
- * acpi_get_hwid - retrieve hardware ID and store in a newly allocated buffer
- *
- * @buf:	buffer to store hardware ID in
- *
- * returns length of hardware id to indicate success
- * returns <0 to indicate error
- */
-extern int acpi_get_hwid(char **buf);
-
-/*
  * acpi_get_frid - retrieve FRID and store in a newly allocated buffer
  *
  * @buf:	buffer to store hardware ID in

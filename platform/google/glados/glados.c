@@ -48,61 +48,47 @@
 
 struct probe_ids {
 	const char *names[2];
-	const char *hwids[2];
 	const char *frids[2];
 };
 
 static const struct probe_ids probe_id_list[] = {
 	{ { "Asuka", NULL },
-	  { "ASUKA", NULL },
 	  { "Asuka", NULL },
 	},
 	{ { "Caroline", NULL },
-	  { "CAROLINE", NULL },
 	  { "Caroline", NULL },
 	},
 	{ { "Cave", NULL },
-	  { "CAVE", NULL },
 	  { "Cave", NULL },
 	},
 	{ { "Chell", NULL },
-	  { "CHELL", NULL },
 	  { "Chell", NULL },
 	},
 	{ { "Eve", NULL },
-	  { "EVE", NULL },
 	  { "Eve", NULL },
 	},
         { { "Poppy", NULL },
-          { "POPPY", NULL },
           { "Poppy", NULL },
         },
 	{ { "Glados", NULL },
-	  { "GLADOS", NULL },
 	  { "Glados", NULL },
 	},
 	{ { "Kunimitsu", NULL },
-	  { "KUNIMITSU", NULL },
 	  { "Kunimitsu", NULL },
 	},
 	{ { "Lars", NULL },
-	  { "LARS", NULL },
 	  { "Lars", NULL },
 	},
 	{ { "Pbody", NULL },
-	  { "PBODY", NULL },
 	  { "Pbody", NULL },
 	},
 	{ { "Sentry", NULL },
-	  { "SENTRY", NULL },
 	  { "Sentry", NULL },
 	},
 	{ { "Skylake", NULL },
-	  { "SKYLAKE", NULL },
 	  { "Skylake", NULL },
 	},
         { { "Soraka", NULL },
-          { "SORAKA", NULL },
           { "Soraka", NULL },
         },
 	{ { NULL } }
@@ -130,12 +116,6 @@ int glados_probe(struct platform_intf *intf)
 		return status;
 
 	for (pid = probe_id_list; pid && pid->names[0]; pid++) {
-		/* HWID */
-		if (probe_hwid((const char **)pid->hwids)) {
-			status = 1;
-			goto glados_probe_exit;
-		}
-
 		/* FRID */
 		if (probe_frid((const char **)pid->frids)) {
 			status = 1;

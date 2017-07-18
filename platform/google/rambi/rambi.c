@@ -48,81 +48,62 @@
 
 struct probe_ids {
 	const char *names[2];
-	const char *hwids[2];
 	const char *frids[2];
 };
 
 static const struct probe_ids probe_id_list[] = {
 	{ { "Banjo", NULL },
-	  { "X86 BANJO", NULL },
 	  { "Google_Banjo", NULL },
 	},
 	{ { "Candy", NULL },
-	  { "X86 CANDY", NULL },
 	  { "Google_Candy", NULL },
 	},
 	{ { "Clapper", NULL },
-	  { "X86 CLAPPER", NULL },
 	  { "Google_Clapper", NULL },
 	},
 	{ { "Cranky", NULL },
-	  { "X86 CRANKY", NULL },
 	  { "Google_Cranky", NULL },
 	},
 	{ { "Enguarde", NULL },
-	  { "X86 ENGUARDE", NULL },
 	  { "Google_Enguarde", NULL },
 	},
 	{ { "Expresso", NULL },
-	  { "X86 EXPRESSO", NULL },
 	  { "Google_Expresso", NULL },
 	},
 	{ { "Glimmer", NULL },
-	  { "X86 GLIMMER", NULL },
 	  { "Google_Glimmer", NULL },
 	},
 	{ { "Gnawty", NULL },
-	  { "X86 GNAWTY", NULL },
 	  { "Google_Gnawty", NULL },
 	},
 	{ { "Heli", NULL },
-	  { "X86 HELI", NULL },
 	  { "Google_Heli", NULL },
 	},
 	{ { "Kip", NULL },
-	  { "X86 KIP", NULL },
 	  { "Google_Kip", NULL },
 	},
 	{ { "Ninja", NULL },
-	  { "X86 NINJA", NULL },
 	  { "Google_Ninja", NULL },
 	},
 	{ { "Orco", NULL },
-	  { "X86 ORCO", NULL },
 	  { "Google_Orco", NULL },
 	},
 	{ { "Quawks", NULL },
-	  { "X86 QUAWKS", NULL },
 	  { "Google_Quawks", NULL },
 	},
 	{ { "Rambi", NULL },
-	  { "X86 RAMBI", NULL },
 	  { "Google_Rambi", NULL },
 	},
 	{ { "Squawks", NULL },
-	  { "X86 SQUAWKS", NULL },
 	  { "Google_Squawks", NULL },
 	},
 	{ { "Sumo", NULL },
-	  { "X86 SUMO", NULL },
 	  { "Google_Sumo", NULL },
 	},
 	{ { "Swanky", NULL },
-	  { "X86 SWANKY", NULL },
 	  { "Google_Swanky", NULL },
 	},
 	{ { "Winky", NULL },
-	  { "X86 WINKY", NULL },
 	  { "Google_Winky", NULL },
 	},
 	{ { NULL } }
@@ -150,12 +131,6 @@ int rambi_probe(struct platform_intf *intf)
 		return status;
 
 	for (pid = probe_id_list; pid && pid->names[0]; pid++) {
-		/* HWID */
-		if (probe_hwid((const char **)pid->hwids)) {
-			status = 1;
-			goto rambi_probe_exit;
-		}
-
 		/* FRID */
 		if (probe_frid((const char **)pid->frids)) {
 			status = 1;

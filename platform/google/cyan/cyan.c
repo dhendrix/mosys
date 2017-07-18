@@ -48,13 +48,11 @@
 
 struct probe_ids {
 	const char *names[2];
-	const char *hwids[2];
 	const char *frids[2];
 };
 
 static const struct probe_ids probe_id_list[] = {
 	{ { "Cyan", NULL },
-	  { "X86 CYAN", NULL },
 	  { "Google_Cyan", NULL },
 	},
 	{ { NULL } }
@@ -81,12 +79,6 @@ int cyan_probe(struct platform_intf *intf)
 		return status;
 
 	for (pid = probe_id_list; pid && pid->names[0]; pid++) {
-		/* HWID */
-		if (probe_hwid((const char **)pid->hwids)) {
-			status = 1;
-			goto cyan_probe_exit;
-		}
-
 		/* FRID */
 		if (probe_frid((const char **)pid->frids)) {
 			status = 1;

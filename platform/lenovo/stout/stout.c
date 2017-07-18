@@ -64,10 +64,6 @@ struct platform_cmd *stout_sub[] = {
 	NULL
 };
 
-static const char *hwids[] = {
-	"X86 STOUT",
-};
-
 static const char *frids[] = {
 	"Google_Stout",
 	NULL
@@ -79,11 +75,6 @@ int stout_probe(struct platform_intf *intf)
 
 	if (probed)
 		return status;
-
-	if (probe_hwid(hwids)) {
-		status = 1;
-		goto stout_probe_exit;
-	}
 
 	if (probe_frid(frids)) {
 		status = 1;

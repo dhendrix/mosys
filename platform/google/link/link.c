@@ -65,11 +65,6 @@ struct platform_cmd *link_sub[] = {
 	NULL
 };
 
-static const char *hwids[] = {
-	"X86 LINK",
-	NULL
-};
-
 static const char *frids[] = {
 	"Google_Link",
 	NULL
@@ -81,11 +76,6 @@ int link_probe(struct platform_intf *intf)
 
 	if (probed)
 		return status;
-
-	if (probe_hwid(hwids)) {
-		status = 1;
-		goto link_probe_exit;
-	}
 
 	if (probe_frid(frids)) {
 		status = 1;

@@ -37,28 +37,6 @@
 #include "lib/acpi.h"
 #include "lib/file.h"
 
-int acpi_get_hwid(char **buf)
-{
-	char path[] = CHROMEOS_ACPI_PATH"HWID";
-	int fd, len = -1;
-
-	fd = file_open(path, FILE_READ);
-	if (fd < 0)
-		return -1;
-
-	*buf = mosys_malloc(CHROMEOS_HWID_MAXLEN);
-	memset(*buf, 0, CHROMEOS_HWID_MAXLEN);
-	len = read(fd, *buf, CHROMEOS_HWID_MAXLEN);
-	if (len < 0) {
-		lprintf(LOG_DEBUG, "%s: failed to read hwid from %s\n",
-		                   __func__, path);
-		free(*buf);
-	}
-
-	close(fd);
-	return len;
-}
-
 int acpi_get_frid(char **buf)
 {
 	char path[] = CHROMEOS_ACPI_PATH"FRID";

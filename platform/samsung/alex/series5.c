@@ -64,13 +64,6 @@ struct platform_cmd *samsung_series5_sub[] = {
 	NULL
 };
 
-static const char *hwids[] = {
-	"{97A1FBD6-FDE1-4FC5-BB81-286608B90FCE}",
-	"SAMS ALEX",
-	"X86 ALEX TEST",
-	NULL
-};
-
 static const char *frids[] = {
 	"Alex",
 	"Google_Alex",
@@ -83,11 +76,6 @@ int samsung_series5_probe(struct platform_intf *intf)
 
 	if (probed)
 		return status;
-
-	if (probe_hwid(hwids)) {
-		status = 1;
-		goto samsung_series5_probe_exit;
-	}
 
 	if (probe_frid(frids)) {
 		status = 1;

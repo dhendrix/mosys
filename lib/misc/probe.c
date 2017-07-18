@@ -54,23 +54,7 @@
 #define LINE_MAX	512
 #endif
 
-int probe_hwid(const char *hwids[])
-{
-	char *id;
-	int ret = 0;
-
-	if (acpi_get_hwid(&id) < 0)
-		return 0;
-
-	if (strlfind(id, hwids, 0)) {
-		ret = 1;
-		lprintf(LOG_DEBUG, "%s: matched id \"%s\"\n", __func__, id);
-	}
-	free(id);
-	return ret;
-}
-
-int probe_frid(const char *hwids[])
+int probe_frid(const char *frids[])
 {
 	int ret = 0;
 	off_t len;
@@ -100,7 +84,7 @@ int probe_frid(const char *hwids[])
 		add_destroy_callback(free, id);
 	}
 
-	if (strlfind(id, hwids, 0)) {
+	if (strlfind(id, frids, 0)) {
 		lprintf(LOG_DEBUG, "%s: matched id \"%s\"\n", __func__, id);
 		ret = 1;
 	}

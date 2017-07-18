@@ -62,12 +62,6 @@ struct platform_cmd *google_cr48_sub[] = {
 	NULL
 };
 
-static const char *hwids[] = {
-	"{D3178EA2-58C9-4DD7-9676-95DBF45290BB}",
-	"{9D799111-A88A-439E-9E1F-FBBB41B00A9A}",
-	NULL
-};
-
 static const char *frids[] = {
 	"Mario",
 	NULL
@@ -79,11 +73,6 @@ int google_cr48_probe(struct platform_intf *intf)
 
 	if (probed)
 		return status;
-
-	if (probe_hwid(hwids)) {
-		status = 1;
-		goto google_cr48_probe_exit;
-	}
 
 	if (probe_frid(frids)) {
 		status = 1;

@@ -41,26 +41,15 @@ struct cros_compat_tuple {
 };
 
 /*
- * probe_hwid - attempt to match chromeos hardware id
- *
- * @hwids:	null-terminated list of hardware IDs
- *
- * returns 1 to indicate match
- * returns 0 to indicate no match
- * returns <0 to indicate error
- */
-extern int probe_hwid(const char *hwids[]);
-
-/*
  * probe_frid - attempt to match platform to chromeos firmware revision id
  *
- * @hwids:	null-terminated list of hardware IDs
+ * @frids:	null-terminated list of firmware revision IDs
  *
  * returns 1 to indicate match
  * returns 0 to indicate no match
  * returns <0 to indicate error
  */
-extern int probe_frid(const char *hwids[]);
+extern int probe_frid(const char *frids[]);
 
 /*
  * probe_smbios - probe smbios for system info

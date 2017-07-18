@@ -65,11 +65,6 @@ struct platform_cmd *lumpy_sub[] = {
 	NULL
 };
 
-static const char *hwids[] = {
-	"X86 LUMPY",
-	NULL
-};
-
 static const char *frids[] = {
 	"Google_Lumpy",
 	NULL
@@ -81,11 +76,6 @@ int lumpy_probe(struct platform_intf *intf)
 
 	if (probed)
 		return status;
-
-	if (probe_hwid(hwids)) {
-		status = 1;
-		goto lumpy_probe_exit;
-	}
 
 	if (probe_frid(frids)) {
 		status = 1;

@@ -47,49 +47,38 @@
 
 struct probe_ids {
 	const char *names[2];
-	const char *hwids[2];
 	const char *frids[2];
 };
 
 static const struct probe_ids probe_id_list[] = {
 	{ { "Beltino", NULL },
-	  { "X86 BELTINO", NULL },
 	  { "Google_Beltino", NULL },
 	},
 	{ { "Guado", NULL },
-	  { "X86 GUADO", NULL },
 	  { "Google_Guado", NULL },
 	},
 	{ { "Jecht", NULL },
-	  { "X86 JECHT", NULL },
 	  { "Google_Jecht", NULL },
 	},
 	{ { "Mccloud", NULL },
-	  { "X86 MCCLOUD", NULL },
 	  { "Google_Mccloud", NULL },
 	},
 	{ { "Monroe", NULL },
-	  { "X86 MONROE", NULL },
 	  { "Google_Monroe", NULL },
 	},
 	{ { "Panther", NULL },
-	  { "X86 PANTHER", NULL },
 	  { "Google_Panther", NULL },
 	},
 	{ { "Rikku", NULL },
-	  { "X86 RIKKU", NULL },
 	  { "Google_Rikku", NULL },
 	},
 	{ { "Tidus", NULL },
-	  { "X86 TIDUS", NULL },
 	  { "Google_Tidus", NULL },
 	},
 	{ { "Tricky", NULL },
-	  { "X86 TRICKY", NULL },
 	  { "Google_Tricky", NULL },
 	},
 	{ { "Zako", NULL },
-	  { "X86 ZAKO", NULL },
 	  { "Google_Zako", NULL },
 	},
 	{ { NULL } }
@@ -117,12 +106,6 @@ int beltino_probe(struct platform_intf *intf)
 		return status;
 
 	for (pid = probe_id_list; pid && pid->names[0]; pid++) {
-		/* HWID */
-		if (probe_hwid((const char **)pid->hwids)) {
-			status = 1;
-			goto beltino_probe_exit;
-		}
-
 		/* FRID */
 		if (probe_frid((const char **)pid->frids)) {
 			status = 1;

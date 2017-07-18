@@ -66,10 +66,6 @@ struct platform_cmd *kiev_sub[] = {
 	NULL
 };
 
-static const char *hwids[] = {
-	"X86 KIEV",
-};
-
 static const char *frids[] = {
 	"Kiev",
 	NULL
@@ -81,11 +77,6 @@ int kiev_probe(struct platform_intf *intf)
 
 	if (probed)
 		return status;
-
-	if (probe_hwid(hwids)) {
-		status = 1;
-		goto kiev_probe_exit;
-	}
 
 	if (probe_frid(frids)) {
 		status = 1;

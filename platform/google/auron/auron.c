@@ -49,7 +49,6 @@
 
 struct probe_ids {
 	const char *names[2];
-	const char *hwids[2];
 	const char *frids[2];
 	const int has_dimms;
 };
@@ -58,32 +57,26 @@ struct platform_cb auron_cb;
 
 static const struct probe_ids probe_id_list[] = {
 	{ { "Buddy", NULL },
-	  { "BUDDY", NULL },
 	  { "Google_Buddy", NULL },
 	  1
 	},
 	{ { "Cid", NULL },
-	  { "CID", NULL },
 	  { "Google_Cid", NULL },
 	  0
 	},
 	{ { "Gandof", NULL },
-	  { "GANDOF", NULL },
 	  { "Google_Gandof", NULL },
 	  0
 	},
 	{ { "Lulu", NULL },
-	  { "LULU", NULL },
 	  { "Google_Lulu", NULL },
 	  0
 	},
 	{ { "Paine", NULL },
-	  { "PAINE", NULL },
 	  { "Google_Auron_Paine", NULL },
 	  0
 	},
 	{ { "Yuna", NULL },
-	  { "YUNA", NULL },
 	  { "Google_Auron_Yuna", NULL },
 	  0
 	},
@@ -92,7 +85,6 @@ static const struct probe_ids probe_id_list[] = {
 	 * frid matching, since Google_Auron is a prefix of Google_Auron_VAR
 	 */
 	{ { "Auron", NULL },
-	  { "AURON", NULL },
 	  { "Google_Auron", NULL },
 	  0
 	},
@@ -121,11 +113,6 @@ int auron_probe(struct platform_intf *intf)
 		return status;
 
 	for (pid = probe_id_list; pid && pid->names[0]; pid++) {
-		/* HWID */
-		if (probe_hwid((const char **)pid->hwids)) {
-			status = 1;
-			goto auron_probe_exit;
-		}
 
 		/* FRID */
 		if (probe_frid((const char **)pid->frids)) {

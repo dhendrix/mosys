@@ -86,7 +86,7 @@ static int z600_eeprom_enet_read(struct platform_intf *intf,
 
 	/* Get serial EEPROM data only for now */
 	mode |= EEPROM_ENET_GEEPROM;
-	
+
 	num_devices = sizeof(z600_eeproms) / sizeof(z600_eeproms[0]);
 	for (i = 0; i < num_devices; i++) {
 		if (z600_eeproms[i].type != EEPROM_TYPE_ENET)
@@ -111,7 +111,7 @@ static int z600_eeprom_enet_read(struct platform_intf *intf,
 
 	/* Get serial EEPROM data only for now */
 	mode |= EEPROM_ENET_GEEPROM;
-	
+
 	num_devices = sizeof(enet_devices) / sizeof(enet_devices[0]);
 	for (i = 0; i < num_devices; i++) {
 		/* If an interface was specified, print only its information */

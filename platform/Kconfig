@@ -28,11 +28,218 @@ config PLATFORM_ARCH_X86
 
 endchoice
 
-source "platform/acer/Kconfig"
-source "platform/google/Kconfig"
-source "platform/hp/Kconfig"
-source "platform/lenovo/Kconfig"
-source "platform/samsung/Kconfig"
-source "platform/experimental/Kconfig"
+config PLATFORM_EXPERIMENTAL
+	bool "Experimental platform support"
+	default n
+
+config PLATFORM_AURON
+	depends on PLATFORM_ARCH_X86
+	select CHIPSET_INTEL_LYNXPOINT_LP
+	select CROS_EC_LPC
+	bool "Auron"
+	default n
+
+config PLATFORM_ALEX
+	depends on PLATFORM_ARCH_X86
+	select CHIPSET_INTEL_NM10
+	select EC_SMSC_MEC1308
+	bool "Samsung XE500 Chromebook"
+	default n
+
+config PLATFORM_BELTINO
+	depends on PLATFORM_ARCH_X86
+	select CHIPSET_INTEL_LYNXPOINT_LP
+	bool "beltino"
+	default n
+
+config PLATFORM_BUTTERFLY
+	depends on PLATFORM_ARCH_X86
+	select CHIPSET_INTEL_SERIES6
+	select EC_ENE_KB932
+	select STORAGE_SANDISK_U100
+	bool "HP Pavilion 14-c010us Chromebook"
+	default n
+
+config PLATFORM_CYAN
+	depends on PLATFORM_ARCH_X86
+	select CROS_EC_LPC
+	select SOC_INTEL_BRASWELL
+	bool "cyan"
+	default n
+
+config PLATFORM_CYCLONE
+	depends on PLATFORM_ARCH_ARMEL
+	bool "Cyclone"
+	default n
+
+config PLATFORM_DAISY
+	depends on PLATFORM_ARCH_ARMEL
+	select CROS_EC_I2C
+	select SOC_SAMSUNG_EXYNOS5250
+	bool "Samsung XE303 Chromebook"
+	default n
+
+config PLATFORM_FIZZ
+	depends on PLATFORM_ARCH_X86
+	select CROS_EC_LPC
+	bool "fizz"
+	default n
+
+config PLATFORM_GLADOS
+	depends on PLATFORM_ARCH_X86
+	select CROS_EC_LPC
+	#select CHIPSET_INTEL_LYNXPOINT_LP
+	bool "glados"
+	default n
+
+config PLATFORM_GRU
+	depends on PLATFORM_ARCH_ARMEL
+	bool "Gru"
+	default n
+
+config PLATFORM_LINK
+	depends on PLATFORM_ARCH_X86
+	select CHIPSET_INTEL_SERIES6
+	select CROS_EC_LPC
+	bool "Google Pixel"
+	default n
+
+config PLATFORM_LUMPY
+	depends on PLATFORM_ARCH_X86
+	select CHIPSET_INTEL_SERIES6
+	bool "Samsung XE550 Chromebook"
+	default n
+
+config PLATFORM_MARIO
+	depends on PLATFORM_ARCH_X86
+	select CHIPSET_INTEL_NM10
+	select EC_ITE_IT8500
+	bool "Google Cr-48 Chromebook"
+	default n
+
+config PLATFORM_NYAN
+        depends on PLATFORM_ARCH_ARMEL
+	select SOC_NVIDIA_TEGRA124
+        select CROS_EC_SPI
+        bool "nyan"
+        default n
+
+config PLATFORM_OAK
+	depends on PLATFORM_ARCH_ARMEL
+	bool "Oak"
+	default n
+
+config PLATFORM_PARROT
+	depends on PLATFORM_ARCH_X86
+	select CHIPSET_INTEL_SERIES6
+	bool "Acer C7 Chromebook"
+	default n
+
+config PLATFORM_PEACH
+	depends on PLATFORM_ARCH_ARMEL
+	select CROS_EC_SPI
+	select SOC_SAMSUNG_EXYNOS5420
+	bool "Samsung Chromebook 2 (XE50312)"
+	default n
+
+config PLATFORM_PINKY
+	depends on PLATFORM_ARCH_ARMEL
+	bool "Pinky"
+	default n
+
+config PLATFORM_RAMBI
+	depends on PLATFORM_ARCH_X86
+	select CROS_EC_LPC
+	select SOC_INTEL_BAYTRAIL
+	bool "rambi"
+	default n
+
+config PLATFORM_REEF
+	depends on PLATFORM_ARCH_X86
+	select CROS_EC_LPC
+	select SOC_INTEL_APOLLOLAKE
+	bool "reef"
+	default n
+
+config PLATFORM_SAMUS
+	depends on PLATFORM_ARCH_X86
+	select CHIPSET_INTEL_LYNXPOINT_LP
+	select CROS_EC_LPC
+	bool "Samus"
+	default n
+
+config PLATFORM_SKATE
+        depends on PLATFORM_ARCH_ARMEL
+        select CROS_EC_I2C
+        select SOC_SAMSUNG_EXYNOS5250
+        bool "skate"
+        default n
+
+config PLATFORM_SLIPPY
+	depends on PLATFORM_ARCH_X86
+	select CHIPSET_INTEL_LYNXPOINT_LP
+	select CROS_EC_LPC
+	bool "slippy"
+	default n
+
+config PLATFORM_SMAUG
+	depends on PLATFORM_ARCH_ARMEL
+	select SOC_NVIDIA_TEGRA124
+	select CROS_EC_I2C
+	bool "smaug"
+	default n
+
+config PLATFORM_SPRING
+	depends on PLATFORM_ARCH_ARMEL
+	select CROS_EC_I2C
+	select SOC_SAMSUNG_EXYNOS5250
+	bool "HP Chromebook 11"
+	default n
+
+config PLATFORM_STORM
+	depends on PLATFORM_ARCH_ARMEL
+	bool "Storm"
+	default n
+
+config PLATFORM_STOUT
+	depends on PLATFORM_ARCH_X86 && PLATFORM_EXPERIMENTAL
+	select CHIPSET_INTEL_SERIES6
+	select EC_ITE_IT8500
+	select STORAGE_SANDISK_U100
+	bool "Thinkpad X131e Chromebook"
+	default n
+
+config PLATFORM_STUMPY
+	depends on PLATFORM_ARCH_X86
+	select CHIPSET_INTEL_SERIES6
+	select SUPERIO_ITE_IT8772
+	bool "Samsung XE300 Chromebox"
+	default n
+
+config PLATFORM_STRAGO
+	depends on PLATFORM_ARCH_X86
+	select CROS_EC_LPC
+	select SOC_INTEL_BRASWELL
+	bool "strago"
+	default n
+
+config PLATFORM_ZGB
+	depends on PLATFORM_ARCH_X86
+	select CHIPSET_INTEL_NM10
+	select EC_NUVOTON_NPCE781
+	bool "Acer AC700 Chromebook"
+	default n
+
+config PLATFORM_Z600
+	depends on PLATFORM_ARCH_X86
+	bool "z600 workstation"
+	default y
+
+config EXPERIMENTAL_KIEV
+	depends on PLATFORM_ARCH_X86 && PLATFORM_EXPERIMENTAL
+	select CHIPSET_INTEL_SERIES6
+	select SUPERIO_ITE_IT8772
+	bool "kiev"
+	default n
 
 endmenu

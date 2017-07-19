@@ -41,6 +41,7 @@
 #include "drivers/google/cros_ec.h"
 
 #include "lib/probe.h"
+#include "lib/sku.h"
 #include "lib/smbios.h"
 #include "lib/elog.h"
 
@@ -48,50 +49,34 @@
 
 struct probe_ids {
 	const char *names[2];
-	const char *frids[2];
+	/**
+	 * Devices with SKU-based mapping should define sku_table,
+	 * otherwise use single_sku.
+	 */
+	struct sku_mapping *sku_table;
+	const struct sku_info single_sku;
 };
 
+/* sku_info: brand, model, chassis, customization */
 static const struct probe_ids probe_id_list[] = {
-	{ { "Asuka", NULL },
-	  { "Asuka", NULL },
-	},
-	{ { "Caroline", NULL },
-	  { "Caroline", NULL },
-	},
-	{ { "Cave", NULL },
-	  { "Cave", NULL },
-	},
-	{ { "Chell", NULL },
-	  { "Chell", NULL },
-	},
-	{ { "Eve", NULL },
-	  { "Eve", NULL },
-	},
-        { { "Poppy", NULL },
-          { "Poppy", NULL },
-        },
-	{ { "Glados", NULL },
-	  { "Glados", NULL },
-	},
-	{ { "Kunimitsu", NULL },
-	  { "Kunimitsu", NULL },
-	},
-	{ { "Lars", NULL },
-	  { "Lars", NULL },
-	},
-	{ { "Pbody", NULL },
-	  { "Pbody", NULL },
-	},
-	{ { "Sentry", NULL },
-	  { "Sentry", NULL },
-	},
-	{ { "Skylake", NULL },
-	  { "Skylake", NULL },
-	},
-        { { "Soraka", NULL },
-          { "Soraka", NULL },
-        },
-	{ { NULL } }
+	{ { "Asuka", }, .single_sku = { .brand = "DEAH", }, },
+	{ { "Caroline", }, .single_sku = { .brand = "SMAK", }, },
+	{ { "Cave", }, .single_sku = { .brand = "ASUL", }, },
+	{ { "Chell", }, .single_sku = { .brand = "HPZR", }, },
+	{ { "Eve", }, .single_sku = { .brand = "ZZAF", }, },
+	{ { "Poppy", } },
+	{ { "Glados", } },
+	{ { "Kunimitsu", }, },
+	/**
+	 * TODO(hungte) There may be variants for LARS so we can't provide a
+	 * single brand here for now. Need to revise for what to do. */
+	{ { "Lars", }, .single_sku = { .brand = NULL, }, },
+	{ { "Pbody", }, },
+	{ { "Sentry", }, .single_sku = { .brand = "LEAJ", }, },
+	{ { "Skylake", }, },
+	/* TODO(hungte) Fill Soraka brand code when it's decided. */
+	{ { "Soraka", }, .single_sku = { .brand = NULL, }, },
+	{ { NULL }, },
 };
 
 struct platform_cmd *glados_sub[] = {
@@ -117,7 +102,7 @@ int glados_probe(struct platform_intf *intf)
 
 	for (pid = probe_id_list; pid && pid->names[0]; pid++) {
 		/* FRID */
-		if (probe_frid((const char **)pid->frids)) {
+		if (probe_frid((const char **)pid->names)) {
 			status = 1;
 			goto glados_probe_exit;
 		}
@@ -134,6 +119,11 @@ glados_probe_exit:
 	probed = 1;
 	/* Update canonical platform name */
 	intf->name = pid->names[0];
+	if (pid->sku_table) {
+		intf->sku_info = sku_find_info(intf, pid->sku_table);
+	} else {
+		intf->sku_info = &pid->single_sku;
+	}
 	return status;
 }
 

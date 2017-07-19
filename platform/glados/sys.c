@@ -42,16 +42,11 @@ static char *glados_get_name(struct platform_intf *intf)
 	return mosys_strdup(intf->name);
 }
 
-static char *glados_get_model(struct platform_intf *intf)
-{
-	return strlower(mosys_strdup(intf->name));
-}
-
 struct sys_cb glados_sys_cb = {
 	.version		= &cros_ec_board_version_str,
 	.vendor			= &smbios_sysinfo_get_vendor,
 	.name			= &glados_get_name,
 	.family			= &smbios_sysinfo_get_family,
 	.firmware_vendor	= &smbios_bios_get_vendor,
-	.model			= &glados_get_model,
+	.sku_number		= &smbios_sysinfo_get_sku_number,
 };

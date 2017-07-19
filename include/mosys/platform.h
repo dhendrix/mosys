@@ -501,6 +501,9 @@ struct platform_cb {
 	struct psu_cb *psu;		/* power supply callbacks */
 };
 
+/* SKU based platform information, provided by lib/sku.h */
+struct sku_info;
+
 /*
  * Top-level interface handler.
  * One of these should be defined for each supported platform.
@@ -509,6 +512,7 @@ struct platform_intf {
 	enum platform_type type;	/* numeric platform type */
 	const char *name;		/* canonical platform name */
 	const char **id_list;		/* list of supported ids */
+	const struct sku_info *sku_info;	/* SKU information */
 	struct platform_cmd **sub;	/* list of commands */
 	struct platform_op *op;		/* operations */
 	struct platform_cb *cb;		/* callbacks */

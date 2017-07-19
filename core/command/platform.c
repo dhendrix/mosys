@@ -39,6 +39,7 @@
 #include "mosys/platform.h"
 
 #include "lib/probe.h"
+#include "lib/sku.h"
 #include "mosys/log.h"
 #include "mosys/kv_pair.h"
 
@@ -88,21 +89,22 @@ static int platform_generic_identifier_cmd(struct platform_intf *intf,
 
 		case PLATFORM_ID_MODEL:
 			getter = intf->cb->sys->model;
+			fallback = sku_get_model;
 			break;
 
 		case PLATFORM_ID_CHASSIS:
 			getter = intf->cb->sys->chassis;
-			fallback = probe_chassis;
+			fallback = sku_get_chassis;
 			break;
 
 		case PLATFORM_ID_BRAND:
 			getter = intf->cb->sys->brand;
-			fallback = probe_brand;
+			fallback = sku_get_brand;
 			break;
 
 		case PLATFORM_ID_CUSTOMIZATION:
 			getter = intf->cb->sys->customization;
-			fallback = probe_customization;
+			fallback = sku_get_customization;
 			break;
 	}
 
@@ -179,7 +181,7 @@ static int platform_sku_cmd(struct platform_intf *intf,
 			    int argc, char **argv)
 {
 	char buffer[16];
-	int sku_number = probe_sku_number(intf);
+	int sku_number = sku_get_number(intf);
 
 	if (sku_number < 0) {
 		errno = ENOSYS;

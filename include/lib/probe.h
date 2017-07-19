@@ -103,34 +103,6 @@ extern const char *extract_cpuinfo(const char *key);
  */
 extern const char *extract_block_device_model_name(const char *device);
 
-/* probe_brand - probe (RLZ) brand code
- *
- * returns allocated string containing value if found
- * returns NULL to indicate value not found or error
- */
-extern char *probe_brand(struct platform_intf *intf);
-
-/* probe_chassis - probe chassis id
- *
- * returns allocated string containing value if found
- * returns NULL to indicate value not found or error
- */
-extern char *probe_chassis(struct platform_intf *intf);
-
-/* probe_customization - probe customization ID
- *
- * returns allocated string containing value if found
- * returns NULL to indicate value not found or error
- */
-extern char *probe_customization(struct platform_intf *intf);
-
-/* probe_sku_number - probe SKU number
- *
- * returns integer representing SKU number
- * returns -1 to indicate value not found or error
- */
-extern int probe_sku_number(struct platform_intf *intf);
-
 /*
  * probe_cmdline - probe /proc/cmdline for key
  *

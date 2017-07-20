@@ -402,3 +402,13 @@ char *strlower(char *str)
 
 	return str;
 }
+
+char *strupper(char *str)
+{
+	char *p;
+
+	for (p = str; *p; p++)
+		*p = toupper(*p);
+
+	return str;
+}

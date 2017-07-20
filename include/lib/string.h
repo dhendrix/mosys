@@ -158,6 +158,14 @@ const char *strlfind(const char *str, const char *arr[], int case_sensitive);
 char *strlower(char *str);
 
 /*
+ * strupper - convert a string to upper case
+ *
+ * @str:		string to convert (in place)
+ * returns pointer to string
+ */
+char *strupper(char *str);
+
+/*
  * Find the min-length string.
  */
 #ifndef __minlen

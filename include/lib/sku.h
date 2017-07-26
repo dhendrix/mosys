@@ -16,11 +16,15 @@ enum {
 /**
  * sku_info - a structure to hold per-SKU information.
  *
- * `brand` is the 4 letter RLZ brand code (go/crosrlz), different for each LOEM
- *         in White Label devices, and also used for CR50 BoardID.
- * `model` is the model name (the public code name on Golden Eye Device list).
- * `chassis` is the chassis ID (usually same as model in lower case).
- * `customization` is the legacy support for customization_id.
+ * `brand` is the 4 letter RLZ brand code (go/crosrlz) in upper case, different
+ *         for each LOEM in White Label devices, and also used for CR50 BoardID,
+ *         for example 'ZZCR'.
+ * `model` is the model name (the public code name on Golden Eye Device list)
+ *         in lower case, for example 'samus'.
+ * `chassis` is the chassis ID (usually same as model) in upper case, for
+ *         example 'SAMUS'.
+ * `customization` is the legacy support for customization_id in upper case,
+ *         for example 'GOOGLE-SAMUS'.
  * `data` is a general pointer for platform implementations to use, for example
  *         adding peripheral status like number of cameras or form factor.
  */

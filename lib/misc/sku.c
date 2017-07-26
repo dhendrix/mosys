@@ -216,7 +216,10 @@ char *sku_get_customization(struct platform_intf *intf)
 	if (info && info->customization)
 		return mosys_strdup(info->customization);
 
-	return NULL;
+	result = sku_get_model(intf);
+	if (result)
+		strupper(result);
+	return result;
 }
 
 void *sku_get_data(struct platform_intf *intf)

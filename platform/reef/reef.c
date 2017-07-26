@@ -61,8 +61,12 @@ static struct sku_info
 	SKU_ASTRONAUT = { .brand = NULL, .model = "astronaut", },
 	SKU_SANTA = { .brand = NULL, .model = "santa", },
 	SKU_LAVA = { .brand = NULL, .model = "lava", },
+	SKU_BLUE = { .brand = NULL, .model = "blue", },
+	SKU_BRUCE = { .brand = NULL, .model = "bruce", },
 	SKU_PORBEAGLE = { .brand = NULL, .model = "porbeagle", },
-	SKU_ROBO = { .brand = NULL, .model = "robo", };
+	SKU_ROBO = { .brand = NULL, .model = "robo", },
+	SKU_WHITETIP = { .brand = NULL, .model = "whitetip", },
+	SKU_NASHER = { .brand = NULL, .model = "nasher", };
 
 /* Reference: b/35583395 */
 static struct sku_mapping reef_sku_table[] = {
@@ -86,10 +90,24 @@ static struct sku_mapping coral_sku_table[] = {
 	{3, &SKU_SANTA},
 	{4, &SKU_LAVA},
 	{5, &SKU_LAVA},
+	{6, &SKU_BLUE},
+	{7, &SKU_BLUE},
+	{7, &SKU_BRUCE},
 	{26, &SKU_PORBEAGLE},
 	{27, &SKU_PORBEAGLE},
+	{61, &SKU_ASTRONAUT},
+	{62, &SKU_ASTRONAUT},
 	{70, &SKU_ROBO},
 	{71, &SKU_ROBO},
+	{126, &SKU_WHITETIP},
+	{127, &SKU_WHITETIP},
+	{160, &SKU_NASHER},
+	{161, &SKU_NASHER},
+	{162, &SKU_NASHER},
+	{163, &SKU_NASHER},
+	{164, &SKU_NASHER},
+	{165, &SKU_NASHER},
+	{166, &SKU_NASHER},
 	{SKU_NUMBER_ANY, NULL},
 };
 
